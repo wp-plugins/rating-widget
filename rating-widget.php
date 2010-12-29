@@ -24,7 +24,7 @@ define("WP_RW__BLOG_POSTS_OPTIONS", "rw_blog_posts_options");
 define("WP_RW__COMMENTS_OPTIONS", "rw_comments_options");
 define("WP_RW__PAGES_OPTIONS", "rw_pages_options");
 
-//define("WP_RW__DEBUG", "");
+define("WP_RW__DEBUG", "");
 
 /**
 * Rating-Widget Plugin Class

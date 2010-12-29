@@ -1,9 +1,9 @@
 === Rating-Widget ===
 Contributors: svovaf
-Tags: rate, rating, ratings, vote, votes, voting, star, nero, like, widget
+Tags: rate, rating, ratings, vote, votes, voting, star, like, widget
 Requires at least: 2.6
-Tested up to: 3.0.3
-Stable tag: 1.0.1
+Tested up to: 3.1
+Stable tag: 1.0.2
 
 Create and manage Rating-Widget ratings from within WordPress.
 
@@ -17,7 +17,7 @@ Rating-Widget ratings are localizable and currently available in:
 * Hebrew
 * Russian
 
-A messages.pot file is included in the plugin - please do send us any language files!
+Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
 
 == Installation ==
 
@@ -44,7 +44,7 @@ It's the best one! The Rating-Widget is without registration, fully customizable
 = How can I change the default stars style with something else? =
 It's very easy. First, go to the Ratings settings. Then, on the Rating-Widget options, select the "Custom" button in the color section, and follow the instructions which will appear in the new window.
 
-= Can my Authors edit MY blog ratings? =
+= Can my Authors edit my blog ratings? =
 
 Nope. Only administrators can edit the blog ratings.
 
@@ -55,5 +55,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.0.2 =
+* Readme file was changed.
+* Plugin containing folder was removed.
+
 = 1.0.1 =
 * Initial release
