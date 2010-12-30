@@ -55,6 +55,10 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.0.3 =
+* reCAPTCHA set keys was replaced into global keys. Now it will work across all domains.
+* Plugin version fix.
+
 = 1.0.2 =
 * Readme file was changed.
 * Plugin containing folder was removed.

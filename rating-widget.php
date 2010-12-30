@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.0.1
+Version: 1.0.3
 Author: Vova Feldman
 Author URI: http://URI_Of_The_Plugin_Author
 License: A "Slug" license name e.g. GPL2
@@ -51,7 +51,7 @@ class RatingWidgetPlugin
     public function __construct()
     {
         $this->errors = new WP_Error();
-        $this->version = '1.0.1';
+        $this->version = '1.0.3';
         $this->base_url = plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/';
         $this->is_admin = true;//(bool)current_user_can('manage_options');
         
@@ -360,17 +360,22 @@ class RatingWidgetPlugin
             var RecaptchaOptions = { theme : 'white' };
         </script>
         <div id="rw_recaptcha_container">
-            <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6LfoAr8SAAAAAFxLgWAiIM4v792_fm78wmcw2gt3"></script>
+            <script type="text/javascript">
+                document.write('<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=' + 
+                               RWM.RECAPTCHA_PUBLIC + '"></' + 'script>');
+            </script>
             <p class="submit">
                 <input type="hidden" name="action" value="account" />
                 <input type="submit" value="<?php echo esc_attr(__('Verify CAPTCHA', WP_RW__ID)); ?>" />
             </p>
         </div>
         <noscript>
-           <iframe src="http://www.google.com/recaptcha/api/noscript?k=6LfoAr8SAAAAAFxLgWAiIM4v792_fm78wmcw2gt3" height="300" width="500" frameborder="0"></iframe><br>
-           <textarea name="recaptcha_challenge_field" rows="3" cols="40">
-           </textarea>
-           <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+            <script type="text/javascript">
+                document.write('<iframe src="http://www.google.com/recaptcha/api/noscript?k=' + RWM.RECAPTCHA_PUBLIC + '" height="300" width="500" frameborder="0"></iframe><br>');
+            </script>
+            <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+            </textarea>
+            <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
         </noscript>
     </form>
 </div>
