@@ -3,7 +3,7 @@ Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 Create and manage Rating-Widget ratings from within WordPress.
 
@@ -55,6 +55,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.0.4 =
+* Rating-Widget options errors were fixed.
+
 = 1.0.3 =
 * reCAPTCHA set keys was replaced into global keys. Now it will work across all domains.
 * Plugin version fix.
