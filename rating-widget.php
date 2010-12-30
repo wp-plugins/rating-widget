@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.0.1
+Version: 1.0.2
 Author: Vova Feldman
 Author URI: http://URI_Of_The_Plugin_Author
 License: A "Slug" license name e.g. GPL2
@@ -51,7 +51,7 @@ class RatingWidgetPlugin
     public function __construct()
     {
         $this->errors = new WP_Error();
-        $this->version = '1.0.1';
+        $this->version = '1.0.2';
         $this->base_url = plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/';
         $this->is_admin = true;//(bool)current_user_can('manage_options');
         
