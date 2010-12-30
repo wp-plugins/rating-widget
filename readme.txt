@@ -3,7 +3,7 @@ Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 
 Create and manage Rating-Widget ratings from within WordPress.
 
