@@ -390,9 +390,6 @@ class RatingWidgetPlugin
     
         // Variables for the field and option names 
         $rw_form_hidden_field_name = "rw_form_hidden_field_name";
-        $rw_align_form_hidden_field_name = "rw_submit_align_hidden";
-        $rw_options_form_hidden_field_name = "rw_submit_options_hidden";
-
 
         $settings_data = array(
             "blog-posts" => array(
@@ -512,7 +509,6 @@ class RatingWidgetPlugin
                             ?>
                         </ul>
                         <div class="tabs-panel rw-body" id="categories-all" style="background: white; height: auto; overflow: visible; width: 592px;">
-                            <input type="hidden" name="<?php echo $rw_align_form_hidden_field_name; ?>" value="Y">
                             <?php
                                 $enabled = isset($rw_align->ver);
                             ?>
