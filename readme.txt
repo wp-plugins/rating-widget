@@ -52,7 +52,7 @@ Nope. Only administrators can edit the blog ratings.
 
 Check your theme's footer.php calls wp_footer. The rating javascript is loaded on this action. 
 
-More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
+More info here: http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
 = 1.0.5 =
