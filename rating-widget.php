@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.0.4
+Version: 1.0.5
 Author: Vova Feldman
 Author URI: http://URI_Of_The_Plugin_Author
 License: A "Slug" license name e.g. GPL2
@@ -51,7 +51,7 @@ class RatingWidgetPlugin
     public function __construct()
     {
         $this->errors = new WP_Error();
-        $this->version = '1.0.4';
+        $this->version = '1.0.5';
         $this->base_url = plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/';
         $this->is_admin = true;//(bool)current_user_can('manage_options');
         
@@ -80,9 +80,7 @@ class RatingWidgetPlugin
         // Register CSS stylesheets.
         wp_register_style('rw', "http://{$this->rw_domain}/css/settings.css", array(), $this->version);
         wp_register_style('rw_wp_settings', "http://{$this->rw_domain}/css/wp.settings.css", array(), $this->version);
-        wp_register_style('rw_wp', "http://{$this->rw_domain}/css/wp.css", array(), $this->version);
         wp_register_style('rw_cp', "http://{$this->rw_domain}/css/colorpicker.css", array(), $this->version);
-        wp_enqueue_style('rw_wp');
 
         // Register JS.
         wp_register_script('rw', "http://{$this->rw_domain}/js/index.php", array(), $this->version);
@@ -391,6 +389,7 @@ class RatingWidgetPlugin
         }
     
         // Variables for the field and option names 
+        $rw_form_hidden_field_name = "rw_form_hidden_field_name";
         $rw_align_form_hidden_field_name = "rw_submit_align_hidden";
         $rw_options_form_hidden_field_name = "rw_submit_options_hidden";
 
@@ -427,24 +426,9 @@ class RatingWidgetPlugin
 
         // See if the user has posted us some information
         // If they did, this hidden field will be set to 'Y'
-        if (isset($_POST[$rw_options_form_hidden_field_name]) && $_POST[$rw_options_form_hidden_field_name] == 'Y')
+        if (isset($_POST[$rw_form_hidden_field_name]) && $_POST[$rw_form_hidden_field_name] == 'Y')
         {
-            $rw_options_str = preg_replace('/\%u([0-9A-F]{4})/i', '\\u$1', urldecode($_POST["rw_options"]));
-            if (null !== json_decode($rw_options_str)){
-                $this->_setOption($rw_current_settings["options"], $rw_options_str);
-            }
-    ?>
-    <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
-    <?php
-        }
-        else
-        {
-            // Get rating settings.
-            $rw_options_str = $this->_getOption($rw_current_settings["options"]);
-        }
-        
-        if (isset($_POST[$rw_align_form_hidden_field_name]) && $_POST[$rw_align_form_hidden_field_name] == 'Y')
-        {
+            // Widget align options.
             $rw_show_rating = isset($_POST["rw_show"]) ? true : false;
             $rw_align_str =  (!$rw_show_rating) ? "{}" : $rw_current_settings["default_align"];
             if ($rw_show_rating && isset($_POST["rw_align"]))
@@ -460,15 +444,25 @@ class RatingWidgetPlugin
                 }
             }
             $this->_setOption($rw_current_settings["align"], $rw_align_str);
+
+            // Rating-Widget options.
+            $rw_options_str = preg_replace('/\%u([0-9A-F]{4})/i', '\\u$1', urldecode($_POST["rw_options"]));
+            if (null !== json_decode($rw_options_str)){
+                $this->_setOption($rw_current_settings["options"], $rw_options_str);
+            }
     ?>
-    <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID); ?></strong></p></div>
+    <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
     <?php
         }
         else
         {
             // Get rating alignment.
             $rw_align_str = $this->_getOption($rw_current_settings["align"]);
+
+            // Get rating settings.
+            $rw_options_str = $this->_getOption($rw_current_settings["options"]);
         }
+        
             
         $rw_align = json_decode($rw_align_str);
         
@@ -493,31 +487,31 @@ class RatingWidgetPlugin
     ?>
 <div class="wrap">
     <h2><?php echo __( 'Rating-Widget Settings', WP_RW__ID);?></h2>
-    <div id="poststuff">
-        <div style="float: left;">
-            <div id="side-sortables"> 
-                <div id="categorydiv" class="categorydiv">
-                    <ul id="category-tabs" class="category-tabs">
-                        <?php
-                            foreach ($settings_data as $key => $settings)
-                            {
-                                if ($settings_data[$key] == $rw_current_settings)
-                                {
-                            ?>
-                                <li class="tabs"><?php echo _e($settings["tab"], WP_RW__ID);?></li>
+    <form method="post" action="">
+        <div id="poststuff">
+            <div style="float: left;">
+                <div id="side-sortables"> 
+                    <div id="categorydiv" class="categorydiv">
+                        <ul id="category-tabs" class="category-tabs">
                             <?php
-                                }
-                                else
+                                foreach ($settings_data as $key => $settings)
                                 {
-                            ?>
-                                <li><a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>"><?php echo _e($settings["tab"], WP_RW__ID);?></a></li>
-                            <?php
+                                    if ($settings_data[$key] == $rw_current_settings)
+                                    {
+                                ?>
+                                    <li class="tabs"><?php echo _e($settings["tab"], WP_RW__ID);?></li>
+                                <?php
+                                    }
+                                    else
+                                    {
+                                ?>
+                                    <li><a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>"><?php echo _e($settings["tab"], WP_RW__ID);?></a></li>
+                                <?php
+                                    }
                                 }
-                            }
-                        ?>
-                    </ul>
-                    <div class="tabs-panel rw-body" id="categories-all" style="background: white; height: auto; overflow: visible; width: 592px;">
-                        <form name="form1" method="post" action="">
+                            ?>
+                        </ul>
+                        <div class="tabs-panel rw-body" id="categories-all" style="background: white; height: auto; overflow: visible; width: 592px;">
                             <input type="hidden" name="<?php echo $rw_align_form_hidden_field_name; ?>" value="Y">
                             <?php
                                 $enabled = isset($rw_align->ver);
@@ -527,7 +521,7 @@ class RatingWidgetPlugin
                                     <input id="rw_show" type="checkbox" name="rw_show" value="true"<?php if ($enabled) echo ' checked="checked"';?> onclick="RWM_WP.enable(this);" /> Enable for <?php echo $rw_current_settings["tab"];?>:
                                 </label>
                                 <br />
-                                <div class="rw-post-rating-align rw-clearfix">
+                                <div class="rw-post-rating-align" style="height: 198px;">
                                     <div class="rw-ui-disabled"<?php if ($enabled) echo ' style="display: none;"';?>></div>
                                 <?php
                                     $vers = array("top", "bottom");
@@ -536,7 +530,7 @@ class RatingWidgetPlugin
                                     foreach ($vers as $ver)
                                     {
                                 ?>
-                                    <div class="rw-clearfix" style="padding: 5px;">
+                                    <div style="height: 89px; padding: 5px;">
                                 <?php
                                         foreach ($hors as $hor)
                                         {
@@ -559,23 +553,18 @@ class RatingWidgetPlugin
                                 ?>
                                 </div>
                             </div>
-
-                            <p class="submit">
-                                <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
-                            </p>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <br />
-            <form method="post" action="">
+                <br />
                 <?php require_once(dirname(__FILE__) . "/view/options.php"); ?>
-            </form>
+            </div>
+            <div style="margin-left: 630px; padding-top: 32px; width: 350px; padding-right: 20px; position: fixed;">
+                <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
+                <?php require_once(dirname(__FILE__) . "/view/save.php"); ?>
+            </div>
         </div>
-        <div style="margin-left: 630px; padding-top: 32px; padding-right: 20px;">
-            <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
-        </div>
-    </div>
+    </form>
     <div class="rw-body">
     <?php include_once($this->base_dir . "/view/settings/custom_color.php");?>
     </div>

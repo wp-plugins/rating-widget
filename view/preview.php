@@ -1,4 +1,4 @@
-<div class="postbox rw-body" style="position: fixed; width: 350px;">
+<div class="postbox rw-body">
     <h3>Preview</h3>
     <div class="inside" style="padding: 10px;">
         <div id="rw_preview_container" style="text-align: <?php
