@@ -33,7 +33,7 @@
                 
                 // Initialize ratings.
                 function RW_Async_Init(){
-                    RW.init("cfcd208495d565ef66e7dff9f98764da", <?php echo $rw_options_str; ?>);
+                    RW.init("cfcd208495d565ef66e7dff9f98764da"<?php if (trim($rw_options_str) !== "") echo ", " . $rw_options_str; ?>);
                     RW.render(function(ratings){
                         rwStar = RWM.STAR = ratings[3];
                         rwNero = RWM.NERO = ratings[17];

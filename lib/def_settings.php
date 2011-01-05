@@ -9,11 +9,17 @@
         $settings->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         $settings->advanced->layout->align = @rw_get_default_value($settings->advanced->layout->align, new stdClass());
         
+        $settings->lng = @rw_get_default_value($settings->lng, "en");
+        $settings->url = @rw_get_default_value($settings->url, "");
+        $settings->title = @rw_get_default_value($settings->title, "");
         $settings->type = @rw_get_default_value($settings->type, $type);
+        $settings->rclass = @rw_get_default_value($settings->rclass, "");
         $settings->size = @rw_get_default_value($settings->size, "small");
         $settings->color = @rw_get_default_value($settings->color, "yellow");
-        $settings->url = @rw_get_default_value($settings->url, "");
+        $settings->imgUrl = @rw_get_default_value($settings->imgUrl, "");
         $settings->readOnly = @rw_get_default_value($settings->readOnly, false);
+        $settings->showInfo = @rw_get_default_value($settings->showInfo, true);
+        $settings->showTooltip = @rw_get_default_value($settings->showTooltip, true);
         $settings->beforeRate = @rw_get_default_value($settings->beforeRate, null);
         $settings->afterRate = @rw_get_default_value($settings->beforeRate, null);
         

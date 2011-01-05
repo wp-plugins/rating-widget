@@ -3,7 +3,7 @@ Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 
 Create and manage Rating-Widget ratings from within WordPress.
 
@@ -55,24 +55,29 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.0.7 =
+* New: ReadOnly functionality was added - now you can set your ratings to also be readonly (e.g. the front page posts).
+* New: You can now specify any UTF-8 letters in the advanced text settings. E.g. you can use Swedish words with letters like Å, Ä, Ö.
+* Fix: CSS stylesheet improvements.
+
 = 1.0.6 =
-* Added find us on Facebook window.
-* Internal CSS bug fixes.
+* New: Added find us on Facebook window.
+* Fix: Internal CSS bug fixes.
 
 = 1.0.5 =
-* Settings UI loading minor fixes.
-* No more confusing 2 different save buttons - one "Save Changes" button for all.
+* Fix: Settings UI loading minor fixes.
+* New: No more confusing 2 different save buttons - one "Save Changes" button for all.
 
 = 1.0.4 =
-* Rating-Widget options errors were fixed.
+* Fix: Rating-Widget options errors were fixed.
 
 = 1.0.3 =
-* reCAPTCHA set keys was replaced into global keys. Now it will work across all domains.
-* Plugin version fix.
+* Fix: reCAPTCHA set keys was replaced into global keys. Now it will work across all domains.
+* Fix: Plugin version fix.
 
 = 1.0.2 =
-* Readme file was changed.
-* Plugin containing folder was removed.
+* Fix: Readme file was changed.
+* Fix: Plugin containing folder was removed.
 
 = 1.0.1 =
-* Initial release
+* New: Initial release

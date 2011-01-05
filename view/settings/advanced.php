@@ -1,5 +1,5 @@
 <table cellspacing="0">
-    <tr class="rw-even">
+    <tr class="rw-odd">
         <td>
             <div id="rw_ui_advanced_container">
                 <div id="advanced_trigger">

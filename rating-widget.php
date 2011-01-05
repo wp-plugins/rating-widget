@@ -3,9 +3,9 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.0.6
+Version: 1.0.7
 Author: Vova Feldman
-Author URI: http://URI_Of_The_Plugin_Author
+Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
 */
 
@@ -51,7 +51,7 @@ class RatingWidgetPlugin
     public function __construct()
     {
         $this->errors = new WP_Error();
-        $this->version = '1.0.6';
+        $this->version = '1.0.7';
         $this->base_url = plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/';
         $this->is_admin = true;//(bool)current_user_can('manage_options');
         
@@ -282,13 +282,14 @@ class RatingWidgetPlugin
             $hook = add_management_page(__( 'Rating-Widget Settings', WP_RW__ID ), __( 'Ratings', WP_RW__ID ), 'edit_posts', 'rw-ratings', array(&$this, 'rw_settings_page') );
         }
 
-        /*if ( $this->is_admin ) { 
+        /*if ($this->is_admin)
+        { 
             add_submenu_page('rw-ratings', __( 'Ratings &ndash; Settings', WP_RW__ID ), __('Settings', WP_RW__ID ), 'edit_posts', 'rw-ratings', array(&$this, 'rw_settings_page'));
-            add_submenu_page('rw-ratings', __( 'Ratings &ndash; Reports', WP_RW__ID ), __('Reports', WP_RW__ID ), 'edit_posts', 'rw_ratings&amp;action=reports', array(&$this, 'rw_settings_page'));
+            add_submenu_page('rw-ratings', __( 'Ratings &ndash; Reports', WP_RW__ID ), __('Reports', WP_RW__ID ), 'edit_posts', 'rw-ratings&amp;action=reports', array(&$this, 'rw_settings_page'));
         }
         else
         { 
-            add_submenu_page('rw-ratings', __( 'Ratings &ndash; Reports', WP_RW__ID ), __( 'Reports', WP_RW__ID ), 'edit_posts', 'rw-ratings', array(&$this, 'rw_settings_page'));
+            add_submenu_page('rw-ratings', __( 'Ratings &ndash; Reports', WP_RW__ID ), __( 'Reports', WP_RW__ID ), 'edit_posts', 'rw-ratings&amp;action=reports', array(&$this, 'rw_settings_page'));
         }*/
     }
 
@@ -381,11 +382,52 @@ class RatingWidgetPlugin
 <?php        
     }
     
+    function rw_reports_page()
+    {
+?>
+<div class="wrap">
+    <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID);?></h2>
+    <form method="post" action="">
+        <table class="widefat">
+            <thead>
+                <tr>
+                    <th scope="col" class="manage-column">Title</th>
+                    <th scope="col" class="manage-column">Start Date</th>
+                    <th scope="col" class="manage-column">Votes</th>
+                    <th scope="col" class="manage-column">Average Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php
+                
+            ?>
+                <tr class="alternate">
+                    <td>
+                        <strong><a href="" target="_blank">Some</a></strong>
+                    </td>
+                    <td>13 Dec, 2010</td>
+                    <td>37</td>
+                    <td>4.5</td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<?php        
+    }
+    
     function rw_settings_page()
     {
-        // Must check that the user has the required capability 
+        // Must check that the user has the required capability.
         if (!current_user_can('manage_options')){
           wp_die(__('You do not have sufficient permissions to access this page.', WP_RW__ID) );
+        }
+        
+        $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : false;
+        if ("reports" == $action)
+        {
+            $this->rw_reports_page();
+            return;
         }
     
         // Variables for the field and option names 
