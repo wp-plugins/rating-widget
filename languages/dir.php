@@ -5,7 +5,7 @@
 //        "ch" => "Chinese",
         "en" => "English (Default)", 
 //        "fr" => "French",
-//        "gr" => "German",
+        "de" => "German",
         "he" => "Hebrew",
 //        "hi" => "Hindi",
 //        "it" => "Italian",
