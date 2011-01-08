@@ -4,7 +4,7 @@
 //        "ar" => "Arabic",
 //        "ch" => "Chinese",
         "en" => "English (Default)", 
-//        "fr" => "French",
+        "fr" => "French",
         "de" => "German",
         "he" => "Hebrew",
 //        "hi" => "Hindi",
@@ -13,7 +13,7 @@
 //        "ko" => "Korean",
 //        "la" => "Latin",
         "ru" => "Russian",
-//        "sp" => "Spanish",
+        "sp" => "Spanish",
 //        "th" => "Thai",
     );
 ?>
