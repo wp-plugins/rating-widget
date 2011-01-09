@@ -9,10 +9,7 @@ Create and manage Rating-Widget ratings from within WordPress.
 
 == Description ==
 
-The Rating-Widget Ratings plugin allows you to create and manage ratings from within your WordPress dashboard. You can embed ratings into your posts, pages or comments.
-All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout.
-
-Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-designs/
+The Rating-Widget Ratings plugin allows you to create and manage ratings from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout.
 
 Rating-Widget ratings are localizable and currently available in:
 
@@ -25,7 +22,7 @@ Rating-Widget ratings are localizable and currently available in:
 
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
 
-
+Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-designs/
 
 == Installation ==
 
@@ -66,6 +63,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 = 1.0.9 =
 * New: Localized to French.
 * New: Localized to Spanish.
+* Fix: CSS stylesheet improvements.
 
 = 1.0.8 =
 * New: Localized to German.
