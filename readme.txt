@@ -22,7 +22,7 @@ Rating-Widget ratings are localizable and currently available in:
 
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
 
-Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/ 
+Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/
 
 == Installation ==
 
