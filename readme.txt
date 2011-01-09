@@ -1,6 +1,6 @@
 ﻿=== Rating-Widget ===
 Contributors: svovaf
-Tags: rate, rating, ratings, vote, votes, voting, star, like, widget
+Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, comments, post, posts, page
 Requires at least: 2.6
 Tested up to: 3.1
 Stable tag: 1.0.9
