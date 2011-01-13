@@ -1,4 +1,4 @@
-﻿=== Rating-Widget ===
+ן»¿=== Rating-Widget ===
 Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax
 Requires at least: 2.6
@@ -21,6 +21,7 @@ Rating-Widget ratings are localizable and currently available in:
 * Spanish
 
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
+
 
 Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/
 
@@ -78,7 +79,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 = 1.0.7 =
 * New: ReadOnly functionality was added - now you can set your ratings to also be readonly (e.g. the front page posts).
-* New: You can now specify any UTF-8 letters in the advanced text settings. E.g. you can use Swedish words with letters like Å, Ä, Ö.
+* New: You can now specify any UTF-8 letters in the advanced text settings. E.g. you can use Swedish words with letters like ֳ…, ֳ„, ֳ–.
 * Fix: CSS stylesheet improvements.
 
 = 1.0.6 =
