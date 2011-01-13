@@ -3,11 +3,11 @@
     $hor = "right";
     $dictionary = array(
         "rateAwful" => "Schrecklich",
-        "ratePoor" => "Bad",
+        "ratePoor" => "Schlecht",
         "rateAverage" => "Durchschnittlich",
-        "rateGood" => "Gute",
+        "rateGood" => "Gut",
         "rateExcellent" => "Ausgezeichnet",
-        "rateThis" => "Bewerten Sie diesen",
+        "rateThis" => "Bewertung abgeben",
         "like" => "Ich mag es",
         "dislike" => "Ich mag nicht",
         "vote" => "Abstimmen",

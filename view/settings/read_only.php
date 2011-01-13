@@ -1,4 +1,4 @@
-<tr id="rw_rate_readonly" class="rw-even">
+<tr id="rw_rate_readonly" class="rw-odd">
     <td class="rw-ui-def-width">
         <span class="rw-ui-def">Read Only:</span>
     </td>

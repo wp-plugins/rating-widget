@@ -6,8 +6,8 @@
                 <table>
                     <?php include_once($this->base_dir . "/view/settings/language.php");?>
                     <?php include_once($this->base_dir . "/view/settings/type.php");?>
+                    <?php include_once($this->base_dir . "/view/settings/theme.php");?>
                     <?php include_once($this->base_dir . "/view/settings/size.php");?>
-                    <?php include_once($this->base_dir . "/view/settings/color.php");?>
                     <?php include_once($this->base_dir . "/view/settings/read_only.php");?>
                 </table>
                 <?php include_once($this->base_dir . "/view/settings/advanced.php");?>

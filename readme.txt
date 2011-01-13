@@ -1,9 +1,9 @@
 ﻿=== Rating-Widget ===
 Contributors: svovaf
-Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, comments, post, posts, page
+Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.0.9
+Stable tag: 1.1.0
 
 Create and manage Rating-Widget ratings from within WordPress.
 
@@ -60,6 +60,14 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.1.0 =
+* New: Major UI change, now we have Themes option.
+* New: 3 new rating designs (check out the Thumb type).
+* New: Color property was deprecated.
+* New: HTTP calls optimization.
+* Fix: JS optimizations.
+* Fix: CSS stylesheet tweaks.
+
 = 1.0.9 =
 * New: Localized to French.
 * New: Localized to Spanish.

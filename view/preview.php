@@ -1,5 +1,5 @@
 <div class="postbox rw-body">
-    <h3>Preview</h3>
+    <h3>Live Preview</h3>
     <div class="inside" style="padding: 10px;">
         <div id="rw_preview_container" style="text-align: <?php
             if ($rw_options->advanced->layout->align->ver != "middle")
@@ -45,6 +45,29 @@
                                 echo 'jQuery("#rw_preview_star").hide();';
                             }
                         ?>
+                        
+                        jQuery("#rw_theme_loader").hide();
+                        jQuery("#rw_star_theme_select").show();
+                        
+                        // Set selected themes.
+                        RWM.Set.selectedTheme.star = "<?php
+                            echo ($rw_options->type == "star" && $rw_options->theme !== "") ?
+                                  $rw_options->theme :
+                                  DEF_STAR_THEME;
+                        ?>";
+                        RWM.Set.selectedTheme.nero = "<?php
+                            echo ($rw_options->type == "nero" && $rw_options->theme !== "") ?
+                                  $rw_options->theme :
+                                  DEF_NERO_THEME;
+                        ?>";
+                        
+                        // Add all themes inline css.
+                        for (var t in RWT)
+                        {
+                            if (RWT[t].options.color == RW.COLOR.CUSTOM){
+                                RW._addCustomImgStyle(RWT[t].options.imgUrl.large, [RWT[t].options.type], "theme", t);
+                            }
+                        }
                     }, false);
                 }
             </script>

@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.0.9
+Version: 1.1.0
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -23,8 +23,6 @@ define("WP_RW__FRONT_POSTS_OPTIONS", "rw_front_posts_options");
 define("WP_RW__BLOG_POSTS_OPTIONS", "rw_blog_posts_options");
 define("WP_RW__COMMENTS_OPTIONS", "rw_comments_options");
 define("WP_RW__PAGES_OPTIONS", "rw_pages_options");
-
-//define("WP_RW__DEBUG", "");
 
 /**
 * Rating-Widget Plugin Class
@@ -51,21 +49,12 @@ class RatingWidgetPlugin
     public function __construct()
     {
         $this->errors = new WP_Error();
-        $this->version = '1.0.9';
+        $this->version = '1.1.0';
         $this->base_url = plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/';
         $this->is_admin = true;//(bool)current_user_can('manage_options');
         
-        if (!defined("WP_RW__DEBUG"))
-        {
-            $this->base_dir = dirname(__FILE__);
-            $this->rw_domain = "rating-widget.com";
-        }
-        else
-        {
-            $this->base_dir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-            $this->rw_domain = "localhost:8080";
-        }
-        
+        $this->base_dir = dirname(__FILE__);
+        $this->rw_domain = "rating-widget.com";
 
         add_action('the_content', array(&$this, 'display_post_rating')); // Displays Rating-Widget on Post
         add_action('comment_text', array(&$this, 'display_comment_rating')); // Displays Rating-Widget on Comments
@@ -509,16 +498,70 @@ class RatingWidgetPlugin
         $rw_language_str = isset($rw_options->lng) ? $rw_options->lng : WP_RW__DEFAULT_LNG;
         
         require_once($this->base_dir . "/languages/{$rw_language_str}.php");
+        require_once($this->base_dir . "/lib/defaults.php");
         require_once($this->base_dir . "/lib/def_settings.php");
-        $rw_options_type = isset($rw_options->type) ? $rw_options->type : "star";
+        /*$rw_options_type = isset($rw_options->type) ? $rw_options->type : "star";
         if ($rw_options_type == "nero"){
             unset($rw_options->type);
             $rw_options_str = json_encode($rw_options);
             $rw_options->type = "nero";
+        }*/
+        
+        global $DEFAULT_OPTIONS;
+        rw_set_language_options($DEFAULT_OPTIONS, $dictionary, $dir, $hor);
+        
+        $rating_font_size_set = false;
+        $rating_line_height_set = false;
+        $theme_font_size_set = false;
+        $theme_line_height_set = false;
+
+        $rating_font_size_set = (isset($rw_options->advanced) && isset($rw_options->advanced->font) && isset($rw_options->advanced->font->size));
+        $rating_line_height_set = (isset($rw_options->advanced) && isset($rw_options->advanced->layout) && isset($rw_options->advanced->layout->lineHeight));
+        
+        $def_options = $DEFAULT_OPTIONS;
+        if (isset($rw_options->theme) && $rw_options->theme !== "")
+        {
+            require($this->base_dir . "/themes/dir.php");
+            if (!isset($rw_options->type)){
+                $rw_options->type = isset($rw_themes["star"][$rw_options->theme]) ? "star" : "nero";
+            }
+            if (isset($rw_themes[$rw_options->type][$rw_options->theme]))
+            {
+                require($this->base_dir . "/themes/" . $rw_themes[$rw_options->type][$rw_options->theme]["file"]);
+
+                $theme_font_size_set = (isset($theme["options"]->advanced) && isset($theme["options"]->advanced->font) && isset($theme["options"]->advanced->font->size));
+                $theme_line_height_set = (isset($theme["options"]->advanced) && isset($theme["options"]->advanced->layout) && isset($theme["options"]->advanced->layout->lineHeight));
+
+                // Enrich theme options with defaults.
+                $def_options = rw_enrich_options1($theme["options"], $DEFAULT_OPTIONS);
+            }
+        }
+
+        // Enrich rating options with calculated default options (with theme reference).
+        $rw_options = rw_enrich_options1($rw_options, $def_options);
+
+        // If font size and line height isn't explicitly specified on rating
+        // options or rating's theme, updated theme correspondingly
+        // to rating size. 
+        if (isset($rw_options->size))
+        {
+            $SIZE = strtoupper($rw_options->size);
+            if (!$rating_font_size_set && !$theme_font_size_set)
+            {
+                global $DEF_FONT_SIZE;
+                if (!isset($rw_options->advanced)){ $rw_options->advanced = new stdClass(); }
+                if (!isset($rw_options->advanced->font)){ $rw_options->advanced->font = new stdClass(); }
+                $rw_options->advanced->font->size = $DEF_FONT_SIZE->$SIZE;
+            }
+            if (!$rating_line_height_set && !$theme_line_height_set)
+            {
+                global $DEF_LINE_HEIGHT;
+                if (!isset($rw_options->advanced)){ $rw_options->advanced = new stdClass(); }
+                if (!isset($rw_options->advanced->layout)){ $rw_options->advanced->layout = new stdClass(); }
+                $rw_options->advanced->layout->lineHeight = $DEF_LINE_HEIGHT->$SIZE;
+            }
         }
         
-
-        rw_enrich_options($rw_options, $dictionary, $dir, $hor);
         $rw_enrich_options_str = json_encode($rw_options);
 
         $browser_info = array("browser" => "msie", "version" => "7.0");
@@ -758,7 +801,7 @@ class RatingWidgetPlugin
                 if (typeof(RW) == "undefined"){ 
                     (function(){
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external.php";
+                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external.min.php";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }
