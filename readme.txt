@@ -1,9 +1,9 @@
-﻿=== Rating-Widget ===
+=== Rating-Widget ===
 Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 
 Create and manage Rating-Widget ratings from within WordPress.
 
@@ -13,15 +13,16 @@ The Rating-Widget Ratings plugin allows you to create and manage ratings from wi
 
 Rating-Widget ratings are localizable and currently available in:
 
+* Croatian
 * English
 * French
 * German
 * Hebrew
+* Portuguese
 * Russian
 * Spanish
 
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
-
 
 Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/
 
@@ -41,6 +42,7 @@ Upload the plugin to your blog and activate it. Then, follow the instructions.
 8. Ratings advanced font options
 9. Ratings advanced layout options
 10. Ratings advanced text options
+11. Rating settings Live Preview
 
 == Frequently Asked Questions ==
 
@@ -61,6 +63,11 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.1.1 =
+* New: Localized to Croatian.
+* New: Localized to Portuguese.
+* Fix: Russian translation was fixed.
+
 = 1.1.0 =
 * New: Major UI change, now we have Themes option.
 * New: 3 new rating designs (check out the Thumb type).

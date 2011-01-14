@@ -7,7 +7,7 @@
         "rateAverage" => "Среднее",
         "rateGood" => "Хорошее",
         "rateExcellent" => "Отлично",
-        "rateThis" => "Проголосовать этом",
+        "rateThis" => "Голосуй",
         "like" => "Нравится",
         "dislike" => "Не нравится",
         "vote" => "Голос",
