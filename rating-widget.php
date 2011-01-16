@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.1.1
+Version: 1.1.2
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -49,10 +49,9 @@ class RatingWidgetPlugin
     public function __construct()
     {
         $this->errors = new WP_Error();
-        $this->version = '1.1.1';
+        $this->version = '1.1.2';
         $this->base_url = plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/';
         $this->is_admin = true;//(bool)current_user_can('manage_options');
-        
         $this->base_dir = dirname(__FILE__);
         $this->rw_domain = "rating-widget.com";
 
@@ -96,13 +95,13 @@ class RatingWidgetPlugin
 
     private static $OPTIONS_DEFAULTS = array(
         WP_RW__FRONT_POSTS_ALIGN => '{"ver": "top", "hor": "left"}',
-        WP_RW__FRONT_POSTS_OPTIONS => "{}",
+        WP_RW__FRONT_POSTS_OPTIONS => '{"type": "star", "theme": "star_yellow1"}',
         WP_RW__BLOG_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__BLOG_POSTS_OPTIONS => "{}",
+        WP_RW__BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_yellow1"}',
         WP_RW__COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__COMMENTS_OPTIONS => '{"type": "nero"}',
+        WP_RW__COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_1"}',
         WP_RW__PAGES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__PAGES_OPTIONS => "{}",
+        WP_RW__PAGES_OPTIONS => '{"type": "star", "theme": "star_yellow1"}',
     );
     
     private static $OPTIONS_CACHE = array();
@@ -801,7 +800,7 @@ class RatingWidgetPlugin
                 if (typeof(RW) == "undefined"){ 
                     (function(){
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external.min.php";
+                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external.php";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }

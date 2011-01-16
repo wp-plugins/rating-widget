@@ -51,14 +51,16 @@
                         
                         // Set selected themes.
                         RWM.Set.selectedTheme.star = "<?php
-                            echo ($rw_options->type == "star" && $rw_options->theme !== "") ?
-                                  $rw_options->theme :
-                                  DEF_STAR_THEME;
+                            echo (isset($rw_options->type) && 
+                                  $rw_options->type == "star" && 
+                                  isset($rw_options->theme) && 
+                                  $rw_options->theme !== "") ? $rw_options->theme : DEF_STAR_THEME;
                         ?>";
                         RWM.Set.selectedTheme.nero = "<?php
-                            echo ($rw_options->type == "nero" && $rw_options->theme !== "") ?
-                                  $rw_options->theme :
-                                  DEF_NERO_THEME;
+                            echo (isset($rw_options->type) &&
+                                  $rw_options->type == "nero" &&
+                                  isset($rw_options->theme) && 
+                                  $rw_options->theme !== "") ? $rw_options->theme : DEF_NERO_THEME;
                         ?>";
                         
                         // Add all themes inline css.
