@@ -25,6 +25,8 @@
                     $options->size = "large";
                     $options->advanced->font->size = "20px";
                     $options->advanced->layout->lineHeight = "30px";
+                    $options->advanced->layout->dir = "ltr";
+                    $options->advanced->layout->align->hor = "right";
                     $vars["options"] = $options;
                     $vars["label"] = $theme["title"];
                     $vars["rate"] = 3.5;
@@ -43,6 +45,8 @@
                     $options->size = "large";
                     $options->advanced->font->size = "20px";
                     $options->advanced->layout->lineHeight = "30px";
+                    $options->advanced->layout->dir = "ltr";
+                    $options->advanced->layout->align->hor = "right";
                     $vars["options"] = $options;
                     $vars["label"] = $theme["title"];
                     $vars["rate"] = 3.5;
@@ -68,6 +72,8 @@
                         $options->size = "large";
                         $options->advanced->font->size = "20px";
                         $options->advanced->layout->lineHeight = "30px";
+                        $options->advanced->layout->dir = "ltr";
+                        $options->advanced->layout->align->hor = "right";
                         $vars["options"] = $options;
                         $vars["label"] = $theme["title"];
                         $vars["rate"] = 3.5;

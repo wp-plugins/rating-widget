@@ -3,7 +3,7 @@ Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 
 Create and manage Rating-Widget ratings from within WordPress.
 
@@ -63,6 +63,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.1.3 =
+* Fix: There was a problem when selecting the default theme of the thumbs type.
+
 = 1.1.2 =
 * Fix: Initial settings preview bug fix.
 

@@ -33,7 +33,37 @@
                 
                 // Initialize ratings.
                 function RW_Async_Init(){
-                    RW.init("cfcd208495d565ef66e7dff9f98764da"<?php if (trim($rw_options_str) !== "") echo ", " . $rw_options_str; ?>);
+                    RW.init("cfcd208495d565ef66e7dff9f98764da");
+                    <?php
+                        $b_type = $rw_options->type;
+                        $b_theme = $rw_options->theme;
+                        $b_style = $rw_options->style;
+                        
+                        $types = array("star", "nero");
+                        $default_themes = array("star" => DEF_STAR_THEME, "nero" => DEF_NERO_THEME);
+                        $ratings_uids = array("star" => 3, "nero" => 17);
+                        foreach($types as $type)
+                        {
+                    ?>
+                    RW.initRating(<?php
+                        if ($rw_options->type !== $type)
+                        {
+                            $rw_options->type = $type;
+                            $rw_options->theme = $default_themes[$type];
+                            $rw_options->style = "";
+                        }
+                        
+                        echo $ratings_uids[$type] . ", ";
+                        echo json_encode($rw_options);
+                        
+                        // Recover.
+                        $rw_options->type = $b_type;
+                        $rw_options->theme = $b_theme;
+                        $rw_options->style = $b_style;                        
+                    ?>);
+                    <?php
+                        }
+                    ?>
                     RW.render(function(ratings){
                         rwStar = RWM.STAR = ratings[3];
                         rwNero = RWM.NERO = ratings[17];
@@ -62,6 +92,8 @@
                                   isset($rw_options->theme) && 
                                   $rw_options->theme !== "") ? $rw_options->theme : DEF_NERO_THEME;
                         ?>";
+                        
+                        RWM.Set.selectedType = RW.TYPE.<?php echo strtoupper($rw_options->type);?>;
                         
                         // Add all themes inline css.
                         for (var t in RWT)
