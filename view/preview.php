@@ -68,6 +68,11 @@
                         rwStar = RWM.STAR = ratings[3];
                         rwNero = RWM.NERO = ratings[17];
                         
+                        jQuery("#rw_theme_loader").hide();
+                        jQuery("#rw_<?php echo $rw_options->type;?>_theme_select").show();
+                        
+                        RWM.Set.sizeIcons(RW.TYPE.<?php echo strtoupper($rw_options->type);?>);
+                        
                         <?php
                             if ($rw_options->type == "star"){
                                 echo 'jQuery("#rw_preview_nero").hide();';
@@ -75,9 +80,6 @@
                                 echo 'jQuery("#rw_preview_star").hide();';
                             }
                         ?>
-                        
-                        jQuery("#rw_theme_loader").hide();
-                        jQuery("#rw_star_theme_select").show();
                         
                         // Set selected themes.
                         RWM.Set.selectedTheme.star = "<?php

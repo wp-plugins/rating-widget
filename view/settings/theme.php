@@ -7,7 +7,7 @@
 <tr id="rw_theme" class="rw-odd">
     <td><span class="rw-ui-def">Theme:</span></td>
     <td>
-        <img id="rw_theme_loader" src="/img/rw.loader.gif" alt="" />
+        <img id="rw_theme_loader" src="http://<?php echo $this->rw_domain;?>/img/rw.loader.gif" alt="" />
         <?php
             foreach ($rw_themes as $type => $type_themes)
             {

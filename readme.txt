@@ -63,6 +63,12 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.1.4 =
+* Fix: Initial size icons are now match to the selected theme and type.
+* Fix: Initial themes list is now match the saved rating type.
+* Fix: ReadOnly icons are now linked to the correct url.
+* Fix: Themes list loading Gif is now points to the correct url.
+
 = 1.1.3 =
 * Fix: There was a problem when selecting the default theme of the thumbs type.
 
