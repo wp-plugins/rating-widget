@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.1.4
+Version: 1.1.5
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -46,18 +46,31 @@ class RatingWidgetPlugin
     var $rw_domain;
     var $ratings;
     
+    static $RW_DOMAIN;
+    static $BASE_DIR;
+    static $VERSION;
+    
+    public static function Init()
+    {
+        self::$VERSION = "1.1.5";
+        self::$BASE_DIR = dirname(__FILE__);
+        self::$RW_DOMAIN = "rating-widget.com";
+    }
+    
     public function __construct()
     {
         $this->errors = new WP_Error();
-        $this->version = '1.1.4';
+        $this->version = self::$VERSION;
         $this->base_url = plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/';
         $this->is_admin = true;//(bool)current_user_can('manage_options');
-        $this->base_dir = dirname(__FILE__);
-        $this->rw_domain = "rating-widget.com";
-
-        add_action('the_content', array(&$this, 'display_post_rating')); // Displays Rating-Widget on Post
-        add_action('comment_text', array(&$this, 'display_comment_rating')); // Displays Rating-Widget on Comments
-        add_action('wp_footer', array(&$this, 'attach_rating_js')); // Attach Rating-Widget javascript.
+        $this->base_dir = self::$BASE_DIR;
+        $this->rw_domain = self::$RW_DOMAIN;
+        $this->ratings = array();
+        
+        add_action('the_content', array(&$this, "rw_display_post_rating")); // Displays Rating-Widget on Post
+        add_action('comment_text', array(&$this, "rw_display_comment_rating")); // Displays Rating-Widget on Comments
+        add_action('wp_footer', array(&$this, "rw_attach_rating_js")); // Attach Rating-Widget javascript.
+//        add_action("plugins_loaded", "rw_top_rated_init"); // Load top rated widget on side bar
 
         add_action( 'admin_menu', array(&$this, 'admin_menu'));
         
@@ -72,7 +85,7 @@ class RatingWidgetPlugin
 
         // Register JS.
         wp_register_script('rw', "http://{$this->rw_domain}/js/index.php", array(), $this->version);
-        wp_register_script('rw_wp', "http://{$this->rw_domain}/js/wp.js", array(), $this->version);
+        wp_register_script('rw_wp', "http://{$this->rw_domain}/js/wordpress/settings.js", array(), $this->version);
         wp_register_script('rw_cp', "http://{$this->rw_domain}/js/vendors/colorpicker.js", array(), $this->version);
         wp_register_script('rw_cp_eye', "http://{$this->rw_domain}/js/vendors/eye.js", array(), $this->version);
         wp_register_script('rw_cp_utils', "http://{$this->rw_domain}/js/vendors/utils.js", array(), $this->version);
@@ -105,7 +118,7 @@ class RatingWidgetPlugin
     );
     
     private static $OPTIONS_CACHE = array();
-    private function _getOption($pOption)
+    public static function _getOption($pOption)
     {
         if (!isset(self::$OPTIONS_CACHE[$pOption]))
         {
@@ -224,6 +237,29 @@ class RatingWidgetPlugin
 <?php
     }
 
+    /* Public Static
+    -------------------------------------------------*/
+    static function RWAddress()
+    {
+        return "http://" . self::$RW_DOMAIN;
+    }
+    
+    static function Version()
+    {
+        return self::$VERSION;
+    }
+    
+    static function BaseDir()
+    {
+        return self::$BASE_DIR;
+    }
+    
+    static $TOP_RATED_WIDGET_LOADED = false;
+    static function TopRatedWidgetLoaded()
+    {
+        self::$TOP_RATED_WIDGET_LOADED = true;
+    }
+    
     /* Admin Settings
     -------------------------------------------------*/
     function admin_menu()
@@ -654,9 +690,9 @@ class RatingWidgetPlugin
 <?php
     }
     
-    /* UI
+    /* Actions
     -------------------------------------------------*/
-    function display_post_rating($content)
+    function rw_display_post_rating($content)
     {
         // Load user key.
         $this->load_user_key();
@@ -698,7 +734,7 @@ class RatingWidgetPlugin
                 $content . $rw;
     }
     
-    function display_comment_rating($content)
+    function rw_display_comment_rating($content)
     {
         // Load user key.
         $this->load_user_key();
@@ -722,7 +758,7 @@ class RatingWidgetPlugin
                 $content . $rw;
     }
     
-    function attach_rating_js($pElement)
+    function rw_attach_rating_js($pElement)
     {
         // Load user key.
         $this->load_user_key();
@@ -791,7 +827,7 @@ class RatingWidgetPlugin
             }
         }  
 
-        if ($attach_js)
+        if ($attach_js || self::$TOP_RATED_WIDGET_LOADED)
         {
 ?>
         <div class="rw-js-container">
@@ -800,7 +836,9 @@ class RatingWidgetPlugin
                 if (typeof(RW) == "undefined"){ 
                     (function(){
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external.php";
+                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external<?php
+                            if (!defined("WP_RW__DEBUG")){ echo ".min"; }
+                        ?>.php";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }
@@ -821,7 +859,9 @@ class RatingWidgetPlugin
                             echo 'RW.initRating("' . $urid . '", {title: "' . esc_js($data["title"]) . '", url: "' . esc_js($data["permalink"]) . '"});';
                         }
                     ?>
-                    RW.render();
+                    RW.render(null, <?php
+                        echo (!self::$TOP_RATED_WIDGET_LOADED) ? "true" : "false";
+                    ?>);
                 }
             </script>
         </div> 
@@ -829,6 +869,168 @@ class RatingWidgetPlugin
         }
     }
 }
+
+if (class_exists("WP_Widget"))
+{
+    /* Top Rated Widget
+    -------------------------------------------------*/
+    class RWTopRated extends WP_Widget
+    {
+        var $rw_address;
+        var $version;
+        
+        function RWTopRated()
+        {
+            $this->rw_address = RatingWidgetPlugin::RWAddress();
+            $this->version = RatingWidgetPlugin::Version();
+            
+            $widget_ops = array('classname' => 'rw_top_rated', 'description' => __('A list of your top rated posts.'));
+            $this->WP_Widget("RWTopRated", "Rating-Widget: Top Rated", $widget_ops);
+            
+//            wp_enqueue_style('rw_toprated', "{$this->rw_address}/css/wordpress/toprated.css", array(), $this->version);
+        }
+    
+        function widget($args, $instance)
+        {
+            if (!defined("WP_RW__USER_KEY") || false === WP_RW__USER_KEY){ return; }
+
+            extract($args, EXTR_SKIP);
+    
+            if (false === $instance['show_posts'] &&
+                false === $instance['show_comments'] &&
+                false === $instance['show_pages'])
+            {
+                // Nothing to show.
+                return;
+            }
+            
+            // Disable CSS optimization to load all type of
+            // ratings UI for the widget.
+            RatingWidgetPlugin::TopRatedWidgetLoaded();
+            
+            echo $before_widget;
+            $title = empty($instance['title']) ? __('Top Rated', WP_RW__ID) : apply_filters('widget_title', $instance['title']);
+            
+            echo $before_title . $title . $after_title;
+?>
+<div id="rw_top_rated_container">
+    <img src="<?php echo $this->rw_address;?>/img/rw.loader.gif" alt="" />
+</div>
+<script type="text/javascript" src="<?php echo $this->rw_address; ?>/js/wordpress/widget.php"></script>
+<script type="text/javascript">
+    // Hook render widget.
+    if (typeof(RW_HOOK_READY) === "undefined"){ RW_HOOK_READY = []; }
+    RW_HOOK_READY.push(function(){
+        RW_WP.renderWidget(<?php
+            require_once(RatingWidgetPlugin::BaseDir() . "/lib/defaults.php");
+            $elements_data = array();
+            
+            $types = array(
+                "posts" => array("classes" => array("blog-post", "front-post") , "options" => WP_RW__FRONT_POSTS_OPTIONS),
+                "pages" => array("classes" => array("page") , "options" => WP_RW__PAGES_OPTIONS),
+                "comments" => array("classes" => array("comment") , "options" => WP_RW__COMMENTS_OPTIONS),
+            );
+            
+            foreach ($types as $type => $type_data)
+            {
+                if ($instance["show_{$type}"] && $instance["{$type}_count"] > 0)
+                {
+                    $options = json_decode(RatingWidgetPlugin::_getOption($type_data["options"]));
+                    $posts = array();
+                    $data["type"] = isset($options->type) ? $options->type : "star";
+                    $data["style"] = isset($options->style) ? 
+                                    $options->style : 
+                                    (($data["type"] !== "star") ? DEF_NERO_STYLE : DEF_STAR_STYLE);
+                    
+                    $data["classes"] = $type_data["classes"];
+                    $data["limit"] = $instance["{$type}_count"];
+                    
+                    $elements_data[$type] = $data;
+                }
+            }
+
+            echo json_encode($elements_data);
+        ?>);
+    });
+</script>
+<?php
+            echo $after_widget;
+        }
+    
+        function update($new_instance, $old_instance)
+        {
+            $types = array("posts", "pages", "comments");
+            
+            $instance = $old_instance;
+            $instance['title'] = strip_tags($new_instance['title']);
+            foreach ($types as $type)
+            {
+                $instance["show_{$type}"] = (int)$new_instance["show_{$type}"];
+                $instance["{$type}_count"] = (int)$new_instance["{$type}_count"];
+            }
+            return $instance;
+        }
+    
+        function form($instance)
+        {
+            $types = array("posts", "pages", "comments");
+            $show = array();
+            $items = array();
+            
+            // Update default values.
+            $values = array("title" => "");
+            foreach ($types as $type)
+            {
+                $values["show_{$type}"] = "1";
+                $values["{$type}_count"] = "2";
+            }
+
+            $instance = wp_parse_args((array)$instance, $values);
+            $title = strip_tags($instance['title']);
+            foreach ($types as $type)
+            {
+                $values["show_{$type}"] = (int)$instance["show_{$type}"];
+                $values["{$type}_count"] = (int)$instance["{$type}_count"];
+            }
+    ?>
+        <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title', WP_RW__ID); ?>: <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></label></p>
+    <?php
+            foreach ($types as $type)
+            {
+    ?>
+        <p>
+            <label for="<?php echo $this->get_field_id("show_{$type}"); ?>">
+                <?php
+                    $checked = "";
+                    if ($values["show_{$type}"] == 1){
+                        $checked = ' checked="checked"';
+                    }
+                ?>
+            <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("show_{$type}"); ?>" name="<?php echo $this->get_field_name("show_{$type}"); ?>" value="1"<?php echo ($checked); ?> />
+                 <?php _e("Show for {$type}", WP_RW__ID); ?>
+            </label>
+        </p>
+        <p>
+            <label for="rss-items-<?php echo $values["{$type}_count"];?>"><?php _e("How many {$type} would you like to display?", WP_RW__ID); ?>
+                    <select id="<?php echo $this->get_field_id("{$type}_count"); ?>" name="<?php echo $this->get_field_name("{$type}_count"); ?>">
+                <?php
+                    for ($i = 1; $i <= 10; $i++){
+                        echo "<option value='{$i}' " . ($values["{$type}_count"] == $i ? "selected='selected'" : '') . ">{$i}</option>";
+                    }
+                ?>
+                    </select>
+            </label>
+        </p>
+<?php        
+            }
+        }    
+    }
+    
+    add_action("widgets_init", create_function('', 'return register_widget("RWTopRated");')); 
+}
+
+// Static init.
+RatingWidgetPlugin::Init();
 
 // Invoke class.
 $rwp = new RatingWidgetPlugin();

@@ -3,7 +3,7 @@ Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 
 Create and manage Rating-Widget ratings from within WordPress.
 
@@ -38,11 +38,13 @@ Upload the plugin to your blog and activate it. Then, follow the instructions.
 4. Set rating alignment
 5. Ratings on a posts
 6. Ratings on comments
-7. Ratings options
-8. Ratings advanced font options
-9. Ratings advanced layout options
-10. Ratings advanced text options
-11. Rating settings Live Preview
+7. Top Rated widget
+8. Ratings options
+9. Ratings advanced font options
+10. Ratings advanced layout options
+11. Ratings advanced text options
+12. Rating settings Live Preview
+13. Top Rated widget settings
 
 == Frequently Asked Questions ==
 
@@ -63,6 +65,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.1.5 =
+* New: Top Rated Widget is now available!
+
 = 1.1.4 =
 * Fix: Initial size icons are now match to the selected theme and type.
 * Fix: Initial themes list is now match the saved rating type.

@@ -16,7 +16,7 @@
             }
         ?>;">
             <div id="rw_preview_star" class="rw-ui-container rw-urid-3"></div>
-            <div id="rw_preview_nero" class="rw-ui-container rw-ui-nero rw-urid-17"></div>
+            <div id="rw_preview_nero" class="rw-ui-container rw-ui-nero rw-urid-17" style="display: none;"></div>
         </div>
         <div class="rw-js-container">
             <script type="text/javascript">
@@ -76,8 +76,10 @@
                         <?php
                             if ($rw_options->type == "star"){
                                 echo 'jQuery("#rw_preview_nero").hide();';
+                                echo 'jQuery("#rw_preview_star").show();';
                             }else{
                                 echo 'jQuery("#rw_preview_star").hide();';
+                                echo 'jQuery("#rw_preview_nero").show();';
                             }
                         ?>
                         

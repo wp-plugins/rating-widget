@@ -5,6 +5,7 @@
         $ret->boost = @rw_get_default_value($settings->boost, new stdClass());
         $ret->imgUrl = @rw_get_default_value($settings->imgUrl, new stdClass());
         $ret->advanced = @rw_get_default_value($settings->advanced, new stdClass());
+        $ret->advanced->star = @rw_get_default_value($settings->advanced->star, new stdClass());
         $ret->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
         $ret->advanced->layout = @rw_get_default_value($settings->advanced->layout, new stdClass());
         $ret->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
@@ -28,6 +29,8 @@
         
         $ret->boost->votes = @rw_get_default_value($settings->boost->votes, $defaults->boost->votes);
         $ret->boost->rate = @rw_get_default_value($settings->boost->rate, $defaults->boost->rate);
+
+        $ret->advanced->star->stars = @rw_get_default_value($settings->advanced->star->stars, $defaults->advanced->star->stars);
 
         $ret->advanced->font->bold = @rw_get_default_value($settings->advanced->font->bold, $defaults->advanced->font->bold);
         $ret->advanced->font->italic = @rw_get_default_value($settings->advanced->font->italic, $defaults->advanced->font->italic);
