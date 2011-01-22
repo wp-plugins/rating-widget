@@ -1,6 +1,6 @@
 === Rating-Widget ===
 Contributors: svovaf
-Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, BuddyPress
+Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress
 Requires at least: 2.6
 Tested up to: 3.1
 Stable tag: 1.1.6
@@ -13,6 +13,7 @@ The Rating-Widget Ratings plugin allows you to create and manage ratings from wi
 
 Rating-Widget ratings are localizable and currently available in:
 
+* Arabic
 * Croatian
 * English
 * French
@@ -66,12 +67,14 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.1.7 =
+* New: Localized to Arabic.
+
 = 1.1.6 =
 * New: Rating-Widget is now suppports BuddyPress activity!
 * New: Special BuddyPress Stars & Thumbs Theme.
 * Fix: Optimized JS loading mechanism.
 * Fix: CSS tweaks for BuddyPress.
-
 
 = 1.1.5 =
 * New: Top Rated Widget is now available!
