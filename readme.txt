@@ -3,7 +3,7 @@ Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 
 Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
 
