@@ -6,11 +6,15 @@
             "star_green1" => array("type" => "star", "file" => "star/default/green_1.php", "title" => "Green Stars"),
             "star_blue1" => array("type" => "star", "file" => "star/default/blue_1.php", "title" => "Blue Stars"),
             "star_gray1" => array("type" => "star", "file" => "star/default/gray_1.php", "title" => "Gray Stars"),
+
+            "star_bp1" => array("type" => "star", "file" => "star/buddypress_1.php", "title" => "BuddyPress"),
+            
             "star_heart1" => array("type" => "star", "file" => "star/heart_1.php", "title" => "Hearts"),
         ),
         "nero" => array(
             "thumbs_1" => array("type" => "nero", "file" => "nero/n1.php", "title" => "Thumbs 1 (Default)"),
             "thumbs_2" => array("type" => "nero", "file" => "nero/n2.php", "title" => "Thumbs 2"),
+            "thumbs_bp1" => array("type" => "nero", "file" => "nero/buddypress_1.php", "title" => "BuddyPress Thumbs"),
             "arrows_1" => array("type" => "nero", "file" => "nero/n3.php", "title" => "Arrows 1"),
             "arrows_2" => array("type" => "nero", "file" => "nero/n4.php", "title" => "Arrows 2"),
         ),

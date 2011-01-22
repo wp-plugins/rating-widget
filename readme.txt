@@ -1,15 +1,15 @@
 === Rating-Widget ===
 Contributors: svovaf
-Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax
+Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, BuddyPress
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 
-Create and manage Rating-Widget ratings from within WordPress.
+Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
 
 == Description ==
 
-The Rating-Widget Ratings plugin allows you to create and manage ratings from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout.
+The Rating-Widget Ratings plugin allows you to create and manage ratings from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. PLUS, you can embed ratings into your BuddyPress activity updates and comments. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
 Rating-Widget ratings are localizable and currently available in:
 
@@ -38,13 +38,14 @@ Upload the plugin to your blog and activate it. Then, follow the instructions.
 4. Set rating alignment
 5. Ratings on a posts
 6. Ratings on comments
-7. Top Rated widget
-8. Ratings options
-9. Ratings advanced font options
-10. Ratings advanced layout options
-11. Ratings advanced text options
-12. Rating settings Live Preview
-13. Top Rated widget settings
+7. Ratings on activity updates & comments
+8. Top Rated widget
+9. Ratings options
+10. Ratings advanced font options
+11. Ratings advanced layout options
+12. Ratings advanced text options
+13. Rating settings Live Preview
+14. Top Rated widget settings
 
 == Frequently Asked Questions ==
 
@@ -65,6 +66,13 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.1.6 =
+* New: Rating-Widget is now suppports BuddyPress activity!
+* New: Special BuddyPress Stars & Thumbs Theme.
+* Fix: Optimized JS loading mechanism.
+* Fix: CSS tweaks for BuddyPress.
+
+
 = 1.1.5 =
 * New: Top Rated Widget is now available!
 

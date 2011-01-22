@@ -27,7 +27,8 @@
         $DEFAULT_OPTIONS->advanced->font = new stdClass();
         $DEFAULT_OPTIONS->advanced->text = new stdClass();
         $DEFAULT_OPTIONS->advanced->layout = new stdClass();
-        $DEFAULT_OPTIONS->advanced->align = new stdClass();
+        $DEFAULT_OPTIONS->advanced->layout->align = new stdClass();
+        $DEFAULT_OPTIONS->advanced->css = new stdClass();
         
         $DEFAULT_OPTIONS->lng = "en";
         $DEFAULT_OPTIONS->url = "";
@@ -72,5 +73,7 @@
         $DEFAULT_OPTIONS->advanced->text->vote = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->text->votes = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->text->thanks = DUMMY_STR;
+        
+        $DEFAULT_OPTIONS->advanced->css->container = "";
     }  
 ?>
