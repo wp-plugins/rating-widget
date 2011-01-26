@@ -4,13 +4,13 @@ if (!function_exists("show_star_rating")){
     {
         $rate = min(5, max(0, $rate));
         $type = " rw-ui-" . $roptions->type;
-        $size = " rw-" . $roptions->size;
+        $size = " rw-size-" . $roptions->size;
         $style = " rw-style-" . $roptions->style;
         $theme = isset($roptions->theme) ? " rw-theme-" . $roptions->theme : "";
         $class = isset($roptions->rclass) ? " rw-class-" . $roptions->rclass : "";
-        $halign = " rw-" . $roptions->advanced->layout->align->hor;
-        $valign = " rw-" . $roptions->advanced->layout->align->ver;
-        $dir = " rw-" . $roptions->advanced->layout->dir;
+        $halign = " rw-halign-" . $roptions->advanced->layout->align->hor;
+        $valign = " rw-valign-" . $roptions->advanced->layout->align->ver;
+        $dir = " rw-dir-" . $roptions->advanced->layout->dir;
         $font_color = "color: " . (isset($roptions->advanced->font->color) ? $roptions->advanced->font->color : "black") . ";";
         $font_type = "font-family: " . (isset($roptions->advanced->font->type) ? $roptions->advanced->font->type : "arial") . ";";
         $font_size = "font-size: " . (isset($roptions->advanced->font->size) ? $roptions->advanced->font->size : "12px") . ";";
