@@ -20,15 +20,6 @@
         </div>
         <div class="rw-js-container">
             <script type="text/javascript">
-                // Append RW JS lib.
-                if (typeof(RW) == "undefined"){ 
-                    (function(){
-                        var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external.php";
-                        var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
-                    })();
-                }
-                
                 var rwStar, rwNero;
                 
                 // Initialize ratings.
@@ -107,6 +98,15 @@
                             }
                         }
                     }, false);
+                }
+
+                // Append RW JS lib.
+                if (typeof(RW) == "undefined"){ 
+                    (function(){
+                        var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
+                        rw.src = "http://<?php echo $this->rw_domain; ?>/js/external.php";
+                        var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
+                    })();
                 }
             </script>
         </div>

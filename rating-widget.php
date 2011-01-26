@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.1.9
+Version: 1.2.0
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -27,7 +27,6 @@ define("WP_RW__COMMENTS_OPTIONS", "rw_comments_options");
 define("WP_RW__PAGES_OPTIONS", "rw_pages_options");
 define("WP_RW__ACTIVITY_UPDATES_OPTIONS", "rw_activity_updates_options");
 define("WP_RW__ACTIVITY_COMMENTS_OPTIONS", "rw_activity_comments_options");
-
 /**
 * Rating-Widget Plugin Class
 * 
@@ -54,7 +53,6 @@ class RatingWidgetPlugin
     
     public static function Init()
     {
-        define("WP_RW__VERSION", "1.1.9");
         define("WP__RW_PLUGIN_DIR", dirname(__FILE__));
         define("WP__RW_DOMAIN", "rating-widget.com");
         define("WP__RW_PLUGIN_URL", plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/');
@@ -1046,17 +1044,6 @@ class RatingWidgetPlugin
 ?>
         <div class="rw-js-container">
             <script type="text/javascript">
-                // Append RW JS lib.
-                if (typeof(RW) == "undefined"){ 
-                    (function(){
-                        var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "<?php echo WP__RW_ADDRESS_JS; ?>external<?php
-                            if (!defined("WP_RW__DEBUG")){ echo ".min"; }
-                        ?>.php";
-                        var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
-                    })();
-                }
-
                 // Initialize ratings.
                 function RW_Async_Init(){
                     RW.init("<?php echo WP_RW__USER_KEY; ?>");
@@ -1076,6 +1063,17 @@ class RatingWidgetPlugin
                     RW.render(null, <?php
                         echo (!self::$TOP_RATED_WIDGET_LOADED) ? "true" : "false";
                     ?>);
+                }
+
+                // Append RW JS lib.
+                if (typeof(RW) == "undefined"){ 
+                    (function(){
+                        var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
+                        rw.src = "<?php echo WP__RW_ADDRESS_JS; ?>external<?php
+                            if (!defined("WP_RW__DEBUG")){ echo ".min"; }
+                        ?>.php";
+                        var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
+                    })();
                 }
             </script>
         </div> 
