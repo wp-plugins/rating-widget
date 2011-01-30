@@ -8,8 +8,9 @@
         $ret->advanced->star = @rw_get_default_value($settings->advanced->star, new stdClass());
         $ret->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
         $ret->advanced->layout = @rw_get_default_value($settings->advanced->layout, new stdClass());
-        $ret->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         $ret->advanced->layout->align = @rw_get_default_value($settings->advanced->layout->align, new stdClass());
+        $ret->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
+        $ret->advanced->css = @rw_get_default_value($settings->advanced->css, new stdClass());
         
         $ret->lng = @rw_get_default_value($settings->lng, $defaults->lng);
         $ret->url = @rw_get_default_value($settings->url, $defaults->url);
@@ -54,6 +55,8 @@
         $ret->advanced->text->vote = @rw_get_default_value($settings->advanced->text->vote, $defaults->advanced->text->vote);
         $ret->advanced->text->votes = @rw_get_default_value($settings->advanced->text->votes, $defaults->advanced->text->votes);
         $ret->advanced->text->thanks = @rw_get_default_value($settings->advanced->text->thanks, $defaults->advanced->text->thanks);
+        
+        $ret->advanced->css->container = @rw_get_default_value($settings->advanced->css->container, $defaults->advanced->css->container);
         
         return $ret;
     }

@@ -1,4 +1,4 @@
-<tr id="rw_rate_type" class="rw-even">
+<tr id="rw_rate_type" class="rw-<?php echo ($odd ? "odd" : "even");?>">
     <td class="rw-ui-def-width">
         <span class="rw-ui-def">Type:</span>
     </td>

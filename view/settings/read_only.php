@@ -1,4 +1,4 @@
-<tr id="rw_rate_readonly" class="rw-odd">
+<tr id="rw_rate_readonly" class="rw-<?php echo ($odd ? "odd" : "even");?>">
     <td class="rw-ui-def-width">
         <span class="rw-ui-def">Read Only:</span>
     </td>

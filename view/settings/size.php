@@ -1,4 +1,4 @@
-<tr id="rw_star_size" class="rw-even">
+<tr id="rw_star_size" class="rw-<?php echo ($odd ? "odd" : "even");?>">
     <td class="rw-ui-def-width">
         <span class="rw-ui-def">Size:</span>
     </td>

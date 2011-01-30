@@ -32,7 +32,6 @@
             "star_crystal_correct" => array("type" => "star", "file" => "star/crystal/correct.php", "title" => "Crystal Correct"),
             
             "star_gray1" => array("type" => "star", "file" => "star/default/gray_1.php", "title" => "Gray Stars"),
-            "star_bp1" => array("type" => "star", "file" => "star/buddypress_1.php", "title" => "BuddyPress"),
             
             "star_heart1" => array("type" => "star", "file" => "star/heart_1.php", "title" => "Hearts"),
             "star_lean_heart" => array("type" => "star", "file" => "star/lean_heart.php", "title" => "Lean Hearts"),

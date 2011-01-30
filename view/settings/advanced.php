@@ -1,5 +1,5 @@
 <table cellspacing="0">
-    <tr class="rw-even">
+    <tr class="rw-<?php echo ($odd ? "odd" : "even");?>">
         <td>
             <div id="rw_ui_advanced_container">
                 <div id="advanced_trigger">
@@ -12,11 +12,13 @@
                         <div class="rw-selected">Font</div>
                         <div>Layout</div>
                         <div>Text</div>
+                        <div id="rw_advanced_star_tab"<?php if ($rw_options->type === "nero") echo ' style="display: none;"' ?>>Star</div>
                     </div>
                     <div id="rw_advanced_settings_body" class="rw-clearfix">
                         <?php require_once(dirname(__FILE__) . "/advanced/font.php"); ?>
                         <?php require_once(dirname(__FILE__) . "/advanced/layout.php"); ?>
                         <?php require_once(dirname(__FILE__) . "/advanced/text.php"); ?>
+                        <?php require_once(dirname(__FILE__) . "/advanced/star.php"); ?>
                     </div>
                 </div>
             </div>
