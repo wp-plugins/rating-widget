@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.2.1
+Version: 1.2.2
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -65,10 +65,10 @@ class RatingWidgetPlugin
     
     public function __construct()
     {
-        define("WP_RW__VERSION", "1.2.1");
+        define("WP_RW__VERSION", "1.2.2");
         define("WP_RW__PLUGIN_DIR", dirname(__FILE__));
         define("WP_RW__DOMAIN", "rating-widget.com");
-
+        
         define("WP_RW__PLUGIN_URL", plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/');
 
         define("WP_RW__ADDRESS", "http://" . WP_RW__DOMAIN);
@@ -970,10 +970,10 @@ class RatingWidgetPlugin
         // Checks if post isn't specificaly excluded.
         if (false === $this->rw_validate_visibility($post->ID, $this->post_class)){ return $content; }
 
-        $post_urid = $this->_getPostRatingGuid();
+        $urid = $this->_getPostRatingGuid();
         $this->_queueRatingData($urid, $post->post_title, get_permalink($post->ID), $this->post_class);
         
-        $rw = '<div class="rw-' . $this->post_align->hor . '"><div class="rw-ui-container rw-class-' . $this->post_class . ' rw-urid-' . $post_urid . '"></div></div>';
+        $rw = '<div class="rw-' . $this->post_align->hor . '"><div class="rw-ui-container rw-class-' . $this->post_class . ' rw-urid-' . $urid . '"></div></div>';
         return ($this->post_align->ver == "top") ?
                 $rw . $content :
                 $content . $rw;

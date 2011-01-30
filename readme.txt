@@ -3,7 +3,7 @@ Contributors: svovaf
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 
 Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
 
@@ -69,6 +69,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.2.2 =
+* Fix: Post urid fix.
+
 = 1.2.1 =
 * New: Advanced star options - you can now select the number of stars you will have in your widget.
 * New: Availability settings - you can now specify if ratings will be active, disabled or hidden for un-logged users.
