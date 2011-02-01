@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.2.2
+Version: 1.2.3
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -65,7 +65,7 @@ class RatingWidgetPlugin
     
     public function __construct()
     {
-        define("WP_RW__VERSION", "1.2.2");
+        define("WP_RW__VERSION", "1.2.3");
         define("WP_RW__PLUGIN_DIR", dirname(__FILE__));
         define("WP_RW__DOMAIN", "rating-widget.com");
         
@@ -357,19 +357,6 @@ class RatingWidgetPlugin
         }else{
             $hook = add_management_page(__( 'Rating-Widget Settings', WP_RW__ID ), __( 'Ratings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page') );
         }
-
-/*        add_action("load-$hook", array( &$this, 'rw_settings_page_load'));
-        
-        if ($this->is_admin)
-        { 
-            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Settings', WP_RW__ID ), __('Settings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'));
-            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Advanced', WP_RW__ID ), __('Advanced', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced', array(&$this, 'rw_settings_page'));
-//            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Reports', WP_RW__ID ), __('Reports', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=reports', array(&$this, 'rw_settings_page'));
-        }
-        else
-        { 
-//            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Reports', WP_RW__ID ), __( 'Reports', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=reports', array(&$this, 'rw_settings_page'));
-        }*/
     }
 
     function rw_user_key_page_load()
@@ -393,7 +380,7 @@ class RatingWidgetPlugin
             'response' => $recaptcha_response,
         );
         
-        $rw_ret_obj = $this->_remoteCall("/action/user.php", $details);
+        $rw_ret_obj = $this->_remoteCall("action/user.php", $details);
 
         if (false === $rw_ret_obj){ return false; }
         
@@ -461,72 +448,15 @@ class RatingWidgetPlugin
 <?php        
     }
 
-    function rw_settings_page_load()
-    {
-        global $plugin_page;
-        
-        $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : false;
-        
-        if (!$this->is_admin){
-            $action = "reports";
-        }
-        
-        switch ($action)
-        {
-            case "advanced":
-                $plugin_page = WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced';
-                break;
-            case "reports":
-                $plugin_page = WP_RW__ADMIN_MENU_SLUG . '&amp;action=reports';
-                break;
-            case false:
-            default:
-                break;
-        }
-        
-    }
-    
-    function rw_reports_page()
-    {
-?>
-<div class="wrap">
-    <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID);?></h2>
-    <form method="post" action="">
-        <table class="widefat">
-            <thead>
-                <tr>
-                    <th scope="col" class="manage-column">Title</th>
-                    <th scope="col" class="manage-column">Start Date</th>
-                    <th scope="col" class="manage-column">Votes</th>
-                    <th scope="col" class="manage-column">Average Rate</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php
-                
-            ?>
-                <tr class="alternate">
-                    <td>
-                        <strong><a href="" target="_blank">Some</a></strong>
-                    </td>
-                    <td>13 Dec, 2010</td>
-                    <td>37</td>
-                    <td>4.5</td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-</div>
-<?php        
-    }
-    
     function rw_settings_page()
     {
         // Must check that the user has the required capability.
         if (!current_user_can('manage_options')){
           wp_die(__('You do not have sufficient permissions to access this page.', WP_RW__ID) );
         }
-            
+
+        $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : false;
+        
         // Variables for the field and option names 
         $rw_form_hidden_field_name = "rw_form_hidden_field_name";
 
@@ -992,7 +922,7 @@ class RatingWidgetPlugin
         if (false === $this->rw_validate_visibility($comment->comment_ID, "comment")){ return $content; }
         
         $urid = $this->_getCommentRatingGuid();
-        $this->_queueRatingData($urid, $comment->comment_content, get_permalink($post->ID) . '#comment-' . $comment->comment_ID, "comment");
+        $this->_queueRatingData($urid, strip_tags($comment->comment_content), get_permalink($post->ID) . '#comment-' . $comment->comment_ID, "comment");
         
         $rw = '<div class="rw-' . $this->comment->align->hor . '"><div class="rw-ui-container rw-class-comment rw-urid-' . $urid . '"></div></div>';
         return ($this->comment->align->ver == "top") ?
@@ -1024,7 +954,7 @@ class RatingWidgetPlugin
             }
             else
             {
-                add_action("bp_activity_entry_meta", array(&$this, "rw_display_activity_update_rating_bottom"));
+                add_action("bp_activity_entry_meta", array(&$this, "rw_display_activity_rating_bottom"));
             }
         }
 
@@ -1039,12 +969,13 @@ class RatingWidgetPlugin
             
             // Hook activity comment rating showup.
             add_filter("bp_get_activity_content", array(&$this, "rw_display_activity_comment_rating"));
+            add_action("bp_activity_entry_meta", array(&$this, "rw_display_activity_rating_bottom"));
             
-            if (!$update_enabled)
+            /*if (!$update_enabled)
             {
                 // Hook to activity-update in order to get current activity-update ref.
                 add_filter("bp_get_activity_action", array(&$this, "rw_get_current_activity_comment"));
-            }
+            }*/
         }
         
         return true;
@@ -1056,6 +987,8 @@ class RatingWidgetPlugin
         
         // Set current activity-comment to current activity update (recursive comments).
         $this->current_comment = $activities_template->activity;
+        
+        if ($activities_template->activity->type !== "activity_update"){ return $action; }
         
         // Validate that activity-update isn't explicitly excluded.
         if (false === $this->rw_validate_visibility($activities_template->activity->id, "activity-update")){ return $action; }        
@@ -1070,24 +1003,26 @@ class RatingWidgetPlugin
         return $action . '<div class="rw-ui-container rw-class-activity-update rw-urid-' . $update_urid . '"></div>';
     }
     
-    function rw_display_activity_update_rating_bottom($id = "", $type = "")
+    function rw_display_activity_rating_bottom($id = "", $type = "")
     {
         global $activities_template;
         
         // Set current activity-comment to current activity update (recursive comments).
         $this->current_comment = $activities_template->activity;
         
-        // Validate that activity-update isn't explicitly excluded.
-        if (false === $this->rw_validate_visibility($activities_template->activity->id, "activity-update")){ return; }
+        $rclass = str_replace("_", "-", $activities_template->activity->type);
+
+        // Validate that activity isn't explicitly excluded.
+        if (false === $this->rw_validate_visibility($activities_template->activity->id, $rclass)){ return; }
         
-        // Get activity-update rating user-rating-id.
+        // Get activity rating user-rating-id.
         $update_urid = $this->_getActivityRatingGuid($activities_template->activity->id);
         
-        // Queue activity-update rating.
-        $this->_queueRatingData($update_urid, $activities_template->activity->content, bp_activity_get_permalink($activities_template->activity->id), "activity-update");
+        // Queue activity rating.
+        $this->_queueRatingData($update_urid, $activities_template->activity->content, bp_activity_get_permalink($activities_template->activity->id), $rclass);
 
         // Attach rating html container on bottom actions line.
-        echo '<div class="rw-ui-container rw-class-activity-update rw-urid-' . $update_urid . '"></div>';
+        echo '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $update_urid . '"></div>';
     }
 
     var $current_comment;

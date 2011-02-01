@@ -1,11 +1,12 @@
 === Rating-Widget ===
 Contributors: svovaf
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VAFEFAZRTLXU4
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 
-Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
+Create and manage **Rating-Widget** ratings from within WordPress (+ BuddyPress Support).
 
 == Description ==
 
@@ -19,6 +20,7 @@ Rating-Widget ratings are localizable and currently available in:
 * French
 * German
 * Hebrew
+* Polish
 * Portuguese
 * Russian
 * Spanish
@@ -26,6 +28,10 @@ Rating-Widget ratings are localizable and currently available in:
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
 
 Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/
+
+Follow us on **Twitter** to keep up with the latest updates [Rating-Widget](http://twitter.com/ratingwidget)
+AND/OR
+Become our **Facebook** fan to keep up with the latest updates [Rating-Widget](http://www.facebook.com/rating.widget)
 
 == Installation ==
 
@@ -69,6 +75,10 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.2.3 =
+* New: Localized to Polish.
+* Fix: BuddyPress comments ratings.
+
 = 1.2.2 =
 * Fix: Post urid fix.
 

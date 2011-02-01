@@ -13,6 +13,7 @@
 //        "jp" => "Japanese",
 //        "ko" => "Korean",
 //        "la" => "Latin",
+        "pl" => "Polish - Polska",
         "pt" => "Portuguese - Português",
         "ru" => "Russian - Русский",
         "es" => "Spanish - Español",
