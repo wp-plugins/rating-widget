@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.2.3
+Version: 1.2.4
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -65,7 +65,7 @@ class RatingWidgetPlugin
     
     public function __construct()
     {
-        define("WP_RW__VERSION", "1.2.3");
+        define("WP_RW__VERSION", "1.2.4");
         define("WP_RW__PLUGIN_DIR", dirname(__FILE__));
         define("WP_RW__DOMAIN", "rating-widget.com");
         
@@ -456,6 +456,12 @@ class RatingWidgetPlugin
         }
 
         $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : false;
+        
+        if ($action == "reports")
+        {
+            $this->rw_reports_page();
+            return;
+        }
         
         // Variables for the field and option names 
         $rw_form_hidden_field_name = "rw_form_hidden_field_name";
@@ -1012,6 +1018,8 @@ class RatingWidgetPlugin
         
         $rclass = str_replace("_", "-", $activities_template->activity->type);
 
+        if (!in_array($rclass, array("activity-update", "activity-comment"))){ return; }
+        
         // Validate that activity isn't explicitly excluded.
         if (false === $this->rw_validate_visibility($activities_template->activity->id, $rclass)){ return; }
         
@@ -1132,7 +1140,9 @@ class RatingWidgetPlugin
                         foreach ($rw_settings as $rclass => $options)
                         {
                             if (isset($rw_settings[$rclass]["enabled"]) && (true === $rw_settings[$rclass]["enabled"])){
-                                echo 'RW.initClass("' . $rclass . '", ' . $rw_settings[$rclass]["options"] . ');';
+                                if (!empty($rw_settings[$rclass]["options"])){
+                                    echo 'RW.initClass("' . $rclass . '", ' . $rw_settings[$rclass]["options"] . ');';
+                                }
                             }
                         }
                         

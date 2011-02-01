@@ -4,13 +4,13 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 
-Create and manage **Rating-Widget** ratings from within WordPress (+ BuddyPress Support).
+Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
 
 == Description ==
 
-The Rating-Widget Ratings plugin allows you to create and manage ratings from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. PLUS, you can embed ratings into your BuddyPress activity updates and comments. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+The Rating-Widget Ratings plugin allows you to **create and manage ratings** from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. PLUS, you can embed ratings into your BuddyPress activity updates and comments. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
 Rating-Widget ratings are localizable and currently available in:
 
@@ -75,6 +75,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.2.4 =
+* Fix: BuddyPress another bug fix.
+
 = 1.2.3 =
 * New: Localized to Polish.
 * Fix: BuddyPress comments ratings.
