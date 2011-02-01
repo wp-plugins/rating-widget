@@ -30,7 +30,9 @@ Help us translate the widget into more languages at - http://rating-widget.com/h
 Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/
 
 Follow us on **Twitter** to keep up with the latest updates [Rating-Widget](http://twitter.com/ratingwidget)
+
 AND/OR
+
 Become our **Facebook** fan to keep up with the latest updates [Rating-Widget](http://www.facebook.com/rating.widget)
 
 == Installation ==
