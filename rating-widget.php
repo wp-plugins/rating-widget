@@ -45,7 +45,6 @@ define("WP_RW__SHOW_ON_EXCERPT", "rw_show_on_excerpt");
 
 define("WP_RW__BP_CORE_FILE", "buddypress/bp-loader.php");
 define("WP_RW__ADMIN_MENU_SLUG", "rating-widget");
-define("WP_RW__DEBUG", "");
 
 /**
 * Rating-Widget Plugin Class
