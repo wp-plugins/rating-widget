@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 
 Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
 
@@ -15,6 +15,7 @@ The Rating-Widget Ratings plugin allows you to **create and manage ratings** fro
 Rating-Widget ratings are localizable and currently available in:
 
 * Arabic
+* Bulgarian
 * Croatian
 * English
 * French
@@ -24,15 +25,14 @@ Rating-Widget ratings are localizable and currently available in:
 * Portuguese
 * Russian
 * Spanish
+* Turkish
 
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
 
 Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/
 
 Follow us on **Twitter** to keep up with the latest updates [Rating-Widget](http://twitter.com/ratingwidget)
-
 AND/OR
-
 Become our **Facebook** fan to keep up with the latest updates [Rating-Widget](http://www.facebook.com/rating.widget)
 
 == Installation ==
@@ -77,6 +77,11 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.2.5 =
+* New: You can now control whether ratings will appear on excerpts or not.
+* New: Localized to Bulgarian.
+* New: Localized to Turkish.
+
 = 1.2.4 =
 * Fix: BuddyPress another bug fix.
 

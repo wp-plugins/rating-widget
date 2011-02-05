@@ -2,6 +2,7 @@
     $rw_languages = array(
 //        "af" => "Afrikaans",
         "ar" => "Arabic - العربية",
+        "bg" => "Bulgarian - български", 
 //        "ch" => "Chinese",
         "hr" => "Croatian - Hrvatski", 
         "en" => "English (Default)", 
@@ -17,6 +18,7 @@
         "pt" => "Portuguese - Português",
         "ru" => "Russian - Русский",
         "es" => "Spanish - Español",
+        "tr" => "Turkish - Türkçe",
 //        "th" => "Thai",
     );
 ?>
