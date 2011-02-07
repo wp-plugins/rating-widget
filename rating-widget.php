@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.2.5
+Version: 1.2.6
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -43,6 +43,8 @@ define("WP_RW__AVAILABILITY_HIDDEN", 2);    // Hidden from logged out users.
 
 define("WP_RW__SHOW_ON_EXCERPT", "rw_show_on_excerpt");
 
+define("WP_RW__FLASH_DEPENDENCY", "rw_flash_dependency");
+
 define("WP_RW__BP_CORE_FILE", "buddypress/bp-loader.php");
 define("WP_RW__ADMIN_MENU_SLUG", "rating-widget");
 
@@ -70,7 +72,7 @@ class RatingWidgetPlugin
     
     public function __construct()
     {
-        define("WP_RW__VERSION", "1.2.5");
+        define("WP_RW__VERSION", "1.2.6");
         define("WP_RW__PLUGIN_DIR", dirname(__FILE__));
         define("WP_RW__DOMAIN", "rating-widget.com");
         
@@ -174,12 +176,16 @@ class RatingWidgetPlugin
         WP_RW__AVAILABILITY_SETTINGS => '{"activity-update": 1, "activity-comment": 1}', // By default, disable all activity ratings for un-logged users.
         
         WP_RW__SHOW_ON_EXCERPT => '{"front-post": false, "blog-post": false, "page": false}',
+        
+        WP_RW__FLASH_DEPENDENCY => "true",
     );
     
     private static $OPTIONS_CACHE = array();
-    public static function _getOption($pOption)
+    
+    
+    public static function _getOption($pOption, $pFlush = false)
     {
-        if (!isset(self::$OPTIONS_CACHE[$pOption]))
+        if ($pFlush || !isset(self::$OPTIONS_CACHE[$pOption]))
         {
             $default = isset(self::$OPTIONS_DEFAULTS[$pOption]) ? self::$OPTIONS_DEFAULTS[$pOption] : false;
             self::$OPTIONS_CACHE[$pOption] = get_option($pOption, $default);
@@ -201,6 +207,17 @@ class RatingWidgetPlugin
         }
     }
 
+    private function _deleteOption($pOption)
+    {
+        delete_option($pOption);
+        
+        if (isset(self::$OPTIONS_DEFAULTS[$pOption])){
+            self::$OPTIONS_CACHE[$pOption] = self::$OPTIONS_DEFAULTS[$pOption];
+        }else{
+            unset(self::$OPTIONS_CACHE[$pOption]);
+        }
+    }
+    
     private function _remoteCall($pPage, $pData)
     {
         if (function_exists('wp_remote_post')) // WP 2.7+
@@ -372,11 +389,20 @@ class RatingWidgetPlugin
         }
 
         add_options_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'));
+//        add_menu_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'), WP_RW__PLUGIN_URL . "icon.png");
         
         if ( function_exists('add_object_page') ){ // WP 2.7+
             $hook = add_object_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'), WP_RW__PLUGIN_URL . "icon.png" );
         }else{
             $hook = add_management_page(__( 'Rating-Widget Settings', WP_RW__ID ), __( 'Ratings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page') );
+        }
+
+        add_action("load-$hook", array( &$this, 'rw_settings_page_load'));
+        
+        if ($this->is_admin)
+        { 
+            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Settings', WP_RW__ID ), __('Settings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'));
+            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Advanced', WP_RW__ID ), __('Advanced', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced', array(&$this, 'rw_settings_page'));
         }
     }
 
@@ -421,9 +447,9 @@ class RatingWidgetPlugin
         return true;
     }
     
-    function rw_user_key_page()
+    function rw_user_key_page($flush = false)
     {
-        if (false !== WP_RW__USER_KEY)
+        if (false === $flush && false !== WP_RW__USER_KEY)
         {
             $this->rw_settings_page();
             return;
@@ -469,6 +495,197 @@ class RatingWidgetPlugin
 <?php        
     }
 
+    function rw_settings_page_load()
+    {
+        global $plugin_page;
+        
+        $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : false;
+        
+        switch ($action)
+        {
+            case "advanced":
+                $plugin_page = WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced';
+                break;
+            case false:
+            default:
+                break;
+        }
+        
+    }
+    
+    function rw_advanced_settings_page()
+    {
+        // Variables for the field and option names 
+        $rw_form_hidden_field_name = "rw_form_hidden_field_name";
+
+        // Get flash dependency.
+        $rw_flash_dependency = $this->_getOption(WP_RW__FLASH_DEPENDENCY);
+        
+        if (isset($_POST[$rw_form_hidden_field_name]) && $_POST[$rw_form_hidden_field_name] == 'Y')
+        {
+            $rw_restore_defaults = (isset($_POST["rw_restore_defaults"]) && in_array($_POST["rw_restore_defaults"], array("true", "false"))) ? 
+                                 $_POST["rw_restore_defaults"] : 
+                                 "false";
+
+            $rw_delete_history = (isset($_POST["rw_delete_history"]) && in_array($_POST["rw_delete_history"], array("true", "false"))) ? 
+                                 $_POST["rw_delete_history"] : 
+                                 "false";
+            
+            if ("true" === $rw_restore_defaults)
+            {
+                // Restore to defaults - delete all settings.
+                $this->_deleteOption(WP_RW__ACTIVITY_COMMENTS_ALIGN);
+                $this->_deleteOption(WP_RW__ACTIVITY_COMMENTS_OPTIONS);
+                $this->_deleteOption(WP_RW__ACTIVITY_UPDATES_ALIGN);
+                $this->_deleteOption(WP_RW__ACTIVITY_UPDATES_OPTIONS);
+                $this->_deleteOption(WP_RW__AVAILABILITY_SETTINGS);
+                $this->_deleteOption(WP_RW__BLOG_POSTS_ALIGN);
+                $this->_deleteOption(WP_RW__BLOG_POSTS_OPTIONS);
+                $this->_deleteOption(WP_RW__COMMENTS_ALIGN);
+                $this->_deleteOption(WP_RW__COMMENTS_OPTIONS);
+                $this->_deleteOption(WP_RW__FLASH_DEPENDENCY);
+                $this->_deleteOption(WP_RW__FRONT_POSTS_ALIGN);
+                $this->_deleteOption(WP_RW__FRONT_POSTS_OPTIONS);
+                $this->_deleteOption(WP_RW__PAGES_ALIGN);
+                $this->_deleteOption(WP_RW__PAGES_OPTIONS);
+                $this->_deleteOption(WP_RW__SHOW_ON_EXCERPT);
+                $this->_deleteOption(WP_RW__VISIBILITY_SETTINGS);
+
+                // Re-Load all advanced settings.
+                    // Flash dependency.
+                    $rw_flash_dependency = $this->_getOption(WP_RW__FLASH_DEPENDENCY);
+
+            }
+            else if ("true" === $rw_delete_history)
+            {
+                // Delete user-key & secret.
+                global $wpdb;
+                $ret = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name = 'rw_user_key' OR option_name = 'rw_user_secret'");
+                
+                // Goto user-key creation page.
+                $this->rw_user_key_page(true);
+                
+                return;
+            }
+            else
+            {
+                // Save advanced settings.
+                    // Get posted flash dependency.
+                    if (isset($_POST["rw_flash_dependency"]) && 
+                        in_array($_POST["rw_flash_dependency"], array("true", "false")) &&
+                        $_POST["rw_flash_dependency"] != $rw_flash_dependency)
+                    {
+                        $rw_flash_dependency = $_POST["rw_flash_dependency"];
+                        // Save flash dependency.
+                        $this->_setOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
+                    }
+            }
+?>
+    <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
+<?php
+        }
+        else
+        {
+            // Get advanced settings.
+        }
+?>
+<div class="wrap">
+    <h2><?php echo __( 'Rating-Widget Advanced Settings', WP_RW__ID);?></h2>
+    <br />
+    <form id="rw_advanced_settings_form" method="post" action="">
+        <div id="poststuff">
+            <div style="float: left;">
+                <div id="rw_flash_settings" class="has-sidebar has-right-sidebar">
+                    <div class="has-sidebar-content">
+                        <div class="postbox rw-body" style="width: 630px;">
+                            <h3>Flash Dependency</h3>
+                            <div class="inside rw-ui-content-container rw-no-radius" style="padding: 5px; width: 610px;">
+                                <div class="rw-ui-img-radio rw-ui-hor<?php if ($rw_flash_dependency == "true") echo ' rw-selected';?>">
+                                    <i class="rw-ui-sprite rw-ui-flash"></i> <input type="radio" name="rw_flash_dependency" value="true" <?php if ($rw_flash_dependency == "true") echo ' checked="checked"';?>> <span>Enable Flash dependency (track computers using LSO).</span>
+                                </div>
+                                <div class="rw-ui-img-radio rw-ui-hor<?php if ($rw_flash_dependency == "false") echo ' rw-selected';?>">
+                                    <i class="rw-ui-sprite rw-ui-flash-disabled"></i> <input type="radio" name="rw_flash_dependency" value="false" <?php if ($rw_flash_dependency == "false") echo ' checked="checked"';?>> <span>Disable Flash dependency (computers with identical IPs won't be distinguished).</span>
+                                </div>
+                                <span style="font-size: 10px; background: white; padding: 2px; border: 1px solid gray; display: block; margin-top: 5px; font-weight: bold; background: rgb(240,240,240); color: black;">Flash dependency <b style="text-decoration: underline;">don't</b> means that if a user don't have a flash player installed on his browser then it will stuck. The reason to disable flash is for users which have flash blocking add-ons (e.g. FF Flashblock add-on), which is quite rare.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="rw_critical_actions" class="has-sidebar has-right-sidebar">
+                    <div class="has-sidebar-content">
+                        <div class="postbox rw-body" style="width: 630px;">
+                            <h3>Critical Actions</h3>
+                            <div class="inside rw-ui-content-container rw-no-radius">
+                                <script type="text/javascript">
+                                    (function($){
+                                        if (typeof(RWM) === "undefined"){ RWM = {}; }
+                                        if (typeof(RWM.Set) === "undefined"){ RWM.Set = {}; }
+                                        
+                                        RWM.Set.clearHistory = function(event)
+                                        {
+                                            if (confirm("Are you sure you want to delete all your ratings history?"))
+                                            {
+                                                $("#rw_delete_history").val("true");
+                                                $("#rw_advanced_settings_form").submit(); 
+                                            }
+                                            
+                                            event.stopPropagation();
+                                        };
+                                        
+                                        RWM.Set.restoreDefaults = function(event)
+                                        {
+                                            if (confirm("Are you sure you want to restore to factory settings?"))
+                                            {
+                                                $("#rw_restore_defaults").val("true");
+                                                $("#rw_advanced_settings_form").submit(); 
+                                            }
+                                            
+                                            event.stopPropagation();
+                                        };
+                                        
+                                        $(document).ready(function(){
+                                            $("#rw_delete_history_con .rw-ui-button").click(RWM.Set.clearHistory);
+                                            $("#rw_delete_history_con .rw-ui-button input").click(RWM.Set.clearHistory);
+
+                                            $("#rw_restore_defaults_con .rw-ui-button").click(RWM.Set.restoreDefaults);
+                                            $("#rw_restore_defaults_con .rw-ui-button input").click(RWM.Set.restoreDefaults);
+                                        });
+                                    })(jQuery);
+                                </script>
+                                <table cellspacing="0">
+                                    <tr class="rw-odd" id="rw_restore_defaults_con">
+                                        <td class="rw-ui-def">
+                                            <input type="hidden" id="rw_restore_defaults" name="rw_restore_defaults" value="false" />
+                                            <span class="rw-ui-button" onclick="RWM.firstUse();">
+                                                <input type="button" style="background: none;" value="Restore to Defaults" onclick="RWM.firstUse();" />
+                                            </span>
+                                        </td>
+                                        <td><span>Restore all Rating-Widget settings to factory.</span></td>
+                                    </tr>    
+                                    <tr class="rw-even" id="rw_delete_history_con">
+                                        <td>
+                                            <input type="hidden" id="rw_delete_history" name="rw_delete_history" value="false" />
+                                            <span class="rw-ui-button rw-ui-critical">
+                                                <input type="button" style="background: none;" value="Delete History" />
+                                            </span>
+                                        </td>
+                                        <td><span>Delete your unique-user-key and generate new one.</span><br /><span><b style="color: red;">Notice: All your ratings data will be deleted.</b></span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-left: 650px; width: 350px; padding-right: 20px; position: fixed;">
+                <?php require_once(dirname(__FILE__) . "/view/save.php"); ?>
+            </div>            
+        </div>
+    </form>
+</div>
+<?php                
+    }
+    
     function rw_settings_page()
     {
         // Must check that the user has the required capability.
@@ -477,6 +694,12 @@ class RatingWidgetPlugin
         }
 
         $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : false;
+        
+        if ($action == "advanced")
+        {
+            $this->rw_advanced_settings_page();
+            return;
+        }
         
         // Variables for the field and option names 
         $rw_form_hidden_field_name = "rw_form_hidden_field_name";
@@ -719,7 +942,7 @@ class RatingWidgetPlugin
 <div class="wrap">
     <h2><?php echo __( 'Rating-Widget Settings', WP_RW__ID);?></h2>
     <form method="post" action="">
-        <div id="poststuff">
+        <div id="poststuff">       
             <div style="float: left;">
                 <div id="side-sortables"> 
                     <div id="categorydiv" class="categorydiv">
@@ -1221,6 +1444,13 @@ class RatingWidgetPlugin
                     ?>);
                 }
 
+                
+                RW_Advanced_Options = {
+                    blockFlash: !(<?php
+                        echo $this->_getOption(WP_RW__FLASH_DEPENDENCY);
+                    ?>)
+                };
+                
                 // Append RW JS lib.
                 if (typeof(RW) == "undefined"){ 
                     (function(){
