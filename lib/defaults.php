@@ -30,6 +30,7 @@
         $DEFAULT_OPTIONS->advanced->layout->align = new stdClass();
         $DEFAULT_OPTIONS->advanced->css = new stdClass();
         
+        $DEFAULT_OPTIONS->uarid = 0;
         $DEFAULT_OPTIONS->lng = "en";
         $DEFAULT_OPTIONS->url = "";
         $DEFAULT_OPTIONS->title = "";
@@ -42,6 +43,7 @@
         $DEFAULT_OPTIONS->imgUrl->ltr = "";
         $DEFAULT_OPTIONS->imgUrl->rtl = "";
         $DEFAULT_OPTIONS->readOnly = false;
+        $DEFAULT_OPTIONS->reVote = true;
         $DEFAULT_OPTIONS->showInfo = true;
         $DEFAULT_OPTIONS->showTooltip = true;
         $DEFAULT_OPTIONS->boost->votes = 0;

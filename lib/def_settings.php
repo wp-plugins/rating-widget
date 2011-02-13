@@ -12,6 +12,7 @@
         $ret->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         $ret->advanced->css = @rw_get_default_value($settings->advanced->css, new stdClass());
         
+        $ret->uarid = @rw_get_default_value($settings->uarid, $defaults->uarid);
         $ret->lng = @rw_get_default_value($settings->lng, $defaults->lng);
         $ret->url = @rw_get_default_value($settings->url, $defaults->url);
         $ret->title = @rw_get_default_value($settings->title, $defaults->title);
@@ -23,6 +24,7 @@
         $ret->imgUrl->ltr = @rw_get_default_value($settings->imgUrl->ltr, $defaults->imgUrl->ltr);
         $ret->imgUrl->rtl = @rw_get_default_value($settings->imgUrl->rtl, $defaults->imgUrl->rtl);
         $ret->readOnly = @rw_get_default_value($settings->readOnly, $defaults->readOnly);
+        $ret->reVote = @rw_get_default_value($settings->reVote, $defaults->reVote);
         $ret->showInfo = @rw_get_default_value($settings->showInfo, $defaults->showInfo);
         $ret->showTooltip = @rw_get_default_value($settings->showTooltip, $defaults->showTooltip);
         $ret->beforeRate = @rw_get_default_value($settings->beforeRate, $defaults->beforeRate);
