@@ -3,113 +3,17 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.2.8
+Version: 1.2.9
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
 */
 
+// Load config.
+require_once(dirname(__FILE__) . "/lib/config.php");
 
-// You can hardcode your Rating-Widget unique-user-key here (get one from http://rating-widget.com)
-//define('WP_RW__USER_KEY', 'abcdefghijklmnopqrstuvwzyz123456' );
-// You can hardcode your Rating-Widget secret here (only for Pro version - contact vova@rating-widget.com)
-//define('WP_RW__USER_SECRET', 'abcdefghijklmnopqrstuvwzyz123456' );
-
-define("WP_RW__ID", "rating_widget");
-define("WP_RW__DEFAULT_LNG", "en");
-
-define("WP_RW__BLOG_POSTS_ALIGN", "rw_blog_posts_align");
-define("WP_RW__BLOG_POSTS_OPTIONS", "rw_blog_posts_options");
-
-define("WP_RW__COMMENTS_ALIGN", "rw_comments_align");
-define("WP_RW__COMMENTS_OPTIONS", "rw_comments_options");
-
-define("WP_RW__PAGES_ALIGN", "rw_pages_align");
-define("WP_RW__PAGES_OPTIONS", "rw_pages_options");
-
-define("WP_RW__FRONT_POSTS_ALIGN", "rw_front_posts_align");
-define("WP_RW__FRONT_POSTS_OPTIONS", "rw_front_posts_options");
-
-// BuddyPress
-    define("WP_RW__BP_CORE_FILE", "buddypress/bp-loader.php");
-
-    define("WP_RW__ACTIVITY_BLOG_POSTS_ALIGN", "rw_activity_blog_posts_align");
-    define("WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS", "rw_activity_blog_posts_options");
-
-    define("WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN", "rw_activity_blog_comments_align");
-    define("WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS", "rw_activity_blog_comments_options");
-    
-    define("WP_RW__ACTIVITY_UPDATES_ALIGN", "rw_activity_updates_align");
-    define("WP_RW__ACTIVITY_UPDATES_OPTIONS", "rw_activity_updates_options");
-
-    define("WP_RW__ACTIVITY_COMMENTS_ALIGN", "rw_activity_comments_align");
-    define("WP_RW__ACTIVITY_COMMENTS_OPTIONS", "rw_activity_comments_options");
-    
-    // bbPress component
-        /*define("WP_RW__FORUM_TOPICS_ALIGN", "rw_forum_topics_align");
-        define("WP_RW__FORUM_TOPICS_OPTIONS", "rw_forum_topics_options");*/
-
-        define("WP_RW__FORUM_POSTS_ALIGN", "rw_forum_posts_align");
-        define("WP_RW__FORUM_POSTS_OPTIONS", "rw_forum_posts_options");
-
-        /*define("WP_RW__ACTIVITY_FORUM_TOPICS_ALIGN", "rw_activity_forum_topics_align");
-        define("WP_RW__ACTIVITY_FORUM_TOPICS_OPTIONS", "rw_activity_forum_topics_options");*/
-
-        define("WP_RW__ACTIVITY_FORUM_POSTS_ALIGN", "rw_activity_forum_posts_align");
-        define("WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS", "rw_activity_forum_posts_options");
-
-// User
-    define("WP_RW__USERS_ALIGN", "rw_users_align");
-    define("WP_RW__USERS_OPTIONS", "rw_users_options");
-// User accamulated ratings
-    // Posts
-    define("WP_RW__USERS_POSTS_ALIGN", "rw_users_posts_align");
-    define("WP_RW__USERS_POSTS_OPTIONS", "rw_users_posts_options");
-    // Pages
-    define("WP_RW__USERS_PAGES_ALIGN", "rw_users_pages_align");
-    define("WP_RW__USERS_PAGES_OPTIONS", "rw_users_pages_options");
-    // Comments
-    define("WP_RW__USERS_COMMENTS_ALIGN", "rw_users_comments_align");
-    define("WP_RW__USERS_COMMENTS_OPTIONS", "rw_users_comments_options");
-    // Activity-Updates
-    define("WP_RW__USERS_ACTIVITY_UPDATES_ALIGN", "rw_users_activity_updates_align");
-    define("WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS", "rw_users_activity_updates_options");
-    // Activity-Comments
-    define("WP_RW__USERS_ACTIVITY_COMMENTS_ALIGN", "rw_users_activity_comments_align");
-    define("WP_RW__USERS_ACTIVITY_COMMENTS_OPTIONS", "rw_users_activity_comments_options");
-    // Forum-Posts
-    define("WP_RW__USERS_FORUM_POSTS_ALIGN", "rw_users_forum_posts_align");
-    define("WP_RW__USERS_FORUM_POSTS_OPTIONS", "rw_users_forum_posts_options");
-    
-    
-define("WP_RW__FLASH_DEPENDENCY", "rw_flash_dependency");
-
-define("WP_RW__VISIBILITY_SETTINGS", "rw_visibility_settings");
-
-define("WP_RW__AVAILABILITY_SETTINGS", "rw_availability_settings");
-define("WP_RW__AVAILABILITY_ACTIVE", 0);    // Active for all users.
-define("WP_RW__AVAILABILITY_DISABLED", 1);  // Disabled for logged out users.
-define("WP_RW__AVAILABILITY_HIDDEN", 2);    // Hidden from logged out users.
-
-define("WP_RW__SHOW_ON_EXCERPT", "rw_show_on_excerpt");
-
-
-define("WP_RW__ADMIN_MENU_SLUG", "rating-widget");
-
-define("WP_RW__DEFAULT_DATE_FORMAT", "Y-n-d");
-
-define("WP_RW__DEF_STARS", 5);
-define("WP_RW__MIN_STARS", 1);
-define("WP_RW__MAX_STARS", 20);
-
-define("WP_RW__USER_SECONDERY_ID", "00");
-
-if (!function_exists("mb_strlen")){
-    function mb_strlen($str){ return strlen($str); }
-}
-if (!function_exists("mb_substr")){
-    function mb_substr($str, $start, $length){ return substr($str, $start, $length); }
-}
+// Require logger file.
+require_once(WP_RW__PLUGIN_DIR . "/lib/logger.php");
 
 /**
 * Rating-Widget Plugin Class
@@ -122,11 +26,12 @@ if (!function_exists("mb_substr")){
 */
 class RatingWidgetPlugin
 {
-    var $errors;
+    static $errors;
+    static $ratings = array();
+    
     var $is_admin;
     var $languages;
     var $languages_short;
-    var $ratings;
     var $visibility_list;
     var $availability_list;
     var $show_on_excerpts_list;
@@ -135,26 +40,19 @@ class RatingWidgetPlugin
     
     public function __construct()
     {
-        define("WP_RW__VERSION", "1.2.8");
-        define("WP_RW__PLUGIN_DIR", dirname(__FILE__));
-        define("WP_RW__DOMAIN", "rating-widget.com");
-        
-        define("WP_RW__PLUGIN_URL", plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/');
+        self::$errors = new WP_Error();
 
-        define("WP_RW__ADDRESS", "http://" . WP_RW__DOMAIN);
-        define("WP_RW__ADDRESS_CSS", "http://" . WP_RW__DOMAIN . "/css/");
-        define("WP_RW__ADDRESS_JS", "http://" . WP_RW__DOMAIN . "/js/");
-        define("WP_RW__ADDRESS_IMG", "http://" . WP_RW__DOMAIN . "/img/");
-        
-        define("WP_RW__BP_INSTALLED", function_exists("bp_activity_get_specific"));
-        
-        $this->errors = new WP_Error();
-        $this->is_admin = true;//(bool)current_user_can('manage_options');
-        $this->ratings = array();
-        
+        if (defined("WP_RW__DEBUG") || true === $this->_getOption("WP_RW__LOGGER"))
+        {
+            // Start logger.
+            RWLogger::PowerOn();
+        }
+                
         // Load user key.
         $this->load_user_key();
         
+        if (RWLogger::IsOn()){ RWLogger::Log("version", WP_RW__VERSION); }
+
         if (false !== WP_RW__USER_KEY)
         {
             // Posts/Pages/Comments
@@ -181,6 +79,7 @@ class RatingWidgetPlugin
         // Register CSS stylesheets.
         wp_register_style('rw', WP_RW__ADDRESS_CSS . "settings.css", array(), WP_RW__VERSION);
         wp_register_style('rw_wp_settings', WP_RW__ADDRESS_CSS . "wordpress/settings.css", array(), WP_RW__VERSION);
+        wp_register_style('rw_wp_reports', WP_RW__ADDRESS_CSS . "wordpress/reports.css", array(), WP_RW__VERSION);
         wp_register_style('rw_cp', WP_RW__ADDRESS_CSS . "colorpicker.css", array(), WP_RW__VERSION);
 
         // Register JS.
@@ -196,28 +95,69 @@ class RatingWidgetPlugin
     
     /* Private
     -------------------------------------------------*/
+    private static function Urid2Id($pUrid, $pSubLength = 1, $pSubValue = 1)
+    {
+        return round((double)substr($pUrid, 0, strlen($pUrid) - $pSubLength) - $pSubValue);
+    }
+
     private function _getPostRatingGuid($id = false)
     {
         if (false === $id){ $id = get_the_ID(); }
-        return ($id + 1) . "0";
+        $urid = ($id + 1) . "0";
+        
+        if (RWLogger::IsOn()){
+            RWLogger::Log("post-id", $id);
+            RWLogger::Log("post-urid", $urid);
+        }
+        
+        return $urid;
+    }
+    public static function Urid2PostId($pUrid)
+    {
+        return self::Urid2Id($pUrid);
     }
     
     private function _getCommentRatingGuid($id = false)
     {
         if (false === $id){ $id = get_comment_ID(); }
-        return ($id + 1) . "1";
+        $urid = ($id + 1) . "1";
+
+        if (RWLogger::IsOn()){
+            RWLogger::Log("comment-id", $id);
+            RWLogger::Log("comment-urid", $urid);
+        }
+        
+        return $urid;
+    }
+    public static function Urid2CommentId($pUrid)
+    {
+        return self::Urid2Id($pUrid);
     }
 
     private function _getActivityRatingGuid($id = false)
     {
         if (false === $id){ $id = bp_get_activity_id(); }
-        return ($id + 1) . "2";
+        $urid = ($id + 1) . "2";
+
+        if (RWLogger::IsOn()){
+            RWLogger::Log("activity-id", $id);
+            RWLogger::Log("activity-urid", $urid);
+        }
+        
+        return $urid;
     }
 
     private function _getForumPostRatingGuid($id = false)
     {
         if (false === $id){ $id = bp_get_the_topic_post_id(); }
-        return ($id + 1) . "3";
+        $urid = ($id + 1) . "3";
+
+        if (RWLogger::IsOn()){
+            RWLogger::Log("forum-post-id", $id);
+            RWLogger::Log("forum-post-urid", $urid);
+        }
+        
+        return $urid;
     }
     
     private function _getUserRatingGuid($secondery_id = WP_RW__USER_SECONDERY_ID, $id = false)
@@ -226,7 +166,15 @@ class RatingWidgetPlugin
         
         $len = strlen($secondery_id);
         $secondery_id = ($len == 0) ? WP_RW__USER_SECONDERY_ID : (($len == 1) ? "0" . $secondery_id : substr($secondery_id, 0, 2));
-        return ($id + 1) . $secondery_id . "4";
+        $urid = ($id + 1) . $secondery_id . "4";
+
+        if (RWLogger::IsOn()){
+            RWLogger::Log("user-id", $id);
+            RWLogger::Log("user-secondery-id", $secondery_id);
+            RWLogger::Log("user-urid", $urid);
+        }
+        
+        return $urid;
     }
     
     private static $OPTIONS_DEFAULTS = array(
@@ -255,13 +203,48 @@ class RatingWidgetPlugin
             WP_RW__ACTIVITY_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
             WP_RW__ACTIVITY_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
         
+        // bbPress
+            /*WP_RW__FORUM_TOPICS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__FORUM_TOPICS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',*/
+
+            WP_RW__FORUM_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__FORUM_POSTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+            
+            /*WP_RW__ACTIVITY_FORUM_TOPICS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__ACTIVITY_FORUM_TOPICS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',*/
+
+            WP_RW__ACTIVITY_FORUM_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+        // User
+            WP_RW__USERS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__USERS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+            // Posts
+            WP_RW__USERS_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__USERS_POSTS_OPTIONS => '{"type": "star", "theme": "star_gray1", "readOnly": true, "advanced": {"css": {"container": "background: #F4F4F4; padding: 1px 2px 0px 2px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+            // Pages
+            WP_RW__USERS_PAGES_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__USERS_PAGES_OPTIONS => '{"type": "star", "theme": "star_gray1", "readOnly": true, "advanced": {"css": {"container": "background: #F4F4F4; padding: 1px 2px 0px 2px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+            // Comments
+            WP_RW__USERS_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__USERS_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "readOnly": true, "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+            // Activity-Updates
+            WP_RW__USERS_ACTIVITY_UPDATES_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_gray1", "readOnly": true, "advanced": {"css": {"container": "background: #F4F4F4; padding: 1px 2px 0px 2px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+            // Avtivity-Comments
+            WP_RW__USERS_ACTIVITY_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__USERS_ACTIVITY_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "readOnly": true, "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
+            // Forum-Posts
+            WP_RW__USERS_FORUM_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
+            WP_RW__USERS_FORUM_POSTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "readOnly": true, "advanced": {"css": {"container": "background: #F4F4F4; padding: 4px 8px 1px 8px; margin-bottom: 2px; border-right: 1px solid #DDD; border-bottom: 1px solid #DDD; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;"}}}',
         
         WP_RW__VISIBILITY_SETTINGS => "{}",
-        WP_RW__AVAILABILITY_SETTINGS => '{"activity-update": 1, "activity-comment": 1}', // By default, disable all activity ratings for un-logged users.
+        WP_RW__AVAILABILITY_SETTINGS => '{"activity-update": 1, "activity-comment": 1, "forum-post": 1, "new-forum-post": 1, "user": 1, "user-post": 1, "user-comment": 1, "user-page": 1, "user-activity-update": 1, "user-activity-comment": 1, "user-forum-post": 1}', // By default, disable all activity ratings for un-logged users.
         
         WP_RW__SHOW_ON_EXCERPT => '{"front-post": false, "blog-post": false, "page": false}',
         
         WP_RW__FLASH_DEPENDENCY => "true",
+        
+        WP_RW__LOGGER => false,
     );
     
     private static $OPTIONS_CACHE = array();
@@ -302,7 +285,7 @@ class RatingWidgetPlugin
         }
     }
     
-    private function _remoteCall($pPage, $pData)
+    public static function RemoteCall($pPage, $pData)
     {
         if (function_exists('wp_remote_post')) // WP 2.7+
         {
@@ -310,7 +293,7 @@ class RatingWidgetPlugin
             
             if (is_wp_error($rw_ret_obj))
             {
-                $this->errors = $rw_ret_obj;
+                self::$errors = $rw_ret_obj;
                 return false;
             }
             
@@ -327,7 +310,7 @@ class RatingWidgetPlugin
             );
 
             if (!$fp){
-                $this->errors->add('connect', __("Can't connect to Rating-Widget.com", WP_RW__ID));
+                self::$errors->add('connect', __("Can't connect to Rating-Widget.com", WP_RW__ID));
                 return false;
             }
 
@@ -359,11 +342,11 @@ class RatingWidgetPlugin
         return $rw_ret_obj;
     }
 
-    private function _queueRatingData($urid, $title, $permalink, $rclass)
+    public static function QueueRatingData($urid, $title, $permalink, $rclass)
     {
         $title_short = (mb_strlen($title) > 256) ? trim(mb_substr($title, 0, 256)) . '...' : $title;
         $permalink = (mb_strlen($permalink) > 512) ? trim(mb_substr($permalink, 0, 512)) . '...' : $permalink;
-        $this->ratings[$urid] = array("title" => $title, "permalink" => $permalink, "rclass" => $rclass);
+        self::$ratings[$urid] = array("title" => $title, "permalink" => $permalink, "rclass" => $rclass);
     }
 
     private function load_user_key()
@@ -387,27 +370,27 @@ class RatingWidgetPlugin
 
     private function _printErrors()
     {
-        if (!$error_codes = $this->errors->get_error_codes()){ return; }
+        if (!$error_codes = self::$errors->get_error_codes()){ return; }
 ?>
 <div class="error">
 <?php
         foreach ($error_codes as $error_code) :
-            foreach ($this->errors->get_error_messages($error_code) as $error_message) :
+            foreach (self::$errors->get_error_messages($error_code) as $error_message) :
 ?>
-    <p><?php echo $this->errors->get_error_data($error_code) ? $error_message : esc_html($error_message); ?></p>
+    <p><?php echo self::$errors->get_error_data($error_code) ? $error_message : esc_html($error_message); ?></p>
 <?php
             endforeach;
         endforeach;
-        $this->errors = new WP_Error();
+        self::$errors = new WP_Error();
 ?>
 </div>
 <br class="clear" />
 <?php
     }
 
-    private function _generateToken($pTimestamp)
+    public function GenerateToken($pTimestamp, $pServerCall = false)
     {
-        $ip = $_SERVER["REMOTE_ADDR"];
+        $ip = (!$pServerCall) ? WP_RW__CLIENT_ADDR : WP_RW__SERVER_ADDR;
         return md5($ip . $pTimestamp . WP_RW__USER_KEY . md5(WP_RW__USER_SECRET));
     }
     
@@ -440,6 +423,10 @@ class RatingWidgetPlugin
 
     function admin_menu()
     {
+        $this->is_admin = (bool)current_user_can('manage_options');
+        
+        if (!$this->is_admin){ return; }
+        
         // Enqueue styles.
         wp_enqueue_style('rw');
         wp_enqueue_style('rw_wp_settings');
@@ -484,19 +471,15 @@ class RatingWidgetPlugin
         
         if ($this->is_admin)
         { 
-            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Basic Settings', WP_RW__ID ), __('Basic Settings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'));
+            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Basic', WP_RW__ID ), __('Basic', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'));
             
             if (WP_RW__BP_INSTALLED){
-                add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; BuddyPress Settings', WP_RW__ID ), __('BuddyPress Settings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=buddypress', array(&$this, 'rw_settings_page'));
+                add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; BuddyPress', WP_RW__ID ), __('BuddyPress', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=buddypress', array(&$this, 'rw_settings_page'));
             }
             
             $user_label = (WP_RW__BP_INSTALLED) ? "User" : "Author";
              
-            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Advanced Settings', WP_RW__ID ), __('Advanced Settings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced', array(&$this, 'rw_settings_page'));
-        }
-        else
-        { 
-//            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Reports', WP_RW__ID ), __( 'Reports', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=reports', array(&$this, 'rw_settings_page'));
+            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Advanced', WP_RW__ID ), __('Advanced', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced', array(&$this, 'rw_settings_page'));
         }
     }
 
@@ -521,7 +504,7 @@ class RatingWidgetPlugin
             'response' => $recaptcha_response,
         );
         
-        $rw_ret_obj = $this->_remoteCall("action/user.php", $details);
+        $rw_ret_obj = self::RemoteCall("action/user.php", $details);
 
         if (false === $rw_ret_obj){ return false; }
         
@@ -530,7 +513,7 @@ class RatingWidgetPlugin
 
         if (false == $rw_ret_obj->success)
         {
-            $this->errors->add('rating_widget_captcha', __($rw_ret_obj->msg, WP_RW__ID));
+            self::$errors->add('rating_widget_captcha', __($rw_ret_obj->msg, WP_RW__ID));
             return false;
         }
         
@@ -595,10 +578,6 @@ class RatingWidgetPlugin
         
         $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : false;
         
-        /*if (!$this->is_admin){
-            $action = "reports";
-        }*/
-        
         switch ($action)
         {
             case "buddypress":
@@ -606,6 +585,9 @@ class RatingWidgetPlugin
                 break;
             case "advanced":
                 $plugin_page = WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced';
+                break;
+            case "user":
+                $plugin_page = WP_RW__ADMIN_MENU_SLUG . '&amp;action=user';
                 break;
             case false:
             default:
@@ -656,7 +638,6 @@ class RatingWidgetPlugin
         
         return substr($pQuery, 0, $pos) . substr($pQuery, $cur);
     }
-    
     
     public static function _isValidPCId($pPCId)
     {
@@ -718,6 +699,20 @@ class RatingWidgetPlugin
                 $this->_deleteOption(WP_RW__ACTIVITY_UPDATES_ALIGN);
                 $this->_deleteOption(WP_RW__ACTIVITY_UPDATES_OPTIONS);
                 $this->_deleteOption(WP_RW__AVAILABILITY_SETTINGS);
+                $this->_deleteOption(WP_RW__USERS_ALIGN);
+                $this->_deleteOption(WP_RW__USERS_OPTIONS);
+                $this->_deleteOption(WP_RW__USERS_POSTS_ALIGN);
+                $this->_deleteOption(WP_RW__USERS_POSTS_OPTIONS);
+                $this->_deleteOption(WP_RW__USERS_PAGES_ALIGN);
+                $this->_deleteOption(WP_RW__USERS_PAGES_OPTIONS);
+                $this->_deleteOption(WP_RW__USERS_COMMENTS_ALIGN);
+                $this->_deleteOption(WP_RW__USERS_COMMENTS_OPTIONS);
+                $this->_deleteOption(WP_RW__USERS_ACTIVITY_UPDATES_ALIGN);
+                $this->_deleteOption(WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS);
+                $this->_deleteOption(WP_RW__USERS_ACTIVITY_COMMENTS_ALIGN);
+                $this->_deleteOption(WP_RW__USERS_ACTIVITY_COMMENTS_OPTIONS);
+                $this->_deleteOption(WP_RW__USERS_FORUM_POSTS_ALIGN);
+                $this->_deleteOption(WP_RW__USERS_FORUM_POSTS_OPTIONS);
                 $this->_deleteOption(WP_RW__ACTIVITY_BLOG_POSTS_ALIGN);
                 $this->_deleteOption(WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS);
                 $this->_deleteOption(WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN);
@@ -1297,6 +1292,8 @@ class RatingWidgetPlugin
     */
     function rw_before_loop_start()
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_before_loop_start", $params); }
+        
         $comment_align_str = $this->_getOption(WP_RW__COMMENTS_ALIGN);
         $comment_align = json_decode($comment_align_str);
         $comment_enabled = (isset($comment_align) && isset($comment_align->hor));
@@ -1426,13 +1423,15 @@ class RatingWidgetPlugin
     */
     function rw_display_post_rating($content)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_post_rating", $params); }
+        
         global $post;
         
         // Checks if post isn't specificaly excluded.
         if (false === $this->rw_validate_visibility($post->ID, $this->post_class)){ return $content; }
 
         $urid = $this->_getPostRatingGuid();
-        $this->_queueRatingData($urid, $post->post_title, get_permalink($post->ID), $this->post_class);
+        self::QueueRatingData($urid, $post->post_title, get_permalink($post->ID), $this->post_class);
         
         $rw = '<div class="rw-' . $this->post_align->hor . '"><div class="rw-ui-container rw-class-' . $this->post_class . ' rw-urid-' . $urid . '"></div></div>';
         return ($this->post_align->ver == "top") ?
@@ -1448,12 +1447,14 @@ class RatingWidgetPlugin
     */
     function rw_display_comment_rating($content)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_comment_rating", $params); }
+        
         global $post, $comment;
 
         if (false === $this->rw_validate_visibility($comment->comment_ID, "comment")){ return $content; }
         
         $urid = $this->_getCommentRatingGuid();
-        $this->_queueRatingData($urid, strip_tags($comment->comment_content), get_permalink($post->ID) . '#comment-' . $comment->comment_ID, "comment");
+        self::QueueRatingData($urid, strip_tags($comment->comment_content), get_permalink($post->ID) . '#comment-' . $comment->comment_ID, "comment");
         
         $rw = '<div class="rw-' . $this->comment_align->hor . '"><div class="rw-ui-container rw-class-comment rw-urid-' . $urid . '"></div></div>';
         return ($this->comment_align->ver == "top") ?
@@ -1466,6 +1467,8 @@ class RatingWidgetPlugin
     var $activity_align = array();
     function rw_before_activity_loop($has_activities)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_before_activity_loop", $params); }
+        
         if (!$has_activities){ return false; }
         
         $items = array(
@@ -1483,14 +1486,6 @@ class RatingWidgetPlugin
             ),
             "new-blog-comment" => array(
                 "align_key" => WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN,
-                "enabled" => false,
-            ),
-            /*"new-forum-topic" => array(
-                "align_key" => WP_RW__ACTIVITY_FORUM_TOPICS_ALIGN,
-                "enabled" => false,
-            ),*/
-            "new-forum-post" => array(
-                "align_key" => WP_RW__ACTIVITY_FORUM_POSTS_ALIGN,
                 "enabled" => false,
             ),
         );
@@ -1535,6 +1530,8 @@ class RatingWidgetPlugin
 
     function rw_get_activity_rating($ver)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_get_activity_rating", $params); }
+        
         global $activities_template;
         
         // Set current activity-comment to current activity update (recursive comments).
@@ -1543,10 +1540,13 @@ class RatingWidgetPlugin
         $rclass = str_replace("_", "-", $activities_template->activity->type);
         
         $is_forum_topic = false;
-        if ($rclass === "new-forum-topic" || $rclass === "new-forum-post"){
-            return false;
+        if ($rclass === "new-forum-topic"){
+            $rclass = "new-forum-post";
+            $is_forum_topic = true;
         }
 
+        if ($rclass == "new-forum-post"){ return false; }
+        
         // Check if item rating is top positioned.
         if (!isset($this->activity_align[$rclass]) || $ver !== $this->activity_align[$rclass]->ver){ return false; }
         
@@ -1581,7 +1581,7 @@ class RatingWidgetPlugin
                   $activities_template->activity->content;
         
         // Queue activity rating.
-        $this->_queueRatingData($urid, strip_tags($title), bp_activity_get_permalink($activities_template->activity->id), $rclass);
+        self::QueueRatingData($urid, strip_tags($title), bp_activity_get_permalink($activities_template->activity->id), $rclass);
 
         // Return rating html container.
         return '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . '"></div>';
@@ -1590,6 +1590,8 @@ class RatingWidgetPlugin
     // Activity item top rating.
     function rw_display_activity_rating_top($action)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_activity_rating_top", $params); }
+        
         $rating_html = $this->rw_get_activity_rating("top");
         
         return ((false === $rating_html) ?
@@ -1601,6 +1603,8 @@ class RatingWidgetPlugin
     // Activity item bottom rating.
     function rw_display_activity_rating_bottom($id = "", $type = "")
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_activity_rating_bottom", $params); }
+        
         $rating_html = $this->rw_get_activity_rating("bottom");
 
         if (false !== $rating_html){
@@ -1623,6 +1627,8 @@ class RatingWidgetPlugin
     // Activity-comment.
     function rw_display_activity_comment_rating($comment_content)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_activity_comment_rating", $params); }
+        
         // Find current comment.
         while (!$this->current_comment->children || false === current($this->current_comment->children))
         {
@@ -1641,7 +1647,7 @@ class RatingWidgetPlugin
         $comment_urid = $this->_getActivityRatingGuid($this->current_comment->id);
         
         // Queue activity-comment rating.
-        $this->_queueRatingData($comment_urid, strip_tags($this->current_comment->content), bp_activity_get_permalink($this->current_comment->id), "activity-comment");
+        self::QueueRatingData($comment_urid, strip_tags($this->current_comment->content), bp_activity_get_permalink($this->current_comment->id), "activity-comment");
         
         $rw = '<div class="rw-' . $this->activity_align["activity-comment"]->hor . '"><div class="rw-ui-container rw-class-activity-comment rw-urid-' . $comment_urid . '"></div></div><p></p>';
         
@@ -1655,6 +1661,8 @@ class RatingWidgetPlugin
     ---------------------------------------------------------------------------------------------------------------*/
     function rw_attach_rating_js($pElement)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_attach_rating_js", $params); }
+
         $rw_settings = array(
             "blog-post" => array("options" => WP_RW__BLOG_POSTS_OPTIONS),
             "front-post" => array("options" => WP_RW__FRONT_POSTS_OPTIONS),
@@ -1663,7 +1671,6 @@ class RatingWidgetPlugin
 
             "activity-update" => array("options" => WP_RW__ACTIVITY_UPDATES_OPTIONS),
             "activity-comment" => array("options" => WP_RW__ACTIVITY_COMMENTS_OPTIONS),
-            "new-forum-post" => array("options" => WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS),
             "new-blog-post" => array("options" => WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS),
             "new-blog-comment" => array("options" => WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS),
         );
@@ -1671,9 +1678,9 @@ class RatingWidgetPlugin
         $attach_js = false;
         
         $is_logged = is_user_logged_in();
-        if (is_array($this->ratings) && count($this->ratings) > 0)
+        if (is_array(self::$ratings) && count(self::$ratings) > 0)
         {
-            foreach ($this->ratings as $urid => $data)
+            foreach (self::$ratings as $urid => $data)
             {
                 $rclass = $data["rclass"];
                 if (isset($rw_settings[$rclass]) && !isset($rw_settings[$rclass]["enabled"]))
@@ -1720,7 +1727,7 @@ class RatingWidgetPlugin
                         {
                             // Secure connection.
                             $timestamp = time();
-                            $token = $this->_generateToken($timestamp);
+                            $token = self::GenerateToken($timestamp);
                             echo ', token: {timestamp: ' . $timestamp . ', token: "' . $token . '"}';
                         }
                     ?>});
@@ -1734,7 +1741,7 @@ class RatingWidgetPlugin
                             }
                         }
                         
-                        foreach ($this->ratings as $urid => $data)
+                        foreach (self::$ratings as $urid => $data)
                         {
                             echo 'RW.initRating("' . $urid . '", {title: "' . esc_js($data["title"]) . '", url: "' . esc_js($data["permalink"]) . '"});';
                         }
@@ -1764,6 +1771,14 @@ class RatingWidgetPlugin
             </script>
         </div> 
 <?php
+        }
+        
+        
+        if (RWLogger::IsOn())
+        {
+            echo "\n<!-- RATING-WIDGET LOG START\n\n";
+            RWLogger::Output("    ");
+            echo "\n RATING-WIDGET LOG END-->\n";
         }
     }    
 }
@@ -1801,56 +1816,161 @@ if (class_exists("WP_Widget"))
                 return;
             }
             
-            // Disable CSS optimization to load all type of
-            // ratings UI for the widget.
-            RatingWidgetPlugin::TopRatedWidgetLoaded();
-            
-            echo $before_widget;
-            $title = empty($instance['title']) ? __('Top Rated', WP_RW__ID) : apply_filters('widget_title', $instance['title']);
-            
-            echo $before_title . $title . $after_title;
-?>
-<div id="rw_top_rated_container">
-    <img src="<?php echo $this->rw_address;?>/img/rw.loader.gif" alt="" />
-</div>
-<script type="text/javascript" src="<?php echo $this->rw_address; ?>/js/wordpress/widget.php"></script>
-<script type="text/javascript">
-    // Hook render widget.
-    if (typeof(RW_HOOK_READY) === "undefined"){ RW_HOOK_READY = []; }
-    RW_HOOK_READY.push(function(){
-        RW_WP.renderWidget(<?php
-            require_once(WP_RW__PLUGIN_DIR . "/lib/defaults.php");
-            $elements_data = array();
+            $details = array( 
+                "uid" => WP_RW__USER_KEY,
+            );
+
+            if (false !== WP_RW__USER_SECRET)
+            {
+                // Secure connection.
+                $timestamp = time();
+                $token = RatingWidgetPlugin::GenerateToken($timestamp, true);
+                $details["timestamp"] = $timestamp;
+                $details["token"] = $token;
+            }
+
+            $queries = array();
             
             $types = array(
-                "posts" => array("classes" => array("blog-post", "front-post") , "options" => WP_RW__FRONT_POSTS_OPTIONS),
-                "pages" => array("classes" => array("page") , "options" => WP_RW__PAGES_OPTIONS),
-                "comments" => array("classes" => array("comment") , "options" => WP_RW__COMMENTS_OPTIONS),
+                "posts" => array(
+                    "rclass" => "blog-post", 
+                    "classes" => "front-post,blog-post,new-blog-post"
+                ),
+                "pages" => array(
+                    "rclass" => "page", 
+                    "classes" => "page"
+                ),
+                "comments" => array(
+                    "rclass" => "comment",
+                    "classes" => "comment,new-blog-comment"
+                ),
             );
             
             foreach ($types as $type => $type_data)
             {
                 if ($instance["show_{$type}"] && $instance["{$type}_count"] > 0)
                 {
-                    $options = json_decode(RatingWidgetPlugin::_getOption($type_data["options"]));
-                    $posts = array();
-                    $data["type"] = isset($options->type) ? $options->type : "star";
-                    $data["style"] = isset($options->style) ? 
-                                    $options->style : 
-                                    (($data["type"] !== "star") ? DEF_NERO_STYLE : DEF_STAR_STYLE);
+                    $queries[$type] = array(
+                        "rclasses" => $type_data["classes"],
+                        "votes" => 1,
+                        "orderby" => "avgrate",
+                        "order" => "DESC",
+                        "limit" => (int)$instance["{$type}_count"],
+                    );
+                }
+            }
+            
+            $details["queries"] = urlencode(json_encode($queries));
+            
+            $rw_ret_obj = RatingWidgetPlugin::RemoteCall("action/query/ratings.php", $details);
+            
+            if (false === $rw_ret_obj){ return; }
+            
+            $rw_ret_obj = json_decode($rw_ret_obj);
+            
+            if (null === $rw_ret_obj || true !== $rw_ret_obj->success){ return; }
+            
+            echo $before_widget;
+            $title = empty($instance['title']) ? __('Top Rated', WP_RW__ID) : apply_filters('widget_title', $instance['title']);
+            echo $before_title . $title . $after_title;
+
+            $empty = true;
+            foreach($rw_ret_obj->data as $type => $ratings)
+            {
+                if (is_array($ratings) && count($ratings) > 0)
+                {
+                    echo '<div id="rw_top_rated_' . $type . '">';
+                    echo '<p style="margin: 0;">' .  ucwords($type) . '</p>';
+                    echo '<ul class="rw-top-rated-list">';
+                    foreach ($ratings as $rating)
+                    {
+                        $urid = $rating->urid;
+                        $rclass = $types[$type]["rclass"];
+                        
+                        RatingWidgetPlugin::QueueRatingData($urid, "", "", $rclass);
+
+                        switch ($type)
+                        {
+                            case "posts":
+                            case "pages":
+                                $id = RatingWidgetPlugin::Urid2PostId($urid);
+                                $post = get_post($id);
+                                $title = trim(strip_tags($post->post_title));
+                                $permalink = get_permalink($post->ID);
+                                break;
+                            case "comments":
+                                $id = RatingWidgetPlugin::Urid2CommentId($urid);
+                                $comment = get_comment($id);
+                                $title = trim(strip_tags($comment->comment_content));
+                                $permalink = get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID;
+                                break;
+                        }
+                        $short = (strlen($title) > 30) ? trim(substr($title, 0, 30)) . "..." : $title;
+                        
+                        echo '<li>'.
+                             '<a href="' . $permalink . '" title="' . $title . '">' . $short . '</a>'.
+                             '<br />'.
+                             '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . '"></div>'.
+                             '</li>';
+                    }
+                    echo "</ul>";
+                    echo "</div>";
                     
-                    $data["classes"] = $type_data["classes"];
-                    $data["limit"] = $instance["{$type}_count"];
-                    
-                    $elements_data[$type] = $data;
+                    $empty = false;
                 }
             }
 
-            echo json_encode($elements_data);
-        ?>);
+            if (true === $empty){
+                echo '<p style="margin: 0;">There are no rated items for this period.</p>';
+            }
+            else
+            {
+                // Set a flag that the widget is loaded.
+                RatingWidgetPlugin::TopRatedWidgetLoaded();
+?>
+<script type="text/javascript">
+    // Hook render widget.
+    if (typeof(RW_HOOK_READY) === "undefined"){ RW_HOOK_READY = []; }
+    RW_HOOK_READY.push(function(){
+        RW._foreach(RW._getByClassName("rw-top-rated-list", "ul"), function(list){
+            RW._foreach(RW._getByClassName("rw-ui-container", "div", list), function(rating){
+                // Deactivate rating.
+                RW._Class.remove(rating, "rw-active");
+                var i = (RW._getByClassName("rw-report-link", "a", rating))[0];
+                if (RW._is(i)){ i.parentNode.removeChild(i); }
+                
+                // Update size to small.
+                if (!RW._Class.has(rating, "rw-size-small"))
+                {
+                    RW._Class.add(rating, "rw-size-small");
+                    RW._Class.remove(rating, "rw-size-medium");
+                    RW._Class.remove(rating, "rw-size-large");
+                }
+                
+                if (RW._Class.has(rating, "rw-ui-star"))
+                {
+                    RW._foreach(RW._getByTagName("li", rating), function(star){
+                        // Clear star event handlers.
+                        star.onmouseover =
+                        star.onmouseout =
+                        star.onclick = "";
+                    });
+                }
+                else
+                {
+                    RW._foreach(RW._getByTagName("i", rating), function(thumb){
+                        // Clear star event handlers.
+                        thumb.onmouseover =
+                        thumb.onmouseout =
+                        thumb.onclick = "";
+                    });
+                }
+            });
+        });
     });
 </script>
 <?php
+            }
             echo $after_widget;
         }
     
@@ -1924,6 +2044,15 @@ if (class_exists("WP_Widget"))
     }
     
     add_action("widgets_init", create_function('', 'return register_widget("RWTopRated");')); 
+}
+
+/* For servers without mb string support.
+---------------------------------------------------------------------------------------------------------------*/
+if (!function_exists("mb_strlen")){
+    function mb_strlen($str){ return strlen($str); }
+}
+if (!function_exists("mb_substr")){
+    function mb_substr($str, $start, $length){ return substr($str, $start, $length); }
 }
 
 // Invoke class.
