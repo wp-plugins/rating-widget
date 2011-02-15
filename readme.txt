@@ -6,11 +6,11 @@ Requires at least: 2.6
 Tested up to: 3.1
 Stable tag: 1.2.9
 
-Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
+Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
 
 == Description ==
 
-The Rating-Widget Ratings plugin allows you to **create and manage ratings** from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. PLUS, you can embed ratings into your BuddyPress activity updates and comments. In extra, the rating support BP's bbPress forum posts ratings. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+The Rating-Widget Ratings plugin allows you to **create and manage ratings** from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. PLUS, you can embed ratings into your BuddyPress activity updates and comments. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
 Rating-Widget ratings are localizable and currently available in:
 
