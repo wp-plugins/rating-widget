@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.1
-Stable tag: 1.2.9
+Stable tag: 1.3.0
 
 Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support).
 
@@ -20,10 +20,13 @@ Rating-Widget ratings are localizable and currently available in:
 * English
 * French
 * German
+* Greek
 * Hebrew
 * Italian
+* Nederlands
 * Polish
 * Portuguese
+* Romanian
 * Russian
 * Spanish
 * Turkish
@@ -78,6 +81,11 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.3.0 =
+* New: Localized to Greek.
+* New: Localized to Nederlands.
+* New: Localized to Romanian.
+
 = 1.2.9 =
 * Fix: "Top-Rated Widget" is now loading the right graphics.
 
