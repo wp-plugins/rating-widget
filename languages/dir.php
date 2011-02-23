@@ -1,0 +1,27 @@
+<?php
+    $rw_languages = array(
+//        "af" => "Afrikaans",
+        "ar" => "Arabic - العربية",
+        "bg" => "Bulgarian - български", 
+//        "ch" => "Chinese",
+        "hr" => "Croatian - Hrvatski", 
+        "en" => "English (Default)", 
+        "fr" => "French - Français",
+        "de" => "German - Deutsch",
+        "el" => "Greek - Ελληνικά",
+        "he" => "Hebrew - עברית",
+//        "hi" => "Hindi",
+        "it" => "Italian - Italiano",
+//        "jp" => "Japanese",
+//        "ko" => "Korean",
+//        "la" => "Latin",
+        "nl" => "Nederlands - Dutch",
+        "pl" => "Polish - Polska",
+        "pt" => "Portuguese - Português",
+        "ro" => "Romanian - Română",
+        "ru" => "Russian - Русский",
+        "es" => "Spanish - Español",
+        "tr" => "Turkish - Türkçe",
+//        "th" => "Thai",
+    );
+?>

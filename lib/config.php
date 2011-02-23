@@ -1,0 +1,157 @@
+<?php
+    /* Version
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__VERSION", "1.3.1");
+
+    /* User-Key & Secret
+    -----------------------------------------------------------------------------------------*/
+    // You can hardcode your Rating-Widget unique-user-key here (get one from http://rating-widget.com)
+    //define('WP_RW__USER_KEY', 'abcdefghijklmnopqrstuvwzyz123456');
+
+    // You can hardcode your Rating-Widget secret here (only for Pro version - contact vova@rating-widget.com)
+    //define('WP_RW__USER_SECRET', 'abcdefghijklmnopqrstuvwzyz123456');
+
+    /* Server Address & Remote Address
+    -----------------------------------------------------------------------------------------*/
+    // If you have a secret key and you are runing it your tests
+    // on a local machine, hardcode your IP here.
+        //define("WP_RW__SERVER_ADDR", "123.123.123.123");
+        //define("WP_RW__CLIENT_ADDR", "123.123.123.123");
+
+    /* General Consts
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__ID", "rating_widget");
+    define("WP_RW__DEFAULT_LNG", "en");
+    define("WP_RW__ADMIN_MENU_SLUG", "rating-widget");
+
+
+    define("WP_RW__BLOG_POSTS_ALIGN", "rw_blog_posts_align");
+    define("WP_RW__BLOG_POSTS_OPTIONS", "rw_blog_posts_options");
+
+    define("WP_RW__COMMENTS_ALIGN", "rw_comments_align");
+    define("WP_RW__COMMENTS_OPTIONS", "rw_comments_options");
+
+    define("WP_RW__PAGES_ALIGN", "rw_pages_align");
+    define("WP_RW__PAGES_OPTIONS", "rw_pages_options");
+
+    define("WP_RW__FRONT_POSTS_ALIGN", "rw_front_posts_align");
+    define("WP_RW__FRONT_POSTS_OPTIONS", "rw_front_posts_options");
+
+    /* BuddyPress
+    -----------------------------------------------------------------------------------------*/
+    // BuddyPress plugin core file.
+    define("WP_RW__BP_CORE_FILE", "buddypress/bp-loader.php");
+
+    define("WP_RW__ACTIVITY_BLOG_POSTS_ALIGN", "rw_activity_blog_posts_align");
+    define("WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS", "rw_activity_blog_posts_options");
+
+    define("WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN", "rw_activity_blog_comments_align");
+    define("WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS", "rw_activity_blog_comments_options");
+    
+    define("WP_RW__ACTIVITY_UPDATES_ALIGN", "rw_activity_updates_align");
+    define("WP_RW__ACTIVITY_UPDATES_OPTIONS", "rw_activity_updates_options");
+
+    define("WP_RW__ACTIVITY_COMMENTS_ALIGN", "rw_activity_comments_align");
+    define("WP_RW__ACTIVITY_COMMENTS_OPTIONS", "rw_activity_comments_options");
+        
+    // bbPress component
+        /*define("WP_RW__FORUM_TOPICS_ALIGN", "rw_forum_topics_align");
+        define("WP_RW__FORUM_TOPICS_OPTIONS", "rw_forum_topics_options");*/
+
+        define("WP_RW__FORUM_POSTS_ALIGN", "rw_forum_posts_align");
+        define("WP_RW__FORUM_POSTS_OPTIONS", "rw_forum_posts_options");
+
+        /*define("WP_RW__ACTIVITY_FORUM_TOPICS_ALIGN", "rw_activity_forum_topics_align");
+        define("WP_RW__ACTIVITY_FORUM_TOPICS_OPTIONS", "rw_activity_forum_topics_options");*/
+
+        define("WP_RW__ACTIVITY_FORUM_POSTS_ALIGN", "rw_activity_forum_posts_align");
+        define("WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS", "rw_activity_forum_posts_options");
+
+    // User
+        define("WP_RW__USERS_ALIGN", "rw_users_align");
+        define("WP_RW__USERS_OPTIONS", "rw_users_options");
+    // User accamulated ratings
+        // Posts
+        define("WP_RW__USERS_POSTS_ALIGN", "rw_users_posts_align");
+        define("WP_RW__USERS_POSTS_OPTIONS", "rw_users_posts_options");
+        // Pages
+        define("WP_RW__USERS_PAGES_ALIGN", "rw_users_pages_align");
+        define("WP_RW__USERS_PAGES_OPTIONS", "rw_users_pages_options");
+        // Comments
+        define("WP_RW__USERS_COMMENTS_ALIGN", "rw_users_comments_align");
+        define("WP_RW__USERS_COMMENTS_OPTIONS", "rw_users_comments_options");
+        // Activity-Updates
+        define("WP_RW__USERS_ACTIVITY_UPDATES_ALIGN", "rw_users_activity_updates_align");
+        define("WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS", "rw_users_activity_updates_options");
+        // Activity-Comments
+        define("WP_RW__USERS_ACTIVITY_COMMENTS_ALIGN", "rw_users_activity_comments_align");
+        define("WP_RW__USERS_ACTIVITY_COMMENTS_OPTIONS", "rw_users_activity_comments_options");
+        // Forum-Posts
+        define("WP_RW__USERS_FORUM_POSTS_ALIGN", "rw_users_forum_posts_align");
+        define("WP_RW__USERS_FORUM_POSTS_OPTIONS", "rw_users_forum_posts_options");
+        
+        
+    /* Settings
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__SHOW_ON_EXCERPT", "rw_show_on_excerpt");
+    define("WP_RW__VISIBILITY_SETTINGS", "rw_visibility_settings");
+    define("WP_RW__AVAILABILITY_SETTINGS", "rw_availability_settings");
+
+    /* Availability Options
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__AVAILABILITY_ACTIVE", 0);    // Active for all users.
+    define("WP_RW__AVAILABILITY_DISABLED", 1);  // Disabled for logged out users.
+    define("WP_RW__AVAILABILITY_HIDDEN", 2);    // Hidden from logged out users.
+
+    /* Advanced Settings
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__FLASH_DEPENDENCY", "rw_flash_dependency");
+    define("WP_RW__LOGGER", "rw_logger");
+
+    define("WP_RW__USER_SECONDERY_ID", "00");
+    define("WP_RW__POST_SECONDERY_ID", "01");
+    define("WP_RW__PAGE_SECONDERY_ID", "02");
+    define("WP_RW__COMMENT_SECONDERY_ID", "03");
+    define("WP_RW__ACTIVITY_UPDATE_SECONDERY_ID", "04");
+    define("WP_RW__ACTIVITY_COMMENT_SECONDERY_ID", "05");
+    define("WP_RW__FORUM_POST_SECONDERY_ID", "06");
+
+    /* Reports Consts
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__REPORT_RECORDS_MIN", 10);
+    define("WP_RW__REPORT_RECORDS_MAX", 50);
+    define("WP_RW__PERIOD_MONTH", 2678400);
+    define("WP_RW__DEFAULT_DATE_FORMAT", "Y-n-d");
+    define("WP_RW__DEFAULT_TIME_FORMAT", "H:i:s");
+
+    /* Stars Consts
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__DEF_STARS", 5);
+    define("WP_RW__MIN_STARS", 1);
+    define("WP_RW__MAX_STARS", 20);
+
+    /* Plugin dir and url
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__PLUGIN_DIR", dirname(dirname(__FILE__)));
+    define("WP_RW__PLUGIN_URL", plugins_url() . '/' . dirname(dirname(plugin_basename(__FILE__))) . '/');
+
+    /* Rating-Widget URIs
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__DOMAIN", (!defined("WP_RW__DEBUG") ? "rating-widget.com" : "localhost:8080"));
+    define("WP_RW__ADDRESS", "http://" . WP_RW__DOMAIN);
+    define("WP_RW__ADDRESS_CSS", "http://" . WP_RW__DOMAIN . "/css/");
+    define("WP_RW__ADDRESS_JS", "http://" . WP_RW__DOMAIN . "/js/");
+    define("WP_RW__ADDRESS_IMG", "http://" . WP_RW__DOMAIN . "/img/");
+
+    define("WP_RW__BP_INSTALLED", function_exists("bp_activity_get_specific"));
+    define("WP_RW__BBP_INSTALLED", (WP_RW__BP_INSTALLED && ("" != get_site_option("bb-config-location", ""))));
+
+    /* Server Address & Remote Address
+    -----------------------------------------------------------------------------------------*/
+    if (!defined("WP_RW__SERVER_ADDR")){
+        define("WP_RW__SERVER_ADDR", $_SERVER["SERVER_ADDR"]);
+    }
+    if (!defined("WP_RW__CLIENT_ADDR")){
+        define("WP_RW__CLIENT_ADDR", $_SERVER["REMOTE_ADDR"]);
+    }
+?>
