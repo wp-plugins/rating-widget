@@ -6,6 +6,7 @@
         $ret->imgUrl = @rw_get_default_value($settings->imgUrl, new stdClass());
         $ret->advanced = @rw_get_default_value($settings->advanced, new stdClass());
         $ret->advanced->star = @rw_get_default_value($settings->advanced->star, new stdClass());
+        $ret->advanced->nero = @rw_get_default_value($settings->advanced->nero, new stdClass());
         $ret->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
         $ret->advanced->layout = @rw_get_default_value($settings->advanced->layout, new stdClass());
         $ret->advanced->layout->align = @rw_get_default_value($settings->advanced->layout->align, new stdClass());
@@ -34,6 +35,9 @@
         $ret->boost->rate = @rw_get_default_value($settings->boost->rate, $defaults->boost->rate);
 
         $ret->advanced->star->stars = @rw_get_default_value($settings->advanced->star->stars, $defaults->advanced->star->stars);
+
+        $ret->advanced->nero->showDislike = @rw_get_default_value($settings->advanced->nero->showDislike, $defaults->advanced->nero->showDislike);
+        $ret->advanced->nero->showLike = @rw_get_default_value($settings->advanced->nero->showLike, $defaults->advanced->nero->showLike);
 
         $ret->advanced->font->bold = @rw_get_default_value($settings->advanced->font->bold, $defaults->advanced->font->bold);
         $ret->advanced->font->italic = @rw_get_default_value($settings->advanced->font->italic, $defaults->advanced->font->italic);

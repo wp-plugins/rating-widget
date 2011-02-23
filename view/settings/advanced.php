@@ -13,12 +13,14 @@
                         <div>Layout</div>
                         <div>Text</div>
                         <div id="rw_advanced_star_tab"<?php if ($rw_options->type === "nero") echo ' style="display: none;"' ?>>Star</div>
+                        <div id="rw_advanced_nero_tab"<?php if ($rw_options->type === "star") echo ' style="display: none;"' ?>>Thumbs</div>
                     </div>
                     <div id="rw_advanced_settings_body" class="rw-clearfix">
                         <?php require_once(dirname(__FILE__) . "/advanced/font.php"); ?>
                         <?php require_once(dirname(__FILE__) . "/advanced/layout.php"); ?>
                         <?php require_once(dirname(__FILE__) . "/advanced/text.php"); ?>
                         <?php require_once(dirname(__FILE__) . "/advanced/star.php"); ?>
+                        <?php require_once(dirname(__FILE__) . "/advanced/nero.php"); ?>
                     </div>
                 </div>
             </div>

@@ -24,6 +24,7 @@
         $DEFAULT_OPTIONS->imgUrl = new stdClass();
         $DEFAULT_OPTIONS->advanced = new stdClass();
         $DEFAULT_OPTIONS->advanced->star = new stdClass();
+        $DEFAULT_OPTIONS->advanced->nero = new stdClass();
         $DEFAULT_OPTIONS->advanced->font = new stdClass();
         $DEFAULT_OPTIONS->advanced->text = new stdClass();
         $DEFAULT_OPTIONS->advanced->layout = new stdClass();
@@ -52,6 +53,9 @@
         $DEFAULT_OPTIONS->afterRate = null;
         
         $DEFAULT_OPTIONS->advanced->star->stars = 5;
+
+        $DEFAULT_OPTIONS->advanced->nero->showLike = true;
+        $DEFAULT_OPTIONS->advanced->nero->showDislike = true;
         
         $DEFAULT_OPTIONS->advanced->font->bold = false;
         $DEFAULT_OPTIONS->advanced->font->italic = false;
