@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.3.2");
+    define("WP_RW__VERSION", "1.3.3");
 
     /* User-Key & Secret
     -----------------------------------------------------------------------------------------*/
@@ -10,6 +10,9 @@
 
     // You can hardcode your Rating-Widget secret here (only for Pro version - contact vova@rating-widget.com)
     //define('WP_RW__USER_SECRET', 'abcdefghijklmnopqrstuvwzyz123456');
+
+//    define("WP_RW__USER_KEY", "e3b1e16e330ab6158e133e7a5ada1844");
+//    define('WP_RW__USER_SECRET', '5eca9bd3eb07c006cd43ae48dfde7fd3');
 
     /* Server Address & Remote Address
     -----------------------------------------------------------------------------------------*/
