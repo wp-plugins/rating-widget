@@ -84,7 +84,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
 = 1.3.3 =
-* New: "Top Rated" Widget titles display is now configurable.
+* New: "Top Rated" Widget titles display are now configurable.
 * New: Short code for adding posts & pages inline ratings - **[ratingwidget]**.
 
 = 1.3.2 =
