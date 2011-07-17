@@ -1,4 +1,4 @@
-<div class="postbox rw-body">
+<div class="postbox rw-body" style="width: 350px;">
     <h3>Live Preview</h3>
     <div class="inside" style="padding: 10px;">
         <div id="rw_preview_container" style="text-align: <?php

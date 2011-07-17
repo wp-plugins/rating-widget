@@ -1,6 +1,6 @@
 <div class="has-sidebar has-right-sidebar">
     <div class="has-sidebar-content">
-        <div class="postbox rw-body" style="width: 630px;">
+        <div class="postbox rw-body">
             <h3>Rating-Widget Options</h3>
             <div class="inside rw-ui-content-container rw-no-radius">
                 <table>

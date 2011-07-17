@@ -26,7 +26,7 @@
             self::$_log[] = date(WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u") . "  -  {$pId}:  {$pMessage}";
         }
         
-        public static function LogEnterence($pId, $pParams, $pLogParams = false)
+        public static function LogEnterence($pId, $pParams = null, $pLogParams = false)
         {
             if (false === self::$_on){ return; }
             

@@ -1,4 +1,4 @@
-<div class="postbox rw-body">
+<div class="postbox rw-body" style="width: 350px;">
     <h3>Save</h3>
     <div class="inside update-nag" style="margin: 0; border: 0;">
         <p class="submit" style="margin: 0; padding: 10px;">

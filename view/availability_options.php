@@ -5,7 +5,7 @@
 ?>
 <div id="rw_availability_settings" class="has-sidebar has-right-sidebar">
     <div class="has-sidebar-content">
-        <div class="postbox rw-body" style="width: 630px;">
+        <div class="postbox rw-body">
             <h3>User Availability Settings</h3>
             <div class="inside rw-ui-content-container rw-no-radius" style="padding: 5px; width: 610px;">
                 <div class="rw-ui-img-radio rw-ui-hor<?php if ($rw_availability_settings == 0) echo ' rw-selected';?>">

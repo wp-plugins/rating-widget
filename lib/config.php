@@ -1,25 +1,33 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.3.3");
+    define("WP_RW__VERSION", "1.3.4");
 
-    /* User-Key & Secret
+    /* Localhost.
     -----------------------------------------------------------------------------------------*/
-    // You can hardcode your Rating-Widget unique-user-key here (get one from http://rating-widget.com)
-    //define('WP_RW__USER_KEY', 'abcdefghijklmnopqrstuvwzyz123456');
-
-    // You can hardcode your Rating-Widget secret here (only for Pro version - contact vova@rating-widget.com)
-    //define('WP_RW__USER_SECRET', 'abcdefghijklmnopqrstuvwzyz123456');
-
-//    define("WP_RW__USER_KEY", "e3b1e16e330ab6158e133e7a5ada1844");
-//    define('WP_RW__USER_SECRET', '5eca9bd3eb07c006cd43ae48dfde7fd3');
+    define("WP_RW__LOCALHOST", ($_SERVER["HTTP_HOST"] == "localhost:8080"));
+    
+    /* Load Unique-User-Key & API Secret
+    -----------------------------------------------------------------------------------------*/
+    require_once(dirname(__FILE__) . "/key.php");
 
     /* Server Address & Remote Address
     -----------------------------------------------------------------------------------------*/
-    // If you have a secret key and you are runing it your tests
-    // on a local machine, hardcode your IP here.
-        //define("WP_RW__SERVER_ADDR", "123.123.123.123");
-        //define("WP_RW__CLIENT_ADDR", "123.123.123.123");
+    // To run your tests on a local machine, hardcode your IP here.
+    // To find your IP go to http://www.ip-adress.com/
+    if (WP_RW__LOCALHOST)
+    {
+        define("WP_RW__SERVER_ADDR", "123.123.123.123");
+        define("WP_RW__CLIENT_ADDR", "123.123.123.123");
+    }
+
+    /* Uncomment for debug mode.
+    -----------------------------------------------------------------------------------------*/
+    // define("WP_RW__DEBUG", "");
+
+    /* For Rating-Widget development mode.
+    -----------------------------------------------------------------------------------------*/
+    if (file_exists(dirname(__FILE__) . "/_dev_.php")){ require_once(dirname(__FILE__) . "/_dev_.php"); }
 
     /* General Consts
     -----------------------------------------------------------------------------------------*/
@@ -140,7 +148,7 @@
 
     /* Rating-Widget URIs
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__DOMAIN", (!defined("WP_RW__DEBUG") ? "rating-widget.com" : "localhost:8080"));
+    if (!defined("WP_RW__DOMAIN")){ define("WP_RW__DOMAIN", "rating-widget.com"); }
     define("WP_RW__ADDRESS", "http://" . WP_RW__DOMAIN);
     define("WP_RW__ADDRESS_CSS", "http://" . WP_RW__DOMAIN . "/css/");
     define("WP_RW__ADDRESS_JS", "http://" . WP_RW__DOMAIN . "/js/");
