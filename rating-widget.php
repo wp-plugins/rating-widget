@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.3.5
+Version: 1.3.6
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -27,6 +27,7 @@ require_once(WP_RW__PLUGIN_DIR . "/lib/logger.php");
 class RatingWidgetPlugin
 {
     static $errors;
+    static $success;
     static $ratings = array();
     
     var $is_admin;
@@ -41,7 +42,8 @@ class RatingWidgetPlugin
     public function __construct()
     {
         self::$errors = new WP_Error();
-
+        self::$success = new WP_Error();
+        
         if (defined("WP_RW__DEBUG") || true === $this->_getOption("WP_RW__LOGGER"))
         {
             // Start logger.
@@ -400,26 +402,37 @@ class RatingWidgetPlugin
         }
     }
 
-    private function _printErrors()
+    private function _printMessages($messages, $class)
     {
-        if (!$error_codes = self::$errors->get_error_codes()){ return; }
+        if (!$codes = $messages->get_error_codes()){ return; }
+        
 ?>
-<div class="error">
+<div class="<?php echo $class;?>">
 <?php
-        foreach ($error_codes as $error_code) :
-            foreach (self::$errors->get_error_messages($error_code) as $error_message) :
+        foreach ($codes as $code) :
+            foreach ($messages->get_error_messages($code) as $message) :
 ?>
-    <p><?php echo self::$errors->get_error_data($error_code) ? $error_message : esc_html($error_message); ?></p>
+    <p><?php echo $messages->get_error_data($code) ? $message : esc_html($message); ?></p>
 <?php
             endforeach;
         endforeach;
-        self::$errors = new WP_Error();
+        $messages = new WP_Error();
 ?>
 </div>
 <br class="clear" />
-<?php
+<?php        
+    }
+    
+    private function _printErrors()
+    {
+        $this->_printMessages(self::$errors, "error");
     }
 
+    private function _printSuccess()
+    {
+        $this->_printMessages(self::$success, "updated");
+    }
+    
     public function GenerateToken($pTimestamp, $pServerCall = false)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GenerateToken", $params, true); }
@@ -2064,6 +2077,7 @@ class RatingWidgetPlugin
                 RWLogger::Output("    ");
                 echo "\n RATING-WIDGET LOG END-->\n";
             }
+            
             return;
         }
         
@@ -3327,7 +3341,7 @@ class RatingWidgetPlugin
             RWLogger::Output("    ");
             echo "\n RATING-WIDGET LOG END-->\n";
         }
-    }    
+    }
 }
 
 if (class_exists("WP_Widget"))
@@ -3426,10 +3440,10 @@ if (class_exists("WP_Widget"))
             echo $before_title . $title . $after_title;
 
             $empty = true;
-            if (is_array($rw_ret_obj->data) && count($rw_ret_obj->data) > 0)
+            if (count($rw_ret_obj->data) > 0)
             {
                 foreach($rw_ret_obj->data as $type => $ratings)
-                {
+                {                    
                     if (is_array($ratings) && count($ratings) > 0)
                     {
                         echo '<div id="rw_top_rated_' . $type . '">';
