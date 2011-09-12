@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.3.6
+Version: 1.3.7
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -455,7 +455,7 @@ class RatingWidgetPlugin
                 RWLogger::Log("ClientIP", $ip);
             }
 
-            $token = md5($ip . $pTimestamp ./* WP_RW__USER_KEY . */ WP_RW__USER_SECRET);
+            $token = md5(/*$ip . */$pTimestamp ./* WP_RW__USER_KEY . */ WP_RW__USER_SECRET);
         }
         
         if (RWLogger::IsOn()){ RWLogger::Log("TOKEN", $token); }
@@ -556,6 +556,10 @@ class RatingWidgetPlugin
 //            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; ' . $user_label . " (Accumulated)", WP_RW__ID ), __($user_label . '  (Accumulated)', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=user', array(&$this, 'rw_settings_page'));
             add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Advanced', WP_RW__ID ), __('Advanced', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced', array(&$this, 'rw_settings_page'));
             add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Reports', WP_RW__ID ), __('Reports', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=reports', array(&$this, 'rw_settings_page'));
+            
+            if (false !== WP_RW__USER_SECRET){
+                add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Boost', WP_RW__ID ), __('Boost', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=boost', array(&$this, 'rw_settings_page'));
+            }
         }
     }
 
@@ -682,6 +686,9 @@ class RatingWidgetPlugin
                 wp_enqueue_style('rw_external', WP_RW__ADDRESS_CSS . "external.php?all=t", array(), WP_RW__VERSION);
                 wp_enqueue_style('rw_wp_reports');
                 $plugin_page = WP_RW__ADMIN_MENU_SLUG . '&amp;action=reports';
+                break;
+            case "boost":
+                $plugin_page = WP_RW__ADMIN_MENU_SLUG . '&amp;action=boost';
                 break;
             case false:
             default:
@@ -2080,6 +2087,15 @@ class RatingWidgetPlugin
             
             return;
         }
+        else if ($action == "boost")
+        {
+            if (false === WP_RW__USER_SECRET)
+            {
+                $this->rw_boost_page();
+            }
+            
+            return;
+        }
         
         // Variables for the field and option names 
         $rw_form_hidden_field_name = "rw_form_hidden_field_name";
@@ -3342,6 +3358,132 @@ class RatingWidgetPlugin
             echo "\n RATING-WIDGET LOG END-->\n";
         }
     }
+    
+    /* Boosting page
+    ---------------------------------------------------------------------------------------------------------------*/
+    function rw_boost_page_load()
+    {
+        if ('post' != strtolower($_SERVER['REQUEST_METHOD']) ||
+            $_POST["rw_boost_posted"] != "Y")
+        {
+            return;
+        }
+        
+        $element = (isset($_POST["rw_element"]) && in_array($_POST["rw_element"], array("post", "comment", "activity", "forum", "user"))) ?
+                    $_POST["rw_element"] :
+                    false;
+        if (false === $element){ self::$errors->add('rating_widget_boost', __("Invalid element selection.", WP_RW__ID)); return; }
+
+        $id = (isset($_POST["rw_id"]) && is_numeric($_POST["rw_id"]) && $_POST["rw_id"] >= 0) ?
+               (int)$_POST["rw_id"] :
+               false;
+        if (false === $id){ self::$errors->add('rating_widget_boost', __("Invalid element id.", WP_RW__ID)); return; }
+               
+        $votes = (isset($_POST["rw_votes"]) && is_numeric($_POST["rw_votes"])) ?
+                  (int)$_POST["rw_votes"] : 
+                  false;
+        if (false === $votes){ self::$errors->add('rating_widget_boost', __("Invalid votes number.", WP_RW__ID)); return; }
+
+        $rate = (isset($_POST["rw_rate"]) && is_numeric($_POST["rw_rate"])) ?
+                 (float)$_POST["rw_rate"] : 
+                 false;
+        if (false === $rate){ self::$errors->add('rating_widget_boost', __("Invalid votes rate.", WP_RW__ID)); return; }
+        
+        $urid = false;
+        switch ($element)
+        {
+            case "post":
+                $urid = $this->_getPostRatingGuid($id);
+                break;
+            case "comment":
+                $urid = $this->_getCommentRatingGuid($id);
+                break;
+            case "activity":
+                $urid = $this->_getActivityRatingGuid($id);
+                break;
+            case "forum":
+                $urid = $this->_getForumPostRatingGuid($id);
+                break;
+            case "user":
+                $urid = $this->_getUserRatingGuid($id);
+                break;
+        }
+        
+        $details = array(
+            "uid" => WP_RW__USER_KEY,
+            "urid" => $urid,
+            "votes" => $votes,
+            "rate" => $rate,
+        );
+        
+        if (false !== WP_RW__USER_SECRET)
+        {
+            // Secure connection.
+            $timestamp = time();
+            $token = self::GenerateToken($timestamp, true);
+            $details["timestamp"] = $timestamp;
+            $details["token"] = $token;
+        }
+        
+        $rw_ret_obj = self::RemoteCall("action/api/boost.php", $details);
+        if (false === $rw_ret_obj){ return; }
+        
+        // Decode RW ret object.
+        $rw_ret_obj = json_decode($rw_ret_obj);
+
+        if (false == $rw_ret_obj->success)
+        {
+            self::$errors->add('rating_widget_boost', __($rw_ret_obj->msg, WP_RW__ID));
+        }
+        else
+        {
+            self::$success->add('rating_widget_boost', __($rw_ret_obj->msg, WP_RW__ID));
+        }
+    }
+    
+    function rw_boost_page()
+    {
+        $this->rw_boost_page_load();
+
+        $this->_printErrors();
+        $this->_printSuccess();
+?>
+<div class="wrap">
+    <h2><?php _e( 'Rating-Widget Boosting', WP_RW__ID ); ?></h2>
+
+    <p>
+        Here you can boost your ratings.<br /><br />
+        <b style="color: red;">Note: This action impact the rating record directly - it's on your own responsibility!</b><br /><br />
+        Example:<br />
+        <b>Element:</b> <i>Post</i>; <b>Id:</b> <i>2</i>; <b>Votes:</b> <i>3</i>; <b>Rate:</b> <i>4</i>;<br />
+        This will add 3 votes with the rate of 4 stars to Post with Id=2.
+    </p>
+
+    <form action="" method="post">
+        <input type="hidden" name="rw_boost_posted" value="Y" />
+        <label for="rw_element">Element: 
+            <select id="rw_element" name="rw_element">
+                <option value="post" selected="selected">Post/Page</option>
+                <option value="comment">Comment</option>
+                <option value="activity">Activity Update</option>
+                <option value="forum">Forum Post</option>
+                <option value="user">User</option>
+            </select>
+        </label>
+        <br /><br />
+        <label for="rw_id">Id: <input type="text" id="rw_id" name="rw_id" value="" /></label>
+        <br /><br />
+        <label for="rw_votes">Votes: <input type="text" id="rw_votes" name="rw_votes" value="" /></label>
+        <br /><br />
+        <label for="rw_rate">Rate: <input type="text" id="rw_rate" name="rw_rate" value="" /></label>
+        <br />
+        <b style="font-size: 10px;">Note: Rate must be a number between -5 to 5.</b>
+        <br /><br />
+        <input type="submit" value="Boost" />
+    </form>
+</div>
+<?php        
+    }
 }
 
 if (class_exists("WP_Widget"))
@@ -3399,15 +3541,18 @@ if (class_exists("WP_Widget"))
             $types = array(
                 "posts" => array(
                     "rclass" => "blog-post", 
-                    "classes" => "front-post,blog-post,new-blog-post"
+                    "classes" => "front-post,blog-post,new-blog-post",
+                    "options" => WP_RW__BLOG_POSTS_OPTIONS,
                 ),
                 "pages" => array(
                     "rclass" => "page", 
-                    "classes" => "page"
+                    "classes" => "page",
+                    "options" => WP_RW__PAGES_OPTIONS,
                 ),
                 "comments" => array(
                     "rclass" => "comment",
-                    "classes" => "comment,new-blog-comment"
+                    "classes" => "comment,new-blog-comment",
+                    "options" => WP_RW__COMMENTS_OPTIONS,
                 ),
             );
             
@@ -3415,16 +3560,19 @@ if (class_exists("WP_Widget"))
             {
                 if ($instance["show_{$type}"] && $instance["{$type}_count"] > 0)
                 {
+                    $options = json_decode(RatingWidgetPlugin::_getOption($type_data["options"]));
+
                     $queries[$type] = array(
                         "rclasses" => $type_data["classes"],
-                        "votes" => 1,
-                        "orderby" => "avgrate",
+                        "votes" => max(1, (int)$instance["{$type}_min_votes"]),
+                        "orderby" => $instance["{$type}_orderby"],
                         "order" => "DESC",
                         "limit" => (int)$instance["{$type}_count"],
+                        "types" => isset($options->type) ? $options->type : "star",
                     );
                 }
             }
-            
+
             $details["queries"] = urlencode(json_encode($queries));
             
             $rw_ret_obj = RatingWidgetPlugin::RemoteCall("action/query/ratings.php", $details);
@@ -3475,7 +3623,7 @@ if (class_exists("WP_Widget"))
                                     $permalink = get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID;
                                     break;
                             }
-                            $short = (strlen($title) > 30) ? trim(substr($title, 0, 30)) . "..." : $title;
+                            $short = (mb_strlen($title) > 30) ? trim(mb_substr($title, 0, 30)) . "..." : $title;
                             
                             echo '<li>'.
                                  '<a href="' . $permalink . '" title="' . $title . '">' . $short . '</a>'.
@@ -3574,6 +3722,8 @@ if (class_exists("WP_Widget"))
                 $instance["show_{$type}_title"] = (int)$new_instance["show_{$type}_title"]; /* (1.3.3) - Conditional title display */
                 $instance["{$type}_title"] = $new_instance["{$type}_title"]; /* (1.3.3) - Explicit title */
                 $instance["{$type}_count"] = (int)$new_instance["{$type}_count"];
+                $instance["{$type}_min_votes"] = (int)$new_instance["{$type}_min_votes"]; /* (1.3.7) - Min votes to appear */
+                $instance["{$type}_orderby"] = $new_instance["{$type}_orderby"]; /* (1.3.7) - Order by */
             }
             return $instance;
         }
@@ -3581,6 +3731,9 @@ if (class_exists("WP_Widget"))
         function form($instance)
         {
             $types = array("posts", "pages", "comments");
+            $orders = array("avgrate", "votes", "likes", "created", "updated");
+            $orders_labels = array("Average Rate", "Votes Number", "Likes (for Thumbs)", "Created", "Updated");
+                        
             $show = array();
             $items = array();
             
@@ -3590,6 +3743,8 @@ if (class_exists("WP_Widget"))
             {
                 $values["show_{$type}"] = "1";
                 $values["{$type}_count"] = "2";
+                $values["{$type}_min_votes"] = "1";
+                $values["{$type}_orderby"] = "avgrate";
             }
 
             $instance = wp_parse_args((array)$instance, $values);
@@ -3600,13 +3755,19 @@ if (class_exists("WP_Widget"))
                 $values["show_{$type}_title"] = (int)$instance["show_{$type}_title"];
                 $values["{$type}_title"] = $instance["{$type}_title"];
                 $values["{$type}_count"] = (int)$instance["{$type}_count"];
+                $values["{$type}_min_votes"] = max(1, (int)$instance["{$type}_min_votes"]);
+                $values["{$type}_orderby"] = $instance["{$type}_orderby"];
+                if (!in_array($values["{$type}_orderby"], $orders)){ $values["{$type}_orderby"] = "avgrate"; }
             }
     ?>
-        <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title', WP_RW__ID); ?>: <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></label></p>
+        <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Widget Title', WP_RW__ID); ?>: <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></label></p>
     <?php
             foreach ($types as $type)
             {
     ?>
+        <hr>
+        <h4><?php echo ucwords($type); ?></h5>
+        <hr>
         <p>
             <label for="<?php echo $this->get_field_id("show_{$type}"); ?>">
                 <?php
@@ -3639,7 +3800,7 @@ if (class_exists("WP_Widget"))
                 <?php
                     $values["{$type}_title"] = empty($values["{$type}_title"]) ? ucwords($type) : $values["{$type}_title"];
                 ?>
-                <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name("{$type}_title"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_title"]); ?>" />
+                <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name("{$type}_title"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_title"]); ?>" style="width: 120px;" />
             </label>
         </p>
         <p>
@@ -3650,6 +3811,23 @@ if (class_exists("WP_Widget"))
                         echo "<option value='{$i}' " . ($values["{$type}_count"] == $i ? "selected='selected'" : '') . ">{$i}</option>";
                     }
                 ?>
+                    </select>
+            </label>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id("{$type}_min_votes"); ?>"><?php _e("Min Votes", WP_RW__ID); ?> (>= 1):
+                <input style="width: 40px; text-align: center;" id="<?php echo $this->get_field_id("{$type}_min_votes"); ?>" name="<?php echo $this->get_field_name("{$type}_min_votes"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_min_votes"]); ?>" />
+            </label>
+        </p>
+        <p>
+            <label for="rss-items-<?php echo $values["{$type}_orderby"];?>"><?php _e("Order By", WP_RW__ID); ?>:
+                    <select id="<?php echo $this->get_field_id("{$type}_orderby"); ?>" name="<?php echo $this->get_field_name("{$type}_orderby"); ?>">
+                    <?php
+                        for ($i = 0, $len = count($orders); $i <  $len; $i++)
+                        {
+                            echo '<option value="' . $orders[$i] . '"' . ($values["{$type}_orderby"] == $orders[$i] ? "selected='selected'" : '') . '>' . $orders_labels[$i] . '</option>';
+                        }
+                    ?>
                     </select>
             </label>
         </p>
