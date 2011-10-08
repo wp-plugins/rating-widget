@@ -5,6 +5,8 @@
         "bg" => "Bulgarian - български", 
         "ch" => "Chinese - 汉语/漢語",
         "hr" => "Croatian - Hrvatski", 
+        "cs" => "Czech - Čeština", 
+        "da" => "Danish - Dansk", 
         "en" => "English (Default)", 
         "fr" => "French - Français",
         "ka" => "Georgian - ქართული",

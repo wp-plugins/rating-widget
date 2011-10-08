@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.3.7
+Version: 1.3.8
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -2089,7 +2089,7 @@ class RatingWidgetPlugin
         }
         else if ($action == "boost")
         {
-            if (false === WP_RW__USER_SECRET)
+            if (false !== WP_RW__USER_SECRET)
             {
                 $this->rw_boost_page();
             }
@@ -2598,6 +2598,7 @@ class RatingWidgetPlugin
             <div style="margin-left: 650px; padding-top: 32px; width: 350px; padding-right: 20px; position: fixed;">
                 <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/save.php"); ?>
+                <?php require_once(dirname(__FILE__) . "/view/twitter.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/fb.php"); ?>
             </div>
         </div>
@@ -3566,7 +3567,7 @@ if (class_exists("WP_Widget"))
                         "rclasses" => $type_data["classes"],
                         "votes" => max(1, (int)$instance["{$type}_min_votes"]),
                         "orderby" => $instance["{$type}_orderby"],
-                        "order" => "DESC",
+                        "order" => $instance["{$type}_order"],
                         "limit" => (int)$instance["{$type}_count"],
                         "types" => isset($options->type) ? $options->type : "star",
                     );
@@ -3724,6 +3725,7 @@ if (class_exists("WP_Widget"))
                 $instance["{$type}_count"] = (int)$new_instance["{$type}_count"];
                 $instance["{$type}_min_votes"] = (int)$new_instance["{$type}_min_votes"]; /* (1.3.7) - Min votes to appear */
                 $instance["{$type}_orderby"] = $new_instance["{$type}_orderby"]; /* (1.3.7) - Order by */
+                $instance["{$type}_order"] = $new_instance["{$type}_order"]; /* (1.3.8) - Order */
             }
             return $instance;
         }
@@ -3745,6 +3747,7 @@ if (class_exists("WP_Widget"))
                 $values["{$type}_count"] = "2";
                 $values["{$type}_min_votes"] = "1";
                 $values["{$type}_orderby"] = "avgrate";
+                $values["{$type}_order"] = "DESC";
             }
 
             $instance = wp_parse_args((array)$instance, $values);
@@ -3758,6 +3761,8 @@ if (class_exists("WP_Widget"))
                 $values["{$type}_min_votes"] = max(1, (int)$instance["{$type}_min_votes"]);
                 $values["{$type}_orderby"] = $instance["{$type}_orderby"];
                 if (!in_array($values["{$type}_orderby"], $orders)){ $values["{$type}_orderby"] = "avgrate"; }
+                $values["{$type}_order"] = strtoupper($instance["{$type}_order"]);
+                if (!in_array($values["{$type}_order"], array("DESC", "ASC"))){ $values["{$type}_order"] = "DESC"; }
             }
     ?>
         <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Widget Title', WP_RW__ID); ?>: <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></label></p>
@@ -3807,7 +3812,7 @@ if (class_exists("WP_Widget"))
             <label for="rss-items-<?php echo $values["{$type}_count"];?>"><?php _e("How many {$type} would you like to display?", WP_RW__ID); ?>
                     <select id="<?php echo $this->get_field_id("{$type}_count"); ?>" name="<?php echo $this->get_field_name("{$type}_count"); ?>">
                 <?php
-                    for ($i = 1; $i <= 10; $i++){
+                    for ($i = 1; $i <= 25; $i++){
                         echo "<option value='{$i}' " . ($values["{$type}_count"] == $i ? "selected='selected'" : '') . ">{$i}</option>";
                     }
                 ?>
@@ -3828,6 +3833,14 @@ if (class_exists("WP_Widget"))
                             echo '<option value="' . $orders[$i] . '"' . ($values["{$type}_orderby"] == $orders[$i] ? "selected='selected'" : '') . '>' . $orders_labels[$i] . '</option>';
                         }
                     ?>
+                    </select>
+            </label>
+        </p>
+        <p>
+            <label for="rss-items-<?php echo $values["{$type}_order"];?>"><?php _e("Order", WP_RW__ID); ?>:
+                    <select id="<?php echo $this->get_field_id("{$type}_order"); ?>" name="<?php echo $this->get_field_name("{$type}_order"); ?>">
+                        <option value="DESC"<?php echo ($values["{$type}_order"] == "DESC" ? " selected='selected'" : '');?>>BEST (Descending)</option>
+                        <option value="ASC"<?php echo ($values["{$type}_order"] == "ASC" ? " selected='selected'" : '');?>>WORST (Ascending)</option>
                     </select>
             </label>
         </p>
