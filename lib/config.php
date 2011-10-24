@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.3.5");
+    define("WP_RW__VERSION", "1.3.9");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -9,7 +9,7 @@
     
     /* Load Unique-User-Key & API Secret
     -----------------------------------------------------------------------------------------*/
-    require_once(dirname(__FILE__) . "/key.php");
+    if (file_exists(dirname(__FILE__) . "/key.php")){ require_once(dirname(__FILE__) . "/key.php"); }
 
     /* Server Address & Remote Address
     -----------------------------------------------------------------------------------------*/
@@ -154,8 +154,9 @@
     define("WP_RW__ADDRESS_JS", "http://" . WP_RW__DOMAIN . "/js/");
     define("WP_RW__ADDRESS_IMG", "http://" . WP_RW__DOMAIN . "/img/");
 
-    define("WP_RW__BP_INSTALLED", function_exists("bp_activity_get_specific"));
-    define("WP_RW__BBP_INSTALLED", (WP_RW__BP_INSTALLED && ("" != get_site_option("bb-config-location", ""))));
+    define("WP_RW__BP_INSTALLED", function_exists("bp_activity_get_specific")); // BuddyPress earlier than v.1.5
+    // Moved to rw_init_bp().
+    // define("WP_RW__BBP_INSTALLED", (WP_RW__BP_INSTALLED && ("" != get_site_option("bb-config-location", ""))));
 
     /* Server Address & Remote Address
     -----------------------------------------------------------------------------------------*/

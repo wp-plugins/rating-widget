@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.2
-Stable tag: 1.3.8
+Stable tag: 1.3.9
 
 Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
 
@@ -91,6 +91,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.3.9 =
+* Fix: BuddyPress & bbPress ratings support for the newest versions.
+
 = 1.3.8 =
 * New: Top-Rated Widget order type - you can now show worst rated elements.
 * New: Localized to Czech.

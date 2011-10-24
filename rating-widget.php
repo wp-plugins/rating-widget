@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.3.8
+Version: 1.3.9
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -39,6 +39,24 @@ class RatingWidgetPlugin
     
     static $VERSION;
     
+    static $WP_RW__BP_INSTALLED = false;
+    public function rw_init_bp()
+    {
+        self::$WP_RW__BP_INSTALLED = true;
+        
+        // Activity page.
+        add_action("bp_has_activities", array(&$this, "rw_before_activity_loop"));
+        
+        // Forum topic page.
+        add_filter("bp_has_topic_posts", array(&$this, "rw_before_forum_loop"));
+        
+        // User profile page.
+        add_action("bp_before_member_header_meta", array(&$this, "rw_display_user_profile_rating"));
+        
+        define("WP_RW__BBP_INSTALLED", ("" != get_site_option("bb-config-location", "")));
+    }
+    
+    
     public function __construct()
     {
         self::$errors = new WP_Error();
@@ -61,8 +79,8 @@ class RatingWidgetPlugin
             RWLogger::Log("WP_RW__CLIENT_ADDR", WP_RW__CLIENT_ADDR);
             RWLogger::Log("WP_RW__PLUGIN_DIR", WP_RW__PLUGIN_DIR);
             RWLogger::Log("WP_RW__PLUGIN_URL", WP_RW__PLUGIN_URL);
-            RWLogger::Log("WP_RW__BP_INSTALLED", (WP_RW__BP_INSTALLED ? "true" : "false"));
-            RWLogger::Log("WP_RW__BBP_INSTALLED", (WP_RW__BBP_INSTALLED ? "true" : "false"));
+            //RWLogger::Log("WP_RW__BP_INSTALLED", (WP_RW__BP_INSTALLED ? "true" : "false"));
+            //RWLogger::Log("WP_RW__BBP_INSTALLED", (WP_RW__BBP_INSTALLED ? "true" : "false"));
         }
 
         if (false !== WP_RW__USER_KEY)
@@ -70,17 +88,15 @@ class RatingWidgetPlugin
             // Posts/Pages/Comments
             add_action("loop_start", array(&$this, "rw_before_loop_start"));
             
-            // BodyPress extension.
             if (WP_RW__BP_INSTALLED)
             {
-                // Activity page.
-                add_action("bp_has_activities", array(&$this, "rw_before_activity_loop"));
-                
-                // Forum topic page.
-                add_filter("bp_has_topic_posts", array(&$this, "rw_before_forum_loop"));
-                
-                // User profile page.
-                add_action("bp_before_member_header_meta", array(&$this, "rw_display_user_profile_rating"));
+                // BuddyPress earlier than v.1.5
+                $this->rw_init_bp();
+            }
+            else
+            {
+                // BuddyPress v.1.5 and latter.
+                add_action("bp_include", array(&$this, "rw_init_bp"));
             }
             
             // Rating-Widget main javascript load.
@@ -544,14 +560,14 @@ class RatingWidgetPlugin
         { 
             add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Basic', WP_RW__ID ), __('Basic', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'));
             
-            if (WP_RW__BP_INSTALLED){
+            if (self::$WP_RW__BP_INSTALLED){
                 add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; BuddyPress', WP_RW__ID ), __('BuddyPress', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=buddypress', array(&$this, 'rw_settings_page'));
             }
             if (WP_RW__BBP_INSTALLED){
                 add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; bbPress', WP_RW__ID ), __('bbPress', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=bbpress', array(&$this, 'rw_settings_page'));
             }
             
-            $user_label = (WP_RW__BP_INSTALLED) ? "User" : "Author";
+            $user_label = (self::$WP_RW__BP_INSTALLED) ? "User" : "Author";
              
 //            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; ' . $user_label . " (Accumulated)", WP_RW__ID ), __($user_label . '  (Accumulated)', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=user', array(&$this, 'rw_settings_page'));
             add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Advanced', WP_RW__ID ), __('Advanced', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced', array(&$this, 'rw_settings_page'));
@@ -878,7 +894,7 @@ class RatingWidgetPlugin
                         __('Comments', WP_RW__ID) => "comments"
                     );
                     
-                    if (WP_RW__BP_INSTALLED && is_plugin_active(WP_RW__BP_CORE_FILE))
+                    if (self::$WP_RW__BP_INSTALLED && is_plugin_active(WP_RW__BP_CORE_FILE))
                     {
                         $select[__('Activity-Updates', WP_RW__ID)] = "activity-updates";
                         $select[__('Activity-Comments', WP_RW__ID)] = "activity-comments";
@@ -2101,7 +2117,7 @@ class RatingWidgetPlugin
         $rw_form_hidden_field_name = "rw_form_hidden_field_name";
 
         
-        if (($action === "buddypress" && WP_RW__BP_INSTALLED) && is_plugin_active(WP_RW__BP_CORE_FILE))
+        if (($action === "buddypress" && self::$WP_RW__BP_INSTALLED) && is_plugin_active(WP_RW__BP_CORE_FILE))
         {
             $settings_data = array(
                 "activity-blog-posts" => array(
@@ -2228,7 +2244,7 @@ class RatingWidgetPlugin
                 ),
             );
             
-            if (WP_RW__BP_INSTALLED && is_plugin_active(WP_RW__BP_CORE_FILE))
+            if (self::$WP_RW__BP_INSTALLED && is_plugin_active(WP_RW__BP_CORE_FILE))
             {
                 $settings_data["users-activity-updates"] = array(
                     "tab" => "Activity Updates",
