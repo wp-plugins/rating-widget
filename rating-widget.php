@@ -53,7 +53,10 @@ class RatingWidgetPlugin
         // User profile page.
         add_action("bp_before_member_header_meta", array(&$this, "rw_display_user_profile_rating"));
         
-        define("WP_RW__BBP_INSTALLED", ("" != get_site_option("bb-config-location", "")));
+        if (false !== WP_RW__USER_SECRET)
+        {
+            define("WP_RW__BBP_INSTALLED", ("" != get_site_option("bb-config-location", "")));
+        }
     }
     
     
