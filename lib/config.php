@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.3.9");
+    define("WP_RW__VERSION", "1.4.0");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -23,7 +23,7 @@
 
     /* Uncomment for debug mode.
     -----------------------------------------------------------------------------------------*/
-    // define("WP_RW__DEBUG", "");
+//     define("WP_RW__DEBUG", "");
 
     /* For Rating-Widget development mode.
     -----------------------------------------------------------------------------------------*/
@@ -117,6 +117,7 @@
     /* Advanced Settings
     -----------------------------------------------------------------------------------------*/
     define("WP_RW__FLASH_DEPENDENCY", "rw_flash_dependency");
+    define("WP_RW__SHOW_ON_MOBILE", "rw_show_on_mobile");
     define("WP_RW__LOGGER", "rw_logger");
 
     define("WP_RW__USER_SECONDERY_ID", "00");

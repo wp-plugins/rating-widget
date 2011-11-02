@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.3.9
+Version: 1.4.0
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -39,7 +39,9 @@ class RatingWidgetPlugin
     
     static $VERSION;
     
-    static $WP_RW__BP_INSTALLED = false;
+    public static $WP_RW__BP_INSTALLED = false;
+    public static $WP_RW__HIDE_RATINGS = false;
+    
     public function rw_init_bp()
     {
         self::$WP_RW__BP_INSTALLED = true;
@@ -69,6 +71,28 @@ class RatingWidgetPlugin
         {
             // Start logger.
             RWLogger::PowerOn();
+        }
+        
+        $rw_show_on_mobile = $this->_getOption(WP_RW__SHOW_ON_MOBILE);
+        
+        if (RWLogger::IsOn()){ RWLogger::Log("WP_RW__SHOW_ON_MOBILE", $rw_show_on_mobile); }
+        
+        if ("false" === $rw_show_on_mobile)
+        {
+            require_once(WP_RW__PLUGIN_DIR . "/vendors/class.mobile.detect.php");
+            $detect = new Mobile_Detect();
+            
+            $is_mobile = $detect->isMobile();
+            
+            if (RWLogger::IsOn()){ RWLogger::Log("WP_RW__IS_MOBILE_CLIENT", ($is_mobile ? "true" : "false")); }
+            
+            if ($is_mobile)
+            {
+                // Don't show any ratings.
+                self::$WP_RW__HIDE_RATINGS = true;
+                
+                return;
+            }
         }
                 
         // Load user key.
@@ -184,6 +208,11 @@ class RatingWidgetPlugin
         return $urid;
     }
 
+    public static function Urid2ActivityId($pUrid)
+    {
+        return self::Urid2Id($pUrid);
+    }
+
     private function _getForumPostRatingGuid($id = false)
     {
         if (false === $id){ $id = bp_get_the_topic_post_id(); }
@@ -195,6 +224,11 @@ class RatingWidgetPlugin
         }
         
         return $urid;
+    }
+
+    public static function Urid2ForumPostId($pUrid)
+    {
+        return self::Urid2Id($pUrid);
     }
     
     private function _getUserRatingGuid($secondery_id = WP_RW__USER_SECONDERY_ID, $id = false)
@@ -213,6 +247,12 @@ class RatingWidgetPlugin
         
         return $urid;
     }
+    
+    public static function Urid2UserId($pUrid)
+    {
+        return self::Urid2Id($pUrid, 3);
+    }
+    
     
     private static $OPTIONS_DEFAULTS = array(
         WP_RW__FRONT_POSTS_ALIGN => '{"ver": "top", "hor": "left"}',
@@ -280,6 +320,8 @@ class RatingWidgetPlugin
         WP_RW__SHOW_ON_EXCERPT => '{"front-post": false, "blog-post": false, "page": false}',
         
         WP_RW__FLASH_DEPENDENCY => "true",
+        
+        WP_RW__SHOW_ON_MOBILE => "true",
         
         WP_RW__LOGGER => false,
     );
@@ -1842,6 +1884,9 @@ class RatingWidgetPlugin
         // Get flash dependency.
         $rw_flash_dependency = $this->_getOption(WP_RW__FLASH_DEPENDENCY);
         
+        // Get show on mobile flag.
+        $rw_show_on_mobile =  $this->_getOption(WP_RW__SHOW_ON_MOBILE);
+        
         if (isset($_POST[$rw_form_hidden_field_name]) && $_POST[$rw_form_hidden_field_name] == 'Y')
         {
             $rw_restore_defaults = (isset($_POST["rw_restore_defaults"]) && in_array($_POST["rw_restore_defaults"], array("true", "false"))) ? 
@@ -1926,6 +1971,16 @@ class RatingWidgetPlugin
                         // Save flash dependency.
                         $this->_setOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
                     }
+
+                    // Get mobile flag.
+                    if (isset($_POST["rw_show_on_mobile"]) && 
+                        in_array($_POST["rw_show_on_mobile"], array("true", "false")) &&
+                        $_POST["rw_show_on_mobile"] != $rw_show_on_mobile)
+                    {
+                        $rw_show_on_mobile = $_POST["rw_show_on_mobile"];
+                        // Save show on mobile flag.
+                        $this->_setOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
+                    }
             }
 ?>
     <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
@@ -1977,6 +2032,21 @@ class RatingWidgetPlugin
                                     <i class="rw-ui-sprite rw-ui-flash-disabled"></i> <input type="radio" name="rw_flash_dependency" value="false" <?php if ($rw_flash_dependency == "false") echo ' checked="checked"';?>> <span>Disable Flash dependency (computers with identical IPs won't be distinguished).</span>
                                 </div>
                                 <span style="font-size: 10px; background: white; padding: 2px; border: 1px solid gray; display: block; margin-top: 5px; font-weight: bold; background: rgb(240,240,240); color: black;">Flash dependency <b style="text-decoration: underline;">don't</b> means that if a user don't have a flash player installed on his browser then it will stuck. The reason to disable flash is for users which have flash blocking add-ons (e.g. FF Flashblock add-on), which is quite rare.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="rw_mobile_settings" class="has-sidebar has-right-sidebar">
+                    <div class="has-sidebar-content">
+                        <div class="postbox rw-body">
+                            <h3>Mobile Settings</h3>
+                            <div class="inside rw-ui-content-container rw-no-radius" style="padding: 5px; width: 610px;">
+                                <div class="rw-ui-img-radio rw-ui-hor<?php if ($rw_show_on_mobile == "true") echo ' rw-selected';?>">
+                                    <i class="rw-ui-sprite rw-ui-mobile"></i> <input type="radio" name="rw_show_on_mobile" value="true" <?php if ($rw_show_on_mobile == "true") echo ' checked="checked"';?>> <span>Show ratings on Mobile devices.</span>
+                                </div>
+                                <div class="rw-ui-img-radio rw-ui-hor<?php if ($rw_show_on_mobile == "false") echo ' rw-selected';?>">
+                                    <i class="rw-ui-sprite rw-ui-mobile-disabled"></i> <input type="radio" name="rw_show_on_mobile" value="false" <?php if ($rw_show_on_mobile == "false") echo ' checked="checked"';?>> <span>Hide ratings on Mobile devices.</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3138,7 +3208,7 @@ class RatingWidgetPlugin
 
             // Get user profile user-rating-id.
             $user_urid = $this->_getUserRatingGuid(WP_RW__USER_SECONDERY_ID, $user_id);
-            
+
             // Queue user profile rating.
             self::QueueRatingData($user_urid, bp_get_displayed_user_fullname(), bp_get_displayed_user_link(), $rclass);
             
@@ -3374,6 +3444,7 @@ class RatingWidgetPlugin
         if (RWLogger::IsOn())
         {
             echo "\n<!-- RATING-WIDGET LOG START\n\n";
+            echo "\n<!-- RATING-WIDGET LOG START\n\n";
             RWLogger::Output("    ");
             echo "\n RATING-WIDGET LOG END-->\n";
         }
@@ -3532,15 +3603,64 @@ if (class_exists("WP_Widget"))
             if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("RWTopRated.widget", $params, true); }
 
             if (!defined("WP_RW__USER_KEY") || false === WP_RW__USER_KEY){ return; }
+            
+            if (RatingWidgetPlugin::$WP_RW__HIDE_RATINGS){ return; }
 
             extract($args, EXTR_SKIP);
     
-            if (false === $instance['show_posts'] &&
-                false === $instance['show_comments'] &&
-                false === $instance['show_pages'])
+            $types = array(
+                "posts" => array(
+                    "rclass" => "blog-post", 
+                    "classes" => "front-post,blog-post,new-blog-post,user-post",
+                    "options" => WP_RW__BLOG_POSTS_OPTIONS,
+                ),
+                "pages" => array(
+                    "rclass" => "page", 
+                    "classes" => "page,user-page",
+                    "options" => WP_RW__PAGES_OPTIONS,
+                ),
+                "comments" => array(
+                    "rclass" => "comment",
+                    "classes" => "comment,new-blog-comment,user-comment",
+                    "options" => WP_RW__COMMENTS_OPTIONS,
+                ),
+                "activity_updates" => array(
+                    "rclass" => "activity-update",
+                    "classes" => "activity-update,user-activity-update",
+                    "options" => WP_RW__ACTIVITY_UPDATES_OPTIONS,
+                ),
+                "activity_comments" => array(
+                    "rclass" => "activity-comment",
+                    "classes" => "activity-comment,user-activity-comment",
+                    "options" => WP_RW__ACTIVITY_COMMENTS_OPTIONS,
+                ),
+                "forum_posts" => array(
+                    "rclass" => "forum-post",
+                    "classes" => "forum-post,new-forum-post,user-forum-post",
+                    "options" => WP_RW__FORUM_POSTS_OPTIONS,
+                ),
+                "users" => array(
+                    "rclass" => "user",
+                    "classes" => "user",
+                    "options" => WP_RW__FORUM_POSTS_OPTIONS,
+                ),
+            );
+
+            $show_any = false;
+
+            foreach ($types as $type => $data)
+            {
+                if (false !== $instance["show_$type"])
+                {
+                    $show_any = true;
+                    break;
+                }
+            }
+
+            if (false === $show_any)
             {
                 // Nothing to show.
-                return;
+                return;                
             }
             
             $details = array( 
@@ -3557,25 +3677,7 @@ if (class_exists("WP_Widget"))
             }
 
             $queries = array();
-            
-            $types = array(
-                "posts" => array(
-                    "rclass" => "blog-post", 
-                    "classes" => "front-post,blog-post,new-blog-post",
-                    "options" => WP_RW__BLOG_POSTS_OPTIONS,
-                ),
-                "pages" => array(
-                    "rclass" => "page", 
-                    "classes" => "page",
-                    "options" => WP_RW__PAGES_OPTIONS,
-                ),
-                "comments" => array(
-                    "rclass" => "comment",
-                    "classes" => "comment,new-blog-comment",
-                    "options" => WP_RW__COMMENTS_OPTIONS,
-                ),
-            );
-            
+           
             foreach ($types as $type => $type_data)
             {
                 if ($instance["show_{$type}"] && $instance["{$type}_count"] > 0)
@@ -3641,6 +3743,25 @@ if (class_exists("WP_Widget"))
                                     $comment = get_comment($id);
                                     $title = trim(strip_tags($comment->comment_content));
                                     $permalink = get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID;
+                                    break;
+                                case "activity_updates":
+                                case "activity_comments":
+                                    $id = RatingWidgetPlugin::Urid2ActivityId($urid);
+                                    $activity = new bp_activity_activity($id);
+                                    $title = trim(strip_tags($activity->content));
+                                    $permalink = bp_activity_get_permalink($id);
+                                    break;
+                                case "users":
+                                    $id = RatingWidgetPlugin::Urid2UserId($urid);
+                                    $title = trim(strip_tags(bp_core_get_user_displayname($id)));
+                                    $permalink = bp_core_get_user_domain($id);
+                                    break;
+                                case "forum_posts":
+                                    $id = RatingWidgetPlugin::Urid2ForumPostId($urid);
+                                    $forum_post = bp_forums_get_post($id);
+                                    $title = trim(strip_tags($forum_post->post_text));
+                                    $page = bb_get_page_number($forum_post->post_position);
+                                    $permalink = get_topic_link($id, $page) . "#post-{$id}";
                                     break;
                             }
                             $short = (mb_strlen($title) > 30) ? trim(mb_substr($title, 0, 30)) . "..." : $title;
@@ -3734,6 +3855,18 @@ if (class_exists("WP_Widget"))
         {
             $types = array("posts", "pages", "comments");
             
+            if (RatingWidgetPlugin::$WP_RW__BP_INSTALLED)
+            {
+                $types[] = "activity_updates";
+                $types[] = "activity_comments";
+                $types[] = "users";
+            }
+            
+            if (defined(WP_RW__BBP_INSTALLED) && WP_RW__BBP_INSTALLED)
+            {
+                $types[] = "forum_posts";
+            }
+            
             $instance = $old_instance;
             $instance['title'] = strip_tags($new_instance['title']);
             foreach ($types as $type)
@@ -3752,9 +3885,22 @@ if (class_exists("WP_Widget"))
         function form($instance)
         {
             $types = array("posts", "pages", "comments");
+                        
+            if (RatingWidgetPlugin::$WP_RW__BP_INSTALLED)
+            {
+                $types[] = "activity_updates";
+                $types[] = "activity_comments";
+                $types[] = "users";
+            }
+            
+            if (defined(WP_RW__BBP_INSTALLED) && WP_RW__BBP_INSTALLED)
+            {
+                $types[] = "forum_posts";
+            }
+            
             $orders = array("avgrate", "votes", "likes", "created", "updated");
             $orders_labels = array("Average Rate", "Votes Number", "Likes (for Thumbs)", "Created", "Updated");
-                        
+
             $show = array();
             $items = array();
             
@@ -3790,7 +3936,7 @@ if (class_exists("WP_Widget"))
             {
     ?>
         <hr>
-        <h4><?php echo ucwords($type); ?></h5>
+        <h4><?php echo ucwords(str_replace("_", " ", $type)); ?></h5>
         <hr>
         <p>
             <label for="<?php echo $this->get_field_id("show_{$type}"); ?>">
