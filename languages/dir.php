@@ -8,6 +8,7 @@
         "cs" => "Czech - Čeština", 
         "da" => "Danish - Dansk", 
         "en" => "English (Default)", 
+        "fi" => "Finnish - Suomi",
         "fr" => "French - Français",
         "ka" => "Georgian - ქართული",
         "de" => "German - Deutsch",
@@ -20,6 +21,8 @@
 //        "ko" => "Korean",
 //        "la" => "Latin",
         "nl" => "Nederlands - Dutch",
+        "no" => "Norwegian - Norsk",
+        "fa" => "Persian - فارسی",
         "pl" => "Polish - Polska",
         "pt" => "Portuguese - Português",
         "ro" => "Romanian - Română",
@@ -28,6 +31,7 @@
         "sv" => "Swedish - Svenska",
         "es" => "Spanish - Español",
         "tr" => "Turkish - Türkçe",
+        "vi" => "Vietnamese - Tiếng Việt",
 //        "th" => "Thai",
     );
 ?>
