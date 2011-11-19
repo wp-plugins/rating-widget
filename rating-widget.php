@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.4.0
+Version: 1.4.1
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -3157,6 +3157,13 @@ class RatingWidgetPlugin
     function rw_display_activity_comment_rating($comment_content)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_activity_comment_rating", $params); }
+        
+        if (!isset($this->current_comment) || null === $this->current_comment)
+        {
+            if (RWLogger::IsOn()){ RWLogger::Log("rw_display_activity_comment_rating", "Current comment is not set."); }
+            
+            return $comment_content;
+        }
         
         // Find current comment.
         while (!$this->current_comment->children || false === current($this->current_comment->children))
