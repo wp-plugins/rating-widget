@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.4.1");
+    define("WP_RW__VERSION", "1.4.2");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -151,9 +151,18 @@
     -----------------------------------------------------------------------------------------*/
     if (!defined("WP_RW__DOMAIN")){ define("WP_RW__DOMAIN", "rating-widget.com"); }
     define("WP_RW__ADDRESS", "http://" . WP_RW__DOMAIN);
-    define("WP_RW__ADDRESS_CSS", "http://" . WP_RW__DOMAIN . "/css/");
-    define("WP_RW__ADDRESS_JS", "http://" . WP_RW__DOMAIN . "/js/");
-    define("WP_RW__ADDRESS_IMG", "http://" . WP_RW__DOMAIN . "/img/");
+    if (WP_RW__LOCALHOST)
+    {
+        define("WP_RW__ADDRESS_CSS", "http://" . WP_RW__DOMAIN . "/css/");
+        define("WP_RW__ADDRESS_JS", "http://" . WP_RW__DOMAIN . "/js/");
+        define("WP_RW__ADDRESS_IMG", "http://" . WP_RW__DOMAIN . "/img/");
+    }
+    else
+    {
+        define("WP_RW__ADDRESS_CSS", "http://css.rating-widget.com/");
+        define("WP_RW__ADDRESS_JS", "http://js.rating-widget.com/");
+        define("WP_RW__ADDRESS_IMG", "http://img.rating-widget.com/");
+    }
 
     define("WP_RW__BP_INSTALLED", function_exists("bp_activity_get_specific")); // BuddyPress earlier than v.1.5
     // Moved to rw_init_bp().

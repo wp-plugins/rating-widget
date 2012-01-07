@@ -7,7 +7,7 @@
 <tr id="rw_theme" class="rw-<?php echo ($odd ? "odd" : "even");?>">
     <td><span class="rw-ui-def">Theme:</span></td>
     <td>
-        <img id="rw_theme_loader" src="http://<?php echo WP_RW__DOMAIN;?>/img/rw.loader.gif" alt="" />
+        <img id="rw_theme_loader" src="<?php echo WP_RW__ADDRESS_IMG;?>rw.loader.gif" alt="" />
         <?php
             foreach ($rw_themes as $type => $type_themes)
             {

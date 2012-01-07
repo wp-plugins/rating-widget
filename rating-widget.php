@@ -101,6 +101,8 @@ class RatingWidgetPlugin
         if (RWLogger::IsOn())
         { 
             RWLogger::Log("WP_RW__VERSION", WP_RW__VERSION);
+            RWLogger::Log("WP_RW__USER_KEY", WP_RW__USER_KEY);
+            RWLogger::Log("WP_RW__USER_SECRET", WP_RW__USER_SECRET);
             RWLogger::Log("WP_RW__DOMAIN", WP_RW__DOMAIN);
             RWLogger::Log("WP_RW__SERVER_ADDR", WP_RW__SERVER_ADDR);
             RWLogger::Log("WP_RW__CLIENT_ADDR", WP_RW__CLIENT_ADDR);
@@ -3450,7 +3452,6 @@ class RatingWidgetPlugin
         
         if (RWLogger::IsOn())
         {
-            echo "\n<!-- RATING-WIDGET LOG START\n\n";
             echo "\n<!-- RATING-WIDGET LOG START\n\n";
             RWLogger::Output("    ");
             echo "\n RATING-WIDGET LOG END-->\n";
