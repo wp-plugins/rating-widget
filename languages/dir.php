@@ -20,6 +20,7 @@
         "jp" => "Japanese - 日本語",
 //        "ko" => "Korean",
 //        "la" => "Latin",
+        "lh" => "Lithuanian - Lietuvių",
         "nl" => "Nederlands - Dutch",
         "no" => "Norwegian - Norsk",
         "fa" => "Persian - فارسی",

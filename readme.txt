@@ -32,6 +32,7 @@ Rating-Widget ratings are localizable and currently available in:
 * Hungarian
 * Italian
 * Japanese
+* Lithuanian
 * Nederlands
 * Norwegian
 * Persian
@@ -97,6 +98,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 == Change Log ==
 = 1.4.2 =
 * New: Updated JS, CSS & Image urls to new sub-domains.
+* New: Localized to Lithuanian.
 
 = 1.4.1 =
 * Fix: Replies of signed-out BuddyPress user's were fixed.
