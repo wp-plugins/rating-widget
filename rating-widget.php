@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.4.2
+Version: 1.4.3
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -711,6 +711,9 @@ class RatingWidgetPlugin
             <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
         </noscript>
     </form>
+    <div style="text-align: center; margin: 20px auto;">
+        <a href="<?php echo WP_RW__ADDRESS;?>/track/?s=1&r=<?php echo urlencode("http://www.host1plus.com");?>" title="Host1Plus Hosting" target="_blank"><img src="<?php echo WP_RW__ADDRESS;?>/track/?s=1&t=<?php echo time();?>&r=<?php echo urlencode(WP_RW__ADDRESS_IMG . "sponsor/host1plus/728x90.jpg");?>" alt="" /></a>
+    </div>
 </div>
 <?php        
     }
@@ -2601,20 +2604,20 @@ class RatingWidgetPlugin
             <div style="float: left;">
                 <div id="side-sortables"> 
                     <div id="categorydiv" class="categorydiv">
-                        <ul id="category-tabs" class="category-tabs">
+                        <ul id="category-tabs" class="category-tabs" style="height: 21px;">
                             <?php
                                 foreach ($settings_data as $key => $settings)
                                 {
                                     if ($settings_data[$key] == $rw_current_settings)
                                     {
                                 ?>
-                                    <li class="tabs"><?php echo _e($settings["tab"], WP_RW__ID);?></li>
+                                    <li class="tabs" style="float: left;"><?php echo _e($settings["tab"], WP_RW__ID);?></li>
                                 <?php
                                     }
                                     else
                                     {
                                 ?>
-                                    <li><a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>"><?php echo _e($settings["tab"], WP_RW__ID);?></a></li>
+                                    <li style="float: left;"><a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>"><?php echo _e($settings["tab"], WP_RW__ID);?></a></li>
                                 <?php
                                     }
                                 }
@@ -2686,11 +2689,14 @@ class RatingWidgetPlugin
                 <?php require_once(dirname(__FILE__) . "/view/availability_options.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/visibility_options.php"); ?>
             </div>
-            <div style="margin-left: 650px; padding-top: 32px; width: 350px; padding-right: 20px; position: fixed;">
+            <div id="rw_floating_container">
                 <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/save.php"); ?>
+            </div>
+            <div style="margin-left: 650px; padding-top: 185px; width: 350px; padding-right: 20px;">
                 <?php require_once(dirname(__FILE__) . "/view/twitter.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/fb.php"); ?>
+                <?php require_once(dirname(__FILE__) . "/view/sponsor.php"); ?>
             </div>
         </div>
     </form>
@@ -3322,7 +3328,7 @@ class RatingWidgetPlugin
     
     /* Final Rating-Widget JS attach (before </body>)
     ---------------------------------------------------------------------------------------------------------------*/
-    function rw_attach_rating_js($pElement)
+    function rw_attach_rating_js($pElement = false)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_attach_rating_js", $params); }
 
@@ -3440,7 +3446,7 @@ class RatingWidgetPlugin
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
                         rw.src = "<?php echo WP_RW__ADDRESS_JS; ?>external<?php
                             if (!defined("WP_RW__DEBUG")){ echo ".min"; }
-                        ?>.php";
+                        ?>.js";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }
@@ -4035,5 +4041,6 @@ if (!function_exists("mb_substr")){
 }
 
 // Invoke class.
+global $rwp;
 $rwp = new RatingWidgetPlugin();
 ?>
