@@ -670,6 +670,9 @@ class RatingWidgetPlugin
         $this->_setOption("rw_user_key", $rw_user_key);
         define("WP_RW__USER_KEY", $rw_user_key);
         
+        // Refresh the page.
+        header("Location: " . $_SERVER["REQUEST_URI"]);
+        
         return true;
     }
     
