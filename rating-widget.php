@@ -635,6 +635,12 @@ class RatingWidgetPlugin
             return false;
         }
         
+        if (!isset($_POST["rw_service_terms"]))
+        {
+            self::$errors->add('rw_service_terms', __("You can't create an account without accepting the Terms of Use and the Privacy Policy."));
+            return false;
+        }
+        
         // Get reCAPTCHA inputs.
         $recaptcha_challenge = $_POST['recaptcha_challenge_field'];
         $recaptcha_response = $_POST['recaptcha_response_field'];
@@ -664,6 +670,9 @@ class RatingWidgetPlugin
         $this->_setOption("rw_user_key", $rw_user_key);
         define("WP_RW__USER_KEY", $rw_user_key);
         
+        // Refresh the page.
+        header("Location: " . $_SERVER["REQUEST_URI"]);
+        
         return true;
     }
     
@@ -676,46 +685,8 @@ class RatingWidgetPlugin
         }                               
 
         $this->_printErrors();
-?>
-<div class="wrap">
-    <h2><?php _e( 'Rating-Widget Account', WP_RW__ID ); ?></h2>
-
-    <p>
-        <?php 
-            printf(__('Before you can use the Rating-Widget plugin, you need to get your <a href="%s">Rating-Widget.com</a> unique user-key.', WP_RW__ID), WP_RW__ADDRESS);
-            echo "<br /><br />";
-            _e('In order to get your user-key, please fill the CAPTCHA below and click on the "Verify CAPTCHA" button.', WP_RW__ID)
-        ?>
-    </p>
-
-    <form action="" method="post">
-        <script type="text/javascript">
-            var RecaptchaOptions = { theme : 'white' };
-        </script>
-        <div id="rw_recaptcha_container">
-            <script type="text/javascript">
-                document.write('<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=' + 
-                               RWM.RECAPTCHA_PUBLIC + '"></' + 'script>');
-            </script>
-            <p class="submit">
-                <input type="hidden" name="action" value="account" />
-                <input type="submit" value="<?php echo esc_attr(__('Verify CAPTCHA', WP_RW__ID)); ?>" />
-            </p>
-        </div>
-        <noscript>
-            <script type="text/javascript">
-                document.write('<iframe src="http://www.google.com/recaptcha/api/noscript?k=' + RWM.RECAPTCHA_PUBLIC + '" height="300" width="500" frameborder="0"></iframe><br>');
-            </script>
-            <textarea name="recaptcha_challenge_field" rows="3" cols="40">
-            </textarea>
-            <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
-        </noscript>
-    </form>
-    <div style="text-align: center; margin: 20px auto;">
-        <a href="<?php echo WP_RW__ADDRESS;?>/track/?s=1&r=<?php echo urlencode("http://www.host1plus.com");?>" title="Host1Plus Hosting" target="_blank"><img src="<?php echo WP_RW__ADDRESS;?>/track/?s=1&t=<?php echo time();?>&r=<?php echo urlencode(WP_RW__ADDRESS_IMG . "sponsor/host1plus/728x90.jpg");?>" alt="" /></a>
-    </div>
-</div>
-<?php        
+        
+        require_once(dirname(__FILE__) . "/view/userkey_generation.php");
     }
 
     function rw_settings_page_load()

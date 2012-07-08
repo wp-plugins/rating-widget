@@ -59,7 +59,9 @@ Become our **Facebook** fan to keep up with the latest updates [Rating-Widget](h
 
 == Installation ==
 
-Upload the plugin to your blog and activate it. Then, follow the instructions.
+1. Upload the plugin to your blog.
+2. Accept the Terms of Use and the Privacy Policy.
+3. Done!
 
 == Screenshots ==
 
@@ -100,6 +102,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
 = 1.4.4 =
+* Privacy: New users must accept our Terms of Use and Privacy policy before they start using the plugin.
 * Sponsor: Added Host1Plus banners.
 
 = 1.4.3 =
