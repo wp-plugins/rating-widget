@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.4.4
+Version: 1.4.5
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -2835,7 +2835,7 @@ class RatingWidgetPlugin
         
         if ($this->rw_has_inline_rating($content))
         {
-            $content = str_replace("[ratingwidget]", $this->rw_embed_rating($urid, $post->post_title, get_permalink($post->ID), $this->post_class), $content);
+            $content = str_replace("[ratingwidget]", $this->rw_embed_rating($urid, $post->post_title, get_permalink($post->ID), $this->post_class, true), $content);
         }
         
         $post_enabled = (isset($this->post_align) && isset($this->post_align->hor));
@@ -2843,7 +2843,7 @@ class RatingWidgetPlugin
         if ($post_enabled)
         {
             $rw = '<div class="rw-' . $this->post_align->hor . '">'.
-                  $this->rw_embed_rating($urid, $post->post_title, get_permalink($post->ID), $this->post_class).
+                  $this->rw_embed_rating($urid, $post->post_title, get_permalink($post->ID), $this->post_class, true).
                   '</div>';
             return ($this->post_align->ver == "top") ?
                     $rw . $content :
@@ -2903,10 +2903,10 @@ class RatingWidgetPlugin
     * @version 1.3.3
     * 
     */
-    function rw_embed_rating($pUrid, $pTitle, $pPermalink, $pElementClass)
+    function rw_embed_rating($pUrid, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false)
     {
         self::QueueRatingData($pUrid, $pTitle, $pPermalink, $pElementClass);
-        return $this->rw_rating_html($pUrid, $pElementClass);
+        return $this->rw_rating_html($pUrid, $pElementClass, $pAddSchema);
     }
     
     /**
@@ -2918,9 +2918,38 @@ class RatingWidgetPlugin
     * @version 1.3.3
     * 
     */
-    function rw_rating_html($pUrid, $pElementClass)
+    function rw_rating_html($pUrid, $pElementClass, $pAddSchema = false)
     {
-        return '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"></div>';
+        $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"></div>';
+        
+        if (true === $pAddSchema)
+        {
+            $details = array( 
+                "uid" => WP_RW__USER_KEY,
+                "rids" => $pUrid,
+            );
+
+            $rw_ret_obj = self::RemoteCall("action/api/rating.php", $details);
+            
+            if (false !== $rw_ret_obj)
+            {
+                // Decode RW ret object.
+                $rw_ret_obj = json_decode($rw_ret_obj);
+
+                if (true === $rw_ret_obj->success && isset($rw_ret_obj->data) && count($rw_ret_obj->data) > 0)
+                {
+                    $rate = $rw_ret_obj->data[0]->rate;
+                    $votes = $rw_ret_obj->data[0]->votes;
+
+                    $rating_html .= '<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">'.
+                                    '<meta itemprop="ratingValue" content="' . ($rate / $votes) . '" />'.
+                                    '<meta itemprop="ratingCount" content="' . $votes . '" />'.
+                                    '</div>';
+                }
+            }
+        }
+        
+        return $rating_html;
     }
     
     /* BuddyPress Support Actions
