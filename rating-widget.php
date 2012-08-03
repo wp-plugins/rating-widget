@@ -2940,9 +2940,9 @@ class RatingWidgetPlugin
                 {
                     $rate = $rw_ret_obj->data[0]->rate;
                     $votes = $rw_ret_obj->data[0]->votes;
-
+                    $calc_rate = ($votes > 0) ? ($rate / $votes) : 0;
                     $rating_html .= '<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">'.
-                                    '<meta itemprop="ratingValue" content="' . ($rate / $votes) . '" />'.
+                                    '<meta itemprop="ratingValue" content="' . $calc_rate . '" />'.
                                     '<meta itemprop="ratingCount" content="' . $votes . '" />'.
                                     '</div>';
                 }
