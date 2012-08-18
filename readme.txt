@@ -102,7 +102,8 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
 = 1.4.6 =
-* Fix: Zero devision error/exception for new ratings.
+* New: Flames theme by Giuseppe.
+* New: Smiley theme by Daya.
 
 = 1.4.5 =
 * New: Google search ratings support (schema.org AggregateRating item).

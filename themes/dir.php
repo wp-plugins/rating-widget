@@ -1,8 +1,8 @@
 <?php
     $rw_themes = array(
         "star" => array(
-            "star_yellow1" => array("type" => "star", "file" => "star/default/yellow_1.php", "title" => "Yellow Stars (Default)"),
             "star_oxygen" => array("type" => "star", "file" => "star/oxygen/yellow.php", "title" => "Oxygen Yellow Stars 1"),
+            "star_yellow1" => array("type" => "star", "file" => "star/default/yellow_1.php", "title" => "Yellow Stars (Default)"),
             "star_oxygen1" => array("type" => "star", "file" => "star/oxygen/yellow1.php", "title" => "Oxygen Yellow Stars 2"),
             "star_darkglass" => array("type" => "star", "file" => "star/darkglass/yellow.php", "title" => "Dark Glass Yellow Stars"),
             "star_quartz" => array("type" => "star", "file" => "star/quartz/yellow.php", "title" => "Quartz Yellow Stars"),
@@ -29,9 +29,14 @@
             "star_quartz_blue" => array("type" => "star", "file" => "star/quartz/blue.php", "title" => "Quartz Blue Stars"),
             "star_christmas_blue" => array("type" => "star", "file" => "star/christmas/blue.php", "title" => "Christmas Blue Stars"),
 
+            "star_flames" => array("type" => "star", "file" => "star/flames.php", "title" => "Flames by Giuseppe"),
+
+            "star_smiley" => array("type" => "star", "file" => "star/smiley.php", "title" => "Smiley by Daya"),
+
             "star_crystal_correct" => array("type" => "star", "file" => "star/crystal/correct.php", "title" => "Crystal Correct"),
             
             "star_gray1" => array("type" => "star", "file" => "star/default/gray_1.php", "title" => "Gray Stars"),
+            "star_bp1" => array("type" => "star", "file" => "star/buddypress_1.php", "title" => "BuddyPress"),
             
             "star_heart1" => array("type" => "star", "file" => "star/heart_1.php", "title" => "Hearts"),
             "star_lean_heart" => array("type" => "star", "file" => "star/lean_heart.php", "title" => "Lean Hearts"),
