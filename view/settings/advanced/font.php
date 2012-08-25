@@ -20,10 +20,18 @@
             <span class="rw-ui-def">Color:</span>
         </td>
         <td>
-            <div id="colorSelector"><div style="background-color: <?php echo $rw_options->advanced->font->color;?>"></div></div>
+            <div id="colorSelector" class="rw-color-selector"><div style="background-color: <?php echo $rw_options->advanced->font->color;?>"></div></div>
         </td>
     </tr>
-    <tr id="rw_font_type" class="rw-odd">
+    <tr id="rw_font_hover_color" class="rw-odd">
+        <td>
+            <span class="rw-ui-def">HOver:</span>
+        </td>
+        <td>
+            <div id="hoverColorSelector" class="rw-color-selector"><div style="background-color: <?php echo $rw_options->advanced->font->hover->color;?>"></div></div>
+        </td>
+    </tr>
+    <tr id="rw_font_type" class="rw-even">
         <td>
             <span class="rw-ui-def">Type:</span>
         </td>
@@ -51,7 +59,7 @@
             ?>
         </td>
     </tr>
-    <tr id="rw_font_style" class="rw-even">
+    <tr id="rw_font_style" class="rw-odd">
         <td class="rw-ui-def-width">
             <span class="rw-ui-def">Style:</span>
         </td>

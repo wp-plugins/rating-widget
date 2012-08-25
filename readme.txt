@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.2
-Stable tag: 1.4.7
+Stable tag: 1.4.8
 
 Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
 
@@ -101,6 +101,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.4.8 =
+* New: Rating HOver color support in the Advance Font Settings.
+
 = 1.4.7 =
 * New: Flames theme by Giuseppe.
 * New: Smiley theme by Daya.
