@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.4.8
+Version: 1.4.9
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -98,9 +98,10 @@ class RatingWidgetPlugin
         // Load user key.
         $this->load_user_key();
         
+        RWLogger::Log("WP_RW__VERSION", WP_RW__VERSION);
+        
         if (RWLogger::IsOn())
         { 
-            RWLogger::Log("WP_RW__VERSION", WP_RW__VERSION);
             RWLogger::Log("WP_RW__USER_KEY", WP_RW__USER_KEY);
             RWLogger::Log("WP_RW__USER_SECRET", WP_RW__USER_SECRET);
             RWLogger::Log("WP_RW__DOMAIN", WP_RW__DOMAIN);
@@ -372,6 +373,17 @@ class RatingWidgetPlugin
         
         if (RWLogger::IsOn()){ RWLogger::Log("address", WP_RW__ADDRESS . "/{$pPage}"); }
         
+        if (false !== WP_RW__USER_SECRET)
+        {
+            if (RWLogger::IsOn()){ RWLogger::Log("is secure call", "true"); }
+            
+            // Secure connection.
+            $timestamp = time();
+            $token = self::GenerateToken($timestamp, true);
+            $details["timestamp"] = $timestamp;
+            $details["token"] = $token;
+        }
+
         if (function_exists('wp_remote_post')) // WP 2.7+
         {
             if (RWLogger::IsOn()){ RWLogger::Log("wp_remote_post", "exist"); }
@@ -840,15 +852,6 @@ class RatingWidgetPlugin
             "offset" => $rw_offset,
         );
         
-        if (false !== WP_RW__USER_SECRET)
-        {
-            // Secure connection.
-            $timestamp = time();
-            $token = self::GenerateToken($timestamp, true);
-            $details["timestamp"] = $timestamp;
-            $details["token"] = $token;
-        }
-        
         $rw_ret_obj = self::RemoteCall("action/report/general.php", $details);
 
         if (false === $rw_ret_obj){ return; }
@@ -1256,15 +1259,6 @@ class RatingWidgetPlugin
             }            
         }
         
-        if (false !== WP_RW__USER_SECRET)
-        {
-            // Secure connection.
-            $timestamp = time();
-            $token = self::GenerateToken($timestamp, true);
-            $details["timestamp"] = $timestamp;
-            $details["token"] = $token;
-        }
-        
         $rw_ret_obj = self::RemoteCall("action/report/explicit.php", $details);
 
         if (false === $rw_ret_obj){ return; }
@@ -1575,15 +1569,6 @@ class RatingWidgetPlugin
             if (isset($_REQUEST[$filter]) && true === $filter_data["validation"]($_REQUEST[$filter])){
                 $details[$filter] = $_REQUEST[$filter];
             }            
-        }
-        
-        if (false !== WP_RW__USER_SECRET)
-        {
-            // Secure connection.
-            $timestamp = time();
-            $token = self::GenerateToken($timestamp, true);
-            $details["timestamp"] = $timestamp;
-            $details["token"] = $token;
         }
         
         $rw_ret_obj = self::RemoteCall("action/report/rating.php", $details);
@@ -2130,12 +2115,12 @@ class RatingWidgetPlugin
                 $this->rw_general_report_page();
             }
 
-            if (RWLogger::IsOn())
-            {
+//            if (RWLogger::IsOn())
+//            {
                 echo "\n<!-- RATING-WIDGET LOG START\n\n";
                 RWLogger::Output("    ");
                 echo "\n RATING-WIDGET LOG END-->\n";
-            }
+//            }
 
             return;
         }
@@ -2938,9 +2923,9 @@ class RatingWidgetPlugin
 
                 if (true === $rw_ret_obj->success && isset($rw_ret_obj->data) && count($rw_ret_obj->data) > 0)
                 {
-                    $rate = $rw_ret_obj->data[0]->rate;
-                    $votes = $rw_ret_obj->data[0]->votes;
-                    $calc_rate = ($votes > 0) ? ($rate / $votes) : 0;
+                    $rate = (float)$rw_ret_obj->data[0]->rate;
+                    $votes = (float)$rw_ret_obj->data[0]->votes;
+                    $calc_rate = ($votes > 0) ? ((float)$rate / (float)$votes) : 0;
                     $rating_html .= '<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">'.
                                     '<meta itemprop="ratingValue" content="' . $calc_rate . '" />'.
                                     '<meta itemprop="ratingCount" content="' . $votes . '" />'.
@@ -3521,15 +3506,6 @@ class RatingWidgetPlugin
             "rate" => $rate,
         );
         
-        if (false !== WP_RW__USER_SECRET)
-        {
-            // Secure connection.
-            $timestamp = time();
-            $token = self::GenerateToken($timestamp, true);
-            $details["timestamp"] = $timestamp;
-            $details["token"] = $token;
-        }
-        
         $rw_ret_obj = self::RemoteCall("action/api/boost.php", $details);
         if (false === $rw_ret_obj){ return; }
         
@@ -3680,15 +3656,6 @@ if (class_exists("WP_Widget"))
             $details = array( 
                 "uid" => WP_RW__USER_KEY,
             );
-
-            if (false !== WP_RW__USER_SECRET)
-            {
-                // Secure connection.
-                $timestamp = time();
-                $token = RatingWidgetPlugin::GenerateToken($timestamp, true);
-                $details["timestamp"] = $timestamp;
-                $details["token"] = $token;
-            }
 
             $queries = array();
            
