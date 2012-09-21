@@ -4,13 +4,13 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.2
-Stable tag: 1.4.9
+Stable tag: 1.5.0
 
 Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
 
 == Description ==
 
-The Rating-Widget Ratings plugin allows you to **create and manage ratings** from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. Support Google search ratings (schema.org AggregateRating item). PLUS, you can embed ratings into your BuddyPress activity updates and comments. In addition, the rating support BP's bbPress forum posts ratings. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+The Rating-Widget Ratings plugin allows you to **create and manage ratings** from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. Support Google Rich Snippets (schema.org AggregateRating item). PLUS, you can embed ratings into your BuddyPress activity updates and comments. In addition, the rating support BP's bbPress forum posts ratings. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
 
@@ -101,6 +101,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.5.0 =
+* New & Huge: Filter ratings by categories (you've asked for, we are delivering :-).
+
 = 1.4.9 =
 * Fix: Google search ratings for premium users.
 

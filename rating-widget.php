@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.4.9
+Version: 1.5.0
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -34,6 +34,7 @@ class RatingWidgetPlugin
     var $languages;
     var $languages_short;
     var $visibility_list;
+    var $categories_list;
     var $availability_list;
     var $show_on_excerpts_list;
     
@@ -319,6 +320,7 @@ class RatingWidgetPlugin
         
         WP_RW__VISIBILITY_SETTINGS => "{}",
         WP_RW__AVAILABILITY_SETTINGS => '{"activity-update": 1, "activity-comment": 1, "forum-post": 1, "new-forum-post": 1, "user": 1, "user-post": 1, "user-comment": 1, "user-page": 1, "user-activity-update": 1, "user-activity-comment": 1, "user-forum-post": 1}', // By default, disable all activity ratings for un-logged users.
+        WP_RW__CATEGORIES_AVAILABILITY_SETTINGS => "{}",
         
         WP_RW__SHOW_ON_EXCERPT => '{"front-post": false, "blog-post": false, "page": false}',
         
@@ -1903,7 +1905,8 @@ class RatingWidgetPlugin
                 $this->_deleteOption(WP_RW__PAGES_OPTIONS);
                 $this->_deleteOption(WP_RW__SHOW_ON_EXCERPT);
                 $this->_deleteOption(WP_RW__VISIBILITY_SETTINGS);
-
+                $this->_deleteOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS);
+                
                 // Re-Load all advanced settings.
                     // Flash dependency.
                     $rw_flash_dependency = $this->_getOption(WP_RW__FLASH_DEPENDENCY);
@@ -2369,6 +2372,9 @@ class RatingWidgetPlugin
         // Visibility list must be loaded anyway.
         $this->visibility_list = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
 
+        // Categories Availability list must be loaded anyway.
+        $this->categories_list = json_decode($this->_getOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS));
+
         // Availability list must be loaded anyway.
         $this->availability_list = json_decode($this->_getOption(WP_RW__AVAILABILITY_SETTINGS));
 
@@ -2420,6 +2426,13 @@ class RatingWidgetPlugin
             
             $this->availability_list->{$rw_class} = $rw_availability;
             $this->_setOption(WP_RW__AVAILABILITY_SETTINGS, json_encode($this->availability_list));
+            
+            /* Categories Availability settings.
+            ---------------------------------------------------------------------------------------------------------------*/
+            $rw_categories = isset($_POST["rw_categories"]) ? $_POST["rw_categories"] : array();
+            
+            $this->categories_list->{$rw_class} = (in_array("-1", $_POST["rw_categories"]) ? array("-1") : $rw_categories);
+            $this->_setOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS, json_encode($this->categories_list));
             
             /* Visibility settings
             ---------------------------------------------------------------------------------------------------------------*/
@@ -2477,6 +2490,11 @@ class RatingWidgetPlugin
             $this->availability_list->{$rw_class} = 0;
         }
         $rw_availability_settings = $this->availability_list->{$rw_class};
+
+        if (!isset($this->categories_list->{$rw_class})){
+            $this->categories_list->{$rw_class} = array(-1);
+        }
+        $rw_categories = $this->categories_list->{$rw_class};
         
         if (!isset($this->show_on_excerpts_list->{$rw_class})){
             $this->show_on_excerpts_list->{$rw_class} = true;
@@ -2644,6 +2662,7 @@ class RatingWidgetPlugin
                 <?php require_once(dirname(__FILE__) . "/view/options.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/availability_options.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/visibility_options.php"); ?>
+                <?php require_once(dirname(__FILE__) . "/view/categories_availability_options.php"); ?>
             </div>
             <div id="rw_floating_container">
                 <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
@@ -2745,7 +2764,42 @@ class RatingWidgetPlugin
         }
         $pIds = array_unique($pIds);
     }
-    
+
+    function rw_validate_category_availability($pId, $pClass)
+    {
+        if (!isset($this->categories_list)){
+            $this->categories_list = json_decode($this->_getOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS));
+        }
+        
+        if (!isset($this->categories_list->{$pClass})){ return true; }
+        
+        // Alias.
+        $categories = $this->categories_list->{$pClass};
+        
+        // Check if all categories.
+        if (!is_array($categories) || in_array("-1", $categories)){ return true; }
+        
+        // No category selected.
+        if (count($categories) == 0){ return false; }
+        
+        // Get post categories.
+        $post_categories = get_the_category($pId);
+        
+        $post_categories_ids = array();
+        
+        if (is_array($post_categories) && count($post_categories) > 0)
+        {
+            foreach ($post_categories as $category)
+            {
+                $post_categories_ids[] = $category->cat_ID;
+            }
+        }
+
+        $common_categories = array_intersect($categories, $post_categories_ids);
+
+        return (is_array($common_categories) && count($common_categories) > 0);
+    }
+        
     function rw_validate_visibility($pId, $pClass)
     {
         if (!isset($this->visibility_list)){
@@ -2812,11 +2866,13 @@ class RatingWidgetPlugin
         
         global $post;
         
+        // Check if post category is selected.
+        if (false === $this->rw_validate_category_availability($post->ID, $this->post_class)){ return $content; }
+        
         // Checks if post isn't specificaly excluded.
         if (false === $this->rw_validate_visibility($post->ID, $this->post_class)){ return $content; }
 
         $urid = $this->_getPostRatingGuid();
-//        self::QueueRatingData($urid, $post->post_title, get_permalink($post->ID), $this->post_class);
         
         if ($this->rw_has_inline_rating($content))
         {
