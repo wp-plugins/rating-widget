@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.0
+Version: 1.5.1
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -369,7 +369,17 @@ class RatingWidgetPlugin
         }
     }
     
-    public static function RemoteCall($pPage, $pData)
+    public static function AddToken(&$pData, $pServerCall = false)
+    {
+        $timestamp = time();
+        $token = self::GenerateToken($timestamp, $pServerCall);
+        $pData["timestamp"] = $timestamp;
+        $pData["token"] = $token;
+        
+        return $pData;
+    }
+    
+    public static function RemoteCall($pPage, &$pData)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("RemoteCall", $params, true); }
         
@@ -379,11 +389,7 @@ class RatingWidgetPlugin
         {
             if (RWLogger::IsOn()){ RWLogger::Log("is secure call", "true"); }
             
-            // Secure connection.
-            $timestamp = time();
-            $token = self::GenerateToken($timestamp, true);
-            $details["timestamp"] = $timestamp;
-            $details["token"] = $token;
+            self::AddToken($pData, true);
         }
 
         if (function_exists('wp_remote_post')) // WP 2.7+
@@ -856,7 +862,7 @@ class RatingWidgetPlugin
         
         $rw_ret_obj = self::RemoteCall("action/report/general.php", $details);
 
-        if (false === $rw_ret_obj){ return; }
+        if (false === $rw_ret_obj){ return false; }
         
         // Decode RW ret object.
         $rw_ret_obj = json_decode($rw_ret_obj);
@@ -869,12 +875,9 @@ class RatingWidgetPlugin
             return false;
         }
         
-        if (isset($details["timestamp"]))
-        {
-            // Update token to client's call token for iframes.
-            $details["token"] = self::GenerateToken($timestamp, false);
-        }
-
+        // Override token to client's call token for iframes.
+        $details["token"] = self::GenerateToken($details["timestamp"], false);
+        
         $empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 ?>
 <div class="wrap rw-report">
@@ -981,7 +984,7 @@ class RatingWidgetPlugin
             $details["date"] = "updated";
             unset($details["since_updated"], $details["due_updated"]);
 
-            $details["width"] = 750;
+            $details["width"] = 950;
             $details["height"] = 200;
             
             $query = "";
@@ -991,7 +994,7 @@ class RatingWidgetPlugin
                 $query .= "{$key}=" . urlencode($value);
             }
             echo WP_RW__ADDRESS . "/action/chart/column.php{$query}";
-        ?>" width="750" height="204" frameborder="0"></iframe>
+        ?>" width="<?php echo $details["width"];?>" height="<?php echo ($details["height"] + 4);?>" frameborder="0"></iframe>
         <br /><br />
         <table class="widefat"><?php
         $records_num = $showen_records_num = 0;
@@ -1263,7 +1266,7 @@ class RatingWidgetPlugin
         
         $rw_ret_obj = self::RemoteCall("action/report/explicit.php", $details);
 
-        if (false === $rw_ret_obj){ return; }
+        if (false === $rw_ret_obj){ return false; }
         
         // Decode RW ret object.
         $rw_ret_obj = json_decode($rw_ret_obj);
@@ -1276,11 +1279,8 @@ class RatingWidgetPlugin
             return false;
         }
         
-        if (isset($details["timestamp"]))
-        {
-            // Update token to client's call token for iframes.
-            $details["token"] = self::GenerateToken($timestamp, false);
-        }
+        // Override token to client's call token for iframes.
+        $details["token"] = self::GenerateToken($details["timestamp"], false);
 
         $empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 ?>
@@ -1587,11 +1587,8 @@ class RatingWidgetPlugin
         
         $empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 
-        if (isset($details["timestamp"]))
-        {
-            // Update token to client's call token for iframes.
-            $details["token"] = self::GenerateToken($timestamp, false);
-        }
+        // Override token to client's call token for iframes.
+        $details["token"] = self::GenerateToken($details["timestamp"], false);
 ?>
 <div class="wrap rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID) . " (Id = " . $_REQUEST["urid"] . ")";?></h2>
@@ -1678,7 +1675,7 @@ class RatingWidgetPlugin
         <br />
         <br />
         <iframe class="rw-chart" src="<?php
-            $details["width"] = (!$empty_result) ? 442 : 750;
+            $details["width"] = (!$empty_result) ? 647 : 950;
             $details["height"] = 200;
 
             $query = "";
