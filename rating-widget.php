@@ -2979,10 +2979,11 @@ class RatingWidgetPlugin
                     $rate = (float)$rw_ret_obj->data[0]->rate;
                     $votes = (float)$rw_ret_obj->data[0]->votes;
                     $calc_rate = ($votes > 0) ? ((float)$rate / (float)$votes) : 0;
+                    $title = mb_convert_to_utf8(trim($pTitle));
                     $rating_html .= 
 '
 <div itemscope itemtype="http://schema.org/Product">
-    <meta itemprop="name" content="' . htmlspecialchars($pTitle, ENT_QUOTES, "utf8") . '" />
+    <meta itemprop="name" content="' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '" />
     <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
         <meta itemprop="ratingValue" content="' . $calc_rate . '" />
         <meta itemprop="ratingCount" content="' . $votes . '" />
@@ -4060,9 +4061,10 @@ if (class_exists("WP_Widget"))
 ---------------------------------------------------------------------------------------------------------------*/
 if (!function_exists("mb_strlen")){
     function mb_strlen($str){ return strlen($str); }
-}
-if (!function_exists("mb_substr")){
     function mb_substr($str, $start, $length){ return substr($str, $start, $length); }
+    function mb_convert_to_utf8($str){ return $str; }
+}else{
+    function mb_convert_to_utf8($str){ return mb_convert_encoding($str, 'UTF-8', mb_detect_encoding($str)); }
 }
 
 // Invoke class.
