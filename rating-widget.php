@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.1
+Version: 1.5.2
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -2944,7 +2944,7 @@ class RatingWidgetPlugin
     function rw_embed_rating($pUrid, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false)
     {
         self::QueueRatingData($pUrid, $pTitle, $pPermalink, $pElementClass);
-        return $this->rw_rating_html($pUrid, $pElementClass, $pAddSchema);
+        return $this->rw_rating_html($pUrid, $pElementClass, $pAddSchema, $pTitle);
     }
     
     /**
@@ -2956,7 +2956,7 @@ class RatingWidgetPlugin
     * @version 1.3.3
     * 
     */
-    function rw_rating_html($pUrid, $pElementClass, $pAddSchema = false)
+    function rw_rating_html($pUrid, $pElementClass, $pAddSchema = false, $pTitle = "")
     {
         $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"></div>';
         
@@ -2979,10 +2979,15 @@ class RatingWidgetPlugin
                     $rate = (float)$rw_ret_obj->data[0]->rate;
                     $votes = (float)$rw_ret_obj->data[0]->votes;
                     $calc_rate = ($votes > 0) ? ((float)$rate / (float)$votes) : 0;
-                    $rating_html .= '<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">'.
-                                    '<meta itemprop="ratingValue" content="' . $calc_rate . '" />'.
-                                    '<meta itemprop="ratingCount" content="' . $votes . '" />'.
-                                    '</div>';
+                    $rating_html .= 
+'
+<div itemscope itemtype="http://schema.org/Product">
+    <meta itemprop="name" content="' . htmlspecialchars($pTitle, ENT_QUOTES, "utf8") . '" />
+    <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+        <meta itemprop="ratingValue" content="' . $calc_rate . '" />
+        <meta itemprop="ratingCount" content="' . $votes . '" />
+    </div>
+</div>';
                 }
             }
         }

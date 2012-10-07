@@ -4,17 +4,17 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.2
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 
-Create and manage Rating-Widget ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
+Create and manage Rating-Widget thumb & star ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
 
 == Description ==
 
-The Rating-Widget Ratings plugin allows you to **create and manage ratings** from within your WordPress dashboard. You can embed ratings into your posts, pages or comments. Support Google Rich Snippets (schema.org AggregateRating item). PLUS, you can embed ratings into your BuddyPress activity updates and comments. In addition, the rating support BP's bbPress forum posts ratings. All Rating-Widget ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited ratings and collect unlimited votes. The rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+The Rating-Widget **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. Support Google Rich Snippets (schema.org AggregateRating item). PLUS, you can embed star ratings into your BuddyPress activity updates and comments. In addition, the rating support BP's bbPress forum posts ratings. All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The stars rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
 
-Rating-Widget ratings are localizable and currently available in:
+Rating-Widget star ratings are localizable and currently available in:
 
 * Arabic
 * Bulgarian
@@ -51,7 +51,7 @@ Rating-Widget ratings are localizable and currently available in:
 
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
 
-Help us to enrich Rating-Widget customization by adding more ratings designs at - http://rating-widget.com/contribute-rating-design/
+Help us to enrich Rating-Widget customization by adding more thumb & star ratings designs at - http://rating-widget.com/contribute-rating-design/
 
 Follow us on **Twitter** to keep up with the latest updates [Rating-Widget](http://twitter.com/ratingwidget)
 AND/OR
@@ -101,21 +101,24 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.5.2 =
+* Fix: Rich Snippets fix (added http://schema.org/Product).
+
 = 1.5.1 =
 * Fix: Fixed reports access to premium users.
 
 = 1.5.0 =
-* New & Huge: Filter ratings by categories (you've asked for, we are delivering :-).
+* New & Huge: Filter star ratings by categories (you've asked for, we are delivering :-).
 
 = 1.4.9 =
-* Fix: Google search ratings for premium users.
+* Fix: Google Rich Snippets support for premium users.
 
 = 1.4.8 =
-* New: Rating HOver color support in the Advance Font Settings.
+* New: Star rating HOver color support in the Advance Font Settings.
 
 = 1.4.7 =
-* New: Flames theme by Giuseppe.
-* New: Smiley theme by Daya.
+* New: Star rating Flames theme by Giuseppe.
+* New: Star rating Smiley theme by Daya.
 
 = 1.4.5 =
 * New: Google search ratings support (schema.org AggregateRating item).
@@ -141,8 +144,8 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 * New: Localized to Vietnamese.
 
 = 1.4.0 =
-* New: Advanced option to control whether to show ratings on mobile devices or not.
-* New: Top-Rated Widget is now able to show all BuddyPress & bbPress ratings.
+* New: Advanced option to control whether to show star ratings on mobile devices or not.
+* New: Top-Rated Widget is now able to show all BuddyPress & bbPress star ratings.
 
 = 1.3.9 =
 * Fix: BuddyPress & bbPress ratings support for the newest versions.
@@ -160,7 +163,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 * New: Added Rating Boosting options for Pro version users.
 
 = 1.3.6 =
-* Fix: Top-Rated Widget is now showing the ratings (Sorry friends :-).
+* Fix: Top-Rated Widget is now showing the thumb & star ratings (Sorry friends :-).
 
 = 1.3.5 =
 * Fix: API Key is now showing your unique-user-key even if you don't have a secret key.
@@ -178,7 +181,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 = 1.3.3 =
 * New: "Top Rated" Widget titles display is now configurable.
-* New: Short code for adding posts & pages inline ratings - **[ratingwidget]**.
+* New: Short code for adding posts & pages inline thumb & star ratings - **[ratingwidget]**.
 
 = 1.3.2 =
 * New: Localized to Georgian.
@@ -209,7 +212,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 * New: You can now control flash dependency.
 
 = 1.2.5 =
-* New: You can now control whether ratings will appear on excerpts or not.
+* New: You can now control whether star ratings will appear on excerpts or not.
 * New: Localized to Bulgarian.
 * New: Localized to Turkish.
 
@@ -218,15 +221,15 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 = 1.2.3 =
 * New: Localized to Polish.
-* Fix: BuddyPress comments ratings.
+* Fix: BuddyPress comments star ratings.
 
 = 1.2.2 =
 * Fix: Post urid fix.
 
 = 1.2.1 =
 * New: Advanced star options - you can now select the number of stars you will have in your widget.
-* New: Availability settings - you can now specify if ratings will be active, disabled or hidden for un-logged users.
-* New: Visibility settings - you can now explicitly exclude or include ratings from specified posts/pages/comments/activity-updates/activity-comments.
+* New: Availability settings - you can now specify if star ratings will be active, disabled or hidden for un-logged users.
+* New: Visibility settings - you can now explicitly exclude or include star ratings from specified posts/pages/comments/activity-updates/activity-comments.
 * Fix: Show ratings on excerpts.
 * Fix: BuddyPress background stuck bug fixed - now you can explicitaly select between Transparent or BuddyPress background types.
 * Fix: Removed unnecessary user-key validations.
@@ -256,7 +259,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 = 1.1.4 =
 * Fix: Initial size icons are now match to the selected theme and type.
-* Fix: Initial themes list is now match the saved rating type.
+* Fix: Initial themes list is now match the saved thumb & star rating type.
 * Fix: ReadOnly icons are now linked to the correct url.
 * Fix: Themes list loading Gif is now points to the correct url.
 
@@ -273,7 +276,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 = 1.1.0 =
 * New: Major UI change, now we have Themes option.
-* New: 3 new rating designs (check out the Thumb type).
+* New: 3 new star rating designs (check out the Thumb type).
 * New: Color property was deprecated.
 * New: HTTP calls optimization.
 * Fix: JS optimizations.
@@ -288,7 +291,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 * New: Localized to German.
 
 = 1.0.7 =
-* New: ReadOnly functionality was added - now you can set your ratings to also be readonly (e.g. the front page posts).
+* New: ReadOnly functionality was added - now you can set your star ratings to also be readonly (e.g. the front page posts).
 * New: You can now specify any UTF-8 letters in the advanced text settings. E.g. you can use Swedish words with letters like Å, Ä, Ö.
 * Fix: CSS stylesheet improvements.
 
