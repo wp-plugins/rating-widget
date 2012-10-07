@@ -6,7 +6,7 @@
         define("DUMMY_STR", "DUMMY");
         define("DEF_STAR_STYLE", "yellow");
         define("DEF_NERO_STYLE", "thumbs");
-        define("DEF_STAR_THEME", "star_yellow1");
+        define("DEF_STAR_THEME", "star_oxygen");
         define("DEF_NERO_THEME", "thumbs_1");
         
         $DEF_FONT_SIZE = new stdClass();
@@ -26,6 +26,7 @@
         $DEFAULT_OPTIONS->advanced->star = new stdClass();
         $DEFAULT_OPTIONS->advanced->nero = new stdClass();
         $DEFAULT_OPTIONS->advanced->font = new stdClass();
+        $DEFAULT_OPTIONS->advanced->font->hover = new stdClass();
         $DEFAULT_OPTIONS->advanced->text = new stdClass();
         $DEFAULT_OPTIONS->advanced->layout = new stdClass();
         $DEFAULT_OPTIONS->advanced->layout->align = new stdClass();
@@ -38,9 +39,9 @@
         $DEFAULT_OPTIONS->type = "star";
         $DEFAULT_OPTIONS->rclass = "";
         $DEFAULT_OPTIONS->size = "small";
-        $DEFAULT_OPTIONS->theme = "";
-        $DEFAULT_OPTIONS->color = "yellow"; // deprecated
-        $DEFAULT_OPTIONS->style = "";
+        $DEFAULT_OPTIONS->theme = DEF_STAR_THEME;
+        $DEFAULT_OPTIONS->color = DEF_STAR_STYLE; // deprecated
+        $DEFAULT_OPTIONS->style = "oxygen";
         $DEFAULT_OPTIONS->imgUrl->ltr = "";
         $DEFAULT_OPTIONS->imgUrl->rtl = "";
         $DEFAULT_OPTIONS->readOnly = false;
@@ -59,14 +60,16 @@
         
         $DEFAULT_OPTIONS->advanced->font->bold = false;
         $DEFAULT_OPTIONS->advanced->font->italic = false;
-        $DEFAULT_OPTIONS->advanced->font->color = "#000000";
-        $DEFAULT_OPTIONS->advanced->font->size = "12px";
+        $DEFAULT_OPTIONS->advanced->font->color = "#000";
+        $DEFAULT_OPTIONS->advanced->font->size = $DEF_FONT_SIZE->SMALL;
         $DEFAULT_OPTIONS->advanced->font->type = "arial";
+        
+        $DEFAULT_OPTIONS->advanced->font->hover->color = "#000";
 
         $DEFAULT_OPTIONS->advanced->layout->dir = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->layout->align->hor = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->layout->align->ver = "middle";
-        $DEFAULT_OPTIONS->advanced->layout->lineHeight = "16px";
+        $DEFAULT_OPTIONS->advanced->layout->lineHeight = $DEF_LINE_HEIGHT->SMALL;
         
         $DEFAULT_OPTIONS->advanced->text->rateAwful = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->text->ratePoor = DUMMY_STR;

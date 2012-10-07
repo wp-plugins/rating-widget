@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.2
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 
 Create and manage Rating-Widget thumb & star ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
 
@@ -16,38 +16,39 @@ To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-p
 
 Rating-Widget star ratings are localizable and currently available in:
 
-* Arabic
-* Bulgarian
-* Catalan
-* Chineese
-* Croatian
-* Czech
-* Danish
+* Arabic - العربية
+* Bulgarian - български
+* Catalan - Català
+* Chinese - 汉语/漢語
+* Croatian - Hrvatski
+* Czech - Čeština
+* Danish - Dansk
 * English
-* Finnish
-* French
-* Georgian
-* German
-* Greek
-* Hebrew
-* Hungarian
-* Indonesian
-* Italian
-* Japanese
-* Lithuanian
-* Mongolian
-* Nederlands
-* Norwegian
-* Persian
-* Polish
-* Portuguese
-* Romanian
-* Russian
-* Serbian
-* Spanish
-* Swedish
-* Turkish
-* Vietnamese
+* Finnish - Suomi
+* French - Français
+* Georgian - ქართული
+* German - Deutsch
+* Greek - Ελληνικά
+* Hebrew - עברית
+* Hindi - हिंदी
+* Hungarian - Magyar
+* Indonesian - Bahasa Indonesia
+* Italian - Italiano
+* Japanese - 日本語
+* Lithuanian - Lietuvių
+* Mongolian - Mongγol Kele
+* Nederlands - Dutch
+* Norwegian - Norsk
+* Persian - فارسی
+* Polish - Polska
+* Portuguese - Português
+* Romanian - Română
+* Russian - Русский
+* Serbian - Српски
+* Spanish - Español
+* Swedish - Svenska
+* Turkish - Türkçe
+* Vietnamese - Tiếng Việt
 
 Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
 
@@ -101,6 +102,9 @@ Check your theme's footer.php calls wp_footer. The rating javascript is loaded o
 More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 == Change Log ==
+= 1.5.3 =
+* New: Localized to Hindi.
+
 = 1.5.2 =
 * Fix: Rich Snippets fix (added http://schema.org/Product).
 
@@ -292,7 +296,7 @@ More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
 
 = 1.0.7 =
 * New: ReadOnly functionality was added - now you can set your star ratings to also be readonly (e.g. the front page posts).
-* New: You can now specify any UTF-8 letters in the advanced text settings. E.g. you can use Swedish words with letters like Å, Ä, Ö.
+* New: You can now specify any UTF-8 letters in the advanced text settings. E.g. you can use Swedish words with letters like ֳ…, ֳ„, ֳ–.
 * Fix: CSS stylesheet improvements.
 
 = 1.0.6 =

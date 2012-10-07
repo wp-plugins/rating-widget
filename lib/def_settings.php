@@ -8,6 +8,7 @@
         $ret->advanced->star = @rw_get_default_value($settings->advanced->star, new stdClass());
         $ret->advanced->nero = @rw_get_default_value($settings->advanced->nero, new stdClass());
         $ret->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
+        $ret->advanced->font->hover = @rw_get_default_value($settings->advanced->font->hover, new stdClass());
         $ret->advanced->layout = @rw_get_default_value($settings->advanced->layout, new stdClass());
         $ret->advanced->layout->align = @rw_get_default_value($settings->advanced->layout->align, new stdClass());
         $ret->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
@@ -44,6 +45,7 @@
         $ret->advanced->font->color = @rw_get_default_value($settings->advanced->font->color, $defaults->advanced->font->color);
         $ret->advanced->font->size = @rw_get_default_value($settings->advanced->font->size, $defaults->advanced->font->size);
         $ret->advanced->font->type = @rw_get_default_value($settings->advanced->font->type, $defaults->advanced->font->type);
+        $ret->advanced->font->hover->color = @rw_get_default_value($settings->advanced->font->hover->color, $defaults->advanced->font->hover->color);
 
         $ret->advanced->layout->dir = @rw_get_default_value($settings->advanced->layout->dir, $defaults->advanced->layout->dir);
         $ret->advanced->layout->lineHeight = @rw_get_default_value($settings->advanced->layout->lineHeight, $defaults->advanced->layout->lineHeight);
@@ -97,9 +99,10 @@
         $settings->boost = @rw_get_default_value($settings->boost, new stdClass());
         $settings->advanced = @rw_get_default_value($settings->advanced, new stdClass());
         $settings->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
+        $settings->advanced->font->hover = @rw_get_default_value($settings->advanced->font->hover, new stdClass());
         $settings->advanced->layout = @rw_get_default_value($settings->advanced->layout, new stdClass());
-        $settings->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         $settings->advanced->layout->align = @rw_get_default_value($settings->advanced->layout->align, new stdClass());
+        $settings->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         
         $settings->lng = @rw_get_default_value($settings->lng, "en");
         $settings->url = @rw_get_default_value($settings->url, "");
@@ -108,7 +111,7 @@
         $settings->rclass = @rw_get_default_value($settings->rclass, "");
         $settings->size = @rw_get_default_value($settings->size, "small");
         $settings->color = @rw_get_default_value($settings->color, "yellow");
-        $settings->style = @rw_get_default_value($settings->style, "");
+        $settings->style = @rw_get_default_value($settings->style, "oxygen");
         $settings->imgUrl = @rw_get_default_value($settings->imgUrl, "");
         $settings->readOnly = @rw_get_default_value($settings->readOnly, false);
         $settings->showInfo = @rw_get_default_value($settings->showInfo, true);
@@ -121,12 +124,13 @@
 
         $settings->advanced->font->bold = @rw_get_default_value($settings->advanced->font->bold, false);
         $settings->advanced->font->italic = @rw_get_default_value($settings->advanced->font->italic, false);
-        $settings->advanced->font->color = @rw_get_default_value($settings->advanced->font->color, "#000000");
-        $settings->advanced->font->size = @rw_get_default_value($settings->advanced->font->size, "12px");
+        $settings->advanced->font->color = @rw_get_default_value($settings->advanced->font->color, "#000");
+        $settings->advanced->font->size = @rw_get_default_value($settings->advanced->font->size, "20px");
         $settings->advanced->font->type = @rw_get_default_value($settings->advanced->font->type, "arial");
+        $settings->advanced->font->hover->color = @rw_get_default_value($settings->advanced->font->hover->color, "#000");
 
         $settings->advanced->layout->dir = @rw_get_default_value($settings->advanced->layout->dir, $dir);
-        $settings->advanced->layout->lineHeight = @rw_get_default_value($settings->advanced->layout->lineHeight, "16px");
+        $settings->advanced->layout->lineHeight = @rw_get_default_value($settings->advanced->layout->lineHeight, "30px");
         $settings->advanced->layout->align->hor = @rw_get_default_value($settings->advanced->layout->align->hor, $hor);
         $settings->advanced->layout->align->ver = @rw_get_default_value($settings->advanced->layout->align->ver, "middle");
 
