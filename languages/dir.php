@@ -1,4 +1,5 @@
 <?php
+    global $rw_languages;
     $rw_languages = array(
 //        "af" => "Afrikaans",
         "ar" => "Arabic - العربية",
@@ -16,7 +17,7 @@
         "el" => "Greek - Ελληνικά",
         "he" => "Hebrew - עברית",
         "hu" => "Hungarian - Magyar",
-//        "hi" => "Hindi",
+        "hi" => "Hindi - हिंदी",
         "id" => "Indonesian - Bahasa Indonesia",
         "it" => "Italian - Italiano",
         "jp" => "Japanese - 日本語",
