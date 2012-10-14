@@ -104,11 +104,17 @@
                 if (typeof(RW) == "undefined"){ 
                     (function(){
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "<?php echo WP_RW__ADDRESS_JS; ?>external.php";
+                        rw.src = "<?php echo WP_RW__ADDRESS_JS; ?>external.js";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }
             </script>
         </div>
+        <p class="submit" style="margin-top: 10px;">
+            <input type="hidden" name="<?php echo $rw_form_hidden_field_name; ?>" value="Y">
+            <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
+            <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
+            <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" class="button-secondary" target="_blank">Go Pro!</a>
+        </p>
     </div>
 </div>

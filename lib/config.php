@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.5.3");
+    define("WP_RW__VERSION", "1.5.4");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -24,6 +24,14 @@
     /* Uncomment for debug mode.
     -----------------------------------------------------------------------------------------*/
 //     define("WP_RW__DEBUG", "");
+     
+     if (defined("WP_RW__DEBUG"))
+     {
+        error_reporting(E_ALL);
+        ini_set('error_reporting', E_ALL);
+        ini_set('display_errors',true);
+        ini_set('html_errors', true);                 
+     }
 
     /* For Rating-Widget development mode.
     -----------------------------------------------------------------------------------------*/
@@ -107,6 +115,7 @@
     define("WP_RW__SHOW_ON_EXCERPT", "rw_show_on_excerpt");
     define("WP_RW__VISIBILITY_SETTINGS", "rw_visibility_settings");
     define("WP_RW__AVAILABILITY_SETTINGS", "rw_availability_settings");
+    define("WP_RW__CATEGORIES_AVAILABILITY_SETTINGS", "rw_categories_availability_settings");
 
     /* Availability Options
     -----------------------------------------------------------------------------------------*/

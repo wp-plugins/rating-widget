@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.3
+Version: 1.5.4
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -56,9 +56,9 @@ class RatingWidgetPlugin
         // User profile page.
         add_action("bp_before_member_header_meta", array(&$this, "rw_display_user_profile_rating"));
         
-        if (false !== WP_RW__USER_SECRET)
+        if (false !== WP_RW__USER_SECRET && ("" != get_site_option("bb-config-location", "")))
         {
-            define("WP_RW__BBP_INSTALLED", ("" != get_site_option("bb-config-location", "")));
+            define("WP_RW__BBP_INSTALLED", true);
         }
     }
     
@@ -130,32 +130,28 @@ class RatingWidgetPlugin
                 add_action("bp_include", array(&$this, "rw_init_bp"));
             }
             
+            // wp_footer call validation.
+            add_action('init', array(&$this, 'test_footer_init'));
+            
             // Rating-Widget main javascript load.
             add_action('wp_footer', array(&$this, "rw_attach_rating_js"));
         }
         
         add_action('admin_head', array(&$this, "rw_admin_menu_icon_css"));
-        add_action( 'admin_menu', array(&$this, 'admin_menu'));
+        add_action('admin_menu', array(&$this, 'admin_menu'));
+        
+        /**
+        * IMPORTANT: 
+        *   All scripts/styles must be enqueued from those actions, 
+        *   otherwise it will mass-up the layout of the admin's dashboard
+        *   on RTL WP versions.
+        */
+        add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+        add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
         
         require_once(WP_RW__PLUGIN_DIR . "/languages/dir.php");
         $this->languages = $rw_languages;
         $this->languages_short = array_keys($this->languages);
-        
-        // Register CSS stylesheets.
-        wp_register_style('rw', WP_RW__ADDRESS_CSS . "settings.css", array(), WP_RW__VERSION);
-        wp_register_style('rw_wp_settings', WP_RW__ADDRESS_CSS . "wordpress/settings.css", array(), WP_RW__VERSION);
-        wp_register_style('rw_wp_reports', WP_RW__ADDRESS_CSS . "wordpress/reports.css", array(), WP_RW__VERSION);
-        wp_register_style('rw_cp', WP_RW__ADDRESS_CSS . "colorpicker.css", array(), WP_RW__VERSION);
-
-        // Register JS.
-        wp_register_script('rw', WP_RW__ADDRESS_JS . "index.php", array(), WP_RW__VERSION);
-        wp_register_script('rw_wp', WP_RW__ADDRESS_JS . "wordpress/settings.js", array(), WP_RW__VERSION);
-        wp_register_script('rw_cp', WP_RW__ADDRESS_JS . "vendors/colorpicker.js", array(), WP_RW__VERSION);
-        wp_register_script('rw_cp_eye', WP_RW__ADDRESS_JS . "vendors/eye.js", array(), WP_RW__VERSION);
-        wp_register_script('rw_cp_utils', WP_RW__ADDRESS_JS . "vendors/utils.js", array(), WP_RW__VERSION);
-
-        // Register and Enqueue jQuery.
-        wp_enqueue_script('jquery');
     }
     
     /* Private
@@ -495,7 +491,17 @@ class RatingWidgetPlugin
         foreach ($codes as $code) :
             foreach ($messages->get_error_messages($code) as $message) :
 ?>
-    <p><?php echo $messages->get_error_data($code) ? $message : esc_html($message); ?></p>
+    <p><?php
+        if ($code === "connect" || strtolower($message) == "couldn't connect to host")
+        {
+            echo "Couldn't connect to host. <b>If you keep getting this message over and over again, a workaround can be found <a href=\"". 
+                 WP_RW__ADDRESS ."/http://rating-widget.com/blog/solution-for-wordpress-plugin-couldnt-connect-to-host/\" targe=\"_blank\">here</a>.</b>";
+        }
+        else
+        {
+            echo $messages->get_error_data($code) ? $message : esc_html($message);
+        } 
+    ?></p>
 <?php
             endforeach;
         endforeach;
@@ -574,13 +580,28 @@ class RatingWidgetPlugin
 
     <?php
     }
-
-    function admin_menu()
+    
+    function enqueue_scripts()
     {
-        $this->is_admin = (bool)current_user_can('manage_options');
-        
-        if (!$this->is_admin){ return; }
-        
+        // Register and Enqueue jQuery.
+        wp_enqueue_script('jquery');
+    }
+    
+    function admin_enqueue_scripts()
+    {
+        // Register CSS stylesheets.
+        wp_register_style('rw', WP_RW__ADDRESS_CSS . "settings.css", array(), WP_RW__VERSION);
+        wp_register_style('rw_wp_settings', WP_RW__ADDRESS_CSS . "wordpress/settings.css", array(), WP_RW__VERSION);
+        wp_register_style('rw_wp_reports', WP_RW__ADDRESS_CSS . "wordpress/reports.css", array(), WP_RW__VERSION);
+        wp_register_style('rw_cp', WP_RW__ADDRESS_CSS . "colorpicker.css", array(), WP_RW__VERSION);
+
+        // Register JS.
+        wp_register_script('rw', WP_RW__ADDRESS_JS . "index.php", array(), WP_RW__VERSION);
+        wp_register_script('rw_wp', WP_RW__ADDRESS_JS . "wordpress/settings.js", array(), WP_RW__VERSION);
+        wp_register_script('rw_cp', WP_RW__ADDRESS_JS . "vendors/colorpicker.js", array(), WP_RW__VERSION);
+        wp_register_script('rw_cp_eye', WP_RW__ADDRESS_JS . "vendors/eye.js", array(), WP_RW__VERSION);
+        wp_register_script('rw_cp_utils', WP_RW__ADDRESS_JS . "vendors/utils.js", array(), WP_RW__VERSION);
+
         // Enqueue styles.
         wp_enqueue_style('rw');
         wp_enqueue_style('rw_wp_settings');
@@ -593,6 +614,13 @@ class RatingWidgetPlugin
         wp_enqueue_script('rw_cp_utils');
         wp_enqueue_script('rw_wp');
         wp_enqueue_script('rw');
+    }
+    
+    function admin_menu()
+    {
+        $this->is_admin = (bool)current_user_can('manage_options');
+        
+        if (!$this->is_admin){ return; }
         
         if (false === WP_RW__USER_KEY){
             add_options_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_user_key_page'));
@@ -613,7 +641,6 @@ class RatingWidgetPlugin
         }
 
         add_options_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'));
-//        add_menu_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'), WP_RW__PLUGIN_URL . "icon.png");
         
         if ( function_exists('add_object_page') ){ // WP 2.7+
             $hook = add_object_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_settings_page'), WP_RW__PLUGIN_URL . "icon.png" );
@@ -630,7 +657,7 @@ class RatingWidgetPlugin
             if (self::$WP_RW__BP_INSTALLED){
                 add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; BuddyPress', WP_RW__ID ), __('BuddyPress', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=buddypress', array(&$this, 'rw_settings_page'));
             }
-            if (WP_RW__BBP_INSTALLED){
+            if (defined('WP_RW__BBP_INSTALLED')){
                 add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; bbPress', WP_RW__ID ), __('bbPress', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=bbpress', array(&$this, 'rw_settings_page'));
             }
             
@@ -880,7 +907,7 @@ class RatingWidgetPlugin
         
         $empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 ?>
-<div class="wrap rw-report">
+<div class="wrap rw-dir-ltr rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID) . " (" . ucwords($elements) . ")";?></h2>
     <div id="message" class="updated fade">
         <p><strong style="color: red;">Notic: All reports are automatically cached for 30 minutes.</strong></p>
@@ -929,7 +956,7 @@ class RatingWidgetPlugin
                         $select[__('Activity-Comments', WP_RW__ID)] = "activity-comments";
                         $select[__('Users-Profiles', WP_RW__ID)] = "users";
                         
-                        if (WP_RW__BBP_INSTALLED)
+                        if (defined('WP_RW__BBP_INSTALLED'))
                         {
                             $select[__('Forum-Posts', WP_RW__ID)] = "forum-posts";
                         }
@@ -1163,7 +1190,7 @@ class RatingWidgetPlugin
     function rw_report_example_page()
     {
 ?>
-<div class="wrap rw-report">
+<div class="wrap rw-dir-ltr rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID);?></h2>
     <div style="width: 750px;">
         The Rating-Widget Reports page provides you with an analytical overview of your blog-ratings' votes in one page. 
@@ -1284,7 +1311,7 @@ class RatingWidgetPlugin
 
         $empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 ?>
-<div class="wrap rw-report">
+<div class="wrap rw-dir-ltr rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID);?></h2>
     <div id="message" class="updated fade">
         <p><strong style="color: red;">Notic: All reports are automatically cached for 30 minutes.</strong></p>
@@ -1590,7 +1617,7 @@ class RatingWidgetPlugin
         // Override token to client's call token for iframes.
         $details["token"] = self::GenerateToken($details["timestamp"], false);
 ?>
-<div class="wrap rw-report">
+<div class="wrap rw-dir-ltr rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID) . " (Id = " . $_REQUEST["urid"] . ")";?></h2>
     <div id="message" class="updated fade">
         <p><strong style="color: red;">Notic: All reports are automatically cached for 30 minutes.</strong></p>
@@ -1952,7 +1979,7 @@ class RatingWidgetPlugin
             // Get advanced settings.
         }
 ?>
-<div class="wrap">
+<div class="wrap rw-dir-ltr">
     <h2><?php echo __( 'Rating-Widget Advanced Settings', WP_RW__ID);?></h2>
     <br />
     <form id="rw_advanced_settings_form" method="post" action="">
@@ -1972,7 +1999,7 @@ class RatingWidgetPlugin
                                     </tr>    
                                     <tr class="rw-even">
                                         <td class="rw-ui-def">
-                                            <span>Secret Key:</span>
+                                            <span>Secret Key (only for <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" target="_blank">pro</a> users):</span>
                                         </td>
                                         <td><span style="font-size: 14px; color: green;"><?php echo (false === WP_RW__USER_SECRET) ? "NONE" : strtolower(WP_RW__USER_SECRET);?></span></td>
                                     </tr>
@@ -2204,7 +2231,7 @@ class RatingWidgetPlugin
             $selected_key = isset($_GET["rating"]) ? $_GET["rating"] : "activity-blog-posts";
             if (!isset($settings_data[$selected_key])){ $selected_key = "activity-blog-posts"; }
         }
-        else if (($action === "bbpress" && WP_RW__BBP_INSTALLED) && is_plugin_active(WP_RW__BP_CORE_FILE))
+        else if (($action === "bbpress" && defined('WP_RW__BBP_INSTALLED')) && is_plugin_active(WP_RW__BP_CORE_FILE))
         {
             $settings_data = array(
                 /*"forum-topics" => array(
@@ -2299,7 +2326,7 @@ class RatingWidgetPlugin
                     "show_align" => false,
                 );
                 
-                if (WP_RW__BBP_INSTALLED)
+                if (defined('WP_RW__BBP_INSTALLED'))
                 {
                     $settings_data["users-forum-posts"] = array(
                         "tab" => "Forum Posts",
@@ -2568,7 +2595,7 @@ class RatingWidgetPlugin
         $browser_info = array("browser" => "msie", "version" => "7.0");
         $rw_languages = $this->languages;
     ?>
-<div class="wrap">
+<div class="wrap rw-dir-ltr">
     <h2><?php echo __( 'Rating-Widget Settings', WP_RW__ID);?></h2>
     <form method="post" action="">
         <div id="poststuff">       
@@ -2663,9 +2690,9 @@ class RatingWidgetPlugin
             </div>
             <div id="rw_floating_container">
                 <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
-                <?php require_once(dirname(__FILE__) . "/view/save.php"); ?>
+                <?php // require_once(dirname(__FILE__) . "/view/save.php"); ?>
             </div>
-            <div style="margin-left: 650px; padding-top: 185px; width: 350px; padding-right: 20px;">
+            <div style="margin-left: 650px; padding-top: 215px; width: 350px; padding-right: 20px;">
                 <?php require_once(dirname(__FILE__) . "/view/twitter.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/fb.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/sponsor.php"); ?>
@@ -3588,7 +3615,7 @@ class RatingWidgetPlugin
         $this->_printErrors();
         $this->_printSuccess();
 ?>
-<div class="wrap">
+<div class="wrap rw-dir-ltr">
     <h2><?php _e( 'Rating-Widget Boosting', WP_RW__ID ); ?></h2>
 
     <p>
@@ -3623,6 +3650,65 @@ class RatingWidgetPlugin
     </form>
 </div>
 <?php        
+    }
+    
+    /* wp_footer() execution validation
+     * Inspired by http://paste.sivel.net/24
+     --------------------------------------------------------------------------------------------------------------*/
+    function test_footer_init() 
+    {
+        // Hook in at admin_init to perform the check for wp_head and wp_footer
+        add_action('admin_init', array(&$this, 'check_head_footer'));
+     
+        // If test-footer query var exists hook into wp_footer
+        if (isset( $_GET['test-footer']))
+            add_action('wp_footer', array(&$this, 'test_footer'), 99999); // Some obscene priority, make sure we run last
+    }
+     
+    // Echo a string that we can search for later into the footer of the document
+    // This should end up appearing directly before </body>
+    function test_footer() 
+    {
+        echo '<!--wp_footer-->';
+    }
+ 
+    // Check for the existence of the strings where wp_head and wp_footer should have been called from
+    function check_head_footer() 
+    {
+        // NOTE: uses home_url and thus requires WordPress 3.0
+        if (!function_exists('home_url'))
+            return;
+        
+        // Build the url to call, 
+        $url = add_query_arg(array('test-footer' => ''), home_url());
+        
+        // Perform the HTTP GET ignoring SSL errors
+        $response = wp_remote_get($url, array('sslverify' => false));
+        
+        // Grab the response code and make sure the request was sucessful
+        $code = (int)wp_remote_retrieve_response_code($response);
+        
+        if ($code == 200) 
+        {
+            // Strip all tabs, line feeds, carriage returns and spaces
+            $html = preg_replace('/[\t\r\n\s]/', '', wp_remote_retrieve_body($response));
+     
+            // Check to see if we found the existence of wp_footer
+            if (!strstr($html, '<!--wp_footer-->'))
+            {
+                add_action('admin_notices', array(&$this, 'test_head_footer_notices'));
+            }
+        }
+    }
+ 
+    // Output the notices
+    function test_head_footer_notices() 
+    {
+        // If we made it here it is because there were errors, lets loop through and state them all
+        echo '<div class="error"><p><strong>' . 
+              esc_html('Rating-Widget\'s ratings won\'t show up on your blog because your active theme is missing the call to <?php wp_footer(); ?> which should appear directly before </body>.').
+              '</strong> '.
+              'For more details check out our <a href="' . WP_RW__ADDRESS . '/faq/" target="_blank">FAQ</a>.</p></div>';
     }
 }
 
@@ -3902,7 +3988,7 @@ if (class_exists("WP_Widget"))
                 $types[] = "users";
             }
             
-            if (defined(WP_RW__BBP_INSTALLED) && WP_RW__BBP_INSTALLED)
+            if (defined('WP_RW__BBP_INSTALLED'))
             {
                 $types[] = "forum_posts";
             }
@@ -3933,7 +4019,7 @@ if (class_exists("WP_Widget"))
                 $types[] = "users";
             }
             
-            if (defined(WP_RW__BBP_INSTALLED) && WP_RW__BBP_INSTALLED)
+            if (defined('WP_RW__BBP_INSTALLED'))
             {
                 $types[] = "forum_posts";
             }
