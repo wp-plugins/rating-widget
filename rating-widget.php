@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.4
+Version: 1.5.5
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -464,20 +464,34 @@ class RatingWidgetPlugin
 
     private function load_user_key()
     {
+        $user_key = $this->_getOption(WP_RW__DB_OPTION_USER_KEY, true);
+
         if (!defined('WP_RW__USER_KEY'))
         {
-            $user_key = $this->_getOption("rw_user_key");
-            if (strlen($user_key) !== 32){ $user_key = false; }
-            
             define('WP_RW__USER_KEY', $user_key);
         }
-        
+        else
+        {
+            if (is_string(WP_RW__USER_KEY) && (!is_string($user_key) || strtolower(WP_RW__USER_KEY) !== strtolower($user_key)))
+            {
+                // Override user key.
+                $this->_setOption(WP_RW__DB_OPTION_USER_KEY, WP_RW__USER_KEY);
+            }
+        }
+
+        $user_secret = $this->_getOption(WP_RW__DB_OPTION_USER_SECRET, true);
+
         if (!defined('WP_RW__USER_SECRET'))
         {
-            $user_secret = $this->_getOption("rw_user_secret");
-            if (strlen($user_secret) !== 32){ $user_secret = false; }
-            
             define('WP_RW__USER_SECRET', $user_secret);
+        }
+        else
+        {
+            if (is_string(WP_RW__USER_SECRET) && (!is_string($user_secret) || strtolower(WP_RW__USER_SECRET) !== strtolower($user_secret)))
+            {
+                // Override user key.
+                $this->_setOption(WP_RW__DB_OPTION_USER_SECRET, WP_RW__USER_SECRET);
+            }
         }
     }
 
@@ -3692,7 +3706,7 @@ class RatingWidgetPlugin
         {
             // Strip all tabs, line feeds, carriage returns and spaces
             $html = preg_replace('/[\t\r\n\s]/', '', wp_remote_retrieve_body($response));
-     
+            
             // Check to see if we found the existence of wp_footer
             if (!strstr($html, '<!--wp_footer-->'))
             {
@@ -3705,8 +3719,8 @@ class RatingWidgetPlugin
     function test_head_footer_notices() 
     {
         // If we made it here it is because there were errors, lets loop through and state them all
-        echo '<div class="error"><p><strong>' . 
-              esc_html('Rating-Widget\'s ratings won\'t show up on your blog because your active theme is missing the call to <?php wp_footer(); ?> which should appear directly before </body>.').
+        echo '<div class="updated highlight"><p><strong>' . 
+              esc_html('If the Rating-Widget\'s ratings don\'t show up on your blog it\'s probably because your active theme is missing the call to <?php wp_footer(); ?> which should appear directly before </body>.').
               '</strong> '.
               'For more details check out our <a href="' . WP_RW__ADDRESS . '/faq/" target="_blank">FAQ</a>.</p></div>';
     }

@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 
 Create and manage Rating-Widget thumb & star ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
 
@@ -105,6 +105,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.5.5 =
+* New: MAJOR FOR PREMIUM USERS - Added mechanism for user key pair preservation to prevent the need for re-uploading the key.php file after every upgrade.
+* Fix: wp_footer() auto detection message is now appears as a notice instead of an error.
+
 = 1.5.4 =
 * New: wp_footer() auto detection message. Now, when wp_footer() isn't called a relevant message will appear on admin's dashboard.
 * Fix: Finally fixed admin's dashboard layout for Right-To-Left WordPress versions.

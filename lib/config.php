@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.5.4");
+    define("WP_RW__VERSION", "1.5.5");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -56,22 +56,27 @@
     define("WP_RW__FRONT_POSTS_ALIGN", "rw_front_posts_align");
     define("WP_RW__FRONT_POSTS_OPTIONS", "rw_front_posts_options");
 
+    /* User-Key Options Consts.
+    -----------------------------------------------------------------------------------------*/
+        define("WP_RW__DB_OPTION_USER_KEY", "rw_user_key");
+        define("WP_RW__DB_OPTION_USER_SECRET", "rw_user_secret");
+
     /* BuddyPress
     -----------------------------------------------------------------------------------------*/
     // BuddyPress plugin core file.
-    define("WP_RW__BP_CORE_FILE", "buddypress/bp-loader.php");
+        define("WP_RW__BP_CORE_FILE", "buddypress/bp-loader.php");
 
-    define("WP_RW__ACTIVITY_BLOG_POSTS_ALIGN", "rw_activity_blog_posts_align");
-    define("WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS", "rw_activity_blog_posts_options");
+        define("WP_RW__ACTIVITY_BLOG_POSTS_ALIGN", "rw_activity_blog_posts_align");
+        define("WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS", "rw_activity_blog_posts_options");
 
-    define("WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN", "rw_activity_blog_comments_align");
-    define("WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS", "rw_activity_blog_comments_options");
-    
-    define("WP_RW__ACTIVITY_UPDATES_ALIGN", "rw_activity_updates_align");
-    define("WP_RW__ACTIVITY_UPDATES_OPTIONS", "rw_activity_updates_options");
+        define("WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN", "rw_activity_blog_comments_align");
+        define("WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS", "rw_activity_blog_comments_options");
+        
+        define("WP_RW__ACTIVITY_UPDATES_ALIGN", "rw_activity_updates_align");
+        define("WP_RW__ACTIVITY_UPDATES_OPTIONS", "rw_activity_updates_options");
 
-    define("WP_RW__ACTIVITY_COMMENTS_ALIGN", "rw_activity_comments_align");
-    define("WP_RW__ACTIVITY_COMMENTS_OPTIONS", "rw_activity_comments_options");
+        define("WP_RW__ACTIVITY_COMMENTS_ALIGN", "rw_activity_comments_align");
+        define("WP_RW__ACTIVITY_COMMENTS_OPTIONS", "rw_activity_comments_options");
         
     // bbPress component
         /*define("WP_RW__FORUM_TOPICS_ALIGN", "rw_forum_topics_align");
