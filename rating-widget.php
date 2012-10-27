@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.5
+Version: 1.5.6
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -131,7 +131,7 @@ class RatingWidgetPlugin
             }
             
             // wp_footer call validation.
-            add_action('init', array(&$this, 'test_footer_init'));
+//            add_action('init', array(&$this, 'test_footer_init'));
             
             // Rating-Widget main javascript load.
             add_action('wp_footer', array(&$this, "rw_attach_rating_js"));
@@ -2773,10 +2773,12 @@ class RatingWidgetPlugin
         {
             $this->post_align = $post_align;
             $this->post_class = $post_class;
-            
+
             // Hook post rating showup.
             add_action('the_content', array(&$this, "rw_display_post_rating"));
-
+            add_action('the_title', array(&$this, "rw_add_title_metadata"));
+            add_action('post_class', array(&$this, "rw_add_article_metadata"));
+            
             if (!isset($this->show_on_excerpts_list)){
                 $this->show_on_excerpts_list = json_decode($this->_getOption(WP_RW__SHOW_ON_EXCERPT));
             }
@@ -3022,13 +3024,11 @@ class RatingWidgetPlugin
                     $calc_rate = ($votes > 0) ? ((float)$rate / (float)$votes) : 0;
                     $title = mb_convert_to_utf8(trim($pTitle));
                     $rating_html .= 
-'
-<div itemscope itemtype="http://schema.org/Product">
-    <meta itemprop="name" content="' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '" />
-    <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
-        <meta itemprop="ratingValue" content="' . $calc_rate . '" />
-        <meta itemprop="ratingCount" content="' . $votes . '" />
-    </div>
+'<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+    <meta itemprop="worstRating" content="0" />
+    <meta itemprop="bestRating" content="5" />
+    <meta itemprop="ratingValue" content="' . $calc_rate . '" />
+    <meta itemprop="ratingCount" content="' . $votes . '" />
 </div>';
                 }
             }
@@ -3664,6 +3664,23 @@ class RatingWidgetPlugin
     </form>
 </div>
 <?php        
+    }
+    
+    /**
+    * Modifies post for Rich Snippets Compliance.
+    * 
+    */
+    function rw_add_title_metadata($title, $id = '')
+    {
+        return '<mark itemprop="name" style="background: none; color: inherit;">' . $title . '</mark>';
+    }
+    
+    function rw_add_article_metadata($classes, $class = '', $post_id = '')
+    {
+        $classes[] = '"';
+        $classes[] = 'itemscope';
+        $classes[] = 'itemtype="http://schema.org/Product';
+        return $classes;
     }
     
     /* wp_footer() execution validation

@@ -1,16 +1,18 @@
 === Rating-Widget ===
 Contributors: svovaf
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VAFEFAZRTLXU4
-Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, comment, comments, post, posts, page, admin, plugin, ajax, buddypress, bbpress
+Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, sidebar, comment, comments, post, posts, page, google, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.5.5
+Stable tag: 1.5.6
 
-Create and manage Rating-Widget thumb & star ratings from within WordPress (+ BuddyPress Support + BP's bbPress Support).
+Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
 
 == Description ==
 
-The Rating-Widget **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. Support Google Rich Snippets (schema.org AggregateRating item). PLUS, you can embed star ratings into your BuddyPress activity updates and comments. In addition, the rating support BP's bbPress forum posts ratings. All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The stars rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+The Rating-Widget **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. Support Google Rich Snippets (schema.org AggregateRating item). All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The stars rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+
+The **Pro Version** support star ratings into your BuddyPress activity updates and comments, BP's bbPress forum posts ratings.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
 
@@ -105,6 +107,11 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.5.6 =
+* New: Support for Inherited font (blog's default font style).
+* New: Beautiful ratings white background style.
+* New: Changed default star ratings style to Oxygen.
+
 = 1.5.5 =
 * New: MAJOR FOR PREMIUM USERS - Added mechanism for user key pair preservation to prevent the need for re-uploading the key.php file after every upgrade.
 * Fix: wp_footer() auto detection message is now appears as a notice instead of an error.

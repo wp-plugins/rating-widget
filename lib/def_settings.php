@@ -125,12 +125,12 @@
         $settings->advanced->font->bold = @rw_get_default_value($settings->advanced->font->bold, false);
         $settings->advanced->font->italic = @rw_get_default_value($settings->advanced->font->italic, false);
         $settings->advanced->font->color = @rw_get_default_value($settings->advanced->font->color, "#000");
-        $settings->advanced->font->size = @rw_get_default_value($settings->advanced->font->size, "20px");
-        $settings->advanced->font->type = @rw_get_default_value($settings->advanced->font->type, "arial");
+        $settings->advanced->font->size = @rw_get_default_value($settings->advanced->font->size, "12px");
+        $settings->advanced->font->type = @rw_get_default_value($settings->advanced->font->type, "inherit");
         $settings->advanced->font->hover->color = @rw_get_default_value($settings->advanced->font->hover->color, "#000");
 
         $settings->advanced->layout->dir = @rw_get_default_value($settings->advanced->layout->dir, $dir);
-        $settings->advanced->layout->lineHeight = @rw_get_default_value($settings->advanced->layout->lineHeight, "30px");
+        $settings->advanced->layout->lineHeight = @rw_get_default_value($settings->advanced->layout->lineHeight, "18px");
         $settings->advanced->layout->align->hor = @rw_get_default_value($settings->advanced->layout->align->hor, $hor);
         $settings->advanced->layout->align->ver = @rw_get_default_value($settings->advanced->layout->align->ver, "middle");
 

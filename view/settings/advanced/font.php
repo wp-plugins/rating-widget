@@ -38,21 +38,22 @@
         <td>
             <?php
                 $fonts = array(
-                    "arial",
-                    "courier",
-                    "lucida",
-                    "tahoma",
-                    "times",
-                    "verdana"
+                    "inherit" => 'inherit',
+                    "arial" => 'arial',
+                    "courier" => 'courier',
+//                    "lucida" => 'lucida grande',
+                    "tahoma" => 'tahoma',
+                    "times" => 'times',
+                    "verdana" => 'verdana',
                 );
                 
-                foreach ($fonts as $i => $font)
+                foreach ($fonts as $label => $font)
                 {
             ?>
-            <div class="rw-ui-img-radio<?php if ($rw_options->advanced->font->type == $font) echo " rw-selected";?> rw-font-<?php echo $font;?>" onclick="rwStar.setFontType('<?php echo $font;?>'); rwNero.setFontType('<?php echo $font;?>');">
+            <div class="rw-ui-img-radio<?php if ($rw_options->advanced->font->type == $font) echo " rw-selected";?> rw-font-<?php echo $label;?>" onclick="rwStar.setFontType('<?php echo $font;?>'); rwNero.setFontType('<?php echo $font;?>');">
                 <span class="rw-font-sample">A</span>
-                <span><?php echo ucwords($font);?></span>
-                <input type="radio" name="rw-font-type" value="<?php echo $i;?>"<?php if ($rw_options->advanced->font->type == $font) echo ' checked="checked"';?> />
+                <span><?php echo ucwords($label);?></span>
+                <input type="radio" name="rw-font-type" value="<?php echo $font;?>"<?php if ($rw_options->advanced->font->type == $font) echo ' checked="checked"';?> />
             </div>
             <?php
                 }

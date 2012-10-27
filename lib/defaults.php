@@ -15,9 +15,9 @@
         $DEF_FONT_SIZE->LARGE = "20px";
         
         $DEF_LINE_HEIGHT = new stdClass();
-        $DEF_LINE_HEIGHT->SMALL = "16px";
-        $DEF_LINE_HEIGHT->MEDIUM = "20px";
-        $DEF_LINE_HEIGHT->LARGE = "30px";
+        $DEF_LINE_HEIGHT->SMALL = "18px";
+        $DEF_LINE_HEIGHT->MEDIUM = "22px";
+        $DEF_LINE_HEIGHT->LARGE = "32px";
 
         $DEFAULT_OPTIONS = new stdClass();
         $DEFAULT_OPTIONS->boost = new stdClass();
@@ -62,7 +62,7 @@
         $DEFAULT_OPTIONS->advanced->font->italic = false;
         $DEFAULT_OPTIONS->advanced->font->color = "#000";
         $DEFAULT_OPTIONS->advanced->font->size = $DEF_FONT_SIZE->SMALL;
-        $DEFAULT_OPTIONS->advanced->font->type = "arial";
+        $DEFAULT_OPTIONS->advanced->font->type = "inherit";
         
         $DEFAULT_OPTIONS->advanced->font->hover->color = "#000";
 
