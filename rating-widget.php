@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.6
+Version: 1.5.7
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -256,16 +256,16 @@ class RatingWidgetPlugin
     
     private static $OPTIONS_DEFAULTS = array(
         WP_RW__FRONT_POSTS_ALIGN => '{"ver": "top", "hor": "left"}',
-        WP_RW__FRONT_POSTS_OPTIONS => '{"type": "star", "theme": "star_yellow1"}',
+        WP_RW__FRONT_POSTS_OPTIONS => '{"type": "star", "theme": "star_oxygen"}',
         
         WP_RW__BLOG_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_yellow1"}',
+        WP_RW__BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_oxygen"}',
         
         WP_RW__COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
         WP_RW__COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_1"}',
         
         WP_RW__PAGES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__PAGES_OPTIONS => '{"type": "star", "theme": "star_yellow1"}',
+        WP_RW__PAGES_OPTIONS => '{"type": "star", "theme": "star_oxygen"}',
 
         // BuddyPress
             WP_RW__ACTIVITY_BLOG_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
@@ -2776,8 +2776,8 @@ class RatingWidgetPlugin
 
             // Hook post rating showup.
             add_action('the_content', array(&$this, "rw_display_post_rating"));
-            add_action('the_title', array(&$this, "rw_add_title_metadata"));
-            add_action('post_class', array(&$this, "rw_add_article_metadata"));
+//            add_action('the_title', array(&$this, "rw_add_title_metadata"));
+//            add_action('post_class', array(&$this, "rw_add_article_metadata"));
             
             if (!isset($this->show_on_excerpts_list)){
                 $this->show_on_excerpts_list = json_decode($this->_getOption(WP_RW__SHOW_ON_EXCERPT));
