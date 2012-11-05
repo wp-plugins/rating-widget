@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.5.7");
+    define("WP_RW__VERSION", "1.5.8");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -23,15 +23,15 @@
 
     /* Uncomment for debug mode.
     -----------------------------------------------------------------------------------------*/
-//     define("WP_RW__DEBUG", "");
-     
-     if (defined("WP_RW__DEBUG"))
-     {
+//    define("WP_RW__DEBUG", "");
+
+    if (defined("WP_RW__DEBUG"))
+    {
         error_reporting(E_ALL);
         ini_set('error_reporting', E_ALL);
         ini_set('display_errors',true);
         ini_set('html_errors', true);                 
-     }
+    }
 
     /* For Rating-Widget development mode.
     -----------------------------------------------------------------------------------------*/
@@ -122,6 +122,12 @@
     define("WP_RW__AVAILABILITY_SETTINGS", "rw_availability_settings");
     define("WP_RW__CATEGORIES_AVAILABILITY_SETTINGS", "rw_categories_availability_settings");
 
+    /* Visibility Options
+    -----------------------------------------------------------------------------------------*/
+    define("WP_RW__VISIBILITY_ALL_VISIBLE", 0);
+    define("WP_RW__VISIBILITY_EXCLUDE", 1);
+    define("WP_RW__VISIBILITY_INCLUDE", 2);
+    
     /* Availability Options
     -----------------------------------------------------------------------------------------*/
     define("WP_RW__AVAILABILITY_ACTIVE", 0);    // Active for all users.

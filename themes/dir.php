@@ -1,5 +1,6 @@
 <?php
-    $rw_themes = array(
+    global $RW_THEMES;
+    $RW_THEMES = array(
         "star" => array(
             "star_oxygen" => array("type" => "star", "file" => "star/oxygen/yellow.php", "title" => "Oxygen Yellow Stars 1"),
             "star_yellow1" => array("type" => "star", "file" => "star/default/yellow_1.php", "title" => "Yellow Stars (Default)"),

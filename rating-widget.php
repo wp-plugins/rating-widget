@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.7
+Version: 1.5.8
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -43,7 +43,7 @@ class RatingWidgetPlugin
     public static $WP_RW__BP_INSTALLED = false;
     public static $WP_RW__HIDE_RATINGS = false;
     
-    public function rw_init_bp()
+    public function InitBuddyPress()
     {
         self::$WP_RW__BP_INSTALLED = true;
         
@@ -122,12 +122,12 @@ class RatingWidgetPlugin
             if (WP_RW__BP_INSTALLED)
             {
                 // BuddyPress earlier than v.1.5
-                $this->rw_init_bp();
+                $this->InitBuddyPress();
             }
             else
             {
                 // BuddyPress v.1.5 and latter.
-                add_action("bp_include", array(&$this, "rw_init_bp"));
+                add_action("bp_include", array(&$this, "InitBuddyPress"));
             }
             
             // wp_footer call validation.
@@ -135,10 +135,13 @@ class RatingWidgetPlugin
             
             // Rating-Widget main javascript load.
             add_action('wp_footer', array(&$this, "rw_attach_rating_js"));
+            add_action('wp_footer', array(&$this, "DumpLog"));
         }
         
         add_action('admin_head', array(&$this, "rw_admin_menu_icon_css"));
         add_action('admin_menu', array(&$this, 'admin_menu'));
+        add_action('admin_menu', array(&$this, 'AddPostMetaBox')); // Metabox for posts/pages
+        add_action('save_post', array(&$this, 'SavePostData'));
         
         /**
         * IMPORTANT: 
@@ -2481,6 +2484,8 @@ class RatingWidgetPlugin
             $this->visibility_list->{$rw_class}->selected = $rw_visibility;
             $this->visibility_list->{$rw_class}->exclude = $rw_visibility_exclude;
             $this->visibility_list->{$rw_class}->include = $rw_visibility_include;
+            self::rw_ids_string_to_array($this->visibility_list->{$rw_class}->exclude);
+            self::rw_ids_string_to_array($this->visibility_list->{$rw_class}->include);
             $this->_setOption(WP_RW__VISIBILITY_SETTINGS, json_encode($this->visibility_list));
     ?>
     <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
@@ -2563,13 +2568,16 @@ class RatingWidgetPlugin
         $def_options = $DEFAULT_OPTIONS;
         if (isset($rw_options->theme) && $rw_options->theme !== "")
         {
-            require(WP_RW__PLUGIN_DIR . "/themes/dir.php");
+            require_once(WP_RW__PLUGIN_DIR . "/themes/dir.php");
+            
+            global $RW_THEMES;
+            
             if (!isset($rw_options->type)){
-                $rw_options->type = isset($rw_themes["star"][$rw_options->theme]) ? "star" : "nero";
+                $rw_options->type = isset($RW_THEMES["star"][$rw_options->theme]) ? "star" : "nero";
             }
-            if (isset($rw_themes[$rw_options->type][$rw_options->theme]))
+            if (isset($RW_THEMES[$rw_options->type][$rw_options->theme]))
             {
-                require(WP_RW__PLUGIN_DIR . "/themes/" . $rw_themes[$rw_options->type][$rw_options->theme]["file"]);
+                require(WP_RW__PLUGIN_DIR . "/themes/" . $RW_THEMES[$rw_options->type][$rw_options->theme]["file"]);
 
                 $theme_font_size_set = (isset($theme["options"]->advanced) && isset($theme["options"]->advanced->font) && isset($theme["options"]->advanced->font->size));
                 $theme_line_height_set = (isset($theme["options"]->advanced) && isset($theme["options"]->advanced->layout) && isset($theme["options"]->advanced->layout->lineHeight));
@@ -2840,38 +2848,149 @@ class RatingWidgetPlugin
         return (is_array($common_categories) && count($common_categories) > 0);
     }
         
-    function rw_validate_visibility($pId, $pClass)
+    function rw_validate_visibility($pId, $pClasses = false)
     {
         if (!isset($this->visibility_list)){
             $this->visibility_list = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
         }
         
-        if (!isset($this->visibility_list->{$pClass})){ return true; }
+        if (is_string($pClasses))
+        {
+            $pClasses = array($pClasses);
+        }
+        else if (false === $pClasses)
+        {
+            foreach ($this->visibility_list as $class => $val)
+            {
+                $pClasses[] = $class;
+            }
+        }
         
-        
-        // Alias.
-        $visibility = $this->visibility_list->{$pClass};
-        
-        // All visible.
-        if ($visibility->selected === 0){ return true; }
-        
+        foreach ($pClasses as $class)
+        {
+            if (!isset($this->visibility_list->{$class}))
+                continue;
+            
+            // Alias.
+            $visibility = $this->visibility_list->{$class};
+            
+            // All visible.
+            if ($visibility->selected === WP_RW__VISIBILITY_ALL_VISIBLE)
+                continue;
 
-        if ($visibility->selected === 1 && !is_array($visibility->exclude))
-        {
-            self::rw_ids_string_to_array($visibility->exclude);
-        }
-        else if ($visibility->selected === 2 && !is_array($visibility->include))
-        {
-            self::rw_ids_string_to_array($visibility->include);
-        }
-        
-        if (($visibility->selected === 1 && in_array($pId, $visibility->exclude)) ||
-            ($visibility->selected === 2 && !in_array($pId, $visibility->include)))
-        {
-            return false;
+            if ($visibility->selected === WP_RW__VISIBILITY_EXCLUDE && !is_array($visibility->exclude))
+            {
+                self::rw_ids_string_to_array($visibility->exclude);
+            }
+            else if ($visibility->selected === WP_RW__VISIBILITY_INCLUDE && !is_array($visibility->include))
+            {
+                self::rw_ids_string_to_array($visibility->include);
+            }
+            
+            if (($visibility->selected === 1 && in_array($pId, $visibility->exclude)) ||
+                ($visibility->selected === 2 && !in_array($pId, $visibility->include)))
+            {
+                return false;
+            }
         }
         
         return true;
+    }
+    
+    function AddToVisibility($pId, $pClasses, $pIsVisible = true)
+    {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("AddToVisibility", $params, true); }
+        
+        if (!isset($this->visibility_list)){
+            $this->visibility_list = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
+        }
+
+        if (is_string($pClasses))
+        {
+            $pClasses = array($pClasses);
+        }
+        else if (!is_array($pClasses) || 0 == count($pClasses))
+        {
+            return;
+        }
+        
+        foreach ($pClasses as $class)
+        {
+            if (RWLogger::IsOn()){ RWLogger::Log("AddToVisibility", "CurrentClass = ". $class); }
+            
+            if (!isset($this->visibility_list->{$class}))
+            {
+                $this->visibility_list->{$class} = new stdClass();
+                $this->visibility_list->{$class}->selected = WP_RW__VISIBILITY_ALL_VISIBLE;
+            }
+            
+            $visibility_list = $this->visibility_list->{$class};
+            
+            if (!isset($visibility_list->include))
+                $visibility_list->include = array();
+            
+            if (!is_array($visibility_list->include))
+                self::rw_ids_string_to_array($visibility->include);
+                
+            if (!isset($visibility_list->exclude))
+                $visibility_list->exclude = array();
+                
+            if (!is_array($visibility_list->exclude))
+                self::rw_ids_string_to_array($visibility->exclude);
+                
+            if ($visibility_list->selected == WP_RW__VISIBILITY_ALL_VISIBLE)
+            {
+                if (RWLogger::IsOn()){ RWLogger::Log("AddToVisibility", "Currently All-Visible for {$class}"); }
+                
+                if (true == $pIsVisible)
+                {
+                    // Already all visible so just ignore this.
+                }
+                else
+                {
+                    // If all visible, and selected to hide this post - exclude specified post/page.
+                    $visibility_list->selected = WP_RW__VISIBILITY_EXCLUDE;
+                    $visibility_list->exclude[] = $pId;
+                }
+            }
+            else
+            {
+                // If not all visible, move post id from one list to another (exclude/include).
+
+                if (RWLogger::IsOn()){ RWLogger::Log("AddToVisibility", "Currently NOT All-Visible for {$class}"); }
+                
+                $remove_from = ($pIsVisible ? "exclude" : "include");
+                $add_to = ($pIsVisible ? "include" : "exclude");
+
+                if (RWLogger::IsOn()){ RWLogger::Log("AddToVisibility", "Remove {$pId} from {$class}'s " . strtoupper(($pIsVisible ? "exclude" : "include")) . "list."); }
+                if (RWLogger::IsOn()){ RWLogger::Log("AddToVisibility", "Add {$pId} to {$class}'s " . strtoupper((!$pIsVisible ? "exclude" : "include")) . "list."); }
+
+                if (!in_array($pId, $visibility_list->{$add_to}))
+                    // Add to include list.
+                    $visibility_list->{$add_to}[] = $pId;
+
+                if (($key = array_search($pId, $visibility_list->{$remove_from})) !== false)
+                    // Remove from exclude list.
+                    $remove_from = array_splice($visibility_list->{$remove_from}, $key, 1);
+                    
+                if (WP_RW__VISIBILITY_EXCLUDE == $visibility_list->selected && 0 === count($visibility_list->exclude))
+                    $visibility_list->selected = WP_RW__VISIBILITY_ALL_VISIBLE;
+            }
+        }
+        
+        if (RWLogger::IsOn()){ RWLogger::LogDeparture("AddToVisibility"); }
+    }
+    
+    function SaveVisibility()
+    {
+        /*foreach ($this->visibility_list as $class => $data)
+        {
+            if (isset($this->visibility_list->{$class}->exclude) && is_array($this->visibility_list->{$class}->exclude))
+            {
+                
+            }
+        }*/
+        $this->_setOption(WP_RW__VISIBILITY_SETTINGS, json_encode($this->visibility_list));
     }
     
     var $is_user_logged_in;
@@ -2916,7 +3035,7 @@ class RatingWidgetPlugin
         
         if ($this->rw_has_inline_rating($content))
         {
-            $content = str_replace("[ratingwidget]", $this->rw_embed_rating($urid, $post->post_title, get_permalink($post->ID), $this->post_class, true), $content);
+            $content = str_replace("[ratingwidget]", $this->EmbedRating($urid, $post->post_title, get_permalink($post->ID), $this->post_class, true), $content);
         }
         
         $post_enabled = (isset($this->post_align) && isset($this->post_align->hor));
@@ -2924,7 +3043,7 @@ class RatingWidgetPlugin
         if ($post_enabled)
         {
             $rw = '<div class="rw-' . $this->post_align->hor . '">'.
-                  $this->rw_embed_rating($urid, $post->post_title, get_permalink($post->ID), $this->post_class, true).
+                  $this->EmbedRating($urid, $post->post_title, get_permalink($post->ID), $this->post_class, true).
                   '</div>';
             return ($this->post_align->ver == "top") ?
                     $rw . $content :
@@ -2984,7 +3103,7 @@ class RatingWidgetPlugin
     * @version 1.3.3
     * 
     */
-    function rw_embed_rating($pUrid, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false)
+    function EmbedRating($pUrid, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false)
     {
         self::QueueRatingData($pUrid, $pTitle, $pPermalink, $pElementClass);
         return $this->rw_rating_html($pUrid, $pElementClass, $pAddSchema, $pTitle);
@@ -3740,6 +3859,84 @@ class RatingWidgetPlugin
               esc_html('If the Rating-Widget\'s ratings don\'t show up on your blog it\'s probably because your active theme is missing the call to <?php wp_footer(); ?> which should appear directly before </body>.').
               '</strong> '.
               'For more details check out our <a href="' . WP_RW__ADDRESS . '/faq/" target="_blank">FAQ</a>.</p></div>';
+    }
+    
+    /* Post/Page Exclude Checkbox
+    ---------------------------------------------------------------------------------------------------------------*/
+    function AddPostMetaBox()
+    {
+        //add the meta box for posts/pages
+        add_meta_box('rw-post-meta-box', __('Rating-Widget Exclude Option', WP_RW__ID), array(&$this, 'ShowPostMetaBox'), 'post', 'side', 'high');
+        add_meta_box('rw-post-meta-box', __('Rating-Widget Exclude Option', WP_RW__ID), array(&$this, 'ShowPostMetaBox'), 'page', 'side', 'high');
+    }
+    
+    // Callback function to show fields in meta box.
+    function ShowPostMetaBox() 
+    {
+         global $post;
+             
+         // Use nonce for verification
+         echo '<input type="hidden" name="rw_post_meta_box_nonce" value="', wp_create_nonce(basename(__FILE__)), '" />';
+
+        // get whether current post is excluded or not
+        $excluded_post = (false === $this->rw_validate_visibility($post->ID, array('front-post', 'blog-post', 'page')));
+        
+        $checked = $excluded_post ? '' : 'checked="checked"';
+
+        echo '<p>';
+        echo '<label for="rw_include_post"><input type="checkbox" name="rw_include_post" id="rw_include_post" value="1" ', $checked, ' /> ';
+        echo __('Show Rating (Uncheck to Hide)', WP_RW__ID);
+        echo '</label>';
+        echo '</p>';
+    }
+
+    // Save data from meta box.
+    function SavePostData($post_id)
+    {    
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("SavePostData", $params, true); }
+        
+        // Verify nonce.
+        if (!isset($_POST['rw_post_meta_box_nonce']) || !wp_verify_nonce($_POST['rw_post_meta_box_nonce'], basename(__FILE__)))
+            return $post_id;
+
+        // Check autosave.
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+            return $post_id;
+
+        if (RWLogger::IsOn()){ RWLogger::Log("post_type", $_POST['post_type']); }
+        
+        // Check permissions.
+        if ('page' == $_POST['post_type']) 
+        {
+            if (!current_user_can('edit_page', $post_id))
+                return $post_id;
+        }
+        else if (!current_user_can('edit_post', $post_id)) 
+        {
+            return $post_id;
+        }
+
+        //check whether this post/page is to be excluded
+        $include_post = $_POST['rw_include_post'];
+
+        $this->AddToVisibility(
+            $_POST['ID'], 
+            (('page' == $_POST['post_type']) ? array('page') : array('front-post', 'blog-post')),
+            (isset($_POST['rw_include_post']) && "1" == $_POST['rw_include_post']));
+        
+        $this->SaveVisibility();
+        
+        if (RWLogger::IsOn()){ RWLogger::LogDeparture("SavePostData"); }
+    }
+    
+    function DumpLog($pElement = false)
+    {
+        if (RWLogger::IsOn())
+        {
+            echo "\n<!-- RATING-WIDGET LOG START\n\n";
+            RWLogger::Output("    ");
+            echo "\n RATING-WIDGET LOG END-->\n";
+        }
     }
 }
 

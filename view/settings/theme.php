@@ -1,7 +1,7 @@
 <?php
-    require_once(dirname(dirname(dirname(__FILE__))) . "/themes/dir.php");
-    require_once(dirname(dirname(dirname(__FILE__))) . "/lib/defaults.php");
-    require_once(dirname(dirname(dirname(__FILE__))) . "/lib/def_settings.php");
+    require_once(WP_RW__PLUGIN_DIR . "/themes/dir.php");
+    require_once(WP_RW__PLUGIN_DIR . "/lib/defaults.php");
+    require_once(WP_RW__PLUGIN_DIR . "/lib/def_settings.php");
     global $DEFAULT_OPTIONS;
 ?>
 <tr id="rw_theme" class="rw-<?php echo ($odd ? "odd" : "even");?>">
@@ -9,7 +9,9 @@
     <td>
         <img id="rw_theme_loader" src="<?php echo WP_RW__ADDRESS_IMG;?>rw.loader.gif" alt="" />
         <?php
-            foreach ($rw_themes as $type => $type_themes)
+            global $RW_THEMES;
+            
+            foreach ($RW_THEMES as $type => $type_themes)
             {
         ?>
         <div id="rw_<?php echo $type;?>_theme_select" class="rw-select" style="display: none;">
@@ -20,7 +22,7 @@
             <?php
                 if ($rw_options->type == $type && isset($rw_options->theme) && isset($type_themes[$rw_options->theme]))
                 {
-                    require(dirname(dirname(dirname(__FILE__))) . "/themes/" . $type_themes[$rw_options->theme]["file"]);
+                    require(WP_RW__PLUGIN_DIR . "/themes/" . $type_themes[$rw_options->theme]["file"]);
                     $options = rw_enrich_options1($theme["options"], $DEFAULT_OPTIONS);
                     $options->size = "large";
                     $options->advanced->font->size = "20px";
@@ -40,7 +42,7 @@
                 {
                     $default_theme = ($type == "star") ? DEF_STAR_THEME : DEF_NERO_THEME;
                 
-                    require(dirname(dirname(dirname(__FILE__))) . "/themes/" . $type_themes[$default_theme]["file"]);
+                    require(WP_RW__PLUGIN_DIR . "/themes/" . $type_themes[$default_theme]["file"]);
                     $options = rw_enrich_options1($theme["options"], $DEFAULT_OPTIONS);
                     $options->size = "large";
                     $options->advanced->font->size = "20px";
@@ -64,7 +66,7 @@
                 {
                     if ($data["type"] == $type)
                     {
-                        require(dirname(dirname(dirname(__FILE__))) . "/themes/" . $data["file"]);
+                        require(WP_RW__PLUGIN_DIR . "/themes/" . $data["file"]);
                         $options = rw_enrich_options1($theme["options"], $DEFAULT_OPTIONS);
             ?>
                 <li class="rw-li<?php if ($selected_theme === $theme_name) echo " rw-selected";?>" onclick="jQuery('#rw_<?php echo $type;?>_theme_selected').html(this.innerHTML); jQuery('#rw_<?php echo $type;?>_theme_select_list li.rw-li.rw-selected').removeClass('rw-selected'); this.className += ' rw-selected'; RWM.Set.theme('<?php echo $theme_name;?>', RW.TYPE.<?php echo strtoupper($type);?>);" onmouseover="jQuery(this.parentNode.childNodes).removeClass('rw-hover'); this.className += ' rw-hover';">
