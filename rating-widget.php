@@ -2482,10 +2482,8 @@ class RatingWidgetPlugin
             $rw_visibility_include  = isset($_POST["rw_visibility_include"]) ? $_POST["rw_visibility_include"] : "";
             
             $this->visibility_list->{$rw_class}->selected = $rw_visibility;
-            $this->visibility_list->{$rw_class}->exclude = $rw_visibility_exclude;
-            $this->visibility_list->{$rw_class}->include = $rw_visibility_include;
-            self::rw_ids_string_to_array($this->visibility_list->{$rw_class}->exclude);
-            self::rw_ids_string_to_array($this->visibility_list->{$rw_class}->include);
+            $this->visibility_list->{$rw_class}->exclude = self::IDsCollectionToArray($rw_visibility_exclude);
+            $this->visibility_list->{$rw_class}->include = self::IDsCollectionToArray($rw_visibility_include);
             $this->_setOption(WP_RW__VISIBILITY_SETTINGS, json_encode($this->visibility_list));
     ?>
     <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
@@ -2799,18 +2797,25 @@ class RatingWidgetPlugin
         }
     }
     
-    static function rw_ids_string_to_array(&$pIds)
+    static function IDsCollectionToArray(&$pIds)
     {
+        if (is_string($pIds) && empty($pIds))
+            return array();
+
+        if (!is_string($pIds) && is_array($pIds))
+            return $pIds;
+        
         $ids = explode(",", $pIds);
-        $pIds = array();
+        $filtered = array();
         foreach ($ids as $id)
         {
             $id = trim($id);
-            if (is_numeric($id)){
-                $pIds[] = $id;
-            }
+            
+            if (is_numeric($id))
+                $filtered[] = $id;
         }
-        $pIds = array_unique($pIds);
+        
+        return array_unique($filtered);
     }
 
     function rw_validate_category_availability($pId, $pClass)
@@ -2880,11 +2885,11 @@ class RatingWidgetPlugin
 
             if ($visibility->selected === WP_RW__VISIBILITY_EXCLUDE && !is_array($visibility->exclude))
             {
-                self::rw_ids_string_to_array($visibility->exclude);
+                $visibility->exclude = self::IDsCollectionToArray($visibility->exclude);
             }
             else if ($visibility->selected === WP_RW__VISIBILITY_INCLUDE && !is_array($visibility->include))
             {
-                self::rw_ids_string_to_array($visibility->include);
+                $visibility->include = self::IDsCollectionToArray($visibility->include);
             }
             
             if (($visibility->selected === 1 && in_array($pId, $visibility->exclude)) ||
@@ -2930,13 +2935,13 @@ class RatingWidgetPlugin
                 $visibility_list->include = array();
             
             if (!is_array($visibility_list->include))
-                self::rw_ids_string_to_array($visibility->include);
+                $visibility->include = self::IDsCollectionToArray($visibility->include);
                 
             if (!isset($visibility_list->exclude))
                 $visibility_list->exclude = array();
                 
             if (!is_array($visibility_list->exclude))
-                self::rw_ids_string_to_array($visibility->exclude);
+                $visibility->exclude = self::IDsCollectionToArray($visibility->exclude);
                 
             if ($visibility_list->selected == WP_RW__VISIBILITY_ALL_VISIBLE)
             {
