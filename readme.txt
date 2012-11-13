@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, sidebar, comment, comments, post, posts, page, google, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.5.8
+Stable tag: 1.5.9
 
 Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
 
@@ -108,6 +108,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.5.9 =
+* New: Added SSL support for Pro users.
+* Fix: Post/Page save/publuish warnings.
+
 = 1.5.8 =
 * New: Option to exclude ratings on post/page add/edit section. No more need to manually type posts/pages ids in the visibility section!
 

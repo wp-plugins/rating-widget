@@ -3,14 +3,14 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.8
+Version: 1.5.9
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
 */
 
-// Load config.
-require_once(dirname(__FILE__) . "/lib/config.php");
+// Load common config.
+require_once(dirname(__FILE__) . "/lib/config.common.php");
 
 // Require logger file.
 require_once(WP_RW__PLUGIN_DIR . "/lib/logger.php");
@@ -33,7 +33,7 @@ class RatingWidgetPlugin
     var $is_admin;
     var $languages;
     var $languages_short;
-    var $visibility_list;
+    var $_visibilityList;
     var $categories_list;
     var $availability_list;
     var $show_on_excerpts_list;
@@ -99,6 +99,9 @@ class RatingWidgetPlugin
         // Load user key.
         $this->load_user_key();
         
+        // Load config after keys are loaded.
+        require_once(WP_RW__PLUGIN_DIR . "/lib/config.php");
+
         RWLogger::Log("WP_RW__VERSION", WP_RW__VERSION);
         
         if (RWLogger::IsOn())
@@ -651,7 +654,7 @@ class RatingWidgetPlugin
             add_action("load-$hook", array( &$this, 'rw_user_key_page_load'));
             
             if ((empty($_GET['page']) || WP_RW__ADMIN_MENU_SLUG != $_GET['page'])){
-                add_action( 'admin_notices', create_function( '', 'echo "<div class=\"error\"><p>" . sprintf( "You need to <a href=\"%s\">input your Rating-Widget.com account details</a>.", "edit.php?page=' . WP_RW__ADMIN_MENU_SLUG . '" ) . "</p></div>";' ) );
+                add_action( 'admin_notices', create_function( '', 'echo "<div class=\"error\"><p>" . sprintf( "Rating-Widget is not activated yet. You need to <a class="button" href=\"%s\">activate the account</a> to start seeing the ratings.", "edit.php?page=' . WP_RW__ADMIN_MENU_SLUG . '" ) . "</p></div>";' ) );
             }
 
             return;
@@ -2411,7 +2414,7 @@ class RatingWidgetPlugin
         $this->show_on_excerpts_list = json_decode($this->_getOption(WP_RW__SHOW_ON_EXCERPT));
         
         // Visibility list must be loaded anyway.
-        $this->visibility_list = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
+        $this->_visibilityList = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
 
         // Categories Availability list must be loaded anyway.
         $this->categories_list = json_decode($this->_getOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS));
@@ -2481,10 +2484,10 @@ class RatingWidgetPlugin
             $rw_visibility_exclude  = isset($_POST["rw_visibility_exclude"]) ? $_POST["rw_visibility_exclude"] : "";
             $rw_visibility_include  = isset($_POST["rw_visibility_include"]) ? $_POST["rw_visibility_include"] : "";
             
-            $this->visibility_list->{$rw_class}->selected = $rw_visibility;
-            $this->visibility_list->{$rw_class}->exclude = self::IDsCollectionToArray($rw_visibility_exclude);
-            $this->visibility_list->{$rw_class}->include = self::IDsCollectionToArray($rw_visibility_include);
-            $this->_setOption(WP_RW__VISIBILITY_SETTINGS, json_encode($this->visibility_list));
+            $this->_visibilityList->{$rw_class}->selected = $rw_visibility;
+            $this->_visibilityList->{$rw_class}->exclude = self::IDsCollectionToArray($rw_visibility_exclude);
+            $this->_visibilityList->{$rw_class}->include = self::IDsCollectionToArray($rw_visibility_include);
+            $this->_setOption(WP_RW__VISIBILITY_SETTINGS, json_encode($this->_visibilityList));
     ?>
     <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
     <?php
@@ -2518,14 +2521,14 @@ class RatingWidgetPlugin
         $rw_options = json_decode($rw_options_str);
         $rw_language_str = isset($rw_options->lng) ? $rw_options->lng : WP_RW__DEFAULT_LNG;
         
-        if (!isset($this->visibility_list->{$rw_class}))
+        if (!isset($this->_visibilityList->{$rw_class}))
         {
-            $this->visibility_list->{$rw_class} = new stdClass();
-            $this->visibility_list->{$rw_class}->selected = 0;
-            $this->visibility_list->{$rw_class}->exclude = "";
-            $this->visibility_list->{$rw_class}->include = "";
+            $this->_visibilityList->{$rw_class} = new stdClass();
+            $this->_visibilityList->{$rw_class}->selected = 0;
+            $this->_visibilityList->{$rw_class}->exclude = "";
+            $this->_visibilityList->{$rw_class}->include = "";
         }
-        $rw_visibility_settings = $this->visibility_list->{$rw_class};
+        $rw_visibility_settings = $this->_visibilityList->{$rw_class};
         
         if (!isset($this->availability_list->{$rw_class})){
             $this->availability_list->{$rw_class} = 0;
@@ -2799,7 +2802,7 @@ class RatingWidgetPlugin
     
     static function IDsCollectionToArray(&$pIds)
     {
-        if (is_string($pIds) && empty($pIds))
+        if (null == $pIds || (is_string($pIds) && empty($pIds)))
             return array();
 
         if (!is_string($pIds) && is_array($pIds))
@@ -2855,8 +2858,8 @@ class RatingWidgetPlugin
         
     function rw_validate_visibility($pId, $pClasses = false)
     {
-        if (!isset($this->visibility_list)){
-            $this->visibility_list = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
+        if (!isset($this->_visibilityList)){
+            $this->_visibilityList = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
         }
         
         if (is_string($pClasses))
@@ -2865,7 +2868,7 @@ class RatingWidgetPlugin
         }
         else if (false === $pClasses)
         {
-            foreach ($this->visibility_list as $class => $val)
+            foreach ($this->_visibilityList as $class => $val)
             {
                 $pClasses[] = $class;
             }
@@ -2873,27 +2876,21 @@ class RatingWidgetPlugin
         
         foreach ($pClasses as $class)
         {
-            if (!isset($this->visibility_list->{$class}))
+            if (!isset($this->_visibilityList->{$class}))
                 continue;
             
             // Alias.
-            $visibility = $this->visibility_list->{$class};
+            $visibility_list = $this->_visibilityList->{$class};
             
             // All visible.
-            if ($visibility->selected === WP_RW__VISIBILITY_ALL_VISIBLE)
+            if ($visibility_list->selected === WP_RW__VISIBILITY_ALL_VISIBLE)
                 continue;
 
-            if ($visibility->selected === WP_RW__VISIBILITY_EXCLUDE && !is_array($visibility->exclude))
-            {
-                $visibility->exclude = self::IDsCollectionToArray($visibility->exclude);
-            }
-            else if ($visibility->selected === WP_RW__VISIBILITY_INCLUDE && !is_array($visibility->include))
-            {
-                $visibility->include = self::IDsCollectionToArray($visibility->include);
-            }
-            
-            if (($visibility->selected === 1 && in_array($pId, $visibility->exclude)) ||
-                ($visibility->selected === 2 && !in_array($pId, $visibility->include)))
+            $visibility_list->exclude = self::IDsCollectionToArray($visibility_list->exclude);
+            $visibility_list->include = self::IDsCollectionToArray($visibility_list->include);
+
+            if (($visibility_list->selected === WP_RW__VISIBILITY_EXCLUDE && in_array($pId, $visibility_list->exclude)) ||
+                ($visibility_list->selected === WP_RW__VISIBILITY_INCLUDE && !in_array($pId, $visibility_list->include)))
             {
                 return false;
             }
@@ -2906,8 +2903,8 @@ class RatingWidgetPlugin
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("AddToVisibility", $params, true); }
         
-        if (!isset($this->visibility_list)){
-            $this->visibility_list = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
+        if (!isset($this->_visibilityList)){
+            $this->_visibilityList = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
         }
 
         if (is_string($pClasses))
@@ -2923,25 +2920,23 @@ class RatingWidgetPlugin
         {
             if (RWLogger::IsOn()){ RWLogger::Log("AddToVisibility", "CurrentClass = ". $class); }
             
-            if (!isset($this->visibility_list->{$class}))
+            if (!isset($this->_visibilityList->{$class}))
             {
-                $this->visibility_list->{$class} = new stdClass();
-                $this->visibility_list->{$class}->selected = WP_RW__VISIBILITY_ALL_VISIBLE;
+                $this->_visibilityList->{$class} = new stdClass();
+                $this->_visibilityList->{$class}->selected = WP_RW__VISIBILITY_ALL_VISIBLE;
             }
             
-            $visibility_list = $this->visibility_list->{$class};
+            $visibility_list = $this->_visibilityList->{$class};
             
-            if (!isset($visibility_list->include))
+            if (!isset($visibility_list->include) || empty($visibility_list->include))
                 $visibility_list->include = array();
             
-            if (!is_array($visibility_list->include))
-                $visibility->include = self::IDsCollectionToArray($visibility->include);
+            $visibility_list->include = self::IDsCollectionToArray($visibility_list->include);
                 
-            if (!isset($visibility_list->exclude))
+            if (!isset($visibility_list->exclude) || empty($visibility_list->exclude))
                 $visibility_list->exclude = array();
                 
-            if (!is_array($visibility_list->exclude))
-                $visibility->exclude = self::IDsCollectionToArray($visibility->exclude);
+            $visibility_list->exclude = self::IDsCollectionToArray($visibility_list->exclude);
                 
             if ($visibility_list->selected == WP_RW__VISIBILITY_ALL_VISIBLE)
             {
@@ -2988,14 +2983,7 @@ class RatingWidgetPlugin
     
     function SaveVisibility()
     {
-        /*foreach ($this->visibility_list as $class => $data)
-        {
-            if (isset($this->visibility_list->{$class}->exclude) && is_array($this->visibility_list->{$class}->exclude))
-            {
-                
-            }
-        }*/
-        $this->_setOption(WP_RW__VISIBILITY_SETTINGS, json_encode($this->visibility_list));
+        $this->_setOption(WP_RW__VISIBILITY_SETTINGS, json_encode($this->_visibilityList));
     }
     
     var $is_user_logged_in;
@@ -3621,7 +3609,9 @@ class RatingWidgetPlugin
                             $token = self::GenerateToken($timestamp);
                             echo ', token: {timestamp: ' . $timestamp . ', token: "' . $token . '"}';
                         }
-                    ?>});
+                    ?>,
+                        source: "WordPress"
+                    });
                     <?php
                         foreach ($rw_settings as $rclass => $options)
                         {
@@ -4039,7 +4029,7 @@ if (class_exists("WP_Widget"))
            
             foreach ($types as $type => $type_data)
             {
-                if ($instance["show_{$type}"] && $instance["{$type}_count"] > 0)
+                if (isset($instance["show_{$type}"]) && $instance["show_{$type}"] && $instance["{$type}_count"] > 0)
                 {
                     $options = json_decode(RatingWidgetPlugin::_getOption($type_data["options"]));
 
@@ -4184,19 +4174,12 @@ if (class_exists("WP_Widget"))
                         thumb.onclick = "";
                     });
 
-                    var like_label = RW._getByClassName("rw-ui-like-label", "span", rating);
-                    if (like_label.length == 1)
-                    {
-                        like_label = like_label[0];
-                        like_label.style.fontSize = like_label.style.lineHeight = "";
-                    }
-                    
-                    var dislike_label = RW._getByClassName("rw-ui-dislike-label", "span", rating);
-                    if (dislike_label.length == 1)
-                    {
-                        dislike_label = dislike_label[0];
-                        dislike_label.style.fontSize = dislike_label.style.lineHeight = "";
-                    }
+                    RW._foreach(['like', 'dislike'], function(label){
+                        var labelItem = RW._getByClassName("rw-ui-like-label", "span", rating);
+                        
+                        if (labelItem.length == 1)
+                            labelItem[0].style.fontSize = labelItem[0].style.lineHeight = "";
+                    });
                 }
                 
                 var label = (RW._getByClassName("rw-ui-info", "span", rating))[0];
