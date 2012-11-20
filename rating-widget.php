@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.5.9
+Version: 1.6.0
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -654,7 +654,7 @@ class RatingWidgetPlugin
             add_action("load-$hook", array( &$this, 'rw_user_key_page_load'));
             
             if ((empty($_GET['page']) || WP_RW__ADMIN_MENU_SLUG != $_GET['page'])){
-                add_action( 'admin_notices', create_function( '', 'echo "<div class=\"error\"><p>" . sprintf( "Rating-Widget is not activated yet. You need to <a class="button" href=\"%s\">activate the account</a> to start seeing the ratings.", "edit.php?page=' . WP_RW__ADMIN_MENU_SLUG . '" ) . "</p></div>";' ) );
+                add_action('admin_notices', create_function('', 'echo "<div class=\"error\"><p>Rating-Widget is not activated yet. You need to <a class=\"button\" style=\"text-decoration: none; color: inherit;\" href=\"edit.php?page=' . WP_RW__ADMIN_MENU_SLUG . '\">activate the account</a> to start seeing the ratings.</p></div>";'));
             }
 
             return;
@@ -3115,7 +3115,7 @@ class RatingWidgetPlugin
     {
         $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"></div>';
         
-        if (true === $pAddSchema)
+        if (true === $pAddSchema && false !== WP_RW__USER_SECRET)
         {
             $details = array( 
                 "uid" => WP_RW__USER_KEY,
@@ -3135,12 +3135,14 @@ class RatingWidgetPlugin
                     $votes = (float)$rw_ret_obj->data[0]->votes;
                     $calc_rate = ($votes > 0) ? ((float)$rate / (float)$votes) : 0;
                     $title = mb_convert_to_utf8(trim($pTitle));
-                    $rating_html .= 
-'<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
-    <meta itemprop="worstRating" content="0" />
-    <meta itemprop="bestRating" content="5" />
-    <meta itemprop="ratingValue" content="' . $calc_rate . '" />
-    <meta itemprop="ratingCount" content="' . $votes . '" />
+                    $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '" itemscope itemtype="http://schema.org/Product">
+    <span itemprop="name" style="position: fixed; top: 100%;">' . esc_html($pTitle) . '</span>
+    <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+        <meta itemprop="worstRating" content="0" />
+        <meta itemprop="bestRating" content="5" />
+        <meta itemprop="ratingValue" content="' . $calc_rate . '" />
+        <meta itemprop="ratingCount" content="' . $votes . '" />
+    </div>
 </div>';
                 }
             }
