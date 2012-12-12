@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, sidebar, comment, comments, post, posts, page, google, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 
 Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
 
@@ -110,6 +110,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.6.2 =
+* New: Christmas Special Edition Thumb & Stars Rating styles - http://rating-widget.com/blog/beautiful-christmas-star-rating-styles/
+* Fix: Improved Greek translation (thanks to our awesome community).
+
 = 1.6.1 =
 * New: Localized to Estonian.
 * New: Localized to Korean.

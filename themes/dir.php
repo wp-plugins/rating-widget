@@ -2,12 +2,12 @@
     global $RW_THEMES;
     $RW_THEMES = array(
         "star" => array(
-            "star_oxygen" => array("type" => "star", "file" => "star/oxygen/yellow.php", "title" => "Oxygen Yellow Stars 1"),
-            "star_yellow1" => array("type" => "star", "file" => "star/default/yellow_1.php", "title" => "Yellow Stars (Default)"),
-            "star_oxygen1" => array("type" => "star", "file" => "star/oxygen/yellow1.php", "title" => "Oxygen Yellow Stars 2"),
-            "star_darkglass" => array("type" => "star", "file" => "star/darkglass/yellow.php", "title" => "Dark Glass Yellow Stars"),
-            "star_quartz" => array("type" => "star", "file" => "star/quartz/yellow.php", "title" => "Quartz Yellow Stars"),
-            "star_christmas" => array("type" => "star", "file" => "star/christmas/yellow.php", "title" => "Christmas Golden Stars"),
+            "star_oxygen" => array("type" => "star", "file" => "star/oxygen/yellow.php", "title" => "Oxygen Yellow Stars 1 (Default)", "premium" => false),
+            "star_yellow1" => array("type" => "star", "file" => "star/default/yellow_1.php", "title" => "Yellow Stars", "premium" => false),
+            "star_oxygen1" => array("type" => "star", "file" => "star/oxygen/yellow1.php", "title" => "Oxygen Yellow Stars 2", "premium" => false),
+            "star_darkglass" => array("type" => "star", "file" => "star/darkglass/yellow.php", "title" => "Dark Glass Yellow Stars", "premium" => false),
+            "star_quartz" => array("type" => "star", "file" => "star/quartz/yellow.php", "title" => "Quartz Yellow Stars", "premium" => false),
+            "star_christmas" => array("type" => "star", "file" => "star/christmas/yellow.php", "title" => "Christmas Golden Stars", "premium" => false),
 
             "star_red1" => array("type" => "star", "file" => "star/default/red_1.php", "title" => "Red Stars"),
             "star_oxygen_red" => array("type" => "star", "file" => "star/oxygen/red.php", "title" => "Oxygen Red Stars 1"),
@@ -66,13 +66,23 @@
             "star_crystal_user" => array("type" => "star", "file" => "star/crystal/user.php", "title" => "Crystal Users"),
 
             "star_darkglass_cookie" => array("type" => "star", "file" => "star/darkglass/cookie.php", "title" => "Dark Glass Cookies"),
+            
+            "star_santa_hat" => array("type" => "star", "file" => "star/christmas/santa_hat.php", "title" => "Christmas Santa Hat"),
+            "star_christmas_yellow_ball" => array("type" => "star", "file" => "star/christmas/yellow_ball.php", "title" => "Christmas Yellow Ball 1", "premium" => false),
+            "star_christmas_yellow_deco_ball" => array("type" => "star", "file" => "star/christmas/yellow_deco_ball.php", "title" => "Christmas Yellow Ball 2"),
+            "star_christmas_red_ball" => array("type" => "star", "file" => "star/christmas/red_ball.php", "title" => "Christmas Red Ball 1", "premium" => false),
+            "star_christmas_red_deco_ball" => array("type" => "star", "file" => "star/christmas/red_deco_ball.php", "title" => "Christmas Red Ball 2"),
+            "star_christmas_blue_ball" => array("type" => "star", "file" => "star/christmas/blue_ball.php", "title" => "Christmas Blue Ball 1", "premium" => false),
+            "star_christmas_blue_deco_ball" => array("type" => "star", "file" => "star/christmas/blue_deco_ball.php", "title" => "Christmas Blue Ball 2"),
         ),
         "nero" => array(
-            "thumbs_1" => array("type" => "nero", "file" => "nero/n1.php", "title" => "Thumbs 1 (Default)"),
+            "thumbs_1" => array("type" => "nero", "file" => "nero/n1.php", "title" => "Thumbs 1 (Default)", "premium" => false),
             "thumbs_2" => array("type" => "nero", "file" => "nero/n2.php", "title" => "Thumbs 2"),
             "thumbs_bp1" => array("type" => "nero", "file" => "nero/buddypress_1.php", "title" => "BuddyPress Thumbs"),
             "arrows_1" => array("type" => "nero", "file" => "nero/n3.php", "title" => "Arrows 1"),
             "arrows_2" => array("type" => "nero", "file" => "nero/n4.php", "title" => "Arrows 2"),
+            
+            "christmas" => array("type" => "nero", "file" => "nero/christmas.php", "title" => "Christmas Santa's Glove"),
         ),
     );
 ?>
