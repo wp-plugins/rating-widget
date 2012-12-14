@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, sidebar, comment, comments, post, posts, page, google, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 
 Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
 
@@ -15,18 +15,18 @@ The Rating-Widget **Star Ratings WordPress plugin** allows you to create and man
 The plugin has [PRO VERSIONS](http://rating-widget.com/get-the-word-press-plugin/) with extra features.
 
 **Standard Pro Version:** 
-1. Remove (i) icon from Ratings
-2. Secure Connection (Fraud protection)
+* Remove (i) icon from Ratings
+* Secure Connection (Fraud protection)
 
 **Premium Pro Version:** 
-1. Priority Email Support
-2. Remove (i) icon from Ratings
-3. Google Rich Snippets (schema.org)
-4. Secure Connection (Fraud protection)
-5. SSL Support
-6. Advanced Ratings' Analytics
-7. BuddyPress activity updates, comments and user profiles ratings.
-8. BP's bbPress forum posts ratings.
+* Priority Email Support
+* Remove (i) icon from Ratings
+* Google Rich Snippets (schema.org)
+* Secure Connection (Fraud protection)
+* SSL Support
+* Advanced Ratings' Analytics
+* BuddyPress activity updates, comments and user profiles ratings.
+* BP's bbPress forum posts ratings.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
 
@@ -124,8 +124,11 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.6.4 =
+* Fix: Top-Rated Widget ratings label is now showing always votes count instead of 'Rate This'.
+
 = 1.6.3 =
-* Update: Updated plugin description to clear out the Pro features..
+* Update: Updated plugin description to clear out the Pro features.
 
 = 1.6.2 =
 * New: Christmas Special Edition Thumb & Stars Rating styles - http://rating-widget.com/blog/beautiful-christmas-star-rating-styles/
