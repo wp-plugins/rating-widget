@@ -10,9 +10,23 @@ Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
 
 == Description ==
 
-The Rating-Widget **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. Support Google Rich Snippets (schema.org AggregateRating item). All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The stars rating editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+The Rating-Widget **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The star ratings editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
-The **Pro Version** support star ratings into your BuddyPress activity updates and comments, BP's bbPress forum posts ratings.
+The plugin has [PRO VERSIONS](http://rating-widget.com/get-the-word-press-plugin/) with extra features.
+
+**Standard Pro Version:** 
+1. Remove (i) icon from Ratings
+2. Secure Connection (Fraud protection)
+
+**Premium Pro Version:** 
+1. Priority Email Support
+2. Remove (i) icon from Ratings
+3. Google Rich Snippets (schema.org)
+4. Secure Connection (Fraud protection)
+5. SSL Support
+6. Advanced Ratings' Analytics
+7. BuddyPress activity updates, comments and user profiles ratings.
+8. BP's bbPress forum posts ratings.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
 
