@@ -3648,7 +3648,7 @@ class RatingWidgetPlugin
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
                         rw.src = "<?php echo WP_RW__ADDRESS_JS; ?>external<?php
                             if (!defined("WP_RW__DEBUG")){ echo ".min"; }
-                        ?>.js";
+                        ?>.js?wp=<?php echo WP_RW__VERSION;?>";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }
