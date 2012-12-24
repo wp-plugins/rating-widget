@@ -27,6 +27,7 @@
         $ret->imgUrl->rtl = @rw_get_default_value($settings->imgUrl->rtl, $defaults->imgUrl->rtl);
         $ret->readOnly = @rw_get_default_value($settings->readOnly, $defaults->readOnly);
         $ret->reVote = @rw_get_default_value($settings->reVote, $defaults->reVote);
+        $ret->frequency = @rw_get_default_value($settings->frequency, $defaults->frequency);
         $ret->showInfo = @rw_get_default_value($settings->showInfo, $defaults->showInfo);
         $ret->showTooltip = @rw_get_default_value($settings->showTooltip, $defaults->showTooltip);
         $ret->beforeRate = @rw_get_default_value($settings->beforeRate, $defaults->beforeRate);

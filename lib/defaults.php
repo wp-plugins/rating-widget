@@ -8,6 +8,7 @@
         define("DEF_NERO_STYLE", "thumbs");
         define("DEF_STAR_THEME", "star_oxygen");
         define("DEF_NERO_THEME", "thumbs_1");
+        define('DEF_FREQUENCY', -1);
         
         $DEF_FONT_SIZE = new stdClass();
         $DEF_FONT_SIZE->SMALL = "12px";
@@ -46,6 +47,7 @@
         $DEFAULT_OPTIONS->imgUrl->rtl = "";
         $DEFAULT_OPTIONS->readOnly = false;
         $DEFAULT_OPTIONS->reVote = true;
+        $DEFAULT_OPTIONS->frequency = DEF_FREQUENCY;
         $DEFAULT_OPTIONS->showInfo = true;
         $DEFAULT_OPTIONS->showTooltip = true;
         $DEFAULT_OPTIONS->boost->votes = 0;

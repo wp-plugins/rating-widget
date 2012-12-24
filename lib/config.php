@@ -11,6 +11,12 @@
         define("WP_RW__ADDRESS_JS", "https://secure." . WP_RW__DOMAIN . "/js/");
         define("WP_RW__ADDRESS_IMG", "https://secure." . WP_RW__DOMAIN . "/img/");
     }
+    else if (defined('WP_RW__STAGING') && true === WP_RW__STAGING)
+    {
+        define("WP_RW__ADDRESS_CSS", "http://scss.rating-widget.com/");
+        define("WP_RW__ADDRESS_JS", "http://sjs.rating-widget.com/");
+        define("WP_RW__ADDRESS_IMG", "http://simg.rating-widget.com/");
+    }
     else
     {
         define("WP_RW__ADDRESS_CSS", "http://css.rating-widget.com/");

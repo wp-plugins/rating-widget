@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.6.4
+Version: 1.6.5
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -2710,6 +2710,7 @@ class RatingWidgetPlugin
                 <?php require_once(dirname(__FILE__) . "/view/availability_options.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/visibility_options.php"); ?>
                 <?php require_once(dirname(__FILE__) . "/view/categories_availability_options.php"); ?>
+                <?php require_once(dirname(__FILE__) . "/view/settings/frequency.php"); ?>
             </div>
             <div id="rw_floating_container">
                 <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
@@ -3935,6 +3936,269 @@ class RatingWidgetPlugin
             echo "\n RATING-WIDGET LOG END-->\n";
         }
     }
+    
+    public function GetPostExcerpt($pPost, $pWords = 15)
+    {
+        if (!empty($pPost->post_excerpt))
+            return trim(strip_tags($pPost->post_excerpt));
+        
+        $strippedContent = trim(strip_tags($pPost->post_content));
+        $excerpt = implode(' ', array_slice(explode(' ', $strippedContent), 0, $pWords));
+        
+        return (mb_strlen($strippedContent) !== mb_strlen($excerpt)) ?
+            $excerpt . "..." :
+            $strippedContent;
+    }
+    
+    public function GetPostFeaturedImage($pPostID)
+    {
+        if (!has_post_thumbnail($pPostID))
+            return '';
+
+        $exceprt = var_export($image, true) . '<br>' . $exceprt;
+        $image = wp_get_attachment_image_src(get_post_thumbnail_id($pPostID), 'single-post-thumbnail');
+        return $image[0];
+    }
+    
+    private function GetTopRatedData($pTypes = array())
+    {
+        if (!is_array($pTypes) || count($pTypes) == 0)
+            return false;
+            
+        $types = array(
+            "posts" => array(
+                "rclass" => "blog-post", 
+                "classes" => "front-post,blog-post,new-blog-post,user-post",
+                "options" => WP_RW__BLOG_POSTS_OPTIONS,
+            ),
+            "pages" => array(
+                "rclass" => "page", 
+                "classes" => "page,user-page",
+                "options" => WP_RW__PAGES_OPTIONS,
+            ),
+            "comments" => array(
+                "rclass" => "comment",
+                "classes" => "comment,new-blog-comment,user-comment",
+                "options" => WP_RW__COMMENTS_OPTIONS,
+            ),
+            "activity_updates" => array(
+                "rclass" => "activity-update",
+                "classes" => "activity-update,user-activity-update",
+                "options" => WP_RW__ACTIVITY_UPDATES_OPTIONS,
+            ),
+            "activity_comments" => array(
+                "rclass" => "activity-comment",
+                "classes" => "activity-comment,user-activity-comment",
+                "options" => WP_RW__ACTIVITY_COMMENTS_OPTIONS,
+            ),
+            "forum_posts" => array(
+                "rclass" => "forum-post",
+                "classes" => "forum-post,new-forum-post,user-forum-post",
+                "options" => WP_RW__FORUM_POSTS_OPTIONS,
+            ),
+            "users" => array(
+                "rclass" => "user",
+                "classes" => "user",
+                "options" => WP_RW__FORUM_POSTS_OPTIONS,
+            ),
+        );
+        
+        $typesKeys = array_keys($types);
+        
+        $availableTypes = array_intersect($typesKeys, $pTypes);
+        
+        if (!is_array($availableTypes) || count($availableTypes) == 0)
+            return false;
+
+        $details = array( 
+            "uid" => WP_RW__USER_KEY,
+        );
+
+        $queries = array();
+       
+        foreach ($availableTypes as $type)
+        {
+                $options = json_decode(RatingWidgetPlugin::_getOption($types[$type]["options"]));
+
+                $queries[$type] = array(
+                    "rclasses" => $types[$type]["classes"],
+                    "votes" => 1,
+                    "orderby" => 'avgrate',
+                    "order" => 'desc',
+                    "limit" => 5,
+                    "types" => isset($options->type) ? $options->type : "star",
+                );
+        }
+
+        $details["queries"] = urlencode(json_encode($queries));
+        
+        $rw_ret_obj = RatingWidgetPlugin::RemoteCall("action/query/ratings.php", $details);
+        
+        if (false === $rw_ret_obj)
+            return false;
+        
+        $rw_ret_obj = json_decode($rw_ret_obj);
+        
+        if (null === $rw_ret_obj || true !== $rw_ret_obj->success)
+            return false;
+        
+        return $rw_ret_obj;
+    }
+    
+    public function GetTopRated()
+    {
+        $rw_ret_obj = $this->GetTopRatedData(array('posts', 'pages'));
+        
+        if (false === $rw_ret_obj || count($rw_ret_obj->data) == 0)
+            return '';
+        
+        $html = '<div id="rw_top_rated_page">';
+        foreach($rw_ret_obj->data as $type => $ratings)
+        {                    
+            if (is_array($ratings) && count($ratings) > 0)
+            {
+                $html .= '<div id="rw_top_rated_page_' . $type . '" class="rw-wp-ui-top-rated-list-container">';
+                if ($instance["show_{$type}_title"]){
+                    $instance["{$type}_title"] = empty($instance["{$type}_title"]) ? ucwords($type) : $instance["{$type}_title"];
+                    $html .= '<p style="margin: 0;">' . $instance["{$type}_title"] . '</p>';
+                }
+                $html .= '<ul class="rw-wp-ui-top-rated-list">';
+
+                $count = 1;
+                foreach ($ratings as $rating)
+                {
+                    $urid = $rating->urid;
+                    $rclass = $types[$type]["rclass"];
+                    $thumbnail = '';
+                    RatingWidgetPlugin::QueueRatingData($urid, "", "", $rclass);
+
+                    switch ($type)
+                    {
+                        case "posts":
+                        case "pages":
+                            $id = RatingWidgetPlugin::Urid2PostId($urid);
+                            $post = get_post($id);
+                            $title = trim(strip_tags($post->post_title));
+                            $excerpt = $this->GetPostExcerpt($post, 15);
+                            $permalink = get_permalink($post->ID);
+                            $thumbnail = $this->GetPostFeaturedImage($post->ID);
+                            break;
+                        case "comments":
+                            $id = RatingWidgetPlugin::Urid2CommentId($urid);
+                            $comment = get_comment($id);
+                            $title = trim(strip_tags($comment->comment_content));
+                            $permalink = get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID;
+                            break;
+                        case "activity_updates":
+                        case "activity_comments":
+                            $id = RatingWidgetPlugin::Urid2ActivityId($urid);
+                            $activity = new bp_activity_activity($id);
+                            $title = trim(strip_tags($activity->content));
+                            $permalink = bp_activity_get_permalink($id);
+                            break;
+                        case "users":
+                            $id = RatingWidgetPlugin::Urid2UserId($urid);
+                            $title = trim(strip_tags(bp_core_get_user_displayname($id)));
+                            $permalink = bp_core_get_user_domain($id);
+                            break;
+                        case "forum_posts":
+                            $id = RatingWidgetPlugin::Urid2ForumPostId($urid);
+                            $forum_post = bp_forums_get_post($id);
+                            $title = trim(strip_tags($forum_post->post_text));
+                            $page = bb_get_page_number($forum_post->post_position);
+                            $permalink = get_topic_link($id, $page) . "#post-{$id}";
+                            break;
+                    }
+                    $short = (mb_strlen($title) > 30) ? trim(mb_substr($title, 0, 30)) . "..." : $title;
+                    
+                    $html .= '
+<li class="rw-wp-ui-top-rated-list-item">
+    <div>
+        <b class="rw-wp-ui-top-rated-list-count">' . $count . '</b>
+        <img class="rw-wp-ui-top-rated-list-item-thumbnail" src="' . $thumbnail . '" alt="" />
+        <div class="rw-wp-ui-top-rated-list-item-data">
+            <div>
+                <a class="rw-wp-ui-top-rated-list-item-title" href="' . $permalink . '" title="' . $title . '">' . $short . '</a>
+                <div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . '"></div>
+            </div>
+            <p class="rw-wp-ui-top-rated-list-item-excerpt">' . $excerpt . '</p>
+        </div>
+    </div>
+</li>';
+                    $count++;
+                }
+                $html .= "</ul>";
+                $html .= "</div>";
+            }
+        }
+        
+        // Set a flag that the widget is loaded.
+        RatingWidgetPlugin::TopRatedWidgetLoaded();
+        
+        ob_start();
+?>
+<script type="text/javascript">
+    // Hook render widget.
+    if (typeof(RW_HOOK_READY) === "undefined"){ RW_HOOK_READY = []; }
+    RW_HOOK_READY.push(function(){
+        RW._foreach(RW._getByClassName("rw-wp-ui-top-rated-list", "ul"), function(list){
+            RW._foreach(RW._getByClassName("rw-ui-container", "div", list), function(rating){
+                // Deactivate rating.
+                RW._Class.remove(rating, "rw-active");
+                var i = (RW._getByClassName("rw-report-link", "a", rating))[0];
+                if (RW._is(i)){ i.parentNode.removeChild(i); }
+                
+                // Update size to small.
+                if (!RW._Class.has(rating, "rw-size-small"))
+                {
+                    RW._Class.add(rating, "rw-size-small");
+                    RW._Class.remove(rating, "rw-size-medium");
+                    RW._Class.remove(rating, "rw-size-large");
+                }
+                
+                if (RW._Class.has(rating, "rw-ui-star"))
+                {
+                    RW._foreach(RW._getByTagName("li", rating), function(star){
+                        // Clear star event handlers.
+                        star.onmouseover =
+                        star.onmouseout =
+                        star.onclick = "";
+                    });
+                }
+                else
+                {
+                    RW._foreach(RW._getByTagName("i", rating), function(thumb){
+                        // Clear star event handlers.
+                        thumb.onmouseover =
+                        thumb.onmouseout =
+                        thumb.onclick = "";
+                    });
+
+                    RW._foreach(['like', 'dislike'], function(label){
+                        var labelItem = RW._getByClassName("rw-ui-like-label", "span", rating);
+                        
+                        if (labelItem.length == 1)
+                            labelItem[0].style.fontSize = labelItem[0].style.lineHeight = "";
+                    });
+                }
+                
+                var ratingControl = RW.getRating(RW._getRatingId(rating)),
+                    votes = ratingControl.votes + ratingControl.options.boost.votes,
+                    label = votes + ' ' + ((votes == 1) ? ratingControl.advanced.text.vote : ratingControl.advanced.text.votes);
+                
+                ratingControl.setLabel(label);
+                
+                var label = (RW._getByClassName("rw-ui-info", "span", rating))[0];
+                label.style.fontSize = label.style.lineHeight = "";
+            });
+        });
+    });
+</script>
+<?php
+        $html .= ob_get_clean();
+        $html .= '</div>';
+        return $html;                
+    }
 }
 
 if (class_exists("WP_Widget"))
@@ -3962,9 +4226,11 @@ if (class_exists("WP_Widget"))
         {
             if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("RWTopRated.widget", $params, true); }
 
-            if (!defined("WP_RW__USER_KEY") || false === WP_RW__USER_KEY){ return; }
+            if (!defined("WP_RW__USER_KEY") || false === WP_RW__USER_KEY)
+                return;
             
-            if (RatingWidgetPlugin::$WP_RW__HIDE_RATINGS){ return; }
+            if (RatingWidgetPlugin::$WP_RW__HIDE_RATINGS)
+                return;
 
             extract($args, EXTR_SKIP);
     

@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.6.4");
+    define("WP_RW__VERSION", "1.6.5");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -24,6 +24,7 @@
     /* Uncomment for debug mode.
     -----------------------------------------------------------------------------------------*/
 //    define("WP_RW__DEBUG", "");
+    define('WP_RW__STAGING', false);
 
     if (defined("WP_RW__DEBUG"))
     {
@@ -169,7 +170,8 @@
 
     /* Rating-Widget URIs
     -----------------------------------------------------------------------------------------*/
-    if (!defined("WP_RW__DOMAIN")){ define("WP_RW__DOMAIN", "rating-widget.com"); }
+    if (!defined("WP_RW__DOMAIN"))
+        define("WP_RW__DOMAIN", (defined('WP_RW__STAGING') && true === WP_RW__STAGING) ? 'staging.rating-widget.com' : 'rating-widget.com');
     
     define("WP_RW__HTTPS", (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'));
     
