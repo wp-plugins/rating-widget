@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, sidebar, comment, comments, post, posts, page, google, admin, plugin, ajax, buddypress, bbpress
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 
 Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
 
@@ -35,6 +35,7 @@ To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-p
 Rating-Widget star ratings are localizable and currently available in:
 
 * Arabic - العربية
+* Bengali - বাংলা
 * Bulgarian - български
 * Catalan - Català
 * Chinese - 汉语/漢語
@@ -126,6 +127,9 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.6.6 =
+* New: Localized to Bengali.
+
 = 1.6.5 =
 * New: User voting frequency settings - you can now allow daily, weekly, monthly and annually voting.
 

@@ -3,6 +3,7 @@
     $rw_languages = array(
 //        'af' => 'Afrikaans',
         'ar' => 'Arabic - العربية',
+        'bn' => 'Bengali - বাংলা',
         'bg' => 'Bulgarian - български', 
         'ca' => 'Catalan - Català',
         'ch' => 'Chinese - 汉语/漢語',
