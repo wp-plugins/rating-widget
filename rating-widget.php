@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.6.8
+Version: 1.6.9
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
