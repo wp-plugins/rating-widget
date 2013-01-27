@@ -4635,13 +4635,22 @@ if (class_exists("WP_Widget"))
 
 /* For servers without mb string support.
 ---------------------------------------------------------------------------------------------------------------*/
-if (!function_exists("mb_strlen")){
+if (!function_exists("mb_strlen"))
+{
     function mb_strlen($str){ return strlen($str); }
-    if (!function_exists("mb_substr")){
+    
+    if (!function_exists("mb_substr"))
+    {
         function mb_substr($str, $start, $length){ return substr($str, $start, $length); }
-    if (!function_exists("mb_convert_to_utf8")){
+    }
+    
+    if (!function_exists("mb_convert_to_utf8"))
+    {
         function mb_convert_to_utf8($str){ return $str; }
-}else{
+    }
+}
+else
+{
     function mb_convert_to_utf8($str){ return mb_convert_encoding($str, 'UTF-8', mb_detect_encoding($str)); }
 }
 
