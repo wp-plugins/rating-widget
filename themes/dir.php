@@ -3,6 +3,10 @@
     $RW_THEMES = array(
         'star' => array(
             'star_oxygen' => array('type' => 'star', 'file' => 'star/oxygen/yellow.php', 'title' => 'Oxygen Yellow Stars 1 (Default)', 'premium' => false),
+
+            'star_lean_heart' => array('type' => 'star', 'file' => 'star/lean_heart.php', 'title' => 'Lean Hearts'),
+            'star_heart1' => array('type' => 'star', 'file' => 'star/heart_1.php', 'title' => 'Hearts'),
+            
             'star_yellow1' => array('type' => 'star', 'file' => 'star/default/yellow_1.php', 'title' => 'Yellow Stars', 'premium' => false),
             'star_oxygen1' => array('type' => 'star', 'file' => 'star/oxygen/yellow1.php', 'title' => 'Oxygen Yellow Stars 2', 'premium' => false),
             'star_darkglass' => array('type' => 'star', 'file' => 'star/darkglass/yellow.php', 'title' => 'Dark Glass Yellow Stars', 'premium' => false),
@@ -30,14 +34,6 @@
             'star_quartz_blue' => array('type' => 'star', 'file' => 'star/quartz/blue.php', 'title' => 'Quartz Blue Stars'),
             'star_christmas_blue' => array('type' => 'star', 'file' => 'star/christmas/blue.php', 'title' => 'Christmas Blue Stars'),
 
-            'star_santa_hat' => array('type' => 'star', 'file' => 'star/christmas/santa_hat.php', 'title' => 'Christmas Santa Hat'),
-            'star_christmas_yellow_ball' => array('type' => 'star', 'file' => 'star/christmas/yellow_ball.php', 'title' => 'Christmas Yellow Ball 1', 'premium' => false),
-            'star_christmas_yellow_deco_ball' => array('type' => 'star', 'file' => 'star/christmas/yellow_deco_ball.php', 'title' => 'Christmas Yellow Ball 2'),
-            'star_christmas_red_ball' => array('type' => 'star', 'file' => 'star/christmas/red_ball.php', 'title' => 'Christmas Red Ball 1', 'premium' => false),
-            'star_christmas_red_deco_ball' => array('type' => 'star', 'file' => 'star/christmas/red_deco_ball.php', 'title' => 'Christmas Red Ball 2'),
-            'star_christmas_blue_ball' => array('type' => 'star', 'file' => 'star/christmas/blue_ball.php', 'title' => 'Christmas Blue Ball 1', 'premium' => false),
-            'star_christmas_blue_deco_ball' => array('type' => 'star', 'file' => 'star/christmas/blue_deco_ball.php', 'title' => 'Christmas Blue Ball 2'),
-            
             'star_flames' => array('type' => 'star', 'file' => 'star/flames.php', 'title' => 'Flames by Giuseppe'),
 
             'star_smiley' => array('type' => 'star', 'file' => 'star/smiley.php', 'title' => 'Smiley by Daya'),
@@ -47,9 +43,6 @@
             'star_gray1' => array('type' => 'star', 'file' => 'star/default/gray_1.php', 'title' => 'Gray Stars'),
             'star_bp1' => array('type' => 'star', 'file' => 'star/buddypress_1.php', 'title' => 'BuddyPress'),
             
-            'star_heart1' => array('type' => 'star', 'file' => 'star/heart_1.php', 'title' => 'Hearts'),
-            'star_lean_heart' => array('type' => 'star', 'file' => 'star/lean_heart.php', 'title' => 'Lean Hearts'),
-
             'star_apple_screen' => array('type' => 'star', 'file' => 'star/apple_screen.php', 'title' => 'Apple Screens'),
             'star_phuzion_diskonkey' => array('type' => 'star', 'file' => 'star/phuzion_diskonkey.php', 'title' => 'Phuzion DiskOnKey'),
 
@@ -75,18 +68,25 @@
 
             'star_darkglass_cookie' => array('type' => 'star', 'file' => 'star/darkglass/cookie.php', 'title' => 'Dark Glass Cookies'),
             
+            'star_santa_hat' => array('type' => 'star', 'file' => 'star/christmas/santa_hat.php', 'title' => 'Christmas Santa Hat'),
+            'star_christmas_yellow_ball' => array('type' => 'star', 'file' => 'star/christmas/yellow_ball.php', 'title' => 'Christmas Yellow Ball 1', 'premium' => false),
+            'star_christmas_yellow_deco_ball' => array('type' => 'star', 'file' => 'star/christmas/yellow_deco_ball.php', 'title' => 'Christmas Yellow Ball 2'),
+            'star_christmas_red_ball' => array('type' => 'star', 'file' => 'star/christmas/red_ball.php', 'title' => 'Christmas Red Ball 1', 'premium' => false),
+            'star_christmas_red_deco_ball' => array('type' => 'star', 'file' => 'star/christmas/red_deco_ball.php', 'title' => 'Christmas Red Ball 2'),
+            'star_christmas_blue_ball' => array('type' => 'star', 'file' => 'star/christmas/blue_ball.php', 'title' => 'Christmas Blue Ball 1', 'premium' => false),
+            'star_christmas_blue_deco_ball' => array('type' => 'star', 'file' => 'star/christmas/blue_deco_ball.php', 'title' => 'Christmas Blue Ball 2'),
         ),
         'nero' => array(
             'thumbs_1' => array('type' => 'nero', 'file' => 'nero/n1.php', 'title' => 'Thumbs 1 (Default)', 'premium' => false),
-
-            'christmas' => array('type' => 'nero', 'file' => 'nero/christmas.php', 'title' => 'Christmas Santa\'s Glove'),
 
             'thumbs_2' => array('type' => 'nero', 'file' => 'nero/n2.php', 'title' => 'Thumbs 2'),
             'thumbs_bp1' => array('type' => 'nero', 'file' => 'nero/buddypress_1.php', 'title' => 'BuddyPress Thumbs'),
             'arrows_1' => array('type' => 'nero', 'file' => 'nero/n3.php', 'title' => 'Arrows 1'),
             'arrows_2' => array('type' => 'nero', 'file' => 'nero/n4.php', 'title' => 'Arrows 2'),
-            
+
+            'candles' => array('type' => 'nero', 'file' => 'nero/candles.php', 'title' => 'Candles by Avelim'),
             'masks' => array('type' => 'nero', 'file' => 'nero/masks.php', 'title' => 'Masks (by David Shenberger)'),
+            'christmas' => array('type' => 'nero', 'file' => 'nero/christmas.php', 'title' => 'Christmas Santa\'s Glove'),
         ),
     );
 ?>

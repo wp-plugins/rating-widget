@@ -1,10 +1,10 @@
 === Rating-Widget ===
 Contributors: svovaf
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VAFEFAZRTLXU4
-Tags: rate, rating, ratings, vote, votes, voting, star, like, widget, widgets, sidebar, comment, comments, post, posts, page, google, admin, plugin, ajax, buddypress, bbpress
+Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.6.9
+Stable tag: 1.7.0
 
 Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
 
@@ -129,6 +129,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.7.0 =
+* New: New beautiful candle thumb rating by Yoram Zara (http://www.avelim.co.il/).
+* Fix: Fixed settings sections layout height for new WP versions.
+
 = 1.6.8 - 1.6.9 =
 * New: Localized to Slovak.
 * New: Localized to Slovenian.

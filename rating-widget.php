@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Rating-Widget Plugin
-Plugin URI: http://rating-widget.com
+Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.6.9
+Version: 1.7.0
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -2644,7 +2644,7 @@ class RatingWidgetPlugin
                                 }
                             ?>
                         </ul>
-                        <div class="tabs-panel rw-body" id="categories-all" style="background: white; height: auto; overflow: visible; width: 602px;">
+                        <div class="tabs-panel rw-body" id="categories-all" style="background: white; height: auto; overflow: visible; width: 602px; max-height: none;">
                             <?php
                                 $enabled = isset($rw_align->ver);
                             ?>
