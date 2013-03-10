@@ -1,8 +1,4 @@
 <?php
-        error_reporting(E_ALL);
-        ini_set('error_reporting', E_ALL);
-        ini_set('display_errors',true);
-        ini_set('html_errors', true);                 
 /*
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
