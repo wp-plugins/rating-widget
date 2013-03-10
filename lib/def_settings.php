@@ -1,5 +1,5 @@
 <?php
-    function rw_enrich_options1($settings, $defaults)
+    function rw_enrich_options1($settings, $defaults, $loadTheme = false, $fromDefaults = false)
     {
         $ret = @rw_get_default_value($settings, new stdClass());
         $ret->boost = @rw_get_default_value($settings->boost, new stdClass());
@@ -14,11 +14,57 @@
         $ret->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         $ret->advanced->css = @rw_get_default_value($settings->advanced->css, new stdClass());
         
+        if ($fromDefaults)
+        {
+            if (isset($settings->size))
+            {
+                require_once(dirname(__FILE__) . "/defaults.php");
+                global $DEF_FONT_SIZE, $DEF_LINE_HEIGHT;
+                $size = strtoupper($settings->size);
+                $settings->advanced->font->size = @rw_get_default_value($settings->advanced->font->size, $DEF_FONT_SIZE->$size);
+                $settings->advanced->layout->lineHeight = @rw_get_default_value($settings->advanced->layout->lineHeight, $DEF_LINE_HEIGHT->$size);
+            }
+            
+            if (isset($settings->lng))
+            {
+                require(RW__PATH_LANGUAGES . $settings->lng . ".php");
+                
+                $settings->advanced->layout->dir = @rw_get_default_value($settings->advanced->layout->dir, $dir);
+                $settings->advanced->layout->align->hor = @rw_get_default_value($settings->advanced->layout->align->hor, $hor);
+
+                $settings->advanced->text->rateAwful = @rw_get_default_value($settings->advanced->text->rateAwful, $dictionary["rateAwful"]);
+                $settings->advanced->text->ratePoor = @rw_get_default_value($settings->advanced->text->ratePoor, $dictionary["ratePoor"]);
+                $settings->advanced->text->rateAverage = @rw_get_default_value($settings->advanced->text->rateAverage, $dictionary["rateAverage"]);
+                $settings->advanced->text->rateGood = @rw_get_default_value($settings->advanced->text->rateGood, $dictionary["rateGood"]);
+                $settings->advanced->text->rateExcellent = @rw_get_default_value($settings->advanced->text->rateExcellent, $dictionary["rateExcellent"]);
+                $settings->advanced->text->rateThis = @rw_get_default_value($settings->advanced->text->rateThis, $dictionary["rateThis"]);
+                $settings->advanced->text->like = @rw_get_default_value($settings->advanced->text->like, $dictionary["like"]);
+                $settings->advanced->text->dislike = @rw_get_default_value($settings->advanced->text->dislike, $dictionary["dislike"]);
+                $settings->advanced->text->vote = @rw_get_default_value($settings->advanced->text->vote, $dictionary["vote"]);
+                $settings->advanced->text->votes = @rw_get_default_value($settings->advanced->text->votes, $dictionary["votes"]);
+                $settings->advanced->text->thanks = @rw_get_default_value($settings->advanced->text->thanks, $dictionary["thanks"]);
+            }
+        }
+        
+        // Get rating type.
+        $ret->type = @rw_get_default_value($settings->type, $defaults->type);
+
+        if ($loadTheme && isset($settings->theme))
+        {
+            require_once(RW__PATH_THEMES . "dir.php");
+            
+            global $RW_THEMES;
+            
+            // Load theme options.
+            require(RW__PATH_THEMES . $RW_THEMES[$ret->type][$settings->theme]["file"]);
+            
+            return rw_enrich_options1($settings, rw_enrich_options1($theme_options, $defaults));
+        }
+        
         $ret->uarid = @rw_get_default_value($settings->uarid, $defaults->uarid);
         $ret->lng = @rw_get_default_value($settings->lng, $defaults->lng);
         $ret->url = @rw_get_default_value($settings->url, $defaults->url);
         $ret->title = @rw_get_default_value($settings->title, $defaults->title);
-        $ret->type = @rw_get_default_value($settings->type, $defaults->type);
         $ret->rclass = @rw_get_default_value($settings->rclass, $defaults->rclass);
         $ret->size = @rw_get_default_value($settings->size, $defaults->size);
         $ret->color = @rw_get_default_value($settings->color, $defaults->color); // deprecated
@@ -30,6 +76,8 @@
         $ret->frequency = @rw_get_default_value($settings->frequency, $defaults->frequency);
         $ret->showInfo = @rw_get_default_value($settings->showInfo, $defaults->showInfo);
         $ret->showTooltip = @rw_get_default_value($settings->showTooltip, $defaults->showTooltip);
+        $ret->showAverage = @rw_get_default_value($settings->showAverage, $defaults->showAverage);
+        $ret->showReport = @rw_get_default_value($settings->showReport, $defaults->showReport);
         $ret->beforeRate = @rw_get_default_value($settings->beforeRate, $defaults->beforeRate);
         $ret->afterRate = @rw_get_default_value($settings->afterRate, $defaults->afterRate);
         
@@ -115,8 +163,11 @@
         $settings->style = @rw_get_default_value($settings->style, "oxygen");
         $settings->imgUrl = @rw_get_default_value($settings->imgUrl, "");
         $settings->readOnly = @rw_get_default_value($settings->readOnly, false);
+        $settings->frequency = @rw_get_default_value($settings->frequency, DEF_FREQUENCY);
         $settings->showInfo = @rw_get_default_value($settings->showInfo, true);
         $settings->showTooltip = @rw_get_default_value($settings->showTooltip, true);
+        $settings->showAverage = @rw_get_default_value($settings->showAverage, true);
+        $settings->showReport = @rw_get_default_value($settings->showReport, true);
         $settings->beforeRate = @rw_get_default_value($settings->beforeRate, null);
         $settings->afterRate = @rw_get_default_value($settings->beforeRate, null);
         
@@ -151,5 +202,34 @@
     function rw_get_default_value($val, $def, $null = null)
     {
         return ((isset($val) && $val !== $null) ? $val : $def);
+    }
+
+    function rw_get_default_obj_value(&$objects, &$address, $defVal, $null = null)
+    {
+        foreach ($objects as $obj)
+        {
+            if (!isset($obj))
+                continue;
+            
+            $hasValue = true;
+            
+            $cur = $obj;
+            
+            foreach ($address as $p)
+            {
+                if (!isset($cur->$p))
+                {
+                    $hasValue = false;
+                    break;
+                }
+                
+                $cur = $cur->$p;
+            }
+            
+            if ($hasValue)
+                return $cur;
+        }
+        
+        return $defVal;
     }
 ?>

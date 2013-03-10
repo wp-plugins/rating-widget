@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.7.0");
+    define("WP_RW__VERSION", "1.7.1");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -163,6 +163,12 @@
     define("WP_RW__MIN_STARS", 1);
     define("WP_RW__MAX_STARS", 20);
 
+    /* Local caching
+    -----------------------------------------------------------------------------------------*/
+    define('WP_RW__CACHE_TIMEOUT_REPORT', 1800);            // 30 min
+    define('WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS', 86400);    // 24 hours
+    define('WP_RW__CACHE_TIMEOUT_TOP_RATED', 300);          // 5 min
+    
     /* Plugin dir and url
     -----------------------------------------------------------------------------------------*/
     define("WP_RW__PLUGIN_DIR", dirname(dirname(__FILE__)));
