@@ -4,9 +4,9 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 
-Create and manage Rating-Widget Thumb & Star Ratings from within WordPress.
+Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
 == Description ==
 
@@ -34,6 +34,7 @@ To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-p
 
 Rating-Widget star ratings are localizable and currently available in:
 
+* Afrikaans
 * Arabic - العربية
 * Bengali - বাংলা
 * Bulgarian - български
@@ -70,6 +71,7 @@ Rating-Widget star ratings are localizable and currently available in:
 * Slovenian - Slovenščina
 * Spanish - Español
 * Swedish - Svenska
+* Tamil - தமிழ்
 * Turkish - Türkçe
 * Vietnamese - Tiếng Việt
 
@@ -129,6 +131,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.7.2 =
+* New: Localized to Afrikaans.
+* New: Localized to Tamil.
+
 = 1.7.1 =
 * New: Posts and Pages ratings shortcodes!!! For the content use '[ratingwidget post_id=123]'. For PHP, use rw_get_post_rating($postID) and rw_the_post_rating($postID).
 * New: Added transient caching support to speed up the Top-Rated Widget and rich snippets data load for Premium users.

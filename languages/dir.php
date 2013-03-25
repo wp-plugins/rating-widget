@@ -1,7 +1,7 @@
 <?php
     global $rw_languages;
     $rw_languages = array(
-//        'af' => 'Afrikaans',
+        'af' => 'Afrikaans',
         'ar' => 'Arabic - العربية',
         'bn' => 'Bengali - বাংলা',
         'bg' => 'Bulgarian - български', 
@@ -40,6 +40,7 @@
         'sl' => 'Slovenian - Slovenščina',
         'sv' => 'Swedish - Svenska',
         'es' => 'Spanish - Español',
+        'ta' => 'Tamil - தமிழ்',
         'tr' => 'Turkish - Türkçe',
         'vi' => 'Vietnamese - Tiếng Việt',
 //        'th' => 'Thai',

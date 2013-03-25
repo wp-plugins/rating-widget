@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.7.1
+Version: 1.7.2
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -411,12 +411,24 @@ class RatingWidgetPlugin
             
             // If found returned cached value.
             if (false !== $value)
+            {
+                if (RWLogger::IsOn())
+                    RWLogger::Log('IS_CACHED', 'false');
+                
                 return $value;
+            }
         }
 
+        if (RWLogger::IsOn())
+        {
+            RWLogger::Log('IS_CACHED', 'false');
+            RWLogger::Log("REMOTE_CALL_DATA", var_export($pData, true));
+        }
+            
         if (function_exists('wp_remote_post')) // WP 2.7+
         {
-            if (RWLogger::IsOn()){ RWLogger::Log("wp_remote_post", "exist"); }
+            if (RWLogger::IsOn())
+                RWLogger::Log("wp_remote_post", "exist");
             
             $rw_ret_obj = wp_remote_post(WP_RW__ADDRESS . "/{$pPage}", array('body' => $pData));
             
@@ -2863,7 +2875,9 @@ class RatingWidgetPlugin
             $this->categories_list = json_decode($this->_getOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS));
         }
         
-        if (!isset($this->categories_list->{$pClass})){ return true; }
+        if (!isset($this->categories_list->{$pClass}) ||
+            empty($this->categories_list->{$pClass}))
+            return true;
         
         // Alias.
         $categories = $this->categories_list->{$pClass};
