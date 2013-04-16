@@ -56,8 +56,8 @@
                         }
                     ?>
                     RW.render(function(ratings){
-                        rwStar = RWM.STAR = ratings[3];
-                        rwNero = RWM.NERO = ratings[17];
+                        rwStar = RWM.STAR = ratings[3].getInstances(0);
+                        rwNero = RWM.NERO = ratings[17].getInstances(0);
                         
                         jQuery("#rw_theme_loader").hide();
                         jQuery("#rw_<?php echo $rw_options->type;?>_theme_select").show();
@@ -93,7 +93,7 @@
                         // Add all themes inline css.
                         for (var t in RWT)
                         {
-                            if (RWT[t].options.color == RW.COLOR.CUSTOM){
+                            if (RWT[t].options.style == RW.STYLE.CUSTOM){
                                 RW._addCustomImgStyle(RWT[t].options.imgUrl.large, [RWT[t].options.type], "theme", t);
                             }
                         }

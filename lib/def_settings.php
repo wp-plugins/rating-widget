@@ -67,7 +67,6 @@
         $ret->title = @rw_get_default_value($settings->title, $defaults->title);
         $ret->rclass = @rw_get_default_value($settings->rclass, $defaults->rclass);
         $ret->size = @rw_get_default_value($settings->size, $defaults->size);
-        $ret->color = @rw_get_default_value($settings->color, $defaults->color); // deprecated
         $ret->style = @rw_get_default_value($settings->style, $defaults->style);
         $ret->imgUrl->ltr = @rw_get_default_value($settings->imgUrl->ltr, $defaults->imgUrl->ltr);
         $ret->imgUrl->rtl = @rw_get_default_value($settings->imgUrl->rtl, $defaults->imgUrl->rtl);
@@ -159,7 +158,6 @@
         $settings->type = @rw_get_default_value($settings->type, $type);
         $settings->rclass = @rw_get_default_value($settings->rclass, "");
         $settings->size = @rw_get_default_value($settings->size, "small");
-        $settings->color = @rw_get_default_value($settings->color, "yellow");
         $settings->style = @rw_get_default_value($settings->style, "oxygen");
         $settings->imgUrl = @rw_get_default_value($settings->imgUrl, "");
         $settings->readOnly = @rw_get_default_value($settings->readOnly, false);

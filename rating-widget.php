@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.7.2
+Version: 1.7.3
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -141,9 +141,9 @@ class RatingWidgetPlugin
             
             // Rating-Widget main javascript load.
             add_action('wp_footer', array(&$this, "rw_attach_rating_js"));
-            add_action('wp_footer', array(&$this, "DumpLog"));
         }
         
+        add_action('wp_footer', array(&$this, "DumpLog"));
         add_action('admin_head', array(&$this, "rw_admin_menu_icon_css"));
         add_action('admin_menu', array(&$this, 'admin_menu'));
         add_action('admin_menu', array(&$this, 'AddPostMetaBox')); // Metabox for posts/pages
@@ -2199,26 +2199,12 @@ class RatingWidgetPlugin
                 $this->rw_general_report_page();
             }
 
-            if (RWLogger::IsOn())
-            {
-                echo "\n<!-- RATING-WIDGET LOG START\n\n";
-                RWLogger::Output("    ");
-                echo "\n RATING-WIDGET LOG END-->\n";
-            }
-
             return;
         }
         else if ($action == "advanced")
         {
             $this->rw_advanced_settings_page();
 
-            if (RWLogger::IsOn())
-            {
-                echo "\n<!-- RATING-WIDGET LOG START\n\n";
-                RWLogger::Output("    ");
-                echo "\n RATING-WIDGET LOG END-->\n";
-            }
-            
             return;
         }
         else if ($action == "boost")
@@ -2908,8 +2894,14 @@ class RatingWidgetPlugin
         
     function rw_validate_visibility($pId, $pClasses = false)
     {
-        if (!isset($this->_visibilityList)){
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_validate_visibility", $params); }
+        
+        if (!isset($this->_visibilityList))
+        {
             $this->_visibilityList = json_decode($this->_getOption(WP_RW__VISIBILITY_SETTINGS));
+            
+            if (RWLogger::IsOn())
+                RWLogger::Log("_visibilityList", var_export($this->_visibilityList, true));
         }
         
         if (is_string($pClasses))
@@ -3703,14 +3695,6 @@ class RatingWidgetPlugin
         </div> 
 <?php
         }
-        
-        
-        if (RWLogger::IsOn())
-        {
-            echo "\n<!-- RATING-WIDGET LOG START\n\n";
-            RWLogger::Output("    ");
-            echo "\n RATING-WIDGET LOG END-->\n";
-        }
     }
     
     /* Boosting page
@@ -3928,7 +3912,9 @@ class RatingWidgetPlugin
          echo '<input type="hidden" name="rw_post_meta_box_nonce" value="', wp_create_nonce(basename(__FILE__)), '" />';
 
         // get whether current post is excluded or not
-        $excluded_post = (false === $this->rw_validate_visibility($post->ID, array('front-post', 'blog-post', 'page')));
+        $excluded_post = (false === $this->rw_validate_visibility($post->ID, 'front-post') &&
+                          false === $this->rw_validate_visibility($post->ID, 'blog-post') &&
+                          false === $this->rw_validate_visibility($post->ID, 'page'));
         
         $checked = $excluded_post ? '' : 'checked="checked"';
 
@@ -4170,7 +4156,7 @@ class RatingWidgetPlugin
         <div class="rw-wp-ui-top-rated-list-item-data">
             <div>
                 <a class="rw-wp-ui-top-rated-list-item-title" href="' . $permalink . '" title="' . $title . '">' . $short . '</a>
-                <div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . '"></div>
+                <div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . ' rw-size-small rw-prop-readOnly-true"></div>
             </div>
             <p class="rw-wp-ui-top-rated-list-item-excerpt">' . $excerpt . '</p>
         </div>
@@ -4198,53 +4184,6 @@ class RatingWidgetPlugin
                 RW._Class.remove(rating, "rw-active");
                 var i = (RW._getByClassName("rw-report-link", "a", rating))[0];
                 if (RW._is(i)){ i.parentNode.removeChild(i); }
-                
-                // Update size to small.
-                if (!RW._Class.has(rating, "rw-size-small"))
-                {
-                    RW._Class.add(rating, "rw-size-small");
-                    RW._Class.remove(rating, "rw-size-medium");
-                    RW._Class.remove(rating, "rw-size-large");
-                }
-                
-                if (RW._Class.has(rating, "rw-ui-star"))
-                {
-                    RW._foreach(RW._getByTagName("li", rating), function(star){
-                        // Clear star event handlers.
-                        star.onmouseover =
-                        star.onmouseout =
-                        star.onclick = "";
-                    });
-                }
-                else
-                {
-                    RW._foreach(RW._getByTagName("i", rating), function(thumb){
-                        // Clear star event handlers.
-                        thumb.onmouseover =
-                        thumb.onmouseout =
-                        thumb.onclick = "";
-                    });
-
-                    RW._foreach(['like', 'dislike'], function(label){
-                        var labelItem = RW._getByClassName("rw-ui-like-label", "span", rating);
-                        
-                        if (labelItem.length == 1)
-                            labelItem[0].style.fontSize = labelItem[0].style.lineHeight = "";
-                    });
-                }
-                
-                var ratingControl = RW.getRating(RW._getRatingId(rating)),
-                    votes = ratingControl.votes + ratingControl.options.boost.votes,
-                    labelValue = votes + ' ' + ((votes == 1) ? ratingControl.advanced.text.vote : ratingControl.advanced.text.votes),
-                    label = RW._getByClassName("rw-ui-info", "span", rating);
-                
-                ratingControl.setLabel(labelValue);
-
-                if (RW._isArray(label) && label.length > 0)
-                {
-                    label = label[0];
-                    label.style.fontSize = label.style.lineHeight = "";
-                }
             });
         });
     });
@@ -4451,7 +4390,7 @@ if (class_exists("WP_Widget"))
                             echo '<li>'.
                                  '<a href="' . $permalink . '" title="' . $title . '">' . $short . '</a>'.
                                  '<br />'.
-                                 '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . '"></div>'.
+                                 '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . ' rw-size-small rw-prop-readOnly-true"></div>'.
                                  '</li>';
                         }
                         echo "</ul>";
@@ -4480,49 +4419,6 @@ if (class_exists("WP_Widget"))
                 RW._Class.remove(rating, "rw-active");
                 var i = (RW._getByClassName("rw-report-link", "a", rating))[0];
                 if (RW._is(i)){ i.parentNode.removeChild(i); }
-                
-                // Update size to small.
-                if (!RW._Class.has(rating, "rw-size-small"))
-                {
-                    RW._Class.add(rating, "rw-size-small");
-                    RW._Class.remove(rating, "rw-size-medium");
-                    RW._Class.remove(rating, "rw-size-large");
-                }
-                
-                if (RW._Class.has(rating, "rw-ui-star"))
-                {
-                    RW._foreach(RW._getByTagName("li", rating), function(star){
-                        // Clear star event handlers.
-                        star.onmouseover =
-                        star.onmouseout =
-                        star.onclick = "";
-                    });
-                }
-                else
-                {
-                    RW._foreach(RW._getByTagName("i", rating), function(thumb){
-                        // Clear star event handlers.
-                        thumb.onmouseover =
-                        thumb.onmouseout =
-                        thumb.onclick = "";
-                    });
-
-                    RW._foreach(['like', 'dislike'], function(label){
-                        var labelItem = RW._getByClassName("rw-ui-like-label", "span", rating);
-                        
-                        if (labelItem.length == 1)
-                            labelItem[0].style.fontSize = labelItem[0].style.lineHeight = "";
-                    });
-                }
-                
-                var ratingControl = RW.getRating(RW._getRatingId(rating)),
-                    votes = ratingControl.votes + ratingControl.options.boost.votes,
-                    label = votes + ' ' + ((votes == 1) ? ratingControl.advanced.text.vote : ratingControl.advanced.text.votes);
-                
-                ratingControl.setLabel(label);
-                
-                var label = (RW._getByClassName("rw-ui-info", "span", rating))[0];
-                label.style.fontSize = label.style.lineHeight = "";
             });
         });
     });

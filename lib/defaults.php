@@ -41,7 +41,6 @@
         $DEFAULT_OPTIONS->rclass = '';
         $DEFAULT_OPTIONS->size = 'small';
         $DEFAULT_OPTIONS->theme = DEF_STAR_THEME;
-        $DEFAULT_OPTIONS->color = DEF_STAR_STYLE; // deprecated
         $DEFAULT_OPTIONS->style = 'oxygen';
         $DEFAULT_OPTIONS->imgUrl->ltr = '';
         $DEFAULT_OPTIONS->imgUrl->rtl = '';
