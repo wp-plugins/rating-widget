@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.7.3");
+    define("WP_RW__VERSION", "1.7.4");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -23,10 +23,10 @@
 
     /* Uncomment for debug mode.
     -----------------------------------------------------------------------------------------*/
-//    define("WP_RW__DEBUG", "");
+    define("WP_RW__DEBUG", false);
     define('WP_RW__STAGING', false);
 
-    if (defined("WP_RW__DEBUG"))
+    if (WP_RW__DEBUG)
     {
         error_reporting(E_ALL);
         ini_set('error_reporting', E_ALL);
@@ -60,6 +60,7 @@
     /* User-Key Options Consts.
     -----------------------------------------------------------------------------------------*/
         define("WP_RW__DB_OPTION_USER_KEY", "rw_user_key");
+        define("WP_RW__DB_OPTION_USER_ID", "rw_user_id");
         define("WP_RW__DB_OPTION_USER_SECRET", "rw_user_secret");
 
     /* BuddyPress
@@ -177,9 +178,11 @@
     /* Rating-Widget URIs
     -----------------------------------------------------------------------------------------*/
     if (!defined("WP_RW__DOMAIN"))
-        define("WP_RW__DOMAIN", (defined('WP_RW__STAGING') && true === WP_RW__STAGING) ? 'staging.rating-widget.com' : 'rating-widget.com');
+        define("WP_RW__DOMAIN", (defined('WP_RW__STAGING') && true === WP_RW__STAGING) ? 
+            'staging.rating-widget.com' : ((WP_RW__LOCALHOST && WP_RW__DEBUG) ? $_SERVER["HTTP_HOST"] : 'rating-widget.com'));
     
     define("WP_RW__HTTPS", (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'));
+    define('WP_RW__PROTOCOL', (WP_RW__HTTPS ? 'https' : 'http'));
     
     define("WP_RW__ADDRESS", "http://" . WP_RW__DOMAIN);
     

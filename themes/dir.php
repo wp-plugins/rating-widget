@@ -4,9 +4,6 @@
         'star' => array(
             'star_oxygen' => array('type' => 'star', 'file' => 'star/oxygen/yellow.php', 'title' => 'Oxygen Yellow Stars 1 (Default)', 'premium' => false),
 
-            'star_lean_heart' => array('type' => 'star', 'file' => 'star/lean_heart.php', 'title' => 'Lean Hearts'),
-            'star_heart1' => array('type' => 'star', 'file' => 'star/heart_1.php', 'title' => 'Hearts'),
-            
             'star_yellow1' => array('type' => 'star', 'file' => 'star/default/yellow_1.php', 'title' => 'Yellow Stars', 'premium' => false),
             'star_oxygen1' => array('type' => 'star', 'file' => 'star/oxygen/yellow1.php', 'title' => 'Oxygen Yellow Stars 2', 'premium' => false),
             'star_darkglass' => array('type' => 'star', 'file' => 'star/darkglass/yellow.php', 'title' => 'Dark Glass Yellow Stars', 'premium' => false),
@@ -33,6 +30,9 @@
             'star_darkglass_blue' => array('type' => 'star', 'file' => 'star/darkglass/blue.php', 'title' => 'Dark Glass Blue Stars'),
             'star_quartz_blue' => array('type' => 'star', 'file' => 'star/quartz/blue.php', 'title' => 'Quartz Blue Stars'),
             'star_christmas_blue' => array('type' => 'star', 'file' => 'star/christmas/blue.php', 'title' => 'Christmas Blue Stars'),
+
+            'star_lean_heart' => array('type' => 'star', 'file' => 'star/lean_heart.php', 'title' => 'Lean Hearts'),
+            'star_heart1' => array('type' => 'star', 'file' => 'star/heart_1.php', 'title' => 'Hearts'),
 
             'star_flames' => array('type' => 'star', 'file' => 'star/flames.php', 'title' => 'Flames by Giuseppe'),
 
@@ -67,6 +67,7 @@
             'star_crystal_user' => array('type' => 'star', 'file' => 'star/crystal/user.php', 'title' => 'Crystal Users'),
 
             'star_darkglass_cookie' => array('type' => 'star', 'file' => 'star/darkglass/cookie.php', 'title' => 'Dark Glass Cookies'),
+            'star_jelly_red' => array('type' => 'star', 'file' => 'star/jelly_red.php', 'title' => 'Red Jellybeans'),
             
             'star_santa_hat' => array('type' => 'star', 'file' => 'star/christmas/santa_hat.php', 'title' => 'Christmas Santa Hat'),
             'star_christmas_yellow_ball' => array('type' => 'star', 'file' => 'star/christmas/yellow_ball.php', 'title' => 'Christmas Yellow Ball 1', 'premium' => false),

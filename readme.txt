@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.4.2
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
@@ -131,6 +131,13 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.7.4 =
+* New: From now you can control the title max length in Top-Rated Widget.
+* New: New PHP shortcode to extract ratings data rw_get_post_rating_data($postID);
+* New: Jelly beans stars theme.
+* New Premium Feature: Multilingual blogs support (with WMPL plugin). The ratings language is automatically modified according to current WMPL language.
+* Fix: Fix of the ratings exclude option box.
+
 = 1.7.3 =
 * New & Fix: From this version posts' ratings won't affect the labels of the Top-Rated Widget ratings. We've added a capability of control per rating instance even if it's the same rating.
 

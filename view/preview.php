@@ -104,7 +104,7 @@
                 if (typeof(RW) == "undefined"){ 
                     (function(){
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "<?php echo WP_RW__ADDRESS_JS; ?>external.js?wp=<?php echo WP_RW__VERSION;?>";
+                        rw.src = "<?php echo rw_js_url('external.php');?>?wp=<?php echo WP_RW__VERSION;?>";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }
