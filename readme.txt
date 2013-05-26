@@ -3,8 +3,8 @@ Contributors: svovaf
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VAFEFAZRTLXU4
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
-Tested up to: 3.4.2
-Stable tag: 1.7.4
+Tested up to: 3.5.1
+Stable tag: 1.7.5
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
@@ -18,15 +18,18 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/get-the-word-press-plugin
 
 * Remove (i) icon from Ratings
 * Secure Connection (Fraud protection)
+* No Ads in votes overview pop-up
 
 **Premium Pro Version:** 
 
 * Priority Email Support
 * Remove (i) icon from Ratings
+* No Ads in votes overview pop-up
 * Google Rich Snippets (schema.org)
 * Secure Connection (Fraud protection)
 * SSL Support
 * Advanced Ratings' Analytics
+* WMPL Language Auto-Selection
 * BuddyPress activity updates, comments and user profiles ratings.
 * BP's bbPress forum posts ratings.
 
@@ -131,6 +134,12 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.7.5 =
+* New: Added settings customization box for Power Users.
+* New: Improved settings layout for better user experience.
+* Fix: From now saving rating labels with quotes is working (i.e. French "j'approuve").
+* Fix: 'Go Pro' button is not shown anymore for pro users.
+
 = 1.7.4 =
 * New: From now you can control the title max length in Top-Rated Widget.
 * New: New PHP shortcode to extract ratings data rw_get_post_rating_data($postID);

@@ -17,7 +17,7 @@
     <div class="has-sidebar-content">
         <div class="postbox rw-body">
             <h3>Specific Visibility Settings</h3>
-            <div class="inside rw-ui-content-container rw-no-radius" style="padding: 5px; width: 610px;">
+            <div class="inside rw-ui-content-container rw-no-radius">
                 <div class="rw-ui-img-radio rw-ui-hor<?php if ($rw_visibility_settings->selected == 0) echo ' rw-selected';?>">
                     <i class="rw-ui-sprite rw-ui-visibility-all"></i> <input type="radio" name="rw_visibility" value="0" <?php if ($rw_visibility_settings->selected == 0) echo ' checked="checked"';?>> <span>Show rating on every <?php echo $type;?></span>
                 </div>

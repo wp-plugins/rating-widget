@@ -1,4 +1,4 @@
-<div class="postbox rw-body" style="width: 350px;">
+<div class="postbox rw-body">
     <h3>Follow us on Twitter</h3>
     <div class="inside" style="padding: 30px; background: #eeeeee; margin: 0;">
         <div style="background: white; padding: 10px; border: 1px solid #186487 !important;">

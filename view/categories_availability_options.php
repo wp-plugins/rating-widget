@@ -10,7 +10,7 @@
     <div class="has-sidebar-content">
         <div class="postbox rw-body">
             <h3>Categories Visibility Settings</h3>
-            <div class="inside rw-ui-content-container rw-no-radius" style="padding: 5px; width: 610px;">
+            <div class="inside rw-ui-content-container rw-no-radius">
                 <div class="rw-ui-img-radio rw-ui-hor rw-select-all<?php if ($all) echo ' rw-selected';?>">
                     <input type="checkbox" name="rw_categories[]" value="-1" <?php if ($all) echo ' checked="checked"';?>> <span>All Categories</span>
                 </div>

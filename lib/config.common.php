@@ -1,7 +1,7 @@
 <?php
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define("WP_RW__VERSION", "1.7.4");
+    define("WP_RW__VERSION", "1.7.5");
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -123,6 +123,8 @@
     define("WP_RW__VISIBILITY_SETTINGS", "rw_visibility_settings");
     define("WP_RW__AVAILABILITY_SETTINGS", "rw_availability_settings");
     define("WP_RW__CATEGORIES_AVAILABILITY_SETTINGS", "rw_categories_availability_settings");
+    define("WP_RW__CUSTOM_SETTINGS_ENABLED", "rw_custom_settings_enabled");
+    define("WP_RW__CUSTOM_SETTINGS", "rw_custom_settings");
 
     /* Visibility Options
     -----------------------------------------------------------------------------------------*/

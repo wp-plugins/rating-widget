@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.7.4
+Version: 1.7.5
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -45,6 +45,8 @@ class RatingWidgetPlugin
     var $categories_list;
     var $availability_list;
     var $show_on_excerpts_list;
+    var $custom_settings_enabled_list;
+    var $custom_settings_list;
     
     static $VERSION;
     
@@ -341,6 +343,9 @@ class RatingWidgetPlugin
         WP_RW__FLASH_DEPENDENCY => "true",
         
         WP_RW__SHOW_ON_MOBILE => "true",
+        
+        WP_RW__CUSTOM_SETTINGS_ENABLED => '{}',
+        WP_RW__CUSTOM_SETTINGS => '{}',
         
         WP_RW__LOGGER => false,
     );
@@ -697,9 +702,9 @@ class RatingWidgetPlugin
     function admin_enqueue_scripts()
     {
         // Register CSS stylesheets.
-        wp_register_style('rw', $this->GetCssUrl("settings.php"), array(), WP_RW__VERSION);
         wp_register_style('rw_wp_style', $this->GetCssUrl("wordpress/style.css"), array(), WP_RW__VERSION);
-        wp_register_style('rw_wp_settings', $this->GetCssUrl("wordpress/settings.php"), array(), WP_RW__VERSION);
+        wp_register_style('rw', $this->GetCssUrl("settings.php"), array(), WP_RW__VERSION);
+//        wp_register_style('rw_wp_settings', $this->GetCssUrl("wordpress/settings.css"), array(), WP_RW__VERSION);
         wp_register_style('rw_wp_reports', $this->GetCssUrl("wordpress/reports.css"), array(), WP_RW__VERSION);
         wp_register_style('rw_cp', $this->GetCssUrl("colorpicker.php"), array(), WP_RW__VERSION);
         wp_enqueue_style( 'rw_fonts', add_query_arg(array('family' => 'Noto+Sans:400,700,400italic,700italic'), WP_RW__PROTOCOL . '://fonts.googleapis.com/css'), array(), WP_RW__VERSION);
@@ -712,9 +717,9 @@ class RatingWidgetPlugin
         wp_register_script('rw_cp_utils', $this->GetJSUrl("vendors/utils.js"), array(), WP_RW__VERSION);
 
         // Enqueue styles.
-        wp_enqueue_style('rw');
         wp_enqueue_style('rw_wp_style');
-        wp_enqueue_style('rw_wp_settings');
+        wp_enqueue_style('rw');
+//        wp_enqueue_style('rw_wp_settings');
         wp_enqueue_style('rw_cp');
 
         // Enqueue scripts.
@@ -726,6 +731,8 @@ class RatingWidgetPlugin
         wp_enqueue_script('rw_wp');                             
         wp_enqueue_script('rw');
 
+//        wp_enqueue_script( 'rw-test', "/wp-admin/js/rw-test.js", array( 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable' ), false, 1 );
+        
         if (false === WP_RW__USER_KEY)
         {
             wp_enqueue_script('rw_wp_validation', $this->GetJSUrl("rw/validation.js"));
@@ -2020,6 +2027,8 @@ class RatingWidgetPlugin
                 $this->_deleteOption(WP_RW__SHOW_ON_EXCERPT);
                 $this->_deleteOption(WP_RW__VISIBILITY_SETTINGS);
                 $this->_deleteOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS);
+                $this->_deleteOption(WP_RW__CUSTOM_SETTINGS_ENABLED);
+                $this->_deleteOption(WP_RW__CUSTOM_SETTINGS);
                 
                 // Re-Load all advanced settings.
                     // Flash dependency.
@@ -2073,7 +2082,7 @@ class RatingWidgetPlugin
     <h2><?php echo __( 'Rating-Widget Advanced Settings', WP_RW__ID);?></h2>
     <br />
     <form id="rw_advanced_settings_form" method="post" action="">
-        <div id="poststuff">
+        <div>
             <div style="float: left;">
                 <div class="has-sidebar has-right-sidebar">
                     <div class="has-sidebar-content">
@@ -2195,7 +2204,7 @@ class RatingWidgetPlugin
                     </div>
                 </div>
             </div>
-            <div style="margin-left: 650px; width: 350px; padding-right: 20px; position: fixed;">
+            <div>
                 <?php require_once(dirname(__FILE__) . "/view/save.php"); ?>
             </div>            
         </div>
@@ -2479,6 +2488,9 @@ class RatingWidgetPlugin
         // Availability list must be loaded anyway.
         $this->availability_list = json_decode($this->_getOption(WP_RW__AVAILABILITY_SETTINGS));
 
+        $this->custom_settings_enabled_list = json_decode($this->_getOption(WP_RW__CUSTOM_SETTINGS_ENABLED));
+        $this->custom_settings_list = json_decode($this->_getOption(WP_RW__CUSTOM_SETTINGS));
+
         // Some alias.
         $rw_class = $rw_current_settings["class"];
         
@@ -2516,7 +2528,7 @@ class RatingWidgetPlugin
             
             /* Rating-Widget options.
             ---------------------------------------------------------------------------------------------------------------*/
-            $rw_options_str = preg_replace('/\%u([0-9A-F]{4})/i', '\\u$1', urldecode($_POST["rw_options"]));
+            $rw_options_str = preg_replace('/\%u([0-9A-F]{4})/i', '\\u$1', urldecode(stripslashes($_POST["rw_options"])));
             if (null !== json_decode($rw_options_str)){
                 $this->_setOption($rw_current_settings["options"], $rw_options_str);
             }
@@ -2543,6 +2555,14 @@ class RatingWidgetPlugin
             $rw_visibility = isset($_POST["rw_visibility"]) ? max(0, min(2, (int)$_POST["rw_visibility"])) : 0;
             $rw_visibility_exclude  = isset($_POST["rw_visibility_exclude"]) ? $_POST["rw_visibility_exclude"] : "";
             $rw_visibility_include  = isset($_POST["rw_visibility_include"]) ? $_POST["rw_visibility_include"] : "";
+            
+            $rw_custom_settings_enabled = isset($_POST["rw_custom_settings_enabled"]) ? true : false;
+            $this->custom_settings_enabled_list->{$rw_class} = $rw_custom_settings_enabled;
+            $this->_setOption(WP_RW__CUSTOM_SETTINGS_ENABLED, json_encode($this->custom_settings_enabled_list));
+            
+            $rw_custom_settings = isset($_POST["rw_custom_settings"]) ? $_POST["rw_custom_settings"] : '';
+            $this->custom_settings_list->{$rw_class} = $rw_custom_settings;
+            $this->_setOption(WP_RW__CUSTOM_SETTINGS, json_encode($this->custom_settings_list));
             
             $this->_visibilityList->{$rw_class}->selected = $rw_visibility;
             $this->_visibilityList->{$rw_class}->exclude = self::IDsCollectionToArray($rw_visibility_exclude);
@@ -2603,10 +2623,17 @@ class RatingWidgetPlugin
             $rw_categories = $this->categories_list->{$rw_class};
         }
         
-        if (!isset($this->show_on_excerpts_list->{$rw_class})){
+        if (!isset($this->show_on_excerpts_list->{$rw_class}))
             $this->show_on_excerpts_list->{$rw_class} = true;
-        }
         $rw_show_on_excerpts = $this->show_on_excerpts_list->{$rw_class};
+        
+        if (!isset($this->custom_settings_enabled_list->{$rw_class}))
+            $this->custom_settings_enabled_list->{$rw_class} = false;
+        $rw_custom_settings_enabled = $this->custom_settings_enabled_list->{$rw_class};
+        
+        if (!isset($this->custom_settings_list->{$rw_class}))
+            $this->custom_settings_list->{$rw_class} = '';
+        $rw_custom_settings = $this->custom_settings_list->{$rw_class};
         
         require_once(WP_RW__PLUGIN_DIR . "/languages/{$rw_language_str}.php");
         require_once(WP_RW__PLUGIN_DIR . "/lib/defaults.php");
@@ -2681,37 +2708,60 @@ class RatingWidgetPlugin
         $browser_info = array("browser" => "msie", "version" => "7.0");
         $rw_languages = $this->languages;
     ?>
-<div class="wrap rw-dir-ltr">
+<div class="wrap rw-dir-ltr rw-wp-container">
     <h2><?php echo __( 'Rating-Widget Settings', WP_RW__ID);?></h2>
+    <!--<div class="widget-liquid-left widgets-sortables">
+        <div id="widgets-left">
+            <div class="widgets-holder-wrap ui-droppable">
+                <div class="sidebar-name">
+                    <div class="sidebar-name-arrow"><br></div>
+                    <h3>Available Widgets <span id="removing-widget">Deactivate <span></span></span></h3>
+                </div>
+                <div class="widget-holder">
+                    <p class="description">Drag widgets from here to a sidebar on the right to activate them. Drag widgets back here to deactivate them and delete their settings.</p>
+                </div>
+                <br class="clear">
+            </div>
+        </div>
+    </div>
+    <div class="widget-liquid-right">
+        <div id="widgets-right">
+            <div class="widgets-holder-wrap ui-droppable">
+                <?php //require_once(dirname(__FILE__) . "/view/twitter.php"); ?>
+            </div>
+        </div>
+    </div>-->
+    
     <form method="post" action="">
         <div id="poststuff">       
-            <div style="float: left;">
+            <div id="rw_wp_set">
+                <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
                 <div id="side-sortables"> 
                     <div id="categorydiv" class="categorydiv">
-                        <ul id="category-tabs" class="category-tabs" style="height: 21px;">
+                        <ul id="category-tabs" class="category-tabs">
                             <?php
                                 foreach ($settings_data as $key => $settings)
                                 {
                                     if ($settings_data[$key] == $rw_current_settings)
                                     {
                                 ?>
-                                    <li class="tabs" style="float: left;"><?php echo _e($settings["tab"], WP_RW__ID);?></li>
+                                    <li class="tabs"><?php echo _e($settings["tab"], WP_RW__ID);?></li>
                                 <?php
                                     }
                                     else
                                     {
                                 ?>
-                                    <li style="float: left;"><a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>"><?php echo _e($settings["tab"], WP_RW__ID);?></a></li>
+                                    <li><a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>"><?php echo _e($settings["tab"], WP_RW__ID);?></a></li>
                                 <?php
                                     }
                                 }
                             ?>
                         </ul>
-                        <div class="tabs-panel rw-body" id="categories-all" style="background: white; height: auto; overflow: visible; width: 602px; max-height: none;">
+                        <div class="tabs-panel rw-body" id="categories-all">
                             <?php
                                 $enabled = isset($rw_align->ver);
                             ?>
-                            <div class="rw-ui-content-container rw-ui-light-bkg" style="width: 580px; margin: 10px 0 10px 0;">
+                            <div class="rw-ui-light-bkg">
                                 <label for="rw_show">
                                     <input id="rw_show" type="checkbox" name="rw_show" value="true"<?php if ($enabled) echo ' checked="checked"';?> onclick="RWM_WP.enable(this);" /> Enable for <?php echo $rw_current_settings["tab"];?>
                                 </label>
@@ -2719,8 +2769,7 @@ class RatingWidgetPlugin
                                 if (true === $rw_current_settings["show_align"])
                                 {
                             ?>
-                                <br />
-                                <div class="rw-post-rating-align" style="height: 220px;">
+                                <div class="rw-post-rating-align">
                                     <div class="rw-ui-disabled"<?php if ($enabled) echo ' style="display: none;"';?>></div>
                                 <?php
                                     $vers = array("top", "bottom");
@@ -2777,15 +2826,19 @@ class RatingWidgetPlugin
                         require_once(dirname(__FILE__) . "/view/categories_availability_options.php"); 
                 ?>
                 <?php require_once(dirname(__FILE__) . "/view/settings/frequency.php"); ?>
+                <?php require_once(dirname(__FILE__) . "/view/powerusers.php"); ?>
             </div>
-            <div id="rw_floating_container">
-                <?php require_once(dirname(__FILE__) . "/view/preview.php"); ?>
-                <?php // require_once(dirname(__FILE__) . "/view/save.php"); ?>
-            </div>
-            <div style="margin-left: 650px; padding-top: 215px; width: 350px; padding-right: 20px;">
-                <?php require_once(dirname(__FILE__) . "/view/twitter.php"); ?>
+            <div id="rw_wp_set_widgets">
+                <?php 
+                    if (false === WP_RW__USER_SECRET)
+                        require_once(dirname(__FILE__) . "/view/upgrade.php"); 
+                ?>
                 <?php require_once(dirname(__FILE__) . "/view/fb.php"); ?>
-                <?php require_once(dirname(__FILE__) . "/view/sponsor.php"); ?>
+                <?php require_once(dirname(__FILE__) . "/view/twitter.php"); ?>
+                <?php 
+                    if (false === WP_RW__USER_SECRET)
+                        require_once(dirname(__FILE__) . "/view/sponsor.php"); 
+                ?>
             </div>
         </div>
     </form>
@@ -3079,6 +3132,18 @@ class RatingWidgetPlugin
         }
         
         return $this->availability_list->{$pClass};
+    }
+    
+    function GetCustomSettings($pClass)
+    {
+        $this->custom_settings_enabled_list = json_decode($this->_getOption(WP_RW__CUSTOM_SETTINGS_ENABLED));
+        
+        if (!isset($this->custom_settings_enabled_list->{$pClass}) || false === $this->custom_settings_enabled_list->{$pClass})
+            return '';
+        
+        $this->custom_settings_list = json_decode($this->_getOption(WP_RW__CUSTOM_SETTINGS));
+        
+        return isset($this->custom_settings_list->{$pClass}) ? stripslashes($this->custom_settings_list->{$pClass}) : '';
     }
     
     /**
@@ -3679,16 +3744,19 @@ class RatingWidgetPlugin
                         options: {
                             <?php if (false !== WP_RW__USER_SECRET && defined('ICL_LANGUAGE_CODE') && isset($this->languages[ICL_LANGUAGE_CODE])) : ?>
                             lng: "<?php echo ICL_LANGUAGE_CODE; ?>"
-                            <?php endif; ?>
+                            <?php endif; ?> 
                         }
                     });
                     <?php
                         foreach ($rw_settings as $rclass => $options)
                         {
-                            if (isset($rw_settings[$rclass]["enabled"]) && (true === $rw_settings[$rclass]["enabled"])){
-                                if (!empty($rw_settings[$rclass]["options"])){
-                                    echo 'RW.initClass("' . $rclass . '", ' . $rw_settings[$rclass]["options"] . ');';
-                                }
+                            if (isset($rw_settings[$rclass]["enabled"]) && (true === $rw_settings[$rclass]["enabled"]))
+                            {
+                    ?>
+                    var options = <?php echo !empty($rw_settings[$rclass]["options"]) ? $rw_settings[$rclass]["options"] : '{}'; ?>;
+                    <?php echo $this->GetCustomSettings($rclass); ?>
+                    RW.initClass("<?php echo $rclass; ?>", options);
+                    <?php
                             }
                         }
                         
@@ -3713,7 +3781,7 @@ class RatingWidgetPlugin
                 if (typeof(RW) == "undefined"){ 
                     (function(){
                         var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
-                        rw.src = "<?php echo $this->GetJSUrl('external' . (WP_RW__DEBUG ? '.min' : '') . '.php');?>?wp=<?php echo WP_RW__VERSION;?>";
+                        rw.src = "<?php echo $this->GetJSUrl('external' . (!WP_RW__DEBUG ? '.min' : '') . '.php');?>?wp=<?php echo WP_RW__VERSION;?>";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
                 }

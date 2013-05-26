@@ -1,4 +1,4 @@
-<div class="postbox rw-body" style="width: 350px;">
+<div id="rw_wp_preview" class="postbox rw-body">
     <h3>Live Preview</h3>
     <div class="inside" style="padding: 10px;">
         <div id="rw_preview_container" style="text-align: <?php
@@ -97,6 +97,8 @@
                                 RW._addCustomImgStyle(RWT[t].options.imgUrl.large, [RWT[t].options.type], "theme", t);
                             }
                         }
+
+                        RWM.Code.refresh();
                     }, false);
                 }
 
@@ -114,7 +116,9 @@
             <input type="hidden" name="<?php echo $rw_form_hidden_field_name; ?>" value="Y">
             <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
             <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
-            <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" class="button-secondary" target="_blank">Go Pro!</a>
+            <?php if (false === WP_RW__USER_SECRET) : ?>
+            <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" class="button-secondary gradient" target="_blank">Go Pro!</a>
+            <?php endif; ?>
         </p>
     </div>
 </div>
