@@ -2083,7 +2083,7 @@ class RatingWidgetPlugin
     <br />
     <form id="rw_advanced_settings_form" method="post" action="">
         <div>
-            <div style="float: left;">
+            <div id="rw_wp_set">
                 <div class="has-sidebar has-right-sidebar">
                     <div class="has-sidebar-content">
                         <div class="postbox rw-body">
@@ -2204,7 +2204,7 @@ class RatingWidgetPlugin
                     </div>
                 </div>
             </div>
-            <div>
+            <div id="rw_wp_set_widgets">
                 <?php require_once(dirname(__FILE__) . "/view/save.php"); ?>
             </div>            
         </div>
