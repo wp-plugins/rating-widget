@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.5.1
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
@@ -134,6 +134,13 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.7.6 =
+* Fix: Fixed the warning when trying to save settings when non categories selected.
+* Fix: Necessary JS and CSS are now loaded only on Rating-Widget settings page.
+* Fix: Removed account creation button disable mode.
+* New: Added GA to collect usage stats to learn and improve the product.
+* New: Added Upgrade CTA to sub menu.
+
 = 1.7.5 =
 * New: Added settings customization box for Power Users.
 * New: Improved settings layout for better user experience.

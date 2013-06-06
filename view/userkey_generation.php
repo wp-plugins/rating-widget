@@ -30,7 +30,7 @@
                 </div>
                 <div class="rw-field">
                     <label for="confirmemail">Confirm Email :</label>
-                    <input type="email" name="confirmemail" value="">
+                    <input type="email" id="rw_confirmemail" name="confirmemail" value="">
                 </div>
                 <div class="rw-field">
                     <label for="password">Password:</label>
@@ -61,7 +61,7 @@
             <p>
                 <input type="hidden" id="rw_siteurl" name="siteurl" value="<?php echo esc_attr(get_option('siteurl', "")); ?>" />
                 <input type="hidden" id="rw_blogtitle" name="blogtitle" value="<?php echo esc_attr(get_option('blogname', "")); ?>" />
-                <button class="button button-primary button-large" disabled="disabled">Activate Account »</button>
+                <button class="button button-primary button-large">Activate Account »</button>
             </p>
         </div>
         <div id="rw_wp_registration_sections">

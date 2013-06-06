@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.7.5
+Version: 1.7.6
 Author: Vova Feldman
 Author URI: http://il.linkedin.com/in/vovafeldman
 License: A "Slug" license name e.g. GPL2
@@ -47,6 +47,8 @@ class RatingWidgetPlugin
     var $show_on_excerpts_list;
     var $custom_settings_enabled_list;
     var $custom_settings_list;
+    var $_inDashboard = false;
+    var $_isRegistered = false;
     
     static $VERSION;
     
@@ -84,6 +86,7 @@ class RatingWidgetPlugin
             RWLogger::PowerOn();
         }
         
+        $this->_inDashboard = (isset($_GET['page']) && $_GET['page'] == 'rating-widget');        
         $rw_show_on_mobile = $this->_getOption(WP_RW__SHOW_ON_MOBILE);
         
         if (RWLogger::IsOn()){ RWLogger::Log("WP_RW__SHOW_ON_MOBILE", $rw_show_on_mobile); }
@@ -108,6 +111,8 @@ class RatingWidgetPlugin
                 
         // Load user key.
         $this->load_user_key();
+        
+        $this->_isRegistered = (false !== WP_RW__USER_KEY);
         
         // Load config after keys are loaded.
         require_once(WP_RW__PLUGIN_DIR . "/lib/config.php");
@@ -154,11 +159,21 @@ class RatingWidgetPlugin
             add_action('wp_footer', array(&$this, "rw_attach_rating_js"));
         }
         
+        if ($this->_inDashboard && isset($_GET['action']) && 'upgrade' === $_GET['action'])
+        {
+            header('Location: ' . WP_RW__ADDRESS . '/get-the-word-press-plugin/', true, 302);
+//            wp_redirect(WP_RW__ADDRESS . '/get-the-wordpress-plugin/'); 
+            exit;
+        }
+        
         add_action('wp_footer', array(&$this, "DumpLog"));
         add_action('admin_head', array(&$this, "rw_admin_menu_icon_css"));
         add_action('admin_menu', array(&$this, 'admin_menu'));
         add_action('admin_menu', array(&$this, 'AddPostMetaBox')); // Metabox for posts/pages
         add_action('save_post', array(&$this, 'SavePostData'));
+        
+        if ($this->_inDashboard)
+            add_action('admin_head', array(&$this, "GoogleAnalytics"));
         
         /**
         * IMPORTANT: 
@@ -167,7 +182,6 @@ class RatingWidgetPlugin
         *   on RTL WP versions.
         */
         add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
-        add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
         
         require_once(WP_RW__PLUGIN_DIR . "/languages/dir.php");
         $this->languages = $rw_languages;
@@ -654,10 +668,26 @@ class RatingWidgetPlugin
     <?php
     }
     
-    function enqueue_scripts()
+    function GoogleAnalytics()
     {
-        // Register and Enqueue jQuery.
-        wp_enqueue_script('jquery');
+?>
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20070413-1']);
+    _gaq.push(['_setAllowLinker', true]);
+    _gaq.push(['_setDomainName', 'none']);
+    _gaq.push(['_trackPageview']);
+<?php if (!$this->_isRegistered) : ?>
+    _gaq.push(['_trackEvent', 'signup', 'wordpress']);
+<?php endif; ?>
+    
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>        
+<?php        
     }
     
     private function StartsWith($haystack, $needle)
@@ -701,42 +731,31 @@ class RatingWidgetPlugin
     
     function admin_enqueue_scripts()
     {
-        // Register CSS stylesheets.
-        wp_register_style('rw_wp_style', $this->GetCssUrl("wordpress/style.css"), array(), WP_RW__VERSION);
-        wp_register_style('rw', $this->GetCssUrl("settings.php"), array(), WP_RW__VERSION);
-//        wp_register_style('rw_wp_settings', $this->GetCssUrl("wordpress/settings.css"), array(), WP_RW__VERSION);
-        wp_register_style('rw_wp_reports', $this->GetCssUrl("wordpress/reports.css"), array(), WP_RW__VERSION);
-        wp_register_style('rw_cp', $this->GetCssUrl("colorpicker.php"), array(), WP_RW__VERSION);
-        wp_enqueue_style( 'rw_fonts', add_query_arg(array('family' => 'Noto+Sans:400,700,400italic,700italic'), WP_RW__PROTOCOL . '://fonts.googleapis.com/css'), array(), WP_RW__VERSION);
-
-        // Register JS.
-        wp_register_script('rw', $this->GetJSUrl("index.php"), array(), WP_RW__VERSION);
-        wp_register_script('rw_wp', $this->GetJSUrl("wordpress/settings.js"), array(), WP_RW__VERSION);
-        wp_register_script('rw_cp', $this->GetJSUrl("vendors/colorpicker.js"), array(), WP_RW__VERSION);
-        wp_register_script('rw_cp_eye', $this->GetJSUrl("vendors/eye.js"), array(), WP_RW__VERSION);
-        wp_register_script('rw_cp_utils', $this->GetJSUrl("vendors/utils.js"), array(), WP_RW__VERSION);
-
-        // Enqueue styles.
-        wp_enqueue_style('rw_wp_style');
-        wp_enqueue_style('rw');
-//        wp_enqueue_style('rw_wp_settings');
-        wp_enqueue_style('rw_cp');
-
-        // Enqueue scripts.
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('json2');
-        wp_enqueue_script('rw_cp');
-        wp_enqueue_script('rw_cp_eye');
-        wp_enqueue_script('rw_cp_utils');
-        wp_enqueue_script('rw_wp');                             
-        wp_enqueue_script('rw');
-
 //        wp_enqueue_script( 'rw-test', "/wp-admin/js/rw-test.js", array( 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable' ), false, 1 );
         
-        if (false === WP_RW__USER_KEY)
-        {
-            wp_enqueue_script('rw_wp_validation', $this->GetJSUrl("rw/validation.js"));
-            wp_enqueue_script('rw_wp_signup', $this->GetJSUrl("wordpress/signup.php"));
+        if ($this->_inDashboard)
+        {        
+            // Enqueue JS.
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('json2');
+            wp_enqueue_script('rw_cp', $this->GetJSUrl("vendors/colorpicker.js"), array(), WP_RW__VERSION);
+            wp_enqueue_script('rw_cp_eye', $this->GetJSUrl("vendors/eye.js"), array(), WP_RW__VERSION);
+            wp_enqueue_script('rw_cp_utils', $this->GetJSUrl("vendors/utils.js"), array(), WP_RW__VERSION);
+            wp_enqueue_script('rw_wp', $this->GetJSUrl("wordpress/settings.js"), array(), WP_RW__VERSION);
+            wp_enqueue_script('rw', $this->GetJSUrl("index.php"), array(), WP_RW__VERSION);
+            
+            // Enqueue CSS stylesheets.
+            wp_enqueue_style('rw_wp_style', $this->GetCssUrl("wordpress/style.css"), array(), WP_RW__VERSION);
+            wp_enqueue_style('rw', $this->GetCssUrl("settings.php"), array(), WP_RW__VERSION);
+            wp_enqueue_style('rw_wp_reports', $this->GetCssUrl("wordpress/reports.css"), array(), WP_RW__VERSION);
+            wp_enqueue_style('rw_cp', $this->GetCssUrl("colorpicker.php"), array(), WP_RW__VERSION);
+            wp_enqueue_style('rw_fonts', add_query_arg(array('family' => 'Noto+Sans:400,700,400italic,700italic'), WP_RW__PROTOCOL . '://fonts.googleapis.com/css'), array(), WP_RW__VERSION);
+            
+            if (false === WP_RW__USER_KEY)
+            {
+                wp_enqueue_script('rw_wp_validation', $this->GetJSUrl("rw/validation.js"));
+                wp_enqueue_script('rw_wp_signup', $this->GetJSUrl("wordpress/signup.php"));
+            }
         }
     }
     
@@ -792,6 +811,7 @@ class RatingWidgetPlugin
 //            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; ' . $user_label . " (Accumulated)", WP_RW__ID ), __($user_label . '  (Accumulated)', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=user', array(&$this, 'rw_settings_page'));
             add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Advanced', WP_RW__ID ), __('Advanced', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=advanced', array(&$this, 'rw_settings_page'));
             add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Reports', WP_RW__ID ), __('Reports', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=reports', array(&$this, 'rw_settings_page'));
+            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Upgrade', WP_RW__ID ), __('&#9733; Upgrade &#9733;', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=upgrade', array(&$this, 'rw_settings_page'));
             
             if (false !== WP_RW__USER_SECRET){
                 add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; Boost', WP_RW__ID ), __('Boost', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=boost', array(&$this, 'rw_settings_page'));
@@ -2082,7 +2102,7 @@ class RatingWidgetPlugin
     <h2><?php echo __( 'Rating-Widget Advanced Settings', WP_RW__ID);?></h2>
     <br />
     <form id="rw_advanced_settings_form" method="post" action="">
-        <div>
+        <div id="poststuff">
             <div id="rw_wp_set">
                 <div class="has-sidebar has-right-sidebar">
                     <div class="has-sidebar-content">
@@ -2257,6 +2277,11 @@ class RatingWidgetPlugin
             }
             
             return;
+        }
+        else if ($action == 'upgrade')
+        {
+            wp_redirect(WP_RW__ADDRESS . '/get-the-wordpress-plugin/'); 
+            exit;
         }
         
         // Variables for the field and option names 
@@ -2544,9 +2569,9 @@ class RatingWidgetPlugin
             {
                 /* Categories Availability settings.
                 ---------------------------------------------------------------------------------------------------------------*/
-                $rw_categories = isset($_POST["rw_categories"]) ? $_POST["rw_categories"] : array();
+                $rw_categories = isset($_POST["rw_categories"]) && is_array($_POST["rw_categories"]) ? $_POST["rw_categories"] : array();
                 
-                $this->categories_list->{$rw_class} = (in_array("-1", $_POST["rw_categories"]) ? array("-1") : $rw_categories);
+                $this->categories_list->{$rw_class} = (in_array("-1", $rw_categories) ? array("-1") : $rw_categories);
                 $this->_setOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS, json_encode($this->categories_list));
             }
             
