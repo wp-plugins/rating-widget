@@ -45,5 +45,5 @@
 <?php 
     }}
     
-    show_rating($vars); 
+    show_rating($VARS); 
 ?>

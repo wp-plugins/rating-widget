@@ -3,7 +3,7 @@
     get_currentuserinfo();     
  ?>
 <div id="rw_wp_registration" class="rw-wp-container rw-dir-ltr wrap">
-    <h2><?php _e( 'Rating-Widget Account Generation', WP_RW__ID ); ?></h2>
+    <h2><?php _e( 'You are just 30 sec away from boosting your WP with stunning ratings...', WP_RW__ID ); ?></h2>
     <div style="position: relative;">
         <p id="rw_wp_terms" style="display: none;">
             The Rating-Widget project is a self-hosted rating system for your website. It is based on dynamic Html & JavaScript and was intentionally developed as plug &amp; play widget for easy installation (without the need of setting any DB or backend support). Therefore all the ratings and voting data is sent and stored on Rating-Widget's servers. In addition, limited personal information like your email and Blog name is sent and stored so we can stay in touch with you and send you different announcements, updates, promotionas and more. For the full details please read our <a href="<?php echo WP_RW__ADDRESS;?>/terms-of-use/" target="_blank" tabindex="-1">Terms of Use</a> and <a href="<?php echo WP_RW__ADDRESS;?>/privacy/" target="_blank" tabindex="-1">Privacy Policy</a>. 
@@ -85,7 +85,7 @@
         ),
         array(
             'title' => 'SEO Friendly: Increase Search Traffic with Rich-Snippets',
-            'desc' => '<a href="http://rating-widget.com/get-the-word-press-plugin/" target="_blank">Premium users</a> enjoy the popular Rich-Snippets feature - makes  search results stand out among the crowd and increases CTR.',
+            'desc' => '<a href="' . rw_get_site_url('get-the-word-press-plugin') . '" target="_blank">Premium users</a> enjoy the popular Rich-Snippets feature - makes  search results stand out among the crowd and increases CTR.',
             'thumb' => WP_RW__ADDRESS_IMG . 'wordpress/register/seo-friendly.png',
         ),
      );

@@ -10,6 +10,9 @@
         "vote", "votes",
         "thanks",
     );
+    
+    $text = rw_options()->advanced->text;
+    
     foreach ($keys as $key)
     {
 ?>
@@ -18,7 +21,7 @@
             <span class="rw-ui-def"><?php echo $dictionary[$key];?>:</span>
         </td>
         <td>
-            <input onfocus="var e = this; setTimeout(function(){jQuery(e).select();}, 100);" onblur="RWM.Set.text('<?php echo $key;?>');" type="text" id="rw_text_input_<?php echo $key;?>" value="<?php echo $rw_options->advanced->text->$key;?>" />
+            <input onfocus="var e = this; setTimeout(function(){jQuery(e).select();}, 100);" onblur="RWM.Set.text('<?php echo $key;?>');" type="text" id="rw_text_input_<?php echo $key;?>" value="<?php echo esc_attr($text->$key);?>" />
         </td>
     </tr>
 <?php

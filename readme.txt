@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.5.1
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
@@ -31,7 +31,7 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/get-the-word-press-plugin
 * Advanced Ratings' Analytics
 * WMPL Language Auto-Selection
 * BuddyPress activity updates, comments and user profiles ratings.
-* BP's bbPress forum posts ratings.
+* bbPress forum posts & replys ratings.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
 
@@ -134,6 +134,15 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.7.7 =
+* New: All versions of bbPress are now fully supported for Premium users.
+* New: Activation of the plugin is automatically redirecting to settings page.
+* New: Added options links to plugins page.
+* New: Removed reCAPTCHA from activation page due to Google servers socket issues.
+* Fix: Optimized script loading to only load relevant scripts to each context site/admin.
+* Fix: Removed 'Upgrade' menu item for pro users.
+* Fix: Updated menu icon to colorful.
+
 = 1.7.6 =
 * Fix: Fixed the warning when trying to save settings when non categories selected.
 * Fix: Necessary JS and CSS are now loaded only on Rating-Widget settings page.

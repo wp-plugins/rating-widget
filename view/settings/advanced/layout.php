@@ -1,3 +1,6 @@
+<?php
+     $layout = rw_options()->advanced->layout;
+ ?>
 <table id="rw_layout_settings" cellspacing="0" style="display: none;">
     <tr id="rw_layout_direction" class="rw-odd">
         <td class="rw-ui-def-width">
@@ -8,7 +11,7 @@
             $directions = array("ltr" => "Left to Right", "rtl" => "Right to Left");
             foreach ($directions as $dir => $direction)
             {
-                $selected = strtolower($dir) == $rw_options->advanced->layout->dir;
+                $selected = strtolower($dir) == $layout->dir;
         ?>
             <div class="rw-ui-img-radio<?php if ($selected) echo ' rw-selected';?>" onclick="RWM.Set.direction(RW.DIR.<?php echo strtoupper($dir);?>);">
                 <i class="rw-ui-holder"><i class="rw-ui-sprite rw-ui-large rw-ui-<?php echo strtolower($dir);?>"></i></i>
@@ -40,7 +43,7 @@
                         }
                         else
                         {
-                            $selected = ($ver == $rw_options->advanced->layout->align->ver && $hor == $rw_options->advanced->layout->align->hor);
+                            $selected = ($ver == $layout->align->ver && $hor == $layout->align->hor);
             ?>
                 <div class="rw-ui-img-radio<?php if ($selected) echo ' rw-selected';?>" onclick="RWM.Set.align('<?php echo $ver . "', '" . $hor?>')">
                     <i class="rw-ui-holder"><i class="rw-ui-sprite rw-ui-large rw-ui-<?php echo $ver . $hor;?>"></i></i>
@@ -65,7 +68,7 @@
                     $line_heights = array(6,8,9,10,11,12,13,14,15,16,18,20,24,30,36);
                     foreach ($line_heights as $height)
                     {
-                        echo '<option value="' . $height . '"' . (($height . "px" == $rw_options->advanced->layout->lineHeight) ? ' selected="selected"' : '') . '>' . $height . 'px</option>';
+                        echo '<option value="' . $height . '"' . (($height . "px" == $layout->lineHeight) ? ' selected="selected"' : '') . '>' . $height . 'px</option>';
                     }
                 ?>
             </select>

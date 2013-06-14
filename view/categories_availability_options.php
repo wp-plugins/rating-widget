@@ -1,10 +1,10 @@
 <?php
     // Get all post categories.
-    $categories = get_categories();
+    $all_categories = get_categories();
     
-    if (is_array($categories) && count($categories) > 0)
+    if (is_array($all_categories) && count($all_categories) > 0)
     {
-        $all = in_array("-1", $rw_categories);
+        $all = in_array("-1", rw_settings()->categories);
 ?>
 <div id="rw_categories_availability_settings" class="has-sidebar has-right-sidebar">
     <div class="has-sidebar-content">
@@ -15,9 +15,9 @@
                     <input type="checkbox" name="rw_categories[]" value="-1" <?php if ($all) echo ' checked="checked"';?>> <span>All Categories</span>
                 </div>
 <?php
-                foreach ($categories as $category)
+                foreach ($all_categories as $category)
                 {
-                    $selected = ($all || in_array($category->cat_ID, $rw_categories));
+                    $selected = ($all || in_array($category->cat_ID, rw_settings()->categories));
 ?>
                 <div class="rw-ui-img-radio rw-ui-hor<?php if ($selected) echo ' rw-selected';?>">
                     <input type="checkbox" name="rw_categories[]" value="<?php echo $category->cat_ID;?>" <?php if ($selected) echo ' checked="checked"';?>> <span><?php echo $category->cat_name;?></span>
