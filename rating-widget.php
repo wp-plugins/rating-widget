@@ -3376,12 +3376,12 @@ class RatingWidgetPlugin
         if (!isset($this->_inBBPress))
         {
             $this->_inBBPress = false;
-//            if (function_exists('bb_get_location'))
-//            {
+            if (function_exists('bbp_is_forum'))
+            {
 //                $this->_inBBPress = $this->_inBBPress || ('' !== bb_get_location());
                 $this->_inBBPress = $this->_inBBPress || bbp_is_forum(get_the_ID());
 //                $this->_inBBPress = $this->_inBBPress || bb_is_feed();
-//            }
+            }
 //            if (function_ex)
             if (RWLogger::IsOn())
                 RWLogger::Log("InBBPressPage", ($this->_inBuddyPress ? 'TRUE' : 'FALSE'));
