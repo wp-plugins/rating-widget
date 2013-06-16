@@ -1,4 +1,7 @@
 <?php
+    // Exit if accessed directly.
+    if (!defined('ABSPATH')) exit;
+    
     if (WP_RW__LOCALHOST)
     {
         define("WP_RW__ADDRESS_CSS", "http://" . WP_RW__DOMAIN . "/css/");

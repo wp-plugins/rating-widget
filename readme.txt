@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.5.1
-Stable tag: 1.7.8
+Stable tag: 1.7.9
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
@@ -134,6 +134,12 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.7.9 =
+* New: Added bbPress user ratings right at forum-topic's thread.
+* New: Added user rating options for bbPress settings page, to support bbPress without BuddyPress config.
+* Fix: Fix warning for PHP 5.4 'Call-time pass-by-reference has been removed in'.
+* Fix: Fixed warning that were displaying on Top-Rated widget, after the user deleted rated comments - 'Warning: array_key_exists() [function.array-key-exists]: The first argument should be either a string or an integer'.
+
 = 1.7.8 =
 * Fix: bbp_is_forum fatal error fix.
 

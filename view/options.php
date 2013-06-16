@@ -17,7 +17,7 @@
                     <tr id="rw_star_size" class="rw-<?php echo (($odd = !$odd) ? "odd" : "even");?>">
                         <?php rw_include_once_view("settings/size.php"); ?>
                     </tr>
-                    <?php if (WP_RW__BP_INSTALLED && is_plugin_active(WP_RW__BP_CORE_FILE)) : ?>
+                    <?php if (ratingwidget()->IsBuddyPressInstalled() || ratingwidget()->IsBBPressInstalled()) : ?>
                     <tr id="rw_rate_background" class="rw-<?php echo (($odd = !$odd) ? "odd" : "even");?>">
                         <?php rw_include_once_view("settings/background.php"); ?>
                     </tr>

@@ -1,4 +1,7 @@
 <?php
+    // Exit if accessed directly.
+    if (!defined('ABSPATH')) exit;
+
     global $DEFAULT_OPTIONS, $DEF_FONT_SIZE, $DEF_LINE_HEIGHT;
     
     if (!isset($DEFAULT_OPTIONS))

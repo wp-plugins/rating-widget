@@ -1,4 +1,7 @@
 <?php
+    // Exit if accessed directly.
+    if (!defined('ABSPATH')) exit;
+    
     /* Unique-User-Key & API Secret
     -----------------------------------------------------------------------------------------*/
     // You can hardcode your Rating-Widget user-id here (get one from http://rating-widget.com)

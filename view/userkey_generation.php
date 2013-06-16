@@ -36,7 +36,7 @@
                     <label for="password">Password:</label>
                     <input type="password" id="rw_password" name="password" value="">
                 </div>
-                <div class="rw-field">
+                <!--<div class="rw-field">
                     <script type="text/javascript">
                         var RecaptchaOptions = { theme : 'white' };
                     </script>
@@ -44,7 +44,7 @@
                     document.write('<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=' + 
                                    RWM.RECAPTCHA_PUBLIC + '"></' + 'script>');
                     </script></div>
-                </div>
+                </div>-->
             </fieldset>
             <noscript>
                 <script type="text/javascript">

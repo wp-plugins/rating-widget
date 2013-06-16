@@ -1,4 +1,7 @@
 <?php
+    // Exit if accessed directly.
+    if (!defined('ABSPATH')) exit;
+    
     function rw_enrich_options1($settings, $defaults, $loadTheme = false, $fromDefaults = false)
     {
         $ret = @rw_get_default_value($settings, new stdClass());
