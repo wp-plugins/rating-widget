@@ -39,6 +39,7 @@
         $DEFAULT_OPTIONS->uarid = 0;
         $DEFAULT_OPTIONS->lng = 'en';
         $DEFAULT_OPTIONS->url = '';
+        $DEFAULT_OPTIONS->img = '';
         $DEFAULT_OPTIONS->title = '';
         $DEFAULT_OPTIONS->type = 'star';
         $DEFAULT_OPTIONS->rclass = '';
@@ -90,5 +91,5 @@
         $DEFAULT_OPTIONS->advanced->text->thanks = DUMMY_STR;
         
         $DEFAULT_OPTIONS->advanced->css->container = '';
-    }  
+    }
 ?>

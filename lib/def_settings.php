@@ -49,15 +49,17 @@
             }
         }
         
-        // Get rating type.
-        $ret->type = @rw_get_default_value($settings->type, $defaults->type);
+        $hasTheme = $loadTheme && isset($settings->theme);
 
-        if ($loadTheme && isset($settings->theme))
+        require_once(RW__PATH_THEMES . "dir.php");
+        
+        global $RW_THEMES;
+        
+        // Get rating type.
+        $ret->type = @rw_get_default_value($settings->type, (!$hasTheme ? $defaults->type : ($RW_THEMES['star'][$settings->theme] ? 'star' : 'nero')));
+
+        if ($hasTheme)
         {
-            require_once(RW__PATH_THEMES . "dir.php");
-            
-            global $RW_THEMES;
-            
             // Load theme options.
             require(RW__PATH_THEMES . $RW_THEMES[$ret->type][$settings->theme]["file"]);
             
@@ -67,6 +69,7 @@
         $ret->uarid = @rw_get_default_value($settings->uarid, $defaults->uarid);
         $ret->lng = @rw_get_default_value($settings->lng, $defaults->lng);
         $ret->url = @rw_get_default_value($settings->url, $defaults->url);
+        $ret->img = @rw_get_default_value($settings->img, $defaults->img);
         $ret->title = @rw_get_default_value($settings->title, $defaults->title);
         $ret->rclass = @rw_get_default_value($settings->rclass, $defaults->rclass);
         $ret->size = @rw_get_default_value($settings->size, $defaults->size);
@@ -156,8 +159,9 @@
         $settings->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         
         $settings->lng = @rw_get_default_value($settings->lng, "en");
-        $settings->url = @rw_get_default_value($settings->url, "");
-        $settings->title = @rw_get_default_value($settings->title, "");
+        $settings->url = @rw_get_default_value($settings->url, '');
+        $settings->img = @rw_get_default_value($settings->img, '');
+        $settings->title = @rw_get_default_value($settings->title, '');
         $settings->type = @rw_get_default_value($settings->type, $type);
         $settings->rclass = @rw_get_default_value($settings->rclass, "");
         $settings->size = @rw_get_default_value($settings->size, "small");

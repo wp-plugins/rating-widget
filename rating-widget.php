@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.7.9
+Version: 1.8.0
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: A "Slug" license name e.g. GPL2
@@ -3065,8 +3065,14 @@ class RatingWidgetPlugin
 
     function rw_validate_category_availability($pId, $pClass)
     {
-        if (!isset($this->categories_list)){
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_validate_category_availability", $params); }
+
+        if (!isset($this->categories_list))
+        {
             $this->categories_list = json_decode($this->GetOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS));
+
+            if (RWLogger::IsOn())
+                RWLogger::Log("categories_list", var_export($this->categories_list, true));
         }
         
         if (!isset($this->categories_list->{$pClass}) ||
@@ -3077,10 +3083,12 @@ class RatingWidgetPlugin
         $categories = $this->categories_list->{$pClass};
         
         // Check if all categories.
-        if (!is_array($categories) || in_array("-1", $categories)){ return true; }
+        if (!is_array($categories) || in_array("-1", $categories))
+            return true;
         
         // No category selected.
-        if (count($categories) == 0){ return false; }
+        if (count($categories) == 0)
+            return false;
         
         // Get post categories.
         $post_categories = get_the_category($pId);
@@ -3273,11 +3281,69 @@ class RatingWidgetPlugin
         // Check if post category is selected.
         if (false === $this->rw_validate_category_availability($pElementID, $pClass))
             return false;
-        // Checks if post isn't specificaly excluded.
+        // Checks if item isn't specificaly excluded.
         if (false === $this->rw_validate_visibility($pElementID, $pClass))
             return false;
             
         return true;
+    }
+    
+    public function IsVisibleCommentRating($pComment)
+    {
+        /**
+        * Check if comment category is selected.
+        * 
+        *   NOTE: 
+        *       $pComment->comment_post_ID IS NOT A MISTAKE
+        *       We transfer the comment parent post id because the availability
+        *       method loads the element categories by get_the_category() which only
+        *       works on post ids.
+        */
+        if (false === $this->rw_validate_category_availability($pComment->comment_post_ID, 'comment'))
+            return false;
+        // Checks if item isn't specificaly excluded.
+        if (false === $this->rw_validate_visibility($pComment->comment_ID, 'comment'))
+            return false;
+            
+        return true;
+    }
+
+    public function GetPostImage($pPost)
+    {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetPostImage", $params); }
+
+        if (function_exists('has_post_thumbnail') && has_post_thumbnail($pPost->ID))
+        {
+            $img = wp_get_attachment_image_src(get_post_thumbnail_id($pPost->ID), 'single-post-thumbnail');
+            
+            if (RWLogger::IsOn())
+                RWLogger::Log('GetPostImage', 'Featured Image = ' . $img[0]);
+                
+            return $img[0];
+        }
+        else
+        {
+            ob_start();
+            ob_end_clean();
+
+            $images = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $pPost->post_content, $matches);
+
+            if($images > 0)
+            {
+                if (RWLogger::IsOn())
+                    RWLogger::Log('GetPostImage', 'Extracted post image = ' . $matches[1][0]);
+                    
+                // Return first image out of post's content.
+                return $matches[1][0];
+            }
+            else
+            {
+                if (RWLogger::IsOn())
+                    RWLogger::Log('GetPostImage', 'No post image');
+
+                false;
+            }
+        }
     }
     
     /**
@@ -3299,8 +3365,8 @@ class RatingWidgetPlugin
         }
         
         global $post;
-        
-        $ratingHtml = $this->EmbedRatingIfVisibleByPost($post, $this->post_class, true, $this->post_align->hor);
+
+        $ratingHtml = $this->EmbedRatingIfVisibleByPost($post, $this->post_class, true, $this->post_align->hor, false);
         
         return ('top' === $this->post_align->ver) ?
                 $ratingHtml . $content :
@@ -3319,7 +3385,7 @@ class RatingWidgetPlugin
         
         global $comment;
 
-        if (!$this->IsVisibleRating($comment->comment_ID, 'comment'))
+        if (!$this->IsVisibleCommentRating($comment))
             return $content;
 
         $ratingHtml = $this->EmbedRatingByComment($comment, 'comment', $this->comment_align->hor);
@@ -3340,14 +3406,16 @@ class RatingWidgetPlugin
     */
     private function GetRatingHtml($pUrid, $pElementClass, $pAddSchema = false, $pTitle = "", $pOptions = array())
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetRatingHtml", $params); }
+        
 //        rw-prop-readOnly-true
 //        $pOptions['class'] = $pElementClass;
         
-        $ratingClass = '';
+        $ratingData = '';
         foreach ($pOptions as $key => $val)
-            $ratingClass .= ' rw-prop-' . $key . '-' . $val;
+            $ratingData .= ' data-' . $key . '="' . esc_attr($val) . '"';
         
-        $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . $ratingClass . ' rw-urid-' . $pUrid . '"></div>';
+        $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
         
         if (true === $pAddSchema)
         {
@@ -3356,18 +3424,18 @@ class RatingWidgetPlugin
             if (false !== $data)
             {
                     $title = mb_convert_to_utf8(trim($pTitle));
-                    $rating_html = 
-'<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '" itemscope itemtype="http://schema.org/Product">
+                    $rating_html .= ' itemscope itemtype="http://schema.org/Product">
     <span itemprop="name" style="position: fixed; top: 100%;">' . esc_html($pTitle) . '</span>
     <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
         <meta itemprop="worstRating" content="0" />
         <meta itemprop="bestRating" content="5" />
         <meta itemprop="ratingValue" content="' . $data['rate'] . '" />
         <meta itemprop="ratingCount" content="' . $data['votes'] . '" />
-    </div>
-</div>';
+    </div';
             }
         }
+        
+        $rating_html . '></div>';
         
         return $rating_html;
     }
@@ -3377,13 +3445,16 @@ class RatingWidgetPlugin
         if (!$this->IsBuddyPressInstalled())
             return;
         
-        global $bp;
-        
         if (!isset($this->_inBuddyPress))
         {
-            $this->_inBuddyPress = function_exists('bp_is_current_component') ? 
-                bp_is_current_component($bp->current_component) :
-                false;
+            $this->_inBuddyPress = false;
+            
+            if (function_exists('bp_is_blog_page'))
+                $this->_inBuddyPress =  !bp_is_blog_page();
+            /*if (function_exists('bp_is_activity_front_page'))
+                $this->_inBuddyPress =  $this->_inBuddyPress || bp_is_blog_page();
+            if (function_exists('bp_is_current_component'))
+                $this->_inBuddyPress =  $this->_inBuddyPress || bp_is_current_component($bp->current_component);*/
             
             if (RWLogger::IsOn())
                 RWLogger::Log("InBuddyPressPage", ($this->_inBuddyPress ? 'TRUE' : 'FALSE'));
@@ -4104,7 +4175,8 @@ class RatingWidgetPlugin
                         
                         foreach (self::$ratings as $urid => $data)
                         {
-                            echo 'RW.initRating("' . $urid . '", {title: "' . esc_js($data["title"]) . '", url: "' . esc_js($data["permalink"]) . '"});';
+                            echo 'RW.initRating("' . $urid . '", {title: "' . esc_js($data["title"]) . '", url: "' . esc_js($data["permalink"]) . '"' .
+                                  (isset($data["img"]) ? 'img: "' . esc_js($data["img"]) . '"' : '')  . '});';
                         }
                     ?>
                     RW.render(null, <?php
@@ -4643,6 +4715,8 @@ class RatingWidgetPlugin
     */
     public function EmbedRating($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRating", $params); }
+
         switch ($pElementClass)
         {
             case 'blog-post':
@@ -4690,6 +4764,8 @@ class RatingWidgetPlugin
     
     public function EmbedRatingIfVisible($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisible", $params); }
+                
         return !$this->IsVisibleRating($pElementID, $pElementClass) ?
             '' :
             $this->EmbedRating($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions);
@@ -4697,6 +4773,10 @@ class RatingWidgetPlugin
     
     public function EmbedRatingByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
+        $postImg = $this->GetPostImage($post);
+        if (false !== $postImg) 
+            $pOptions['img'] = $postImg;
+
         return $this->EmbedRating(
             $pPost->ID, 
             $pPost->post_title, 
@@ -4710,6 +4790,12 @@ class RatingWidgetPlugin
     
     public function EmbedRatingIfVisibleByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisibleByPost", $params); }
+        
+        $postImg = $this->GetPostImage($pPost);
+        if (false !== $postImg && !empty($postImg)) 
+            $pOptions['img'] = $postImg;
+
         return $this->EmbedRatingIfVisible(
             $pPost->ID, 
             $pPost->post_title, 
@@ -4736,6 +4822,8 @@ class RatingWidgetPlugin
     
     public function EmbedRatingByComment($pComment, $pClass = 'comment', $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('EmbedRatingByComment', $params); }
+
         return $this->EmbedRating(
             $pComment->comment_ID,
             strip_tags($pComment->comment_content), 

@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.5.1
-Stable tag: 1.7.9
+Stable tag: 1.8.0
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
@@ -95,12 +95,12 @@ Become our **Facebook** fan to keep up with the latest updates [Rating-Widget](h
 == Screenshots ==
 
 1. Ratings settings button
-2. Creating user-key
-3. Add ratings
-4. Set rating alignment
-5. Ratings on a posts
-6. Ratings on comments
-7. Ratings on activity updates & comments
+2. Add ratings
+3. Set rating alignment
+4. Ratings on a posts
+5. Ratings on comments
+6. Ratings on BuddyPress activity updates & comments
+7. Ratings on bbPress forum replys and replys authors'
 8. Top Rated widget
 9. Ratings options
 10. Ratings advanced font options
@@ -134,6 +134,12 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.8.0 =
+* Fix: Fixed comment ratings availability validation.
+* Fix: Fixed bbPress redirection error.
+* Fix: Fixed support for bbPress forum posts ratings on Top-Rated Widget.
+* New: Featured image extraction for future post recommendations.
+
 = 1.7.9 =
 * New: Added bbPress user ratings right at forum-topic's thread.
 * New: Added user rating options for bbPress settings page, to support bbPress without BuddyPress config.

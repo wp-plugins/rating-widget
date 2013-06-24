@@ -5,11 +5,11 @@
             <li><b>Google Rich Snippets (schema.org)</b></li>
             <li><b>Advanced Ratings' Analytics</b></li>
             <li><b>White-labeled - Ads free</b></li>
+            <li><b>bbPress Forum Ratings</b></li>
             <li>Priority Email Support</li>
             <li>SSL Support</li>
             <li>Secure Connection (Fraud protection)</li>
             <li>WMPL Language Auto-Selection</li>
-            <li>BuddyPress bbPress's Forum Ratings</li>
         </ul>
         <!--<i>Starting from only $6.99 / month</i>-->
         <div id="rw_wp_subscribe">
