@@ -180,6 +180,7 @@
     define('WP_RW__PLUGIN_FILE', 'rating-widget.php');
     define('WP_RW__PLUGIN_FILE_FULL', WP_RW__PLUGIN_DIR . '/' . WP_RW__PLUGIN_FILE);
     define('WP_RW__PLUGIN_LIB_DIR', WP_RW__PLUGIN_DIR . '/lib/');
+    define('RW__PATH_THEMES', WP_RW__PLUGIN_DIR . '/themes/');
     define('WP_RW__PLUGIN_VIEW_DIR', WP_RW__PLUGIN_DIR . '/view/');
     define('WP_RW__PLUGIN_URL', plugins_url() . '/' . dirname(dirname(plugin_basename(__FILE__))) . '/');
 
