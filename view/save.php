@@ -5,7 +5,9 @@
             <input type="hidden" name="<?php echo rw_settings()->form_hidden_field_name; ?>" value="Y">
             <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
             <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
-            <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" class="button-secondary rw-upgrade-button" target="_blank">Upgrade Now!</a>
+            <?php if (false === WP_RW__USER_SECRET) : ?>
+            <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank">Upgrade Now!</a>
+            <?php endif; ?>
         </p>
     </div>
 </div>
