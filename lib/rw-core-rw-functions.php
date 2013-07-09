@@ -80,6 +80,22 @@ function rw_get_css_url($css)
     
     return WP_RW__ADDRESS_CSS . $css;
 }
+
+function rw_get_post_thumb_url($post, $width = 160, $height = 100)
+{
+    $img = ratingwidget()->GetPostImage($post, WP_RW__CACHE_TIMEOUT_POST_THUMB_EXTRACT);    
+    return rw_get_img_thumb_url(
+        (false !== $img ? $img : get_permalink($post->ID)),
+        $width,
+        $height
+    );
+}
+
+function rw_get_img_thumb_url($src, $width = 160, $height = 100)
+{
+    return WP_RW__ADDRESS_TMB . '?src=' . urlencode($src) . '&w=' . $width . '&h=' . $height . '&zc=1';
+}
+
 /* Views.
 --------------------------------------------------------------------------------------------*/
 function rw_get_view_path($path)
@@ -163,6 +179,9 @@ function rw_site_redirect($location = '')
 function rw_redirect($location, $status = 302) {
     global $is_IIS;
 
+    if (headers_sent())
+        return false;
+    
     if ( !$location ) // allows the wp_redirect filter to cancel a redirect
         return false;
 

@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.8.2
+Version: 1.8.3
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: A "Slug" license name e.g. GPL2
@@ -602,7 +602,7 @@ class RatingWidgetPlugin
             if (false !== $value)
             {
                 if (RWLogger::IsOn())
-                    RWLogger::Log('IS_CACHED', 'false');
+                    RWLogger::Log('IS_CACHED', 'true');
                 
                 return $value;
             }
@@ -3308,42 +3308,61 @@ class RatingWidgetPlugin
         return true;
     }
 
-    public function GetPostImage($pPost)
+    public function GetPostImage($pPost, $pExpiration = false)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetPostImage", $params); }
 
-        if (function_exists('has_post_thumbnail') && has_post_thumbnail($pPost->ID))
+        $cacheKey = 'post_thumb_' . $pPost->ID;
+        $img = false;
+        if (false !== $pExpiration)
         {
-            $img = wp_get_attachment_image_src(get_post_thumbnail_id($pPost->ID), 'single-post-thumbnail');
+            // Try to get cached item.
+            $img = get_transient($cacheKey);
             
             if (RWLogger::IsOn())
-                RWLogger::Log('GetPostImage', 'Featured Image = ' . $img[0]);
-                
-            return $img[0];
+                RWLogger::Log('IS_CACHED', (false !== $img) ? 'true' : 'false');
         }
-        else
+        
+        if (false === $img)
         {
-            ob_start();
-            ob_end_clean();
-
-            $images = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $pPost->post_content, $matches);
-
-            if($images > 0)
+            if (function_exists('has_post_thumbnail') && has_post_thumbnail($pPost->ID))
             {
+                $img = wp_get_attachment_image_src(get_post_thumbnail_id($pPost->ID), 'single-post-thumbnail');
+                
                 if (RWLogger::IsOn())
-                    RWLogger::Log('GetPostImage', 'Extracted post image = ' . $matches[1][0]);
+                    RWLogger::Log('GetPostImage', 'Featured Image = ' . $img[0]);
                     
-                // Return first image out of post's content.
-                return $matches[1][0];
+                $img = $img[0];
             }
             else
             {
-                if (RWLogger::IsOn())
-                    RWLogger::Log('GetPostImage', 'No post image');
+                ob_start();
+                ob_end_clean();
 
-                false;
+                $images = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $pPost->post_content, $matches);
+
+                if($images > 0)
+                {
+                    if (RWLogger::IsOn())
+                        RWLogger::Log('GetPostImage', 'Extracted post image = ' . $matches[1][0]);
+                        
+                    // Return first image out of post's content.
+                    $img = $matches[1][0];
+                }
+                else
+                {
+                    if (RWLogger::IsOn())
+                        RWLogger::Log('GetPostImage', 'No post image');
+
+                    $img = '';
+                }
             }
+
+            if (false !== $pExpiration && !empty($cacheKey))
+                set_transient($cacheKey, $img, $pExpiration);
         }
+            
+        return !empty($img) ? $img : false;
     }
     
     /**
@@ -3413,7 +3432,10 @@ class RatingWidgetPlugin
         
         $ratingData = '';
         foreach ($pOptions as $key => $val)
-            $ratingData .= ' data-' . $key . '="' . esc_attr($val) . '"';
+        {
+            if (is_string($val) && '' !== trim($val))
+                $ratingData .= ' data-' . $key . '="' . esc_attr(trim($val)) . '"';
+        }
         
         $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
         
@@ -4182,6 +4204,9 @@ class RatingWidgetPlugin
                     RW.render(null, <?php
                         echo (!self::$TOP_RATED_WIDGET_LOADED) ? "true" : "false";
                     ?>);
+                    <?php if (self::$TOP_RATED_WIDGET_LOADED) : ?>
+                    RW.Trc.load('toprated');
+                    <?php endif; // if (self::$TOP_RATED_WIDGET_LOADED) ?>
                 }
 
                 
@@ -4601,7 +4626,8 @@ class RatingWidgetPlugin
             if (is_array($ratings) && count($ratings) > 0)
             {
                 $html .= '<div id="rw_top_rated_page_' . $type . '" class="rw-wp-ui-top-rated-list-container">';
-                if ($instance["show_{$type}_title"]){
+                if ($instance["show_{$type}_title"])
+                {
                     $instance["{$type}_title"] = empty($instance["{$type}_title"]) ? ucwords($type) : $instance["{$type}_title"];
                     $html .= '<p style="margin: 0;">' . $instance["{$type}_title"] . '</p>';
                 }

@@ -81,6 +81,7 @@
         $ret->showTooltip = @rw_get_default_value($settings->showTooltip, $defaults->showTooltip);
         $ret->showAverage = @rw_get_default_value($settings->showAverage, $defaults->showAverage);
         $ret->showReport = @rw_get_default_value($settings->showReport, $defaults->showReport);
+        $ret->showLoader = @rw_get_default_value($settings->showLoader, $defaults->showLoader);
         $ret->beforeRate = @rw_get_default_value($settings->beforeRate, $defaults->beforeRate);
         $ret->afterRate = @rw_get_default_value($settings->afterRate, $defaults->afterRate);
         
@@ -171,6 +172,7 @@
         $settings->showTooltip = @rw_get_default_value($settings->showTooltip, true);
         $settings->showAverage = @rw_get_default_value($settings->showAverage, true);
         $settings->showReport = @rw_get_default_value($settings->showReport, true);
+        $settings->showLoader = @rw_get_default_value($settings->showLoader, true);
         $settings->beforeRate = @rw_get_default_value($settings->beforeRate, null);
         $settings->afterRate = @rw_get_default_value($settings->beforeRate, null);
         

@@ -4,7 +4,7 @@
 
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__VERSION', '1.8.2');
+    define('WP_RW__VERSION', '1.8.3');
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -170,9 +170,10 @@
 
     /* Local caching
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__CACHE_TIMEOUT_REPORT', 1800);            // 30 min
-    define('WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS', 86400);    // 24 hours
-    define('WP_RW__CACHE_TIMEOUT_TOP_RATED', 300);          // 5 min
+    define('WP_RW__CACHE_TIMEOUT_REPORT', 1800);                // 30 min
+    define('WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS', 86400);        // 24 hours
+    define('WP_RW__CACHE_TIMEOUT_TOP_RATED', 300);              // 5 min
+    define('WP_RW__CACHE_TIMEOUT_POST_THUMB_EXTRACT', 86400);   // 24 hours
     
     /* Plugin dir and url
     -----------------------------------------------------------------------------------------*/

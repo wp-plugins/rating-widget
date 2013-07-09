@@ -101,6 +101,9 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
             }
         }
 
+        if (RWLogger::IsOn())
+            RWLogger::Log('RatingWidgetPlugin_TopRatedWidget', 'show_any = ' . ($show_any ? 'TRUE' : 'FALSE'));
+        
         if (false === $show_any)
         {
             // Nothing to show.
@@ -152,12 +155,19 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
             {                    
                 if (is_array($ratings) && count($ratings) > 0)
                 {
-                    echo '<div id="rw_top_rated_' . $type . '">';
+                    echo '<div class="rw-ui-toprated" id="rw_top_rated_' . $type . '">';
+                    /*echo '
+<script type="text/javascript">
+    var RW = RW || {};
+    RW.Trc = RW.Trc || {};
+</script>
+';*/
                     if ($instance["show_{$type}_title"]){ /* (1.3.3) - Conditional title display */
                         $instance["{$type}_title"] = empty($instance["{$type}_title"]) ? ucwords($type) : $instance["{$type}_title"];
                         echo '<p style="margin: 0;">' . $instance["{$type}_title"] . '</p>';
                     }
                     echo '<ul class="rw-top-rated-list">';
+                    $cell = 0;
                     foreach ($ratings as $rating)
                     {
                         $urid = $rating->urid;
@@ -207,22 +217,62 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                                 break;
                             case "forum_posts":
                                 $id = RatingWidgetPlugin::Urid2ForumPostId($urid);
-                                $forum_post = @bp_forums_get_post($id);
-                                if (null === $forum_post || is_null($forum_post))
+                                if (function_exists('bp_forums_get_post'))
+                                {
+                                    $forum_post = @bp_forums_get_post($id);
+                                    
+                                    if (null === $forum_post || is_null($forum_post))
+                                        continue;
+                                        
+                                    $title = trim(strip_tags($forum_post->post_text));
+                                    $page = bb_get_page_number($forum_post->post_position);
+                                    $permalink = get_topic_link($id, $page) . "#post-{$id}";
+                                }
+                                else if (function_exists('bbp_get_reply_id'))
+                                {
+                                    $forum_post = @get_post($id);
+                                    
+                                    if (null === $forum_post || is_null($forum_post))
+                                        continue;
+                                        
+                                    $title = trim(strip_tags($forum_post->post_title));
+                                    $permalink = get_permalink($forum_post->ID);
+                                }
+                                else
+                                {
                                     continue;
-                                $title = trim(strip_tags($forum_post->post_text));
-                                $page = bb_get_page_number($forum_post->post_position);
-                                $permalink = get_topic_link($id, $page) . "#post-{$id}";
+                                }   
                                 break;
                         }
                         
                         $short = (mb_strlen($title) > $titleMaxLength) ? trim(mb_substr($title, 0, $titleMaxLength)) . "..." : $title;
                         
-                        echo '<li>'.
-                             '<a href="' . $permalink . '" title="' . $title . '">' . $short . '</a>'.
-                             '<br />'.
-                             '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . ' rw-size-small rw-prop-readOnly-true"></div>'.
-                             '</li>';
+                        if ('posts' === $type && 1 == $instance["{$type}_style"])
+                        {
+?>
+    <li class="rw-ui-recommendation">
+        <a href="<?php echo $permalink;?>" title="<?php echo $title;?>" onclick="RW.Trc.linkClick(this, {category: 'toprated', label: '<?php echo $type;?>', cell: <?php echo $cell;?>}); return false;">
+            <div class="rw-ui-thumb">
+                <img src="<?php echo rw_get_post_thumb_url($post); ?>" alt="">
+                <div class="rw-ui-rating"><div style="display: none;" class="rw-ui-container rw-class-<?php echo $rclass; ?> rw-urid-<?php echo $urid; ?> rw-size-small rw-prop-readOnly-true rw-prop-showLoader-false rw-prop-showReport-false rw-valign-bottom rw-halign-center"></div></div>
+            </div>
+        </a>
+        <a class="rw-ui-title" href="<?php echo $permalink;?>" title="<?php echo $title;?>" onclick="RW.Trc.linkClick(this, {category: 'toprated', label: '<?php echo $type;?>', cell: <?php echo $cell;?>}); return false;">
+            <?php echo $short;?>
+        </a>
+    </li>
+<?php                            
+                        }
+                        else
+                        {
+                            echo '<li>'.
+                                 '<a href="' . $permalink . '" title="' . $title . '" onclick="RW.Trc.linkClick(this, {category: \'toprated\', label: \'' . $type . '\', cell: ' . $cell . '}); return false;">' . $short . '</a>'.
+                                 '<br />'.
+                                 '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . ' rw-size-small rw-prop-readOnly-true rw-prop-showLoader-false"></div>'.
+                                 '</li>';
+                        }
+                        
+                        $cell++;
                     }
                     echo "</ul>";
                     echo "</div>";
@@ -239,6 +289,17 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         {
             // Set a flag that the widget is loaded.
             RatingWidgetPlugin::TopRatedWidgetLoaded();
+            
+            if (false === WP_RW__USER_SECRET)
+            {
+?>
+<div class="rw-ui-toprated">
+    <div class="rw-ui-poweredby">
+        Powered by <a href="http://wordpress.org/extend/plugins/rating-widget/" target="_blank"><em></em> <b>Rating</b><i>Widget</i></a>
+    </div>
+</div>
+<?php
+            }
 ?>
 <script type="text/javascript">
 // Hook render widget.
@@ -284,6 +345,7 @@ RW_HOOK_READY.push(function(){
         {
             $instance["show_{$type}"] = (int)$new_instance["show_{$type}"];
             $instance["show_{$type}_title"] = (int)$new_instance["show_{$type}_title"]; /* (1.3.3) - Conditional title display */
+            $instance["{$type}_style"] = (int)$new_instance["{$type}_style"];
             $instance["{$type}_title"] = $new_instance["{$type}_title"]; /* (1.3.3) - Explicit title */
             $instance["{$type}_count"] = (int)$new_instance["{$type}_count"];
             $instance["{$type}_min_votes"] = (int)$new_instance["{$type}_min_votes"]; /* (1.3.7) - Min votes to appear */
@@ -326,6 +388,7 @@ RW_HOOK_READY.push(function(){
             $values["{$type}_orderby"] = "avgrate";
             $values["{$type}_order"] = "DESC";
             $values["show_{$type}_title"] = '1';
+            $values["{$type}_style"] = '1';
         }
 
         $instance = wp_parse_args((array)$instance, $values);
@@ -339,6 +402,8 @@ RW_HOOK_READY.push(function(){
                 $values["show_{$type}_title"] = (int)$instance["show_{$type}_title"];
             if (isset($instance["{$type}_title"]))
                 $values["{$type}_title"] = $instance["{$type}_title"];
+            if (isset($instance["{$type}_style"]))
+                $values["{$type}_style"] = (int)$instance["{$type}_style"];
             if (isset($instance["{$type}_count"]))
                 $values["{$type}_count"] = (int)$instance["{$type}_count"];
             if (isset($instance["{$type}_min_votes"]))
@@ -374,20 +439,24 @@ RW_HOOK_READY.push(function(){
              <?php _e("Show for {$type}", WP_RW__ID); ?>
         </label>
     </p>
+    <?php if (in_array($type, array('posts', 'pages'))) : ?>
+    <?php
+        $styles = array(
+            'Titles (Legacy)',
+            'Thumbnails (160px X 100px) + Titles',
+        );
+    ?>
+    <p>
+        <select id="<?php echo $this->get_field_id('style'); ?>" name="<?php echo $this->get_field_name("{$type}_style"); ?>">
+        <?php for ($i = 0; $i < count($styles); $i++) : ?>
+            <option value="<?php echo $i?>"<?php if ($i == $values["{$type}_style"]) echo ' selected="selected"' ?>><?php echo $styles[$i]; ?></option>
+        <?php endfor; ?>
+        </select>
+    </p>
+    <?php endif; ?>
     <?php
         /* (1.3.3) - Conditional title display */
     ?>
-    <p>
-        <label for="<?php echo $this->get_field_id("show_{$type}_title"); ?>">
-            <?php
-                $checked = "";
-                if ($values["show_{$type}_title"] == 1)
-                    $checked = ' checked="checked"';
-            ?>
-        <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("show_{$type}_title"); ?>" name="<?php echo $this->get_field_name("show_{$type}_title"); ?>" value="1"<?php echo ($checked); ?> />
-             <?php _e("Show '" . $type . "' title", WP_RW__ID); ?>
-        </label>
-    </p>
     <p>
         <label for="<?php echo $this->get_field_id("{$type}_title"); ?>"><?php _e(ucwords($type) . " Title", WP_RW__ID); ?>:
             <?php
@@ -450,6 +519,7 @@ function rw_register_toprated_widget()
     register_widget("RatingWidgetPlugin_TopRatedWidget");
     
     add_action('admin_enqueue_scripts', 'rw_toprated_widget_load_style');
+    add_action('wp_enqueue_scripts', 'rw_toprated_widget_load_style');
 //    if (is_active_widget(false, false, 'RatingWidgetPlugin_TopRatedWidget')) 
 //        add_action('wp_head', 'rw_toprated_widget_load_style');
 }

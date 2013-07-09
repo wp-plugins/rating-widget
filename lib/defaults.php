@@ -55,6 +55,7 @@
         $DEFAULT_OPTIONS->showTooltip = true;
         $DEFAULT_OPTIONS->showAverage = true;
         $DEFAULT_OPTIONS->showReport = true;
+        $DEFAULT_OPTIONS->showLoader = true;
         $DEFAULT_OPTIONS->boost->votes = 0;
         $DEFAULT_OPTIONS->boost->rate = 5;
         $DEFAULT_OPTIONS->beforeRate = null;
