@@ -22,6 +22,8 @@ class RatingWidgetPlugin_Settings
     var $show_on_mobile;
     
     var $rating_type;
+    
+    var $is_user_accumulated;
 }
 
 /**

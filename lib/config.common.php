@@ -4,7 +4,7 @@
 
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__VERSION', '1.8.3');
+    define('WP_RW__VERSION', '1.8.4');
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -27,6 +27,8 @@
     /* Uncomment for debug mode.
     -----------------------------------------------------------------------------------------*/
     define('WP_RW__DEBUG', false);
+    define('WP_RW__LOCALHOST_SCRIPTS', WP_RW__DEBUG && false);
+    define('WP_RW__CACHING_ON', !WP_RW__DEBUG);
     define('WP_RW__STAGING', false);
 
     // This gives all other plugins the chance to load before Rating-Widget.
@@ -127,6 +129,7 @@
     define('WP_RW__CATEGORIES_AVAILABILITY_SETTINGS', 'rw_categories_availability_settings');
     define('WP_RW__CUSTOM_SETTINGS_ENABLED', 'rw_custom_settings_enabled');
     define('WP_RW__CUSTOM_SETTINGS', 'rw_custom_settings');
+    define('WP_RW__IS_ACCUMULATED_USER_RATING', 'rw_accumulated_user_rating');
 
     /* Visibility Options
     -----------------------------------------------------------------------------------------*/

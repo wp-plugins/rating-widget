@@ -59,15 +59,20 @@ function rw_get_blog_url($path = '')
     return rw_get_site_url('/blog/' . ltrim($path, '/'));
 }
 
+function rw_get_url_daily_cache_killer()
+{
+    return date('\YY\Mm\Dd');
+}
+
 function rw_get_js_url($js)
 {
     if (rw_starts_with($js, 'http'))
         return $js;
 
-    if ((!WP_RW__LOCALHOST || !WP_RW__DEBUG) && rw_ends_with($js, '.php'))
+    if (((!WP_RW__LOCALHOST && !WP_RW__LOCALHOST_SCRIPTS) || !WP_RW__DEBUG) && rw_ends_with($js, '.php'))
         $js = substr($js, 0, strlen($js) - 3) . 'js';
     
-    return WP_RW__ADDRESS_JS . $js;
+    return WP_RW__ADDRESS_JS . $js . '?ck=' . rw_get_url_daily_cache_killer();
 }
 
 function rw_get_css_url($css)
@@ -75,10 +80,10 @@ function rw_get_css_url($css)
     if (rw_starts_with($css, 'http'))
         return $css;
         
-    if ((!WP_RW__LOCALHOST || !WP_RW__DEBUG) && rw_ends_with($css, '.php'))
+    if (((!WP_RW__LOCALHOST && !WP_RW__LOCALHOST_SCRIPTS) || !WP_RW__DEBUG) && rw_ends_with($css, '.php'))
         $css = substr($css, 0, strlen($css) - 3) . 'css';
     
-    return WP_RW__ADDRESS_CSS . $css;
+    return WP_RW__ADDRESS_CSS . $css . '?ck=' . rw_get_url_daily_cache_killer();
 }
 
 function rw_get_post_thumb_url($post, $width = 160, $height = 100)
@@ -94,6 +99,16 @@ function rw_get_post_thumb_url($post, $width = 160, $height = 100)
 function rw_get_img_thumb_url($src, $width = 160, $height = 100)
 {
     return WP_RW__ADDRESS_TMB . '?src=' . urlencode($src) . '&w=' . $width . '&h=' . $height . '&zc=1';
+}
+
+function rw_get_plugin_img_path($path)
+{
+    return WP_RW__PLUGIN_URL . 'resources/img/' . trim($path, '/');
+}
+
+function rw_get_plugin_css_path($path)
+{
+    return WP_RW__PLUGIN_URL . 'resources/css/' . trim($path, '/');
 }
 
 /* Views.

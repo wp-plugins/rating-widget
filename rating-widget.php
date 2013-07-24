@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.8.3
+Version: 1.8.4
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: A "Slug" license name e.g. GPL2
@@ -393,9 +393,10 @@ class RatingWidgetPlugin
         return self::Urid2Id($pUrid);
     }
     
-    private function _getUserRatingGuid($secondery_id = WP_RW__USER_SECONDERY_ID, $id = false)
+    private function _getUserRatingGuid($id = false, $secondery_id = WP_RW__USER_SECONDERY_ID)
     {
-        if (false === $id){ $id = bp_displayed_user_id(); }
+        if (false === $id)
+            $id = bp_displayed_user_id();
         
         $len = strlen($secondery_id);
         $secondery_id = ($len == 0) ? WP_RW__USER_SECONDERY_ID : (($len == 1) ? "0" . $secondery_id : substr($secondery_id, 0, 2));
@@ -482,6 +483,8 @@ class RatingWidgetPlugin
         WP_RW__CATEGORIES_AVAILABILITY_SETTINGS => "{}",
         
         WP_RW__SHOW_ON_EXCERPT => '{"front-post": false, "blog-post": false, "page": false}',
+        
+        WP_RW__IS_ACCUMULATED_USER_RATING => 'true',
         
         WP_RW__FLASH_DEPENDENCY => "true",
         
@@ -575,6 +578,10 @@ class RatingWidgetPlugin
     
     public function RemoteCall($pPage, &$pData, $pExpiration = false)
     {
+        if (!WP_RW__CACHING_ON)
+            // No caching on debug mode.
+            $pExpiration = false;
+            
         if (RWLogger::IsOn())
         { 
             $params = func_get_args(); RWLogger::LogEnterence("RemoteCall", $params, true);
@@ -835,7 +842,7 @@ class RatingWidgetPlugin
         if (!$this->is_admin)
             return;
         
-        $pageLoaderFunction = 'rw_settings_page';
+        $pageLoaderFunction = 'SettingsPage';
         if (!$this->_isRegistered)
         {
             $pageLoaderFunction = 'rw_user_key_page';
@@ -878,28 +885,40 @@ class RatingWidgetPlugin
         // Basic settings.
         $submenu[] = array(
             'menu_title' => 'Basic',
-            'function' => 'rw_settings_page',
+            'function' => 'SettingsPage',
             'slug' => '',
         );
         
+        // Top-Rated Promotion Page.
+        $submenu[] = array(
+            'menu_title' => 'Top-Rated Widget',
+            'function' => 'TopRatedSettingsPageRender',
+            'load_function' => 'TopRatedSettingsPageLoad',
+            'slug' => 'toprated',
+        );
+
         if ($this->IsBuddyPressInstalled())
             // BuddyPress settings.
             $submenu[] = array(
                 'menu_title' => 'BuddyPress',
-                'function' => 'rw_settings_page',
+                'function' => 'SettingsPage',
             );
 
         if ($this->IsBBPressInstalled())
             // bbPress settings.
             $submenu[] = array(
                 'menu_title' => 'bbPress',
-                'function' => 'rw_settings_page',
+                'function' => 'SettingsPage',
             );
         
         $user_label = $this->IsBBPressInstalled() ? "User" : "Author";
          
-//            add_submenu_page(WP_RW__ADMIN_MENU_SLUG, __( 'Ratings &ndash; ' . $user_label . " (Accumulated)", WP_RW__ID ), __($user_label . '  (Accumulated)', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG . '&amp;action=user', array(&$this, 'rw_settings_page'));
-
+        // Reports.
+        $submenu[] = array(
+            'menu_title' => 'Reports',
+            'function' => 'ReportsPageRender',
+        );
+        
         // Advanced settings.
         $submenu[] = array(
             'menu_title' => 'Advanced',
@@ -907,12 +926,6 @@ class RatingWidgetPlugin
             'load_function' => 'AdvancedSettingsPageLoad',
         );
 
-        // Reports.
-        $submenu[] = array(
-            'menu_title' => 'Reports',
-            'function' => 'ReportsPageRender',
-        );
-        
         if (false === WP_RW__USER_SECRET)
             // Upgrade link.
             $submenu[] = array(
@@ -2126,6 +2139,7 @@ class RatingWidgetPlugin
                 $this->DeleteOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS);
                 $this->DeleteOption(WP_RW__CUSTOM_SETTINGS_ENABLED);
                 $this->DeleteOption(WP_RW__CUSTOM_SETTINGS);
+                $this->DeleteOption(WP_RW__IS_ACCUMULATED_USER_RATING);
                 
                 // Re-Load all advanced settings.
                     // Flash dependency.
@@ -2303,6 +2317,67 @@ class RatingWidgetPlugin
 <?php                
     }
     
+    function TopRatedSettingsPageLoad()
+    {
+        rw_enqueue_style('rw_toprated', rw_get_plugin_css_path('toprated.css'));
+    }
+    
+    function TopRatedSettingsPageRender()
+    {
+?>
+<div class="wrap rw-dir-ltr rw-wp-container">
+    <h2><?php echo __( 'Increase User Retention and Pageviews', WP_RW__ID);?></h2>
+    <div>
+        <p style="font-weight: bold; font-size: 14px;">With the Top-Rated Sidebar Widget readers will stay on your site for a longer period of time.</p>
+        <ul>
+            <li>
+                <ul id="screenshots">
+                    <li>
+                        <img src="<?php echo rw_get_plugin_img_path('top-rated/legacy.png');?>" alt="">
+                    </li>
+                    <li>
+                        <img src="<?php echo rw_get_plugin_img_path('top-rated/compact-thumbs.png');?>" alt="">
+                    </li>
+                    <li>
+                        <img src="<?php echo rw_get_plugin_img_path('top-rated/thumbs.png');?>" alt="">
+                    </li>
+                </ul>
+                <div style="clear: both;"> </div>
+            </li>
+            <li>
+                <a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary" style="margin-left: 20px; display: block; text-align: center; width: 720px;">Add Widget Now!</a>
+            </li>
+            <li>
+                <h3>How</h3>
+                <p>Expose your readers to the top rated posts onsite that they might not have otherwise noticed and increase your chance to reduce the bounce rate.</p>
+            </li>
+            <li>
+                <h3>What</h3>
+                <p>The Top-Rated Widget is a beautiful sidebar widget containing the top rated posts on your blog.</p>
+            </li>
+            <li>
+                <h3>Install</h3>
+                <p>Go to <b><i><a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary">Appearence > Widgets</a></i></b> and simply drag the <b>Rating-Widget: Top Rated</b> widget to your sidebar.</p>
+                <img src="<?php echo rw_get_plugin_img_path('top-rated/add-widget.png');?>" alt="">
+            </li>
+            <li>
+                <h3>New</h3>
+                <p>Thumbnails: a beautiful new thumbnail display, for themes which use post thumbnails (featured images).</p>
+            </li>
+            <li>
+                <h3>Performance</h3>
+                <p>The widget is performant, caching the top posts and featured images' thumbnails as your site is visited.</p>
+            </li>
+            <li>
+                <a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary">Add Widget Now!</a>
+            </li>
+        </ul>
+    </div>
+    <br />
+</div>
+<?php        
+    }
+    
     public function ReportsPageRender()
     {
         if (false === WP_RW__USER_SECRET)
@@ -2338,7 +2413,7 @@ class RatingWidgetPlugin
     *   
     *       get_post_types(array('public'=>true,'_builtin' => false))
     */
-    public function rw_settings_page()
+    public function SettingsPage()
     {
         // Must check that the user has the required capability.
         if (!current_user_can('manage_options')){
@@ -2591,6 +2666,10 @@ class RatingWidgetPlugin
         $this->custom_settings_enabled_list = json_decode($this->GetOption(WP_RW__CUSTOM_SETTINGS_ENABLED));
         $this->custom_settings_list = json_decode($this->GetOption(WP_RW__CUSTOM_SETTINGS));
 
+        // Accumulated user ratings support.
+        if ('users' === $selected_key && $this->IsBBPressInstalled())
+            $rw_is_user_accumulated = $this->GetOption(WP_RW__IS_ACCUMULATED_USER_RATING);
+        
         // Some alias.
         $rw_class = $rw_current_settings["class"];
         
@@ -2648,6 +2727,13 @@ class RatingWidgetPlugin
                 
                 $this->categories_list->{$rw_class} = (in_array("-1", $rw_categories) ? array("-1") : $rw_categories);
                 $this->SetOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS, json_encode($this->categories_list));
+            }
+
+            // Accumulated user ratings support.
+            if ('users' === $selected_key && $this->IsBBPressInstalled() && isset($_POST['rw_accumulated_user_rating']))
+            {
+                $rw_is_user_accumulated = in_array($_POST['rw_accumulated_user_rating'], array('true', 'false')) ? $_POST['rw_accumulated_user_rating'] : 'true';
+                $this->SetOption(WP_RW__IS_ACCUMULATED_USER_RATING, $rw_is_user_accumulated);
             }
             
             /* Visibility settings
@@ -2730,7 +2816,7 @@ class RatingWidgetPlugin
         if (!isset($this->custom_settings_enabled_list->{$rw_class}))
             $this->custom_settings_enabled_list->{$rw_class} = false;
         $rw_custom_settings_enabled = $this->custom_settings_enabled_list->{$rw_class};
-        
+
         if (!isset($this->custom_settings_list->{$rw_class}))
             $this->custom_settings_list->{$rw_class} = '';
         $rw_custom_settings = $this->custom_settings_list->{$rw_class};
@@ -2818,6 +2904,10 @@ class RatingWidgetPlugin
         $this->settings->form_hidden_field_name = $rw_form_hidden_field_name;
         $this->settings->custom_settings_enabled = $rw_custom_settings_enabled;
         $this->settings->custom_settings = $rw_custom_settings;
+        // Accumulated user ratings support.
+        if ('users' === $selected_key && $this->IsBBPressInstalled())
+            $this->settings->is_user_accumulated = ('true' === $rw_is_user_accumulated);
+
 ?>
 <div class="wrap rw-dir-ltr rw-wp-container">
     <h2><?php echo __( 'Rating-Widget Settings', WP_RW__ID);?></h2>
@@ -2929,6 +3019,10 @@ class RatingWidgetPlugin
                     </div>
                 </div>
                 <br />
+                <?php
+                    if ('users' === $selected_key)
+                        rw_require_once_view('user_rating_type_options.php');
+                ?>
                 <?php rw_require_once_view('options.php'); ?>
                 <?php rw_require_once_view('availability_options.php'); ?>
                 <?php rw_require_once_view('visibility_options.php'); ?>
@@ -3276,13 +3370,13 @@ class RatingWidgetPlugin
         return isset($this->custom_settings_list->{$pClass}) ? stripslashes($this->custom_settings_list->{$pClass}) : '';
     }
     
-    public function IsVisibleRating($pElementID, $pClass)
+    public function IsVisibleRating($pElementID, $pClass, $pValidateCategory = true, $pValidateVisibility = true)
     {
         // Check if post category is selected.
-        if (false === $this->rw_validate_category_availability($pElementID, $pClass))
+        if ($pValidateCategory && false === $this->rw_validate_category_availability($pElementID, $pClass))
             return false;
         // Checks if item isn't specificaly excluded.
-        if (false === $this->rw_validate_visibility($pElementID, $pClass))
+        if ($pValidateVisibility && false === $this->rw_validate_visibility($pElementID, $pClass))
             return false;
             
         return true;
@@ -3426,9 +3520,6 @@ class RatingWidgetPlugin
     private function GetRatingHtml($pUrid, $pElementClass, $pAddSchema = false, $pTitle = "", $pOptions = array())
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetRatingHtml", $params); }
-        
-//        rw-prop-readOnly-true
-//        $pOptions['class'] = $pElementClass;
         
         $ratingData = '';
         foreach ($pOptions as $key => $val)
@@ -3600,7 +3691,7 @@ class RatingWidgetPlugin
         return true;
     }
 
-    private function GetBuddyPressRating($ver)
+    private function GetBuddyPressRating($ver, $horAlign = true)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetBuddyPressRating", $params); }
         
@@ -3609,7 +3700,7 @@ class RatingWidgetPlugin
         // Set current activity-comment to current activity update (recursive comments).
         $this->current_comment = $activities_template->activity;
         
-        $rclass = str_replace("_", "-", $activities_template->activity->type);
+        $rclass = str_replace("_", "-", bp_get_activity_type());
         
         $is_forum_topic = ($rclass === "new-forum-topic");
 
@@ -3625,8 +3716,8 @@ class RatingWidgetPlugin
         
         // Get item id.
         $item_id = ("activity-update" === $rclass || "activity-comment" === $rclass) ?
-                    $activities_template->activity->id :
-                    $activities_template->activity->secondary_item_id;
+                    bp_get_activity_id() :
+                    bp_get_activity_secondary_item_id();
         
         if ($is_forum_topic)
         {
@@ -3661,41 +3752,34 @@ class RatingWidgetPlugin
             $item_id = $post->post_id;
         }
         
-        // Validate that item isn't explicitly excluded.
-        if (false === $this->rw_validate_visibility($item_id, $rclass)){ return false; }
-
-        switch ($rclass)
-        {
-            case "activity-update":
-            case "activity-comment":
-                // Get activity rating user-rating-id.
-                $urid = $this->_getActivityRatingGuid($item_id);
-                break;
-            case "new-blog-post":
-                // Get activity rating user-rating-id.
-                $urid = $this->_getPostRatingGuid($item_id);
-                break;
-            case "new-blog-comment":
-                // Get activity rating user-rating-id.
-                $urid = $this->_getCommentRatingGuid($item_id);
-                break;
-            /*case "new-forum-topic":*/
-            case "new-forum-post":
-                // Get activity rating user-rating-id.
-                $urid = $this->_getForumPostRatingGuid($item_id);
-                break;
-        }
-        
         // If the item is post, queue rating with post title.
         $title = ("new-blog-post" === $rclass) ?
                   get_the_title($item_id) :
-                  $activities_template->activity->content;
+                  bp_get_activity_content_body();// $activities_template->activity->content;
         
+        $options = array();
+
+        // Add accumulator id if user accumulated rating.
+        if ($this->IsUserAccumulatedRating())
+            $options['uarid'] = $this->_getUserRatingGuid(bp_get_activity_user_id());
+        
+        return $this->EmbedRatingIfVisible(
+            $item_id,
+            strip_tags($title),
+            bp_activity_get_permalink(bp_get_activity_id()),
+            $rclass,
+            false,
+            ($horAlign ? $this->activity_align[$rclass]->hor : false),
+            false,
+            $options,
+            false   // Don't validate category - there's no category for bp items
+        );
+        /*
         // Queue activity rating.
         $this->QueueRatingData($urid, strip_tags($title), bp_activity_get_permalink($activities_template->activity->id), $rclass);
 
         // Return rating html container.
-        return '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . '"></div>';
+        return '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . '"></div>';*/
     }
     
     // Activity item top rating.
@@ -3705,10 +3789,7 @@ class RatingWidgetPlugin
         
         $rating_html = $this->GetBuddyPressRating("top");
         
-        return ((false === $rating_html) ?
-                $action :
-                // Attach rating html container after activity actions line.
-                $action . '<div class="rw-' . $this->activity_align[$rclass]->hor . '">' . $rating_html .'</div>');
+        return $action . ((false === $rating_html) ? '' : $rating_html);
     }
     
     // Activity item bottom rating.
@@ -3716,7 +3797,7 @@ class RatingWidgetPlugin
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_activity_rating_bottom", $params); }
         
-        $rating_html = $this->GetBuddyPressRating("bottom");
+        $rating_html = $this->GetBuddyPressRating("bottom", false);
 
         if (false !== $rating_html)
             // Echo rating html container on bottom actions line.
@@ -3757,8 +3838,10 @@ class RatingWidgetPlugin
         $this->current_comment = current($this->current_comment->children);
         $this->current_comment->parent = $parent;
         
+        /*
         // Check if comment rating isn't specifically excluded.
-        if (false === $this->rw_validate_visibility($this->current_comment->id, "activity-comment")){ return $comment_content; }        
+        if (false === $this->rw_validate_visibility($this->current_comment->id, "activity-comment"))
+            return $comment_content;
 
         // Get activity comment user-rating-id.
         $comment_urid = $this->_getActivityRatingGuid($this->current_comment->id);
@@ -3767,6 +3850,25 @@ class RatingWidgetPlugin
         $this->QueueRatingData($comment_urid, strip_tags($this->current_comment->content), bp_activity_get_permalink($this->current_comment->id), "activity-comment");
         
         $rw = '<div class="rw-' . $this->activity_align["activity-comment"]->hor . '"><div class="rw-ui-container rw-class-activity-comment rw-urid-' . $comment_urid . '"></div></div><p></p>';
+        */
+        
+        $options = array();
+
+        // Add accumulator id if user accumulated rating.
+        if ($this->IsUserAccumulatedRating())
+            $options['uarid'] = $this->_getUserRatingGuid($this->current_comment->user_id);
+        
+        $rw = $this->EmbedRatingIfVisible(
+            $this->current_comment->id,
+            strip_tags($this->current_comment->content),
+            bp_activity_get_permalink($this->current_comment->id),
+            'activity-comment',
+            false,
+            $this->activity_align['activity-comment']->hor,
+            false,
+            $options,
+            false
+        );
         
         // Attach rating html container.
         return ($this->activity_align["activity-comment"]->ver == "top") ?
@@ -3805,7 +3907,7 @@ class RatingWidgetPlugin
                 return;
 
             // Get user profile user-rating-id.
-            $user_urid = $this->_getUserRatingGuid(WP_RW__USER_SECONDERY_ID, $user_id);
+            $user_urid = $this->_getUserRatingGuid($user_id);
 
             // Queue user profile rating.
             $this->QueueRatingData($user_urid, bp_get_displayed_user_fullname(), bp_get_displayed_user_link(), $rclass);
@@ -3816,7 +3918,7 @@ class RatingWidgetPlugin
         ----------------------------------------------------*/
         /*    $rclass = $rclass . "-forum-post";
             // Get user profile user-rating-id.
-            $user_urid = $this->_getUserRatingGuid(WP_RW__FORUM_POST_SECONDERY_ID, $user_id);
+            $user_urid = $this->_getUserRatingGuid($user_id);
             
             // Queue user profile rating.
             $this->QueueRatingData($user_urid, bp_get_displayed_user_fullname(), bp_get_displayed_user_link(), $rclass);
@@ -3910,7 +4012,7 @@ class RatingWidgetPlugin
         if ($this->IsHiddenRatingByType('user'))
             return;
 
-        echo $this->EmbedRatingIfVisibleByUser(bbpress()->displayed_user);
+        echo $this->EmbedRatingIfVisibleByUser(bbpress()->displayed_user, 'user');
     }
     
     public function AddBBPressForumThreadUserRating($author_link)
@@ -3922,7 +4024,13 @@ class RatingWidgetPlugin
         if (bbp_is_reply_anonymous($reply_id))
             return $author_link;
         
-//        bbp_get_reply_author_id($reply_id);
+        $options = array('show-info' => 'false');
+        // If accumulated user rating, then make sure it can not be directly rated.
+        if ($this->IsUserAccumulatedRating())
+        {
+            $options['read-only'] = 'true';
+            $options['show-report'] = 'false';
+        }
         
         return $author_link . $this->EmbedRatingIfVisible(
             bbp_get_reply_author_id($reply_id),
@@ -3932,7 +4040,7 @@ class RatingWidgetPlugin
             false,
             false,
             false,
-            array('showInfo' => 'false')
+            $options
         );
     }
     
@@ -4059,6 +4167,7 @@ class RatingWidgetPlugin
         
         $post_id = bp_get_the_topic_post_id();
         
+        /*
         // Validate that item isn't explicitly excluded.
         if (false === $this->rw_validate_visibility($post_id, $rclass))
             return $content;
@@ -4069,14 +4178,26 @@ class RatingWidgetPlugin
         // Queue activity-comment rating.
         $this->QueueRatingData($post_urid, strip_tags($topic_template->post->post_text), bp_get_the_topic_permalink() . "#post-" . $post_id, $rclass);
         
-        /*
-        // Get corresponding user's accamulator rating id.
-        $uarid = $this->_getUserRatingGuid(WP_RW__FORUM_POST_SECONDERY_ID, bp_get_the_topic_poster_id());
-
-        $rw = '<div class="rw-' . $this->forum_align[$rclass]->hor . '"><div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $post_urid . ' rw-uarid-' . $uarid . '"></div></div>';
+        $rw = '<div class="rw-' . $this->forum_align[$rclass]->hor . '"><div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $post_urid . '"></div></div>';
         */
         
-        $rw = '<div class="rw-' . $this->forum_align[$rclass]->hor . '"><div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $post_urid . '"></div></div>';
+        global $topic_template;
+            
+        // Add accumulator id if user accumulated rating.
+        if ($this->IsUserAccumulatedRating())
+            $options['uarid'] = $this->_getUserRatingGuid($topic_template->post->poster_id);
+
+        $rw = $this->EmbedRatingIfVisible(
+            $post_id, 
+            strip_tags(bp_get_the_topic_post_content()),
+            bp_get_the_topic_permalink() . "#post-" . $post_id,
+            $rclass,
+            false,
+            $this->forum_align[$rclass]->hor,
+            false,
+            $options,
+            false);
+        
         
         // Attach rating html container.
         return ($this->forum_align[$rclass]->ver == "top") ?
@@ -4204,9 +4325,6 @@ class RatingWidgetPlugin
                     RW.render(null, <?php
                         echo (!self::$TOP_RATED_WIDGET_LOADED) ? "true" : "false";
                     ?>);
-                    <?php if (self::$TOP_RATED_WIDGET_LOADED) : ?>
-                    RW.Trc.load('toprated');
-                    <?php endif; // if (self::$TOP_RATED_WIDGET_LOADED) ?>
                 }
 
                 
@@ -4219,7 +4337,8 @@ class RatingWidgetPlugin
                 // Append RW JS lib.
                 if (typeof(RW) == "undefined"){ 
                     (function(){
-                        var rw = document.createElement("script"); rw.type = "text/javascript"; rw.async = true;
+                        var rw = document.createElement("script"); 
+                        rw.type = "text/javascript"; rw.async = true;
                         rw.src = "<?php echo rw_get_js_url('external' . (!WP_RW__DEBUG ? '.min' : '') . '.php');?>?wp=<?php echo WP_RW__VERSION;?>";
                         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(rw, s);
                     })();
@@ -4739,10 +4858,23 @@ class RatingWidgetPlugin
     * @version 1.3.3
     * 
     */
-    public function EmbedRating($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
+    public function EmbedRating(
+        $pElementID, 
+        $pTitle, 
+        $pPermalink, 
+        $pElementClass, 
+        $pAddSchema = false, 
+        $pHorAlign = false, 
+        $pCustomStyle = false, 
+        $pOptions = array(),
+        $pValidateVisibility = false,
+        $pValidateCategory = true)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRating", $params); }
 
+        if ($pValidateVisibility && !$this->IsVisibleRating($pElementID, $pElementClass, $pValidateCategory))
+            return '';
+            
         switch ($pElementClass)
         {
             case 'blog-post':
@@ -4764,7 +4896,7 @@ class RatingWidgetPlugin
                 $urid = $this->_getForumPostRatingGuid($pElementID);
                 break;
             case 'user':
-                $urid = $this->_getUserRatingGuid(WP_RW__USER_SECONDERY_ID, $pElementID);
+                $urid = $this->_getUserRatingGuid($pElementID);
                 break;
             case 'activity-update':
             case 'user-activity-update':
@@ -4788,21 +4920,23 @@ class RatingWidgetPlugin
         return $html;
     }
     
-    public function EmbedRatingIfVisible($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
+    public function EmbedRatingIfVisible($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateCategory = true)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisible", $params); }
                 
-        return !$this->IsVisibleRating($pElementID, $pElementClass) ?
-            '' :
-            $this->EmbedRating($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions);
+        return $this->EmbedRating($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions, true, $pValidateCategory);
     }
     
-    public function EmbedRatingByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
+    public function EmbedRatingByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateVisibility = false)
     {
-        $postImg = $this->GetPostImage($post);
+        $postImg = $this->GetPostImage($pPost);
         if (false !== $postImg) 
             $pOptions['img'] = $postImg;
 
+        // Add accumulator id if user accumulated rating.
+        if ($this->IsUserAccumulatedRating())
+            $pOptions['uarid'] = $this->_getUserRatingGuid($pPost->post_author);
+        
         return $this->EmbedRating(
             $pPost->ID, 
             $pPost->post_title, 
@@ -4811,30 +4945,34 @@ class RatingWidgetPlugin
             $pAddSchema, 
             $pHorAlign,
             $pCustomStyle,
-            $pOptions);
+            $pOptions,
+            $pValidateVisibility);
     }
     
     public function EmbedRatingIfVisibleByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisibleByPost", $params); }
         
-        $postImg = $this->GetPostImage($pPost);
-        if (false !== $postImg && !empty($postImg)) 
-            $pOptions['img'] = $postImg;
-
-        return $this->EmbedRatingIfVisible(
-            $pPost->ID, 
-            $pPost->post_title, 
-            get_permalink($pPost->ID), 
-            $pClass, 
-            $pAddSchema, 
+        return $this->EmbedRatingByPost(
+            $pPost,
+            $pClass,
+            $pAddSchema,
             $pHorAlign,
             $pCustomStyle,
-            $pOptions);
+            $pOptions,
+            true
+        );
     }
     
     public function EmbedRatingIfVisibleByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array())
     {
+        // If accumulated user rating, then make sure it can not be directly rated.
+        if ($this->IsUserAccumulatedRating())
+        {
+            $pOptions['read-only'] = 'true';
+            $pOptions['show-report'] = 'false';
+        }
+            
         return $this->EmbedRatingIfVisible(
             $pUser->id, 
             $pUser->fullname, 
@@ -4850,6 +4988,10 @@ class RatingWidgetPlugin
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('EmbedRatingByComment', $params); }
 
+        // Add accumulator id if user accumulated rating.
+        if ($this->IsUserAccumulatedRating() && (int)$pComment->user_id > 0)
+            $pOptions['uarid'] = $this->_getUserRatingGuid($pComment->user_id);
+        
         return $this->EmbedRating(
             $pComment->comment_ID,
             strip_tags($pComment->comment_content), 
@@ -4859,6 +5001,19 @@ class RatingWidgetPlugin
             $pHorAlign,
             $pCustomStyle,
             $pOptions);
+    }
+    
+    /*public function GetItemOwnerID($item)
+    {
+        
+    }*/
+    
+    public function IsUserAccumulatedRating()
+    {
+        if (!$this->IsBBPressInstalled())
+            return false;
+        
+        return ('true' === $this->GetOption(WP_RW__IS_ACCUMULATED_USER_RATING));
     }
     
     public function GetRatingDataByRatingID($pRatingID, $pAccuracy = false)

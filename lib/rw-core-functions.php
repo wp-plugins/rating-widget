@@ -35,6 +35,14 @@ if (!function_exists('get_transient'))
     }
 }
 
+if (!function_exists('get_admin_url'))
+{
+    function get_admin_url($blog_id = null, $path = '')
+    {
+        echo site_url() . '/wp-admin/' . trim($path, '/');
+    }
+}
+
 if (!function_exists('bbp_get_user_display_name'))  
 {
     function bbp_get_user_display_name($author_id)

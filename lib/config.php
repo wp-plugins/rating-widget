@@ -9,6 +9,14 @@
         define("WP_RW__ADDRESS_IMG", "http://" . WP_RW__DOMAIN . "/img/");
         define("WP_RW__ADDRESS_TMB", "http://" . WP_RW__DOMAIN . "/apps/thumb");
     }
+    else if (WP_RW__LOCALHOST_SCRIPTS)
+    {
+        // For development testing on remote machine with local scripts.
+        define("WP_RW__ADDRESS_CSS", "http://localhost:8080/css/");
+        define("WP_RW__ADDRESS_JS", "http://localhost:8080/js/");
+        define("WP_RW__ADDRESS_IMG", "http://localhost:8080/img/");
+        define("WP_RW__ADDRESS_TMB", "http://localhost:8080/apps/thumb");
+    }
     else if (WP_RW__HTTPS && false !== WP_RW__USER_SECRET)
     {
         define("WP_RW__ADDRESS_CSS", "https://secure." . WP_RW__DOMAIN . "/css/");

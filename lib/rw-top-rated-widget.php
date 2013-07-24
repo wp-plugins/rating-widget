@@ -4,6 +4,12 @@ if (!defined('ABSPATH')) exit;
 
 if (class_exists("WP_Widget") && !class_exists('RatingWidgetPlugin_TopRatedWidget')) :
 
+define('WP_RW__TR_DEFAULT_ITEMS_COUNT', 5);
+define('WP_RW__TR_DEFAULT_MIN_VOTES', 1);
+define('WP_RW__TR_DEFAULT_ORDERY_BY', 'avgrate');
+define('WP_RW__TR_DEFAULT_ORDERY', 'DESC');
+define('WP_RW__TR_DEFAULT_STYLE', 'compact_thumbs');
+
 /* Top Rated Widget
 ---------------------------------------------------------------------------------------------------------------*/
 class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
@@ -11,14 +17,14 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
     var $rw_address;
     var $version;
     
-    function RatingWidgetPlugin_TopRatedWidget()
+    function __construct()
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("RatingWidgetPlugin_TopRatedWidget Constructor", $params, true); }
         
         $this->rw_address = WP_RW__ADDRESS;
         
         $widget_ops = array('classname' => 'rw_top_rated', 'description' => __('A list of your top rated posts.'));
-        $this->WP_Widget("RatingWidgetPlugin_TopRatedWidget", "Rating-Widget: Top Rated", $widget_ops);
+         parent::__construct(strtolower('RatingWidgetPlugin_TopRatedWidget'), "Rating-Widget: Top Rated", $widget_ops);
         
         if (RWLogger::IsOn()){ RWLogger::LogDeparture("RatingWidgetPlugin_TopRatedWidget Constructor"); }
     }
@@ -145,177 +151,232 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         
         echo $before_widget;
         $title = empty($instance['title']) ? __('Top Rated', WP_RW__ID) : apply_filters('widget_title', $instance['title']);
-        echo $before_title . $title . $after_title;
 
         $titleMaxLength = (isset($instance['title_max_length']) && is_numeric($instance['title_max_length'])) ? (int)$instance['title_max_length'] : 30;
+        
         $empty = true;
+        
+        $toprated_data = new stdClass();
+        $toprated_data->id = rand(1, 100);
+        $toprated_data->title = array(
+            'label' => $title,
+            'show' => true,
+            'before' => $before_title,
+            'after' => $after_title,
+        );
+        ;
+        $toprated_data->showTitle = true;
+        $toprated_data->options = array(
+            'align' => 'vertical',
+            'direction' => 'ltr',
+        );
+        $toprated_data->site = array(
+            'id' => WP_RW__USER_ID,
+            'domain' => $_SERVER['HTTP_HOST'],
+            'type' => 'WordPress',
+        );
+        $toprated_data->itemGroups = array();
+        
         if (count($rw_ret_obj->data) > 0)
         {
             foreach($rw_ret_obj->data as $type => $ratings)
             {                    
                 if (is_array($ratings) && count($ratings) > 0)
                 {
-                    echo '<div class="rw-ui-toprated" id="rw_top_rated_' . $type . '">';
-                    /*echo '
-<script type="text/javascript">
-    var RW = RW || {};
-    RW.Trc = RW.Trc || {};
-</script>
-';*/
-                    if ($instance["show_{$type}_title"]){ /* (1.3.3) - Conditional title display */
-                        $instance["{$type}_title"] = empty($instance["{$type}_title"]) ? ucwords($type) : $instance["{$type}_title"];
-                        echo '<p style="margin: 0;">' . $instance["{$type}_title"] . '</p>';
+                    $item_group = new stdClass();
+                    $item_group->type = $type;
+                    $item_group->title = $instance["{$type}_title"];
+                    $item_group->showTitle = (1 === $instance["show_{$type}_title"] && '' !== trim($item_group->title));
+                    if (is_numeric($instance["{$type}_style"]))
+                    {
+                        switch ($instance["{$type}_style"])
+                        {
+                            case 0:
+                                $instance["{$type}_style"] = 'legacy';
+                                break;
+                            case 1:
+                            default:
+                                $instance["{$type}_style"] = 'thumbs';
+                                break;
+                        }
+                        
                     }
-                    echo '<ul class="rw-top-rated-list">';
+                    $item_group->style = $instance["{$type}_style"];
+                    
+                    $item_group->options = array(
+                        'title' => array('maxLen' => $titleMaxLength)
+                    );
+                    $item_group->items = array();
+                    
+                    $has_thumb = (strtolower($instance["{$type}_style"]) !== 'legacy');
+
+                    $thumb_width = 160;
+                    $thumb_height = 100;
+                    if ($has_thumb)
+                    {
+                        switch ($instance["{$type}_style"])
+                        {
+                            case '2':
+                            case 'compact_thumbs':
+                                $thumb_width = 50;
+                                $thumb_height = 40;
+                                break;
+                            case '1':
+                            case 'thumbs':
+                            default:
+                                $thumb_width = 160;
+                                $thumb_height = 100;
+                                break;
+                        }
+                        $item_group->options['thumb'] = array(
+                            'width' => $thumb_width,
+                            'height' => $thumb_height,
+                        );
+                    }
+                        
                     $cell = 0;
                     foreach ($ratings as $rating)
                     {
                         $urid = $rating->urid;
                         $rclass = $types[$type]["rclass"];
                         
-                        ratingwidget()->QueueRatingData($urid, "", "", $rclass);
-
-                        switch ($type)
+                        if ('posts' === $type ||
+                            'pages' === $type)
                         {
-                            case "posts":
-                            case "pages":
-                                $id = RatingWidgetPlugin::Urid2PostId($urid);
-                                $post = @get_post($id);
-                                if (null === $post || is_null($post))
-                                    continue;
-                                $title = trim(strip_tags($post->post_title));
-                                $permalink = get_permalink($post->ID);
-                                break;
-                            case "comments":
-                                $id = RatingWidgetPlugin::Urid2CommentId($urid);
-                                $comment = @get_comment($id);
-                                if (null === $comment || is_null($comment))
-                                    continue;
-                                $title = trim(strip_tags($comment->comment_content));
-                                $permalink = get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID;
-                                break;
-                            case "activity_updates":
-                            case "activity_comments":
-                                $id = RatingWidgetPlugin::Urid2ActivityId($urid);
-                                $activity = new bp_activity_activity($id);
-                                $title = trim(strip_tags($activity->content));
-                                $permalink = bp_activity_get_permalink($id);
-                                break;
-                            case "users":
-                                $id = RatingWidgetPlugin::Urid2UserId($urid);
-                                
-                                if ($bpInstalled)
-                                {
-                                    $title = trim(strip_tags(bp_core_get_user_displayname($id)));
-                                    $permalink = bp_core_get_user_domain($id);
-                                }
-                                else if ($bbInstalled)
-                                {
-                                    $title = trim(strip_tags(bbp_get_user_display_name($id)));
-                                    $permalink = bbp_get_user_profile_url($id);
-                                }
-                                break;
-                            case "forum_posts":
-                                $id = RatingWidgetPlugin::Urid2ForumPostId($urid);
-                                if (function_exists('bp_forums_get_post'))
-                                {
-                                    $forum_post = @bp_forums_get_post($id);
-                                    
-                                    if (null === $forum_post || is_null($forum_post))
-                                        continue;
-                                        
-                                    $title = trim(strip_tags($forum_post->post_text));
-                                    $page = bb_get_page_number($forum_post->post_position);
-                                    $permalink = get_topic_link($id, $page) . "#post-{$id}";
-                                }
-                                else if (function_exists('bbp_get_reply_id'))
-                                {
-                                    $forum_post = @get_post($id);
-                                    
-                                    if (null === $forum_post || is_null($forum_post))
-                                        continue;
-                                        
-                                    $title = trim(strip_tags($forum_post->post_title));
-                                    $permalink = get_permalink($forum_post->ID);
-                                }
-                                else
-                                {
-                                    continue;
-                                }   
-                                break;
+                            $post = null;
+                            $id = RatingWidgetPlugin::Urid2PostId($urid);
+                            $post = @get_post($id);
+                            if (null === $post || is_null($post))
+                                continue;
+                            $title = trim(strip_tags($post->post_title));
+                            $permalink = get_permalink($post->ID);
                         }
-                        
-                        $short = (mb_strlen($title) > $titleMaxLength) ? trim(mb_substr($title, 0, $titleMaxLength)) . "..." : $title;
-                        
-                        if ('posts' === $type && 1 == $instance["{$type}_style"])
+                        else if ('comments' === $type)
                         {
-?>
-    <li class="rw-ui-recommendation">
-        <a href="<?php echo $permalink;?>" title="<?php echo $title;?>" onclick="RW.Trc.linkClick(this, {category: 'toprated', label: '<?php echo $type;?>', cell: <?php echo $cell;?>}); return false;">
-            <div class="rw-ui-thumb">
-                <img src="<?php echo rw_get_post_thumb_url($post); ?>" alt="">
-                <div class="rw-ui-rating"><div style="display: none;" class="rw-ui-container rw-class-<?php echo $rclass; ?> rw-urid-<?php echo $urid; ?> rw-size-small rw-prop-readOnly-true rw-prop-showLoader-false rw-prop-showReport-false rw-valign-bottom rw-halign-center"></div></div>
-            </div>
-        </a>
-        <a class="rw-ui-title" href="<?php echo $permalink;?>" title="<?php echo $title;?>" onclick="RW.Trc.linkClick(this, {category: 'toprated', label: '<?php echo $type;?>', cell: <?php echo $cell;?>}); return false;">
-            <?php echo $short;?>
-        </a>
-    </li>
-<?php                            
+                            $comment = null;
+                            $id = RatingWidgetPlugin::Urid2CommentId($urid);
+                            $comment = @get_comment($id);
+                            if (null === $comment || is_null($comment))
+                                continue;
+                            $title = trim(strip_tags($comment->comment_content));
+                            $permalink = get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID;
+                        }
+                        else if ('activity_updates' === $type ||
+                                 'activity_comments' === $type)
+                        {
+                            $id = RatingWidgetPlugin::Urid2ActivityId($urid);
+                            $activity = new bp_activity_activity($id);
+                            if (null === $activity || is_null($activity))
+                                continue;
+                            $title = trim(strip_tags($activity->content));
+                            $permalink = bp_activity_get_permalink($id);
+                        }
+                        else if ('users' === $type)
+                        {
+                            $id = RatingWidgetPlugin::Urid2UserId($urid);
+                            
+                            if ($bpInstalled)
+                            {
+                                $title = trim(strip_tags(bp_core_get_user_displayname($id)));
+                                $permalink = bp_core_get_user_domain($id);
+                            }
+                            else if ($bbInstalled)
+                            {
+                                $title = trim(strip_tags(bbp_get_user_display_name($id)));
+                                $permalink = bbp_get_user_profile_url($id);
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                        else if ('forum_posts' === $type)
+                        {
+                            $id = RatingWidgetPlugin::Urid2ForumPostId($urid);
+                            if (function_exists('bp_forums_get_post'))
+                            {
+                                $forum_post = @bp_forums_get_post($id);
+                                
+                                if (null === $forum_post || is_null($forum_post))
+                                    continue;
+                                    
+                                $title = trim(strip_tags($forum_post->post_text));
+                                $page = bb_get_page_number($forum_post->post_position);
+                                $permalink = get_topic_link($id, $page) . "#post-{$id}";
+                            }
+                            else if (function_exists('bbp_get_reply_id'))
+                            {
+                                $forum_post = @get_post($id);
+                                
+                                if (null === $forum_post || is_null($forum_post))
+                                    continue;
+                                    
+                                $title = trim(strip_tags($forum_post->post_title));
+                                $permalink = get_permalink($forum_post->ID);
+                            }
+                            else
+                            {
+                                continue;
+                            }   
                         }
                         else
                         {
-                            echo '<li>'.
-                                 '<a href="' . $permalink . '" title="' . $title . '" onclick="RW.Trc.linkClick(this, {category: \'toprated\', label: \'' . $type . '\', cell: ' . $cell . '}); return false;">' . $short . '</a>'.
-                                 '<br />'.
-                                 '<div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . ' rw-size-small rw-prop-readOnly-true rw-prop-showLoader-false"></div>'.
-                                 '</li>';
+                            continue;
                         }
+
+                        ratingwidget()->QueueRatingData($urid, "", "", $rclass);
+                        
+                        $short = (mb_strlen($title) > $titleMaxLength) ? trim(mb_substr($title, 0, $titleMaxLength)) . "..." : $title;
+                        
+                        $item = array(
+                            'site' => array(
+                                'id' => WP_RW__USER_ID,
+                                'domain' => $_SERVER['HTTP_HOST'],
+                            ),
+                            'page' => array(
+                                'externalID' => $id,
+                                'url' => $permalink,
+                                'title' => $short,
+                            ),
+                            'rating' => array(
+                                'localID' => $urid,
+                                'options' => array(
+                                    'rclass' => $rclass,
+                                ),
+                            ),
+                        );
+                        
+                        // Add thumb url.
+                        if ($has_thumb && in_array($type, array('posts', 'pages')))
+                            $item['page']['img'] = rw_get_post_thumb_url($post, $thumb_width, $thumb_height);
+                        
+                        $item_group->items[] = $item;
                         
                         $cell++;
                     }
-                    echo "</ul>";
-                    echo "</div>";
-                    
+
                     $empty = false;
+                    
+                    $toprated_data->itemGroups[] = $item_group;
                 }
             }                
         }
 
-        if (true === $empty){
-            echo '<p style="margin: 0;">There are no rated items for this period.</p>';
+        if (true === $empty)
+        {
+//            echo '<p style="margin: 0;">There are no rated items for this period.</p>';
         }
         else
         {
             // Set a flag that the widget is loaded.
             RatingWidgetPlugin::TopRatedWidgetLoaded();
-            
-            if (false === WP_RW__USER_SECRET)
-            {
 ?>
-<div class="rw-ui-toprated">
-    <div class="rw-ui-poweredby">
-        Powered by <a href="http://wordpress.org/extend/plugins/rating-widget/" target="_blank"><em></em> <b>Rating</b><i>Widget</i></a>
-    </div>
-</div>
-<?php
-            }
-?>
+<b class="rw-ui-recommendations" data-id="<?php echo $toprated_data->id; ?>"></b>
 <script type="text/javascript">
-// Hook render widget.
-if (typeof(RW_HOOK_READY) === "undefined"){ RW_HOOK_READY = []; }
-RW_HOOK_READY.push(function(){
-    RW._foreach(RW._getByClassName("rw-top-rated-list", "ul"), function(list){
-        RW._foreach(RW._getByClassName("rw-ui-container", "div", list), function(rating){
-            // Deactivate rating.
-            RW._Class.remove(rating, "rw-active");
-            var i = (RW._getByClassName("rw-report-link", "a", rating))[0];
-            if (RW._is(i)){ i.parentNode.removeChild(i); }
-        });
-    });
-});
+    var _rwq = _rwq || [];
+    _rwq.push(['_setRecommendations', <?php echo json_encode($toprated_data); ?>]);
 </script>
-<?php
+<?php            
         }
         
         echo $after_widget;
@@ -345,7 +406,7 @@ RW_HOOK_READY.push(function(){
         {
             $instance["show_{$type}"] = (int)$new_instance["show_{$type}"];
             $instance["show_{$type}_title"] = (int)$new_instance["show_{$type}_title"]; /* (1.3.3) - Conditional title display */
-            $instance["{$type}_style"] = (int)$new_instance["{$type}_style"];
+            $instance["{$type}_style"] = $new_instance["{$type}_style"];
             $instance["{$type}_title"] = $new_instance["{$type}_title"]; /* (1.3.3) - Explicit title */
             $instance["{$type}_count"] = (int)$new_instance["{$type}_count"];
             $instance["{$type}_min_votes"] = (int)$new_instance["{$type}_min_votes"]; /* (1.3.7) - Min votes to appear */
@@ -382,13 +443,13 @@ RW_HOOK_READY.push(function(){
         $values = array('title' => '', 'title_max_length' => 30);
         foreach ($types as $type)
         {
-            $values["show_{$type}"] = "1";
-            $values["{$type}_count"] = "2";
-            $values["{$type}_min_votes"] = "1";
-            $values["{$type}_orderby"] = "avgrate";
-            $values["{$type}_order"] = "DESC";
-            $values["show_{$type}_title"] = '1';
-            $values["{$type}_style"] = '1';
+            $values["show_{$type}"] = ('posts' === $type);
+            $values["{$type}_count"] = WP_RW__TR_DEFAULT_ITEMS_COUNT;
+            $values["{$type}_min_votes"] = WP_RW__TR_DEFAULT_MIN_VOTES;
+            $values["{$type}_orderby"] = WP_RW__TR_DEFAULT_ORDERY_BY;
+            $values["{$type}_order"] = WP_RW__TR_DEFAULT_ORDERY;
+            $values["show_{$type}_title"] = 0;
+            $values["{$type}_style"] = WP_RW__TR_DEFAULT_STYLE;
         }
 
         $instance = wp_parse_args((array)$instance, $values);
@@ -403,7 +464,7 @@ RW_HOOK_READY.push(function(){
             if (isset($instance["{$type}_title"]))
                 $values["{$type}_title"] = $instance["{$type}_title"];
             if (isset($instance["{$type}_style"]))
-                $values["{$type}_style"] = (int)$instance["{$type}_style"];
+                $values["{$type}_style"] = $instance["{$type}_style"];
             if (isset($instance["{$type}_count"]))
                 $values["{$type}_count"] = (int)$instance["{$type}_count"];
             if (isset($instance["{$type}_min_votes"]))
@@ -411,11 +472,11 @@ RW_HOOK_READY.push(function(){
             if (isset($instance["{$type}_orderby"]))
                 $values["{$type}_orderby"] = $instance["{$type}_orderby"];
             if (isset($values["{$type}_orderby"]) && !in_array($values["{$type}_orderby"], $orders))
-                $values["{$type}_orderby"] = "avgrate";
+                $values["{$type}_orderby"] = WP_RW__TR_DEFAULT_ORDERY_BY;
             if (isset($values["{$type}_order"]))
                 $values["{$type}_order"] = strtoupper($instance["{$type}_order"]);
             if (isset($values["{$type}_order"]) && !in_array($values["{$type}_order"], array("DESC", "ASC")))
-                $values["{$type}_order"] = "DESC";
+                $values["{$type}_order"] = WP_RW__TR_DEFAULT_ORDERY;
         }
 ?>
 <div id="rw_wp_top_rated_settings">
@@ -442,21 +503,35 @@ RW_HOOK_READY.push(function(){
     <?php if (in_array($type, array('posts', 'pages'))) : ?>
     <?php
         $styles = array(
-            'Titles (Legacy)',
-            'Thumbnails (160px X 100px) + Titles',
+            'legacy' => 'Titles (Legacy)',
+            'thumbs' => 'Thumbs (160px X 100px) + Titles',
+            'compact_thumbs' => 'Compact Thumbs (50px X 40px) + Titles',
         );
     ?>
     <p>
-        <select id="<?php echo $this->get_field_id('style'); ?>" name="<?php echo $this->get_field_name("{$type}_style"); ?>">
-        <?php for ($i = 0; $i < count($styles); $i++) : ?>
-            <option value="<?php echo $i?>"<?php if ($i == $values["{$type}_style"]) echo ' selected="selected"' ?>><?php echo $styles[$i]; ?></option>
-        <?php endfor; ?>
+        <select id="<?php echo $this->get_field_id('style'); ?>" name="<?php echo $this->get_field_name("{$type}_style"); ?>" style="font-size: 11px;">
+        <?php $i = 0; // for old versions ?>
+        <?php foreach ($styles as $key => $val) : ?>
+            <option value="<?php echo $key?>"<?php if ($key == $values["{$type}_style"] || $i === $values["{$type}_style"]) echo ' selected="selected"' ?>><?php echo $val; ?></option>
+            <?php $i++; ?>
+        <?php endforeach; ?>
         </select>
     </p>
     <?php endif; ?>
     <?php
         /* (1.3.3) - Conditional title display */
     ?>
+    <p>
+        <label for="<?php echo $this->get_field_id("show_{$type}_title"); ?>">
+            <?php
+                $checked = "";
+                if ($values["show_{$type}_title"] == 1)
+                    $checked = ' checked="checked"';
+            ?>
+        <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("show_{$type}_title"); ?>" name="<?php echo $this->get_field_name("show_{$type}_title"); ?>" value="1"<?php echo ($checked); ?> />
+             <?php _e("Show '" . $type . "' title", WP_RW__ID); ?>
+        </label>
+    </p>
     <p>
         <label for="<?php echo $this->get_field_id("{$type}_title"); ?>"><?php _e(ucwords($type) . " Title", WP_RW__ID); ?>:
             <?php
@@ -512,13 +587,22 @@ RW_HOOK_READY.push(function(){
 function rw_toprated_widget_load_style()
 {
     rw_enqueue_style('rw_toprated', 'wordpress/toprated.css');
+    rw_enqueue_style('rw_recommendations', 'widget/recommendations.css');
+}
+
+function rw_toprated_widget_load_admin_style()
+{
+    rw_enqueue_style('rw_toprated', 'wordpress/toprated.css');
+    rw_enqueue_style('rw_recommendations', 'widget/recommendations.css');
 }
 
 function rw_register_toprated_widget()
 {
+//    is_active_widget()
+    
     register_widget("RatingWidgetPlugin_TopRatedWidget");
     
-    add_action('admin_enqueue_scripts', 'rw_toprated_widget_load_style');
+    add_action('admin_enqueue_scripts', 'rw_toprated_widget_load_admin_style');
     add_action('wp_enqueue_scripts', 'rw_toprated_widget_load_style');
 //    if (is_active_widget(false, false, 'RatingWidgetPlugin_TopRatedWidget')) 
 //        add_action('wp_head', 'rw_toprated_widget_load_style');

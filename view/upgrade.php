@@ -6,6 +6,7 @@
             <li><b>Advanced Ratings' Analytics</b></li>
             <li><b>White-labeled - Ads free</b></li>
             <li><b>bbPress Forum Ratings</b></li>
+            <li><b>User Reputation-Rating (BuddyPress/bbPress)</b></li>
             <li>Priority Email Support</li>
             <li>SSL Support</li>
             <li>Secure Connection (Fraud protection)</li>
