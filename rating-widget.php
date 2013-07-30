@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.8.4
+Version: 1.8.5
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: A "Slug" license name e.g. GPL2
