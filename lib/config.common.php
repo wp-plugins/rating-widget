@@ -4,7 +4,7 @@
 
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__VERSION', '1.8.5');
+    define('WP_RW__VERSION', '1.8.6');
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -66,6 +66,7 @@
         define('WP_RW__DB_OPTION_USER_KEY', 'rw_user_key');
         define('WP_RW__DB_OPTION_USER_ID', 'rw_user_id');
         define('WP_RW__DB_OPTION_USER_SECRET', 'rw_user_secret');
+        define('WP_RW__DB_OPTION_TRACKING', 'rw_tracking');
 
     /* BuddyPress
     -----------------------------------------------------------------------------------------*/

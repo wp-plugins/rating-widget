@@ -149,7 +149,6 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         
         if (null === $rw_ret_obj || true !== $rw_ret_obj->success){ return; }
         
-        echo $before_widget;
         $title = empty($instance['title']) ? __('Top Rated', WP_RW__ID) : apply_filters('widget_title', $instance['title']);
 
         $titleMaxLength = (isset($instance['title_max_length']) && is_numeric($instance['title_max_length'])) ? (int)$instance['title_max_length'] : 30;
@@ -165,10 +164,13 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
             'after' => $after_title,
         );
         ;
-        $toprated_data->showTitle = true;
         $toprated_data->options = array(
             'align' => 'vertical',
             'direction' => 'ltr',
+            'html' => array(
+                'before' => $before_widget,
+                'after' => $after_widget,
+            ),
         );
         $toprated_data->site = array(
             'id' => WP_RW__USER_ID,
@@ -365,6 +367,9 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         if (true === $empty)
         {
 //            echo '<p style="margin: 0;">There are no rated items for this period.</p>';
+
+//        echo $before_widget;
+//        echo $after_widget;
         }
         else
         {
@@ -378,8 +383,6 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
 </script>
 <?php            
         }
-        
-        echo $after_widget;
     }
 
     function update($new_instance, $old_instance)

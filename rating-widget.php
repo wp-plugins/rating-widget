@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.8.5
+Version: 1.8.6
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: A "Slug" license name e.g. GPL2
@@ -197,7 +197,9 @@ class RatingWidgetPlugin
         if ($this->_inDashboard)
         {
             add_action('init', array(&$this, 'RedirectOnUpgrade'));
-            add_action('admin_head', array(&$this, "GoogleAnalytics"));
+            
+            if ($this->GetOption(WP_RW__DB_OPTION_TRACKING))
+                add_action('admin_head', array(&$this, "GoogleAnalytics"));
             
             // wp_footer call validation.
             // add_action('init', array(&$this, 'test_footer_init'));
@@ -964,8 +966,9 @@ class RatingWidgetPlugin
         
         if ('post' === strtolower($_SERVER['REQUEST_METHOD']) && isset($_POST['action']) && 'account' === $_POST['action'])
         {
-            $this->SetOption("rw_user_key", $_POST['uid']);
-            $this->SetOption("rw_user_id", $_POST['huid']);
+            $this->SetOption(WP_RW__DB_OPTION_USER_KEY, $_POST['uid']);
+            $this->SetOption(WP_RW__DB_OPTION_USER_ID, $_POST['huid']);
+            $this->SetOption(WP_RW__DB_OPTION_TRACKING, (isset($_POST['tracking']) && '1' == $_POST['tracking']));
             
             // Reload the page with the keys.
             rw_admin_redirect();
@@ -3040,10 +3043,6 @@ class RatingWidgetPlugin
                 ?>
                 <?php rw_require_once_view('fb.php'); ?>
                 <?php rw_require_once_view('twitter.php'); ?>
-                <?php 
-                    if (false === WP_RW__USER_SECRET)
-                        rw_require_once_view('sponsor.php');
-                ?>
             </div>
         </div>
     </form>

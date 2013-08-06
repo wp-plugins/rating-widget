@@ -10,11 +10,6 @@
             <button class="button">Close</button>
         </p>
         <div id="rw_wp_registration_form" class="rw-wp-form">
-            <form action="" method="POST" style="display: none;">
-                <input type="hidden" id="rw_uid" name="uid" value="" />
-                <input type="hidden" id="rw_huid" name="huid" value="" />
-                <input type="hidden" name="action" value="account" />
-            </form>
             <fieldset>
                 <div class="rw-field">
                     <label for="firstname">First Name:</label>
@@ -46,6 +41,9 @@
                     </script></div>
                 </div>-->
             </fieldset>
+            <div style="font-size: 11px; line-height: 16px; text-align: justify; margin-bottom: 10px;">
+The Rating-Widget plugin is a self-hosted rating system for your blog. It is based on dynamic Html &amp; JavaScript and was intentionally developed as plug &amp; play widget without the need of setting any DB. Therefore all the ratings and voting data is sent and stored on Rating-Widget's servers. In addition, limited personal information like your email and Blog name is sent and stored to stay in touch with you and send you different announcements, updates, promotionas and more. For the full details please read our <a href="<?php echo WP_RW__ADDRESS;?>/terms-of-use/" target="_blank" tabindex="-1" style="line-height: 16px;">Terms of Use</a> and <a href="<?php echo WP_RW__ADDRESS;?>/privacy/" target="_blank" tabindex="-1" style="line-height: 16px;">Privacy Policy</a>.                
+            </div>
             <noscript>
                 <script type="text/javascript">
                     document.write('<iframe src="http://www.google.com/recaptcha/api/noscript?k=' + RWM.RECAPTCHA_PUBLIC + '" height="300" width="500" frameborder="0"></iframe><br>');
@@ -55,9 +53,18 @@
                 <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
             </noscript>
             <div class="rw-checkbox-field">
-                <input type="checkbox" name="rw_service_terms" id="rw_terms_checkbox" value="1" />
-                <label>I've read and I accept the <a href="#" id="rw_wp_terms_trigger" tabindex="-1">Terms of Use and Privacy Policy</a> of the <a href="<?php echo WP_RW__ADDRESS;?>" target="_blank" tabindex="-1">Rating-Widget</a> service.</label>
+                <input type="checkbox" name="rw_service_terms" id="rw_terms_checkbox" value="1" checked="checked" />
+                <label>I agree to the plugin's terms and privacy policy.</label>
             </div>
+            <form action="" method="POST">
+                <input type="hidden" id="rw_uid" name="uid" value="" />
+                <input type="hidden" id="rw_huid" name="huid" value="" />
+                <input type="hidden" name="action" value="account" />
+                <div class="rw-checkbox-field">
+                    <input type="checkbox" name="tracking" id="rw_tracking" value="1" />
+                    <label>I like to help improve the plugin by allowing tracking of my ratings user-experience.</label>
+                </div>
+            </form>
             <p>
                 <input type="hidden" id="rw_siteurl" name="siteurl" value="<?php echo esc_attr(get_option('siteurl', "")); ?>" />
                 <input type="hidden" id="rw_blogtitle" name="blogtitle" value="<?php echo esc_attr(get_option('blogname', "")); ?>" />
@@ -105,8 +112,5 @@
 ?>
             </ul>
         </div>
-    </div>
-    <div style="clear: both; text-align: center; margin: 20px auto; padding: 20px; border-top: 1px solid #ccc; margin-top: 20px;">
-        <a href="<?php echo WP_RW__ADDRESS;?>/track/?s=1&r=<?php echo urlencode("http://www.host1plus.com");?>" title="Host1Plus Hosting" target="_blank"><img src="<?php echo WP_RW__ADDRESS;?>/track/?s=1&t=<?php echo time();?>&r=<?php echo urlencode(WP_RW__ADDRESS_IMG . "sponsor/host1plus/728x90.jpg");?>" alt="" /></a>
     </div>
 </div>
