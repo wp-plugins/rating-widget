@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.8.6
+Version: 1.8.7
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: A "Slug" license name e.g. GPL2
@@ -4056,6 +4056,9 @@ class RatingWidgetPlugin
         
         global $post;
 
+        // 2013.08.29 - This is a preperation to differentiate between topics and topic replies.
+//        $is_reply = ($post->ID == bbp_get_reply_topic_id($post->ID));
+        
         $ratingHtml = $this->EmbedRatingIfVisibleByPost($post, 'forum-post', false, $this->forum_post_align->hor);
         
         return $content . $ratingHtml;
