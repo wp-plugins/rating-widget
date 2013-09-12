@@ -73,11 +73,6 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                 "classes" => "activity-comment,user-activity-comment",
                 "options" => WP_RW__ACTIVITY_COMMENTS_OPTIONS,
             );
-            $types['users'] = array(
-                "rclass" => "user",
-                "classes" => "user",
-                "options" => WP_RW__FORUM_POSTS_OPTIONS,
-            );
             $types['forum_posts'] = array(
                 "rclass" => "forum-post",
                 "classes" => "forum-post,new-forum-post,user-forum-post",
@@ -87,7 +82,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         
         $bbInstalled = ratingwidget()->IsBBPressInstalled();
         
-        if ($bbInstalled)
+        if ($bpInstalled || $bbInstalled)
         {
             $types['users'] = array(
                 "rclass" => "user",
@@ -160,8 +155,8 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         $toprated_data->title = array(
             'label' => $title,
             'show' => true,
-            'before' => $before_title,
-            'after' => $after_title,
+            'before' => trim(preg_replace('/\s+/', ' ', $before_title)),
+            'after' => trim(preg_replace('/\s+/', ' ', $after_title)),
         );
         ;
         $toprated_data->options = array(
@@ -241,15 +236,42 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                     {
                         $urid = $rating->urid;
                         $rclass = $types[$type]["rclass"];
+
+                        if (RWLogger::IsOn())
+                            RWLogger::Log('HADNLED_ITEM', 'Urid = ' . $urid . '; Class = ' . $rclass . ';');
                         
                         if ('posts' === $type ||
                             'pages' === $type)
                         {
                             $post = null;
                             $id = RatingWidgetPlugin::Urid2PostId($urid);
-                            $post = @get_post($id);
-                            if (null === $post || is_null($post))
+                            $status = @get_post_status($id);
+                            if (false === $status)
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('POST_NOT_EXIST', $id);
+                                    
+                                // Post not exist.
                                 continue;
+                            }
+                            else if ('publish' !== $status && 'private' !== $status)
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('POST_NOT_VISIBLE', 'status = ' . $status);
+
+                                // Post not yet published.
+                                continue;
+                            }
+                            else if ('private' === $status && !is_user_logged_in())
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('POST_PRIVATE && USER_LOGGED_OUT');
+
+                                // Private post but user is not logged in.
+                                continue;
+                            }
+                                
+                            $post = @get_post($id);
                             $title = trim(strip_tags($post->post_title));
                             $permalink = get_permalink($post->ID);
                         }
@@ -257,9 +279,25 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                         {
                             $comment = null;
                             $id = RatingWidgetPlugin::Urid2CommentId($urid);
-                            $comment = @get_comment($id);
-                            if (null === $comment || is_null($comment))
+                            $status = @wp_get_comment_status($id);
+                            if (false === $status)
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('COMMENT_NOT_EXIST', $id);
+
+                                // Comment not exist.
                                 continue;
+                            }
+                            else if ('approved' !== $status)
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('COMMENT_NOT_VISIBLE', 'status = ' . $status);
+
+                                // Comment not approved.
+                                continue;
+                            }
+
+                            $comment = @get_comment($id);
                             $title = trim(strip_tags($comment->comment_content));
                             $permalink = get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID;
                         }
@@ -268,8 +306,32 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                         {
                             $id = RatingWidgetPlugin::Urid2ActivityId($urid);
                             $activity = new bp_activity_activity($id);
-                            if (null === $activity || is_null($activity))
+                            
+                            if (!is_object($activity))
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('BP_ACTIVITY_NOT_EXIST', $id);
+
+                                // Activity not exist.
                                 continue;
+                            }
+                            else if (!empty($activity->is_spam))
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('BP_ACTIVITY_NOT_VISIBLE (SPAM or TRASH)');
+
+                                // Activity marked as SPAM or TRASH.
+                                continue;
+                            }
+                            else if (!empty($activity->hide_sitewide))
+                            {
+                                if (RWLogger::IsOn())
+                                    RWLogger::Log('BP_ACTIVITY_HIDE_SITEWIDE');
+
+                                // Activity marked as hidden in site.
+                                continue;
+                            }
+                            
                             $title = trim(strip_tags($activity->content));
                             $permalink = bp_activity_get_permalink($id);
                         }
@@ -299,7 +361,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                             {
                                 $forum_post = @bp_forums_get_post($id);
                                 
-                                if (null === $forum_post || is_null($forum_post))
+                                if (!is_object($forum_post))
                                     continue;
                                     
                                 $title = trim(strip_tags($forum_post->post_text));
@@ -308,10 +370,57 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                             }
                             else if (function_exists('bbp_get_reply_id'))
                             {
-                                $forum_post = @get_post($id);
+                                $forum_item = bbp_get_topic();
+
+                                if (is_object($forum_item))
+                                {
+                                    $is_topic = true;
+                                }
+                                else
+                                {
+                                    $is_topic = false;
+                                    
+                                    $forum_item = bbp_get_reply($id);
+                                    
+                                    if (!is_object($forum_item))
+                                    {
+                                        if (RWLogger::IsOn())
+                                            RWLogger::Log('BBP_FORUM_ITEM_NOT_EXIST', $id);
+
+                                        // Invalid id (no topic nor reply).
+                                        continue;
+                                    }
+
+                                    if (RWLogger::IsOn())
+                                        RWLogger::Log('BBP_IS_TOPIC_REPLY', ($is_topic ? 'FALSE' : 'TRUE'));
+                                }
                                 
-                                if (null === $forum_post || is_null($forum_post))
+                                // Visible statueses: Public or Closed.
+                                $visible_statuses = array(bbp_get_public_status_id(), bbp_get_closed_status_id());
+                                
+                                if (!in_array($forum_item->post_status, $visible_statuses))
+                                {
+                                    if (RWLogger::IsOn())
+                                        RWLogger::Log('BBP_FORUM_ITEM_HIDDEN', $forum_item->post_status);
+                                        
+                                    // Item is not public nor closed.
                                     continue;
+                                }
+
+                                if ($is_reply)
+                                {
+                                    // Get parent topic.
+                                    $forum_topic = bbp_get_topic($forum_post->post_parent);
+
+                                    if (!in_array($forum_topic->post_status, $visible_statuses))
+                                    {
+                                        if (RWLogger::IsOn())
+                                            RWLogger::Log('BBP_PARENT_FORUM_TOPIC_IS_HIDDEN', 'TRUE');
+                                            
+                                        // Parent topic is not public nor closed.
+                                        continue;
+                                    }
+                                }
                                     
                                 $title = trim(strip_tags($forum_post->post_title));
                                 $permalink = get_permalink($forum_post->ID);
@@ -355,10 +464,10 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                         $item_group->items[] = $item;
                         
                         $cell++;
+                        
+                        $empty = false;
                     }
 
-                    $empty = false;
-                    
                     $toprated_data->itemGroups[] = $item_group;
                 }
             }                

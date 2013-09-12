@@ -4,7 +4,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.5.1
-Stable tag: 1.8.7
+Stable tag: 1.8.8
+License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
 
@@ -14,77 +15,41 @@ The Rating-Widget **Star Ratings WordPress plugin** allows you to create and man
 
 The plugin has [PRO VERSIONS](http://rating-widget.com/get-the-word-press-plugin/) with extra features.
 
-**Standard Pro Version:** 
+> #### Standard Pro Version:
+> * Remove (i) icon from Ratings
+> * Secure Connection (Fraud protection)
+> * No Ads in votes overview pop-up
 
-* Remove (i) icon from Ratings
-* Secure Connection (Fraud protection)
-* No Ads in votes overview pop-up
+> #### Premium Pro Version:
 
-**Premium Pro Version:** 
-
-* Priority Email Support
-* Remove (i) icon from Ratings
-* No Ads in votes overview pop-up
-* Google Rich Snippets (schema.org)
-* Secure Connection (Fraud protection)
-* SSL Support
-* Advanced Ratings' Analytics
-* WMPL Language Auto-Selection
-* BuddyPress activity updates, comments and user profiles ratings.
-* bbPress forum posts & replys ratings.
+> * Priority Email Support
+> * Remove (i) icon from Ratings
+> * No Ads in votes overview pop-up
+> * Google Rich Snippets (schema.org)
+> * Secure Connection (Fraud protection)
+> * SSL Support
+> * Advanced Ratings' Analytics
+> * WMPL Language Auto-Selection
+> * BuddyPress activity updates, comments and user profiles ratings.
+> * bbPress forum posts & replys ratings.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
 
-Rating-Widget star ratings are localizable and currently available in:
+> #### Supported in 40 Languages
+> Rating-Widget star ratings are localizable and currently available in:
+>
+> Afrikaans, Arabic - العربية, Bengali - বাংলা, Bulgarian - български, Catalan - Català, Chinese - 汉语/漢語, Croatian - Hrvatski, Czech - Čeština, Danish - Dansk, English, Estonian - Eesti keel, Finnish - Suomi, French - Français, Georgian - ქართული, German - Deutsch, Greek - Ελληνικά, Hebrew - עברית, Hindi - हिंदी, Hungarian - Magyar, Indonesian - Bahasa Indonesia, Italian - Italiano, Japanese - 日本語, Korean - 한국어/조선말, Lithuanian - Lietuvių, Mongolian - Mongγol Kele, Nederlands - Dutch, Norwegian - Norsk, Persian - فارسی, Polish - Polska, Portuguese - Português, Romanian - Română, Russian - Русский, Serbian - Српски, Slovak - Slovenčina, Slovenian - Slovenščina, Spanish - Español, Swedish - Svenska, Tamil - தமிழ், Turkish - Türkçe, Vietnamese - Tiếng Việt
+>
+> Can't find your language? Help us translate [here](http://rating-widget.com/help-translate/): http://rating-widget.com/help-translate/
 
-* Afrikaans
-* Arabic - العربية
-* Bengali - বাংলা
-* Bulgarian - български
-* Catalan - Català
-* Chinese - 汉语/漢語
-* Croatian - Hrvatski
-* Czech - Čeština
-* Danish - Dansk
-* English
-* Estonian - Eesti keel
-* Finnish - Suomi
-* French - Français
-* Georgian - ქართული
-* German - Deutsch
-* Greek - Ελληνικά
-* Hebrew - עברית
-* Hindi - हिंदी
-* Hungarian - Magyar
-* Indonesian - Bahasa Indonesia
-* Italian - Italiano
-* Japanese - 日本語
-* Korean - 한국어/조선말
-* Lithuanian - Lietuvių
-* Mongolian - Mongγol Kele
-* Nederlands - Dutch
-* Norwegian - Norsk
-* Persian - فارسی
-* Polish - Polska
-* Portuguese - Português
-* Romanian - Română
-* Russian - Русский
-* Serbian - Српски
-* Slovak - Slovenčina
-* Slovenian - Slovenščina
-* Spanish - Español
-* Swedish - Svenska
-* Tamil - தமிழ்
-* Turkish - Türkçe
-* Vietnamese - Tiếng Việt
+> #### Are you a designer?
+> Help us to enrich Rating-Widget's themes collection by adding more thumb & star ratings designs at - http://rating-widget.com/contribute-rating-design/
 
-Help us translate the widget into more languages at - http://rating-widget.com/help-translate/
+> #### Follow Us
+> [Blog](http://rating-widget.com/blog/) | [Twitter](http://twitter.com/ratingwidget) | [Facebook](http://www.facebook.com/rating.widget) | [Google+](https://plus.google.com/103776958800403053498/) | [LinkedIn](http://www.linkedin.com/company/1856639) | [YouTube](https://www.youtube.com/ratingwidget)
 
-Help us to enrich Rating-Widget customization by adding more thumb & star ratings designs at - http://rating-widget.com/contribute-rating-design/
-
-Follow us on **Twitter** to keep up with the latest updates [Rating-Widget](http://twitter.com/ratingwidget)
-AND/OR
-Become our **Facebook** fan to keep up with the latest updates [Rating-Widget](http://www.facebook.com/rating.widget)
+> #### Rating-Widget Support Forum
+> Please visit the [Rating-Widget's Support Forum](http://wordpress.org/support/plugin/rating-widget) for additional help with using this plugin. You may also post feature requests, ideas and bug reports there.
 
 == Installation ==
 
@@ -134,6 +99,11 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.8.8 =
+* New: Revamped plugin's main description page.
+* Fix: Fixed Top-Rated Widget to hide deleted, spam & private elements (posts, pages, BuddyPress activites, bbPress topics & replies).
+* Fix: Fixed Top-Rated Widget for themes with before and after widget multi-line html.
+
 = 1.8.7 =
 * Fix: Fixed double Users Top-Rated Widget settings for when BuddyPress and bbPress both active.
 * Update: Changed TOS agreement to opt-in option.
