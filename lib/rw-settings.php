@@ -10,7 +10,10 @@ class RatingWidgetPlugin_Settings
     var $visibility;
     var $availability;
     var $categories;
-    var $show_on_excerpts;
+    var $show_on_excerpt;
+    var $show_on_archive;
+    var $show_on_category;
+    var $show_on_search;
     var $custom_settings_enabled;
     var $custom_settings;
     var $languages;
@@ -24,6 +27,17 @@ class RatingWidgetPlugin_Settings
     var $rating_type;
     
     var $is_user_accumulated;
+    
+    private $_saveMode = false;
+    public function SetSaveMode()
+    {
+        $this->_saveMode = true;
+    }
+    
+    public function IsSaveMode()
+    {
+        return $this->_saveMode;
+    }
 }
 
 /**

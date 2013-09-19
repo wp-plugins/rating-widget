@@ -4,7 +4,7 @@
 
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__VERSION', '1.8.8');
+    define('WP_RW__VERSION', '1.8.9');
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -126,6 +126,9 @@
     /* Settings
     -----------------------------------------------------------------------------------------*/
     define('WP_RW__SHOW_ON_EXCERPT', 'rw_show_on_excerpt');
+    define('WP_RW__SHOW_ON_ARCHIVE', 'rw_show_on_archive');
+    define('WP_RW__SHOW_ON_CATEGORY', 'rw_show_on_category');
+    define('WP_RW__SHOW_ON_SEARCH', 'rw_show_on_search');
     define('WP_RW__VISIBILITY_SETTINGS', 'rw_visibility_settings');
     define('WP_RW__AVAILABILITY_SETTINGS', 'rw_availability_settings');
     define('WP_RW__CATEGORIES_AVAILABILITY_SETTINGS', 'rw_categories_availability_settings');

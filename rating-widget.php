@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.8.8
+Version: 1.8.9
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: A "Slug" license name e.g. GPL2
@@ -500,18 +500,20 @@ class RatingWidgetPlugin
     
     private $_OPTIONS_CACHE = array();
 
-    public function GetOption($pOption, $pFlush = false)
+    public function GetOption($pOption, $pFlush = false, $pDefault = null)
     {
         if ($pFlush || !isset($this->_OPTIONS_CACHE[$pOption]))
         {
-            $default = isset(self::$OPTIONS_DEFAULTS[$pOption]) ? self::$OPTIONS_DEFAULTS[$pOption] : false;
-            $this->_OPTIONS_CACHE[$pOption] = get_option($pOption, $default);
+            if (null === $pDefault)
+                $pDefault = isset(self::$OPTIONS_DEFAULTS[$pOption]) ? self::$OPTIONS_DEFAULTS[$pOption] : false;
+                
+            $this->_OPTIONS_CACHE[$pOption] = get_option($pOption, $pDefault);
         }
         
         return $this->_OPTIONS_CACHE[$pOption];
     }
     
-    private function SetOption($pOption, $pValue)
+    public function SetOption($pOption, $pValue)
     {
         if (!isset($this->_OPTIONS_CACHE[$pOption]) ||
             $pValue != $this->_OPTIONS_CACHE[$pOption])
@@ -2623,7 +2625,7 @@ class RatingWidgetPlugin
                     "options" => WP_RW__FRONT_POSTS_OPTIONS,
                     "align" => WP_RW__FRONT_POSTS_ALIGN,
                     "default_align" => self::$OPTIONS_DEFAULTS[WP_RW__FRONT_POSTS_ALIGN],
-                    "excerpt" => true,
+                    "excerpt" => false,
                     "show_align" => true,
                 ),
                 "comments" => array(
@@ -2641,7 +2643,7 @@ class RatingWidgetPlugin
                     "options" => WP_RW__PAGES_OPTIONS,
                     "align" => WP_RW__PAGES_ALIGN,
                     "default_align" => self::$OPTIONS_DEFAULTS[WP_RW__PAGES_ALIGN],
-                    "excerpt" => true,
+                    "excerpt" => false,
                     "show_align" => true,
                 ),
             );
@@ -2653,13 +2655,16 @@ class RatingWidgetPlugin
         
         $rw_current_settings = $settings_data[$selected_key];
 
+        $is_blog_post = ('blog-post' === $rw_current_settings['class']);
+        $item_with_category = in_array($rw_current_settings['class'], array('blog-post', 'front-post', 'comment'));
+        
         // Show on excerpts list must be loaded anyway.
-        $this->show_on_excerpts_list = json_decode($this->GetOption(WP_RW__SHOW_ON_EXCERPT));
+//        $this->show_on_excerpts_list = json_decode($this->GetOption(WP_RW__SHOW_ON_EXCERPT));
         
         // Visibility list must be loaded anyway.
         $this->_visibilityList = json_decode($this->GetOption(WP_RW__VISIBILITY_SETTINGS));
 
-        if ('page' !== $rw_current_settings['class'])
+        if ($item_with_category)
             // Categories Availability list must be loaded anyway.
             $this->categories_list = json_decode($this->GetOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS));
 
@@ -2680,6 +2685,9 @@ class RatingWidgetPlugin
         // If they did, this hidden field will be set to 'Y'
         if (isset($_POST[$rw_form_hidden_field_name]) && $_POST[$rw_form_hidden_field_name] == 'Y')
         {
+            // Set settings into save mode.
+            $this->settings->SetSaveMode();
+            
             /* Widget align options.
             ---------------------------------------------------------------------------------------------------------------*/
             $rw_show_rating = isset($_POST["rw_show"]) ? true : false;
@@ -2697,16 +2705,6 @@ class RatingWidgetPlugin
                 }
             }
             $this->SetOption($rw_current_settings["align"], $rw_align_str);
-
-            /* Show on excerpts.
-            ---------------------------------------------------------------------------------------------------------------*/
-            $rw_show_on_excerpts = false;
-            if ($rw_current_settings["excerpt"] === true)
-            {
-                $rw_show_on_excerpts = isset($_POST["rw_show_excerpt"]) ? true : false;
-                $this->show_on_excerpts_list->{$rw_class} = $rw_show_on_excerpts;
-                $this->SetOption(WP_RW__SHOW_ON_EXCERPT, json_encode($this->show_on_excerpts_list));
-            }
             
             /* Rating-Widget options.
             ---------------------------------------------------------------------------------------------------------------*/
@@ -2722,7 +2720,7 @@ class RatingWidgetPlugin
             $this->availability_list->{$rw_class} = $rw_availability;
             $this->SetOption(WP_RW__AVAILABILITY_SETTINGS, json_encode($this->availability_list));
             
-            if ('page' !== $rw_current_settings['class'])
+            if ($item_with_category)
             {
                 /* Categories Availability settings.
                 ---------------------------------------------------------------------------------------------------------------*/
@@ -2804,7 +2802,7 @@ class RatingWidgetPlugin
         }
         $rw_availability_settings = $this->availability_list->{$rw_class};
 
-        if ('page' !== $rw_current_settings['class'])
+        if ($item_with_category)
         {
             if (!isset($this->categories_list->{$rw_class})){
                 $this->categories_list->{$rw_class} = array(-1);
@@ -2812,9 +2810,6 @@ class RatingWidgetPlugin
             $rw_categories = $this->categories_list->{$rw_class};
         }
         
-        if (!isset($this->show_on_excerpts_list->{$rw_class}))
-            $this->show_on_excerpts_list->{$rw_class} = true;
-        $rw_show_on_excerpts = $this->show_on_excerpts_list->{$rw_class};
         
         if (!isset($this->custom_settings_enabled_list->{$rw_class}))
             $this->custom_settings_enabled_list->{$rw_class} = false;
@@ -3002,17 +2997,7 @@ class RatingWidgetPlugin
                                     </div>
                                 <?php
                                     }
-                                    
-                                    if (true === $rw_current_settings["excerpt"])
-                                    {
                                 ?>
-                                    <label for="rw_show_excerpt" style="margin-left: 20px; font-weight: bold;">
-                                        <input id="rw_show_excerpt" type="checkbox" name="rw_show_excerpt" value="true"<?php if ($rw_show_on_excerpts) echo ' checked="checked"';?> /> Show on excerpts as well.
-                                    </label>
-                                <?php
-                                    }
-                                ?>
-                                </label>
                                 </div>
                             <?php
                                 }
@@ -3025,16 +3010,20 @@ class RatingWidgetPlugin
                 <?php
                     if ('users' === $selected_key)
                         rw_require_once_view('user_rating_type_options.php');
-                ?>
-                <?php rw_require_once_view('options.php'); ?>
-                <?php rw_require_once_view('availability_options.php'); ?>
-                <?php rw_require_once_view('visibility_options.php'); ?>
-                <?php
-                    if ('page' !== $rw_current_settings['class'])
+                
+                    rw_require_once_view('options.php');
+                    rw_require_once_view('availability_options.php');
+                    rw_require_once_view('visibility_options.php');
+                    
+                    if ($is_blog_post)
+                        rw_require_once_view('post_views_visibility.php');
+                    
+                    if ($item_with_category)
                         rw_require_once_view('categories_availability_options.php');
+                    
+                    rw_require_once_view('settings/frequency.php');
+                    rw_require_once_view('powerusers.php'); 
                 ?>
-                <?php rw_require_once_view('settings/frequency.php'); ?>
-                <?php rw_require_once_view('powerusers.php'); ?>
             </div>
             <div id="rw_wp_set_widgets">
                 <?php 
@@ -3070,6 +3059,18 @@ class RatingWidgetPlugin
     function rw_before_loop_start()
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_before_loop_start", $params); }
+
+        // Check if shown on search results.
+        if (is_search() && 'false' === $this->GetOption(WP_RW__SHOW_ON_SEARCH, false, 'true'))
+            return;
+            
+        // Checks if category.
+        if (is_category() && 'false' === $this->GetOption(WP_RW__SHOW_ON_CATEGORY, false, 'true'))
+            return;
+
+        // Checks if shown on archive.
+        if (is_archive() && !is_category() && 'false' === $this->GetOption(WP_RW__SHOW_ON_ARCHIVE, false, 'true'))
+            return;
 
         if ($this->InBuddyPressPage())
             return;
@@ -3123,10 +3124,7 @@ class RatingWidgetPlugin
 //            add_action('the_title', array(&$this, "rw_add_title_metadata"));
 //            add_action('post_class', array(&$this, "rw_add_article_metadata"));
             
-            if (!isset($this->show_on_excerpts_list))
-                $this->show_on_excerpts_list = json_decode($this->GetOption(WP_RW__SHOW_ON_EXCERPT));
-            
-            if ($this->show_on_excerpts_list->{$post_class} === true)
+            if (true === $this->GetOption(WP_RW__SHOW_ON_EXCERPT, false, true))
                 // Hook post excerpt rating showup.
                 add_action('the_excerpt', array(&$this, 'AddPostRating'));
         }
