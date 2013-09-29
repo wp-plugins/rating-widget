@@ -29,6 +29,17 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         if (RWLogger::IsOn()){ RWLogger::LogDeparture("RatingWidgetPlugin_TopRatedWidget Constructor"); }
     }
 
+    private function EncodeHtml($pHtml)
+    {
+        // Remove multi-lines.
+        $pHtml = preg_replace('/\s\s+/', ' ', $pHtml);
+        
+        // Remove comments.
+        $pHtml = preg_replace('/<!--(.|\s)*?-->/', '', $pHtml);
+        
+        return $pHtml;
+    }
+    
     function widget($args, $instance)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("RatingWidgetPlugin_TopRatedWidget.widget", $params, true); }
@@ -155,16 +166,16 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         $toprated_data->title = array(
             'label' => $title,
             'show' => true,
-            'before' => trim(preg_replace('/\s+/', ' ', $before_title)),
-            'after' => trim(preg_replace('/\s+/', ' ', $after_title)),
+            'before' => $this->EncodeHtml($before_title),
+            'after' => $this->EncodeHtml($after_title),
         );
-        ;
+        
         $toprated_data->options = array(
             'align' => 'vertical',
             'direction' => 'ltr',
             'html' => array(
-                'before' => $before_widget,
-                'after' => $after_widget,
+                'before' => $this->EncodeHtml($before_widget),
+                'after' => $this->EncodeHtml($after_widget),
             ),
         );
         $toprated_data->site = array(

@@ -6,27 +6,27 @@ if (!class_exists('RatingWidgetPlugin_Settings')) :
 
 class RatingWidgetPlugin_Settings
 {
-    var $options;
-    var $visibility;
-    var $availability;
-    var $categories;
-    var $show_on_excerpt;
-    var $show_on_archive;
-    var $show_on_category;
-    var $show_on_search;
-    var $custom_settings_enabled;
-    var $custom_settings;
-    var $languages;
-    var $language_str;
+    public $options;
+    public $visibility;
+    public $availability;
+    public $categories;
+    public $show_on_excerpt;
+    public $show_on_archive;
+    public $show_on_category;
+    public $show_on_search;
+    public $custom_settings_enabled;
+    public $custom_settings;
+    public $languages;
+    public $language_str;
 
-    var $form_hidden_field_name;
+    public $form_hidden_field_name;
     
-    var $flash_dependency;
-    var $show_on_mobile;
+    public $flash_dependency;
+    public $show_on_mobile;
     
-    var $rating_type;
+    public $rating_type;
     
-    var $is_user_accumulated;
+    public $is_user_accumulated;
     
     private $_saveMode = false;
     public function SetSaveMode()

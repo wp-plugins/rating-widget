@@ -3,10 +3,10 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.8.9
+Version: 1.9.0
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
-License: A "Slug" license name e.g. GPL2
+License: GPLv2 or later
 */
 
 // Exit if accessed directly.
@@ -118,7 +118,7 @@ class RatingWidgetPlugin
     
     private function InitLogger()
     {
-        if (WP_RW__DEBUG || true === $this->GetOption("WP_RW__LOGGER"))
+        if (WP_RW__DEBUG || 'true' === $this->GetOption(WP_RW__LOGGER))
             // Start logger.
             RWLogger::PowerOn();
 
@@ -3124,7 +3124,7 @@ class RatingWidgetPlugin
 //            add_action('the_title', array(&$this, "rw_add_title_metadata"));
 //            add_action('post_class', array(&$this, "rw_add_article_metadata"));
             
-            if (true === $this->GetOption(WP_RW__SHOW_ON_EXCERPT, false, true))
+            if ('false' !== $this->GetOption(WP_RW__SHOW_ON_EXCERPT, false, 'true'))
                 // Hook post excerpt rating showup.
                 add_action('the_excerpt', array(&$this, 'AddPostRating'));
         }

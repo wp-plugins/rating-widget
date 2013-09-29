@@ -1,10 +1,10 @@
 === Rating-Widget ===
-Contributors: svovaf
+Contributors: ratingwidget, svovaf
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VAFEFAZRTLXU4
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
-Tested up to: 3.5.1
-Stable tag: 1.8.9
+Tested up to: 3.6.1
+Stable tag: 1.9.0
 License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
@@ -30,9 +30,11 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/get-the-word-press-plugin
 > * Advanced Ratings' Analytics
 > * WMPL Language Auto-Selection
 > * BuddyPress activity updates, comments and user profiles ratings.
-> * bbPress forum posts & replys ratings.
+> * Ratings on bbPress forum replies and replies' authors.
 
 To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
+
+---
 
 > #### Supported in 40 Languages
 > Rating-Widget star ratings are localizable and currently available in:
@@ -41,14 +43,17 @@ To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-p
 >
 > Can't find your language? Help us translate [here](http://rating-widget.com/help-translate/): http://rating-widget.com/help-translate/
 
+---
  
 > #### Are you a designer?
 > Help us to enrich Rating-Widget's themes collection by adding more thumb & star ratings designs at - http://rating-widget.com/contribute-rating-design/
 
+---
  
 > #### Follow Us
 > [Blog](http://rating-widget.com/blog/) | [Twitter](http://twitter.com/ratingwidget) | [Facebook](http://www.facebook.com/rating.widget) | [Google+](https://plus.google.com/103776958800403053498/) | [LinkedIn](http://www.linkedin.com/company/1856639) | [YouTube](https://www.youtube.com/ratingwidget)
 
+---
  
 > #### Rating-Widget Support Forum
 > Please visit the [Rating-Widget's Support Forum](http://wordpress.org/support/plugin/rating-widget) for additional help with using this plugin. You may also post feature requests, ideas and bug reports there.
@@ -101,6 +106,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.9.0 =
+* Fix: $before_widget and $after_widget html items encoding for Top-Rated Widget were fixed.
+* Fix: Fixed Show on excerpts option savings.
+
 = 1.8.9 =
 * New: Control whether to show votes in excerpts, archive, category and search results view.
 
