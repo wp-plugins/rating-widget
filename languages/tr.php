@@ -13,5 +13,7 @@
         "vote" => "Oyla",
         "votes" => "Oylar",
         "thanks" => "Teşekkürler",
+        "outOf" => "üzerinden",
+        "weRecommend" => "Biz Tavsiye",
     );
 ?>

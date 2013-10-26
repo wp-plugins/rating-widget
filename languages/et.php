@@ -13,5 +13,7 @@
         "vote" => "Hinda",
         "votes" => "Hääli",
         "thanks" => "Täname",
+        "outOf" => "out of",
+        "weRecommend" => "Soovitame",
     );
 ?>

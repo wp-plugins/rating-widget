@@ -13,5 +13,7 @@
         "vote" => "Voteaza",
         "votes" => "Voturi",
         "thanks" => "Multumim",
+        "outOf" => "din",
+        "weRecommend" => "Vă recomandăm",
     );
 ?>

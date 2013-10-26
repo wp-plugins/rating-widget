@@ -13,5 +13,7 @@
         "vote" => "Vote",
         "votes" => "Votes",
         "thanks" => "Merci",
+        "outOf" => "sur",
+        "weRecommend" => "Nous vous recommandons",
     );
 ?>

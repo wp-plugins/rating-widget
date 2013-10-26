@@ -1,13 +1,10 @@
 <?php
-    // Exit if accessed directly.
-    if (!defined('ABSPATH')) exit;
-
     global $DEFAULT_OPTIONS, $DEF_FONT_SIZE, $DEF_LINE_HEIGHT;
     
     if (!isset($DEFAULT_OPTIONS))
     {
         define('DUMMY_STR', 'DUMMY');
-        define('DEF_STAR_STYLE', 'yellow');
+        define('DEF_STAR_STYLE', 'oxygen');
         define('DEF_NERO_STYLE', 'thumbs');
         define('DEF_STAR_THEME', 'star_oxygen');
         define('DEF_NERO_THEME', 'thumbs_1');
@@ -26,6 +23,7 @@
         $DEFAULT_OPTIONS = new stdClass();
         $DEFAULT_OPTIONS->boost = new stdClass();
         $DEFAULT_OPTIONS->imgUrl = new stdClass();
+        $DEFAULT_OPTIONS->label = new stdClass();
         $DEFAULT_OPTIONS->advanced = new stdClass();
         $DEFAULT_OPTIONS->advanced->star = new stdClass();
         $DEFAULT_OPTIONS->advanced->nero = new stdClass();
@@ -48,6 +46,7 @@
         $DEFAULT_OPTIONS->style = 'oxygen';
         $DEFAULT_OPTIONS->imgUrl->ltr = '';
         $DEFAULT_OPTIONS->imgUrl->rtl = '';
+        $DEFAULT_OPTIONS->label->background = '#FFFFFF';
         $DEFAULT_OPTIONS->readOnly = false;
         $DEFAULT_OPTIONS->reVote = true;
         $DEFAULT_OPTIONS->frequency = DEF_FREQUENCY;
@@ -68,11 +67,11 @@
         
         $DEFAULT_OPTIONS->advanced->font->bold = false;
         $DEFAULT_OPTIONS->advanced->font->italic = false;
-        $DEFAULT_OPTIONS->advanced->font->color = '#000';
+        $DEFAULT_OPTIONS->advanced->font->color = '#000000';
         $DEFAULT_OPTIONS->advanced->font->size = $DEF_FONT_SIZE->SMALL;
         $DEFAULT_OPTIONS->advanced->font->type = 'inherit';
         
-        $DEFAULT_OPTIONS->advanced->font->hover->color = '#000';
+        $DEFAULT_OPTIONS->advanced->font->hover->color = '#000000';
 
         $DEFAULT_OPTIONS->advanced->layout->dir = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->layout->align->hor = DUMMY_STR;
@@ -90,7 +89,9 @@
         $DEFAULT_OPTIONS->advanced->text->vote = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->text->votes = DUMMY_STR;
         $DEFAULT_OPTIONS->advanced->text->thanks = DUMMY_STR;
+        $DEFAULT_OPTIONS->advanced->text->outOf = DUMMY_STR;
+        $DEFAULT_OPTIONS->advanced->text->weRecommend = DUMMY_STR;
         
         $DEFAULT_OPTIONS->advanced->css->container = '';
-    }
+    }  
 ?>

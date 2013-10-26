@@ -13,5 +13,7 @@
         "vote" => "Szavazzon",
         "votes" => "Szavazatok",
         "thanks" => "Köszönöm",
+        "outOf" => "out of",
+        "weRecommend" => "Javasoljuk",
     );
 ?>

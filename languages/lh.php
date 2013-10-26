@@ -13,5 +13,7 @@
         "vote" => "Balsuoti",
         "votes" => "Balsų",
         "thanks" => "Ačiū",
+        "outOf" => "iš",
+        "weRecommend" => "Rekomenduojame",
     );
 ?>

@@ -9,6 +9,7 @@
         "like", "dislike",
         "vote", "votes",
         "thanks",
+        'outOf', 'weRecommend',
     );
     
     $text = rw_options()->advanced->text;

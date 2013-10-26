@@ -13,5 +13,7 @@
         "vote" => "Hlas",
         "votes" => "Hlasy",
         "thanks" => "Ďakujem",
+        "outOf" => "z",
+        "weRecommend" => "Odporúčame",
     );
 ?>

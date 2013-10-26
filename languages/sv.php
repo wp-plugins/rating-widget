@@ -13,5 +13,7 @@
         "vote" => "Röst",
         "votes" => "Röster",
         "thanks" => "Tack",
+        "outOf" => "av",
+        "weRecommend" => "Vi rekommenderar",
     );
 ?>

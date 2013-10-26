@@ -13,5 +13,7 @@
         "vote" => "Pilih",
         "votes" => "Pemilihan",
         "thanks" => "Terima Kasih",
+        "outOf" => "dari",
+        "weRecommend" => "Kami Merekomendasikan",
     );
 ?>

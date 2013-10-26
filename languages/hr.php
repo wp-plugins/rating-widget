@@ -13,5 +13,7 @@
         "vote" => "Glas",
         "votes" => "Glasova",
         "thanks" => "Hvala",
+        "outOf" => "od",
+        "weRecommend" => "Preporučamo",
     );
 ?>

@@ -30,6 +30,17 @@ function rw_get_post_rating_data($postID = false, $accuracy = false)
     return $rwp->GetRatingDataByRatingID($rwp->_getPostRatingGuid($postID), $accuracy);
 }
 
+function rw_get_user_rating($userID = false)
+{
+    $userID = (false === $userID) ? get_current_user_id() : $userID;
+    return ratingwidget()->EmbedRatingByUser(get_user_by('id', $userID));
+}
+
+function rw_the_user_rating($userID = false)
+{
+    echo rw_get_user_rating($userID);
+}
+
 /* Post inline Shortcodes.
 --------------------------------------------------------------------------------------------*/
 function rw_the_post_shortcode($atts)

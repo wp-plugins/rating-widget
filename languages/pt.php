@@ -13,5 +13,7 @@
         "vote" => "Voto",
         "votes" => "Votos",
         "thanks" => "Obrigado",
+        "outOf" => "de",
+        "weRecommend" => "Recomendamos",
     );
 ?>

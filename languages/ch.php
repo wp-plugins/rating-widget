@@ -13,5 +13,7 @@
         "vote" => "投票",
         "votes" => "投票",
         "thanks" => "谢谢",
+        "outOf" => "出",
+        "weRecommend" => "我们建议",
     );
 ?>

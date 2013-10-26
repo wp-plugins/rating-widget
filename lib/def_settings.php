@@ -1,12 +1,10 @@
 <?php
-    // Exit if accessed directly.
-    if (!defined('ABSPATH')) exit;
-    
     function rw_enrich_options1($settings, $defaults, $loadTheme = false, $fromDefaults = false)
     {
         $ret = @rw_get_default_value($settings, new stdClass());
         $ret->boost = @rw_get_default_value($settings->boost, new stdClass());
         $ret->imgUrl = @rw_get_default_value($settings->imgUrl, new stdClass());
+        $ret->label = @rw_get_default_value($settings->label, new stdClass());
         $ret->advanced = @rw_get_default_value($settings->advanced, new stdClass());
         $ret->advanced->star = @rw_get_default_value($settings->advanced->star, new stdClass());
         $ret->advanced->nero = @rw_get_default_value($settings->advanced->nero, new stdClass());
@@ -49,15 +47,17 @@
             }
         }
         
-        // Get rating type.
-        $ret->type = @rw_get_default_value($settings->type, $defaults->type);
+        $hasTheme = $loadTheme && isset($settings->theme);
 
-        if ($loadTheme && isset($settings->theme))
+        require_once(RW__PATH_THEMES . "dir.php");
+        
+        global $RW_THEMES;
+        
+        // Get rating type.
+        $ret->type = @rw_get_default_value($settings->type, (!$hasTheme ? $defaults->type : ($RW_THEMES['star'][$settings->theme] ? 'star' : 'nero')));
+
+        if ($hasTheme)
         {
-            require_once(RW__PATH_THEMES . "dir.php");
-            
-            global $RW_THEMES;
-            
             // Load theme options.
             require(RW__PATH_THEMES . $RW_THEMES[$ret->type][$settings->theme]["file"]);
             
@@ -74,6 +74,7 @@
         $ret->style = @rw_get_default_value($settings->style, $defaults->style);
         $ret->imgUrl->ltr = @rw_get_default_value($settings->imgUrl->ltr, $defaults->imgUrl->ltr);
         $ret->imgUrl->rtl = @rw_get_default_value($settings->imgUrl->rtl, $defaults->imgUrl->rtl);
+        $ret->label->background = @rw_get_default_value($settings->label->background, $defaults->label->background);
         $ret->readOnly = @rw_get_default_value($settings->readOnly, $defaults->readOnly);
         $ret->reVote = @rw_get_default_value($settings->reVote, $defaults->reVote);
         $ret->frequency = @rw_get_default_value($settings->frequency, $defaults->frequency);
@@ -150,6 +151,7 @@
     {
         $settings = @rw_get_default_value($settings, new stdClass());
         $settings->boost = @rw_get_default_value($settings->boost, new stdClass());
+        $settings->label = @rw_get_default_value($settings->label, new stdClass());
         $settings->advanced = @rw_get_default_value($settings->advanced, new stdClass());
         $settings->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
         $settings->advanced->font->hover = @rw_get_default_value($settings->advanced->font->hover, new stdClass());
@@ -158,9 +160,9 @@
         $settings->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
         
         $settings->lng = @rw_get_default_value($settings->lng, "en");
-        $settings->url = @rw_get_default_value($settings->url, "");
-        $settings->img = @rw_get_default_value($settings->img, "");
-        $settings->title = @rw_get_default_value($settings->title, "");
+        $settings->url = @rw_get_default_value($settings->url, '');
+        $settings->img = @rw_get_default_value($settings->img, '');
+        $settings->title = @rw_get_default_value($settings->title, '');
         $settings->type = @rw_get_default_value($settings->type, $type);
         $settings->rclass = @rw_get_default_value($settings->rclass, "");
         $settings->size = @rw_get_default_value($settings->size, "small");
@@ -178,6 +180,8 @@
         
         $settings->boost->votes = @rw_get_default_value($settings->boost->votes, 0);
         $settings->boost->rate = @rw_get_default_value($settings->boost->rate, 5);
+
+        $settings->label->background = @rw_get_default_value($settings->label->background, '#fff');
 
         $settings->advanced->font->bold = @rw_get_default_value($settings->advanced->font->bold, false);
         $settings->advanced->font->italic = @rw_get_default_value($settings->advanced->font->italic, false);
@@ -202,6 +206,8 @@
         $settings->advanced->text->vote = @rw_get_default_value($settings->advanced->text->vote, $dictionary["vote"]);
         $settings->advanced->text->votes = @rw_get_default_value($settings->advanced->text->votes, $dictionary["votes"]);
         $settings->advanced->text->thanks = @rw_get_default_value($settings->advanced->text->thanks, $dictionary["thanks"]);
+        $settings->advanced->text->outOf = @rw_get_default_value($settings->advanced->text->outOf, $dictionary["outOf"]);
+        $settings->advanced->text->weRecommend = @rw_get_default_value($settings->advanced->text->weRecommend, $dictionary["weRecommend"]);
     }
         
     function rw_get_default_value($val, $def, $null = null)

@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.9.0
+Version: 1.9.1
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -395,7 +395,7 @@ class RatingWidgetPlugin
         return self::Urid2Id($pUrid);
     }
     
-    private function _getUserRatingGuid($id = false, $secondery_id = WP_RW__USER_SECONDERY_ID)
+    public function _getUserRatingGuid($id = false, $secondery_id = WP_RW__USER_SECONDERY_ID)
     {
         if (false === $id)
             $id = bp_displayed_user_id();
@@ -3756,12 +3756,15 @@ class RatingWidgetPlugin
         
         $options = array();
 
+        $owner_id = bp_get_activity_user_id();
+        
         // Add accumulator id if user accumulated rating.
         if ($this->IsUserAccumulatedRating())
-            $options['uarid'] = $this->_getUserRatingGuid(bp_get_activity_user_id());
-        
+            $options['uarid'] = $this->_getUserRatingGuid($owner_id);
+                                 
         return $this->EmbedRatingIfVisible(
             $item_id,
+            $owner_id,
             strip_tags($title),
             bp_activity_get_permalink(bp_get_activity_id()),
             $rclass,
@@ -3857,6 +3860,7 @@ class RatingWidgetPlugin
         
         $rw = $this->EmbedRatingIfVisible(
             $this->current_comment->id,
+            $this->current_comment->user_id,
             strip_tags($this->current_comment->content),
             bp_activity_get_permalink($this->current_comment->id),
             'activity-comment',
@@ -4029,8 +4033,11 @@ class RatingWidgetPlugin
             $options['show-report'] = 'false';
         }
         
+        $author_id = bbp_get_reply_author_id($reply_id);
+        
         return $author_link . $this->EmbedRatingIfVisible(
-            bbp_get_reply_author_id($reply_id),
+            $author_id,
+            $author_id,
             bbp_get_reply_author_display_name($reply_id),
             bbp_get_reply_author_url($reply_id),
             'user',
@@ -4188,7 +4195,8 @@ class RatingWidgetPlugin
             $options['uarid'] = $this->_getUserRatingGuid($topic_template->post->poster_id);
 
         $rw = $this->EmbedRatingIfVisible(
-            $post_id, 
+            $post_id,
+            $topic_template->post->poster_id, 
             strip_tags(bp_get_the_topic_post_content()),
             bp_get_the_topic_permalink() . "#post-" . $post_id,
             $rclass,
@@ -4647,8 +4655,10 @@ class RatingWidgetPlugin
         return $image[0];
     }
     
-    private function GetTopRatedData($pTypes = array())
+    public function GetTopRatedData($pTypes = array(), $pLimit = 5, $pOffset = 0, $pMinVotes = 1, $pInclude = false, $pShowOrder = false, $pOrderBy = 'avgrate', $pOrder = 'DESC')
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetTopRatedData", $params); }
+        
         if (!is_array($pTypes) || count($pTypes) == 0)
             return false;
             
@@ -4686,7 +4696,7 @@ class RatingWidgetPlugin
             "users" => array(
                 "rclass" => "user",
                 "classes" => "user",
-                "options" => WP_RW__FORUM_POSTS_OPTIONS,
+                "options" => WP_RW__USERS_OPTIONS,
             ),
         );
         
@@ -4709,12 +4719,17 @@ class RatingWidgetPlugin
 
                 $queries[$type] = array(
                     "rclasses" => $types[$type]["classes"],
-                    "votes" => 1,
-                    "orderby" => 'avgrate',
-                    "order" => 'desc',
-                    "limit" => 5,
+                    "votes" => $pMinVotes,
+                    "orderby" => $pOrderBy,
+                    "order" => $pOrder,
+                    "show_order" => ($pShowOrder ? "true" : "false"),
+                    "offset" => $pOffset,
+                    "limit" => $pLimit,
                     "types" => isset($options->type) ? $options->type : "star",
                 );
+                
+                if (is_array($pInclude) && count($pInclude) > 0)
+                    $queries[$type]['urids'] = implode(',', $pInclude);
         }
 
         $details["queries"] = urlencode(json_encode($queries));
@@ -4859,7 +4874,8 @@ class RatingWidgetPlugin
     * 
     */
     public function EmbedRating(
-        $pElementID, 
+        $pElementID,
+        $pOwnerID, 
         $pTitle, 
         $pPermalink, 
         $pElementClass, 
@@ -4872,6 +4888,11 @@ class RatingWidgetPlugin
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRating", $params); }
 
+        $result = apply_filters('rw_filter_embed_rating', $pElementID, $pOwnerID);
+        
+        if (false === $result)
+            return '';
+
         if ($pValidateVisibility && !$this->IsVisibleRating($pElementID, $pElementClass, $pValidateCategory))
             return '';
             
@@ -4883,11 +4904,15 @@ class RatingWidgetPlugin
             case 'user-page':
             case 'new-blog-post':
             case 'user-post':
+//                $post = get_post($pElementID);
+//                $owner_id = $post->post_author;
                 $urid = $this->_getPostRatingGuid($pElementID);
                 break;
             case 'comment':
             case 'new-blog-comment':
             case 'user-comment':
+//                $comment = get_comment($pElementID);
+//                $owner_id = $comment->user_id;
                 $urid = $this->_getCommentRatingGuid($pElementID);
                 break;
             case 'forum-post':
@@ -4896,12 +4921,15 @@ class RatingWidgetPlugin
                 $urid = $this->_getForumPostRatingGuid($pElementID);
                 break;
             case 'user':
+//                $owner_id = $pElementID;
                 $urid = $this->_getUserRatingGuid($pElementID);
                 break;
             case 'activity-update':
             case 'user-activity-update':
             case 'activity-comment':
             case 'user-activity-comment':
+//                $activities = bp_activity_get_specific(array('activity_ids' => $pElementID));
+//                $owner_id = $activities['activities'][0]->user_id;
                 $urid = $this->_getActivityRatingGuid($pElementID);
                 break;
         }
@@ -4920,11 +4948,11 @@ class RatingWidgetPlugin
         return $html;
     }
     
-    public function EmbedRatingIfVisible($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateCategory = true)
+    public function EmbedRatingIfVisible($pElementID, $pOwnerID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateCategory = true)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisible", $params); }
                 
-        return $this->EmbedRating($pElementID, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions, true, $pValidateCategory);
+        return $this->EmbedRating($pElementID, $pOwnerID, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions, true, $pValidateCategory);
     }
     
     public function EmbedRatingByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateVisibility = false)
@@ -4938,7 +4966,8 @@ class RatingWidgetPlugin
             $pOptions['uarid'] = $this->_getUserRatingGuid($pPost->post_author);
         
         return $this->EmbedRating(
-            $pPost->ID, 
+            $pPost->ID,
+            $pPost->post_author, 
             $pPost->post_title, 
             get_permalink($pPost->ID), 
             $pClass, 
@@ -4964,8 +4993,10 @@ class RatingWidgetPlugin
         );
     }
     
-    public function EmbedRatingIfVisibleByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array())
+    public function EmbedRatingByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array(), $pValidateVisibility = false)
     {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingByUser", $params); }
+
         // If accumulated user rating, then make sure it can not be directly rated.
         if ($this->IsUserAccumulatedRating())
         {
@@ -4973,15 +5004,30 @@ class RatingWidgetPlugin
             $pOptions['show-report'] = 'false';
         }
             
-        return $this->EmbedRatingIfVisible(
-            $pUser->id, 
+        return $this->EmbedRating(
+            $pUser->id,
+            $pUser->id,
             $pUser->fullname, 
             $pUser->domain,
             $pClass, 
-            false, 
+            false,
             false,
             $pCustomStyle,
-            $pOptions);
+            $pOptions,
+            $pValidateVisibility,
+            false);
+    }
+    
+    public function EmbedRatingIfVisibleByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array())
+    {
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisibleByUser", $params); }
+            
+        return $this->EmbedRatingByUser(
+            $pUser,
+            $pClass, 
+            $pCustomStyle, 
+            $pOptions,
+            true);
     }
     
     public function EmbedRatingByComment($pComment, $pClass = 'comment', $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
@@ -4994,6 +5040,7 @@ class RatingWidgetPlugin
         
         return $this->EmbedRating(
             $pComment->comment_ID,
+            (int)$pComment->user_id,
             strip_tags($pComment->comment_content), 
             get_permalink($pComment->comment_post_ID ) . '#comment-' . $pComment->comment_ID, 
             $pClass, 

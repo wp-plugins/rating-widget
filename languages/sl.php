@@ -13,5 +13,7 @@
         "vote" => "Glasuj",
         "votes" => "Glasovi",
         "thanks" => "Hvala",
+        "outOf" => "od",
+        "weRecommend" => "Vam priporočamo",
     );
 ?>
