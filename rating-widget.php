@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.9.1
+Version: 1.9.2
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -101,8 +101,6 @@ class RatingWidgetPlugin
         $this->errors = new WP_Error();
         $this->success = new WP_Error();
 
-        add_action('wp_footer', array(&$this, "DumpLog"));
-        
         /**
         * IMPORTANT: 
         *   All scripts/styles must be enqueued from those actions, 
@@ -119,8 +117,15 @@ class RatingWidgetPlugin
     private function InitLogger()
     {
         if (WP_RW__DEBUG || 'true' === $this->GetOption(WP_RW__LOGGER))
+        {
             // Start logger.
             RWLogger::PowerOn();
+            
+            if (is_admin())
+                add_action('admin_footer', array(&$this, "DumpLog"));
+            else
+                add_action('wp_footer', array(&$this, "DumpLog"));
+        }
 
         // Load config after keys are loaded.
         require_once(WP_RW__PLUGIN_DIR . "/lib/config.php");
@@ -582,16 +587,16 @@ class RatingWidgetPlugin
     
     public function RemoteCall($pPage, &$pData, $pExpiration = false)
     {
-        if (!WP_RW__CACHING_ON)
-            // No caching on debug mode.
-            $pExpiration = false;
-            
         if (RWLogger::IsOn())
         { 
             $params = func_get_args(); RWLogger::LogEnterence("RemoteCall", $params, true);
-            RWLogger::Log("address", WP_RW__ADDRESS . "/{$pPage}"); 
+            RWLogger::Log("RemoteCall", 'Address: ' . WP_RW__ADDRESS . "/{$pPage}");
         }
         
+        if (!WP_RW__CACHING_ON)
+            // No caching on debug mode.
+            $pExpiration = false;
+
         if (false !== WP_RW__USER_SECRET)
         {
             if (RWLogger::IsOn())
@@ -621,8 +626,9 @@ class RatingWidgetPlugin
 
         if (RWLogger::IsOn())
         {
-            RWLogger::Log('IS_CACHED', 'false');
-            RWLogger::Log("REMOTE_CALL_DATA", var_export($pData, true));
+            RWLogger::Log('REMOTE_CALL_DATA', 'IS_CACHED: FALSE');
+            RWLogger::Log("RemoteCall", 'REMOTE_CALL_DATA: ' . var_export($pData, true));
+            RWLogger::Log("RemoteCall", 'Query: "' . WP_RW__ADDRESS . "/{$pPage}?" . http_build_query($pData) . '"');
         }
             
         if (function_exists('wp_remote_post')) // WP 2.7+
@@ -834,7 +840,7 @@ class RatingWidgetPlugin
             rw_enqueue_style('rw_cp', 'colorpicker.php');
             rw_enqueue_script('jquery-ui-datepicker', 'vendors/jquery-ui-1.8.9.custom.min.js');
             rw_enqueue_style('jquery-theme-smoothness', 'vendors/jquery/smoothness/jquery.smoothness.css');
-            rw_enqueue_style('rw_external', 'external.php?all=t');
+            rw_enqueue_style('rw_external', 'style.css?all=t');
             rw_enqueue_style('rw_wp_reports', 'wordpress/reports.php');
         }
     }
@@ -1714,7 +1720,7 @@ class RatingWidgetPlugin
         ?>
         <div class="rw-control-bar">
             <div style="float: left;">
-                <span style="font-weight: bold; font-size: 12px;"><?php echo ($offset + 1); ?>-<?php echo ($offset + $showen_records_num); ?></span>
+                <span style="font-weight: bold; font-size: 12px;"><?php echo ($rw_offset + 1); ?>-<?php echo ($rw_offset + $showen_records_num); ?></span>
             </div>
             <div style="float: right;">
                 <span>Show rows:</span>
@@ -2027,7 +2033,7 @@ class RatingWidgetPlugin
         ?>
         <div class="rw-control-bar">
             <div style="float: left;">
-                <span style="font-weight: bold; font-size: 12px;"><?php echo ($offset + 1); ?>-<?php echo ($offset + $showen_records_num); ?></span>
+                <span style="font-weight: bold; font-size: 12px;"><?php echo ($rw_offset + 1); ?>-<?php echo ($rw_offset + $showen_records_num); ?></span>
             </div>
             <div style="float: right;">
                 <span>Show rows:</span>
@@ -4063,6 +4069,9 @@ class RatingWidgetPlugin
 
         // 2013.08.29 - This is a preperation to differentiate between topics and topic replies.
 //        $is_reply = ($post->ID == bbp_get_reply_topic_id($post->ID));
+        
+        if (RWLogger::IsOn())
+            RWLogger::Log('AddBBPressBottomRating', 'post: ' . var_export($post, true));
         
         $ratingHtml = $this->EmbedRatingIfVisibleByPost($post, 'forum-post', false, $this->forum_post_align->hor);
         

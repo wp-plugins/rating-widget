@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.6.1
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
@@ -106,6 +106,11 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.9.2 =
+* Fix: Fixed logger for DEBUG state in management dashboard.
+* Fix: Fixed rating styling/CSS on dashboard preview.
+* Fix: Fixed ratings data view on Premium reports.
+
 = 1.9.1 =
 * Fix: Fixed GetTopRatedData for users' ratings fetching.
 * New: Added a shortcode for user rating: rw_get_user_rating and rw_the_user_rating.
