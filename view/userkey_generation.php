@@ -24,7 +24,7 @@
                     <input type="email" id="rw_email" name="email" value="">
                 </div>
                 <div class="rw-field">
-                    <label for="confirmemail">Confirm Email :</label>
+                    <label for="confirmemail">Confirm Email:</label>
                     <input type="email" id="rw_confirmemail" name="confirmemail" value="">
                 </div>
                 <div class="rw-field">
@@ -40,6 +40,53 @@
                                    RWM.RECAPTCHA_PUBLIC + '"></' + 'script>');
                     </script></div>
                 </div>-->
+                <div class="rw-field">
+                    <label for="category">Category:</label>
+<?php
+    $categories = array(
+        'Adult',
+        'Art',
+        'Automobiles',
+        'Beauty',
+        'Business',
+        'Entertainment',
+        'Fashion',
+        'Finance',
+        'Fitness',
+        'Food',
+        'Games',
+        'Health',
+        'Home & Family',
+        'Humor',
+        'Internet Marketing',
+        'Kids & Teens',
+        'LifeStyle',
+        'Music',
+        'News',
+        'Parenting',
+        'Photography',
+        'Pornography',
+        'Poetry & Literature',
+        'Religion & Spirituality',
+        'Soccer',
+        'Society',
+        'Sports',
+        'Technology',
+        'Travel',
+        'Weddings',
+    );
+?>
+                    <select id="rw_category" name="category">
+                        <option value="">Select Category</option>
+                            <option id="rw_new_category">Other (Add New...)</option>
+                        <optgroup id="rw_category_official" label="Official Categories">
+                        <?php foreach ($categories as $c) : ?>
+                            <option data-type="system" value="<?php echo $c;?>"><?php echo $c;?></option>
+                        <?php endforeach; ?>
+                        </optgroup>
+                        <optgroup id="rw_category_by_user" label="User's Categories"></optgroup>
+                    </select>
+                </div>
             </fieldset>
             <div style="font-size: 11px; line-height: 16px; text-align: justify; margin-bottom: 10px;">
 The Rating-Widget is a self-hosted rating system for your blog. Therefore the ratings data is stored on Rating-Widget's servers. Please read our full <a href="#" id="rw_wp_terms_trigger" tabindex="-1" style="line-height: 16px;">Terms of Use and Privacy Policy</a>.                         </div>
