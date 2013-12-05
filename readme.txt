@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
 Requires at least: 2.6
 Tested up to: 3.6.1
-Stable tag: 1.9.4
+Stable tag: 1.9.5
 License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
@@ -106,6 +106,12 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.9.5 =
+* New: Added new awesome RatingWidget star rating's theme + 6 flat additional designs.
+* New: Added new tiny size to the size options after so many requests we got.
+* Fix: Fixed advanced settings text options labels.
+* Update: Upgraded mobile detect library to 2.7.5 (http://mobiledetect.net).
+
 = 1.9.4 =
 * New: Localized to Ukrainian.
 

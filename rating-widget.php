@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.9.4
+Version: 1.9.5
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -427,26 +427,26 @@ class RatingWidgetPlugin
 --------------------------------------------------------------------------------------------*/
     private static $OPTIONS_DEFAULTS = array(
         WP_RW__FRONT_POSTS_ALIGN => '{"ver": "top", "hor": "left"}',
-        WP_RW__FRONT_POSTS_OPTIONS => '{"type": "star", "theme": "star_oxygen"}',
+        WP_RW__FRONT_POSTS_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_ratingwidget"}',
         
         WP_RW__BLOG_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_oxygen"}',
+        WP_RW__BLOG_POSTS_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_ratingwidget"}',
         
         WP_RW__COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
         WP_RW__COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_1"}',
         
         WP_RW__PAGES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__PAGES_OPTIONS => '{"type": "star", "theme": "star_oxygen"}',
+        WP_RW__PAGES_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_ratingwidget"}',
 
         // BuddyPress
             WP_RW__ACTIVITY_BLOG_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_gray1"}',
+            WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_ratingwidget"}',
 
             WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
             WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1"}',
 
             WP_RW__ACTIVITY_UPDATES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_gray1"}',
+            WP_RW__ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_ratingwidget"}',
 
             WP_RW__ACTIVITY_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
             WP_RW__ACTIVITY_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1"}',
@@ -465,19 +465,19 @@ class RatingWidgetPlugin
             WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1"}',
         // User
             WP_RW__USERS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_OPTIONS => '{"theme": "star_gray1"}',
+            WP_RW__USERS_OPTIONS => '{"theme": "star_ratingwidget"}',
             // Posts
             WP_RW__USERS_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_POSTS_OPTIONS => '{"type": "star", "theme": "star_gray1", "readOnly": true}',
+            WP_RW__USERS_POSTS_OPTIONS => '{"type": "star", "theme": "star_ratingwidget", "readOnly": true}',
             // Pages
             WP_RW__USERS_PAGES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_PAGES_OPTIONS => '{"type": "star", "theme": "star_gray1", "readOnly": true}',
+            WP_RW__USERS_PAGES_OPTIONS => '{"type": "star", "theme": "star_ratingwidget", "readOnly": true}',
             // Comments
             WP_RW__USERS_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "readOnly": true}',
+            WP_RW__USERS_COMMENTS_OPTIONS => '{"type": "nero", "theme": "star_ratingwidget", "readOnly": true}',
             // Activity-Updates
             WP_RW__USERS_ACTIVITY_UPDATES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_gray1", "readOnly": true}',
+            WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_ratingwidget", "readOnly": true}',
             // Avtivity-Comments
             WP_RW__USERS_ACTIVITY_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
             WP_RW__USERS_ACTIVITY_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "readOnly": true}',
@@ -3963,8 +3963,10 @@ class RatingWidgetPlugin
         }
         else
         {
-            define('WP_RW__BBP_CONFIG_LOCATION', get_site_option('bb-config-location', ''));            
-            define('WP_RW__BBP_INSTALLED', '' !== WP_RW__BBP_CONFIG_LOCATION);
+            define('WP_RW__BBP_CONFIG_LOCATION', get_site_option('bb-config-location', ''));
+            
+            if (!defined('WP_RW__BBP_INSTALLED'))
+                define('WP_RW__BBP_INSTALLED', '' !== WP_RW__BBP_CONFIG_LOCATION);
         }
 
         if (WP_RW__BBP_INSTALLED && !is_admin() /* && is_bbpress()*/)
@@ -4113,7 +4115,8 @@ class RatingWidgetPlugin
         if (RWLogger::IsOn())
             RWLogger::LogEnterence("InitBuddyPress");
 
-        define('WP_RW__BP_INSTALLED', true);
+        if (!defined('WP_RW__BP_INSTALLED'))
+            define('WP_RW__BP_INSTALLED', true);
         
         if (!is_admin())
         {
