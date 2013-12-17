@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.9.5
+Version: 1.9.6
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -427,26 +427,26 @@ class RatingWidgetPlugin
 --------------------------------------------------------------------------------------------*/
     private static $OPTIONS_DEFAULTS = array(
         WP_RW__FRONT_POSTS_ALIGN => '{"ver": "top", "hor": "left"}',
-        WP_RW__FRONT_POSTS_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_ratingwidget"}',
+        WP_RW__FRONT_POSTS_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_flat_yellow"}',
         
         WP_RW__BLOG_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__BLOG_POSTS_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_ratingwidget"}',
+        WP_RW__BLOG_POSTS_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_flat_yellow"}',
         
         WP_RW__COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
         WP_RW__COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_1"}',
         
         WP_RW__PAGES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-        WP_RW__PAGES_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_ratingwidget"}',
+        WP_RW__PAGES_OPTIONS => '{"type": "star", "size": "medium", "theme": "star_flat_yellow"}',
 
         // BuddyPress
             WP_RW__ACTIVITY_BLOG_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_ratingwidget"}',
+            WP_RW__ACTIVITY_BLOG_POSTS_OPTIONS => '{"type": "star", "theme": "star_flat_yellow"}',
 
             WP_RW__ACTIVITY_BLOG_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
             WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1"}',
 
             WP_RW__ACTIVITY_UPDATES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_ratingwidget"}',
+            WP_RW__ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_flat_yellow"}',
 
             WP_RW__ACTIVITY_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
             WP_RW__ACTIVITY_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1"}',
@@ -465,19 +465,19 @@ class RatingWidgetPlugin
             WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1"}',
         // User
             WP_RW__USERS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_OPTIONS => '{"theme": "star_ratingwidget"}',
+            WP_RW__USERS_OPTIONS => '{"theme": "star_flat_yellow"}',
             // Posts
             WP_RW__USERS_POSTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_POSTS_OPTIONS => '{"type": "star", "theme": "star_ratingwidget", "readOnly": true}',
+            WP_RW__USERS_POSTS_OPTIONS => '{"type": "star", "theme": "star_flat_yellow", "readOnly": true}',
             // Pages
             WP_RW__USERS_PAGES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_PAGES_OPTIONS => '{"type": "star", "theme": "star_ratingwidget", "readOnly": true}',
+            WP_RW__USERS_PAGES_OPTIONS => '{"type": "star", "theme": "star_flat_yellow", "readOnly": true}',
             // Comments
             WP_RW__USERS_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_COMMENTS_OPTIONS => '{"type": "nero", "theme": "star_ratingwidget", "readOnly": true}',
+            WP_RW__USERS_COMMENTS_OPTIONS => '{"type": "nero", "theme": "star_flat_yellow", "readOnly": true}',
             // Activity-Updates
             WP_RW__USERS_ACTIVITY_UPDATES_ALIGN => '{"ver": "bottom", "hor": "left"}',
-            WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_ratingwidget", "readOnly": true}',
+            WP_RW__USERS_ACTIVITY_UPDATES_OPTIONS => '{"type": "star", "theme": "star_flat_yellow", "readOnly": true}',
             // Avtivity-Comments
             WP_RW__USERS_ACTIVITY_COMMENTS_ALIGN => '{"ver": "bottom", "hor": "left"}',
             WP_RW__USERS_ACTIVITY_COMMENTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "readOnly": true}',
@@ -486,7 +486,7 @@ class RatingWidgetPlugin
             WP_RW__USERS_FORUM_POSTS_OPTIONS => '{"type": "nero", "theme": "thumbs_bp1", "readOnly": true}',
         
         WP_RW__VISIBILITY_SETTINGS => "{}",
-        WP_RW__AVAILABILITY_SETTINGS => '{"activity-update": 1, "activity-comment": 1, "forum-post": 1, "new-forum-post": 1, "user": 1, "user-post": 1, "user-comment": 1, "user-page": 1, "user-activity-update": 1, "user-activity-comment": 1, "user-forum-post": 1}', // By default, disable all activity ratings for un-logged users.
+        WP_RW__AVAILABILITY_SETTINGS => '{"activity-update": 1, "activity-comment": 1, "forum-post": 1, "forum-reply": 1, "new-forum-post": 1, "user": 1, "user-post": 1, "user-comment": 1, "user-page": 1, "user-activity-update": 1, "user-activity-comment": 1, "user-forum-post": 1}', // By default, disable all activity ratings for un-logged users.
         WP_RW__CATEGORIES_AVAILABILITY_SETTINGS => "{}",
         
         WP_RW__SHOW_ON_EXCERPT => '{"front-post": false, "blog-post": false, "page": false}',
@@ -1058,6 +1058,10 @@ class RatingWidgetPlugin
                 $rating_options = WP_RW__FORUM_POSTS_OPTIONS;
                 $rclass = "forum-post,new-forum-post";
                 break;
+            case "forum-replies":
+                $rating_options = WP_RW__FORUM_POSTS_OPTIONS;
+                $rclass = "forum-reply";
+                break;
             case "users":
                 $rating_options = WP_RW__USERS_OPTIONS;
                 $rclass = "user";
@@ -1451,6 +1455,10 @@ class RatingWidgetPlugin
             case "forum-posts":
                 $rating_options = WP_RW__FORUM_POSTS_OPTIONS;
                 $rclass = "forum-post,new-forum-post";
+                break;
+            case "forum-replies":
+                $rating_options = WP_RW__FORUM_POSTS_OPTIONS;
+                $rclass = "forum-reply";
                 break;
             case "users":
                 $rating_options = WP_RW__USERS_OPTIONS;
@@ -4067,15 +4075,19 @@ class RatingWidgetPlugin
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('AddBBPressBottomRating', $params); }
         
-        global $post;
-
-        // 2013.08.29 - This is a preperation to differentiate between topics and topic replies.
-//        $is_reply = ($post->ID == bbp_get_reply_topic_id($post->ID));
+        $forum_item = bbp_get_reply(bbp_get_reply_id());
+        
+        $is_reply = is_object($forum_item);
+        
+        if (!$is_reply)
+            $forum_item = bbp_get_topic(bbp_get_topic_id());
+        
+        $class = ($is_reply ? 'forum-reply' : 'forum-post');
         
         if (RWLogger::IsOn())
-            RWLogger::Log('AddBBPressBottomRating', 'post: ' . var_export($post, true));
+            RWLogger::Log('AddBBPressBottomRating', $class . ': ' . var_export($forum_item, true));
         
-        $ratingHtml = $this->EmbedRatingIfVisibleByPost($post, 'forum-post', false, $this->forum_post_align->hor);
+        $ratingHtml = $this->EmbedRatingIfVisibleByPost($forum_item, $class, false, $this->forum_post_align->hor);
         
         return $content . $ratingHtml;
     }
@@ -4088,9 +4100,19 @@ class RatingWidgetPlugin
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('AddBBPressTopCenterRating', $params); }
         
-        global $post;
+        $forum_item = bbp_get_reply(bbp_get_reply_id());
+        
+        $is_reply = is_object($forum_item);
+        
+        if (!$is_reply)
+            $forum_item = bbp_get_topic(bbp_get_topic_id());
+        
+        $class = ($is_reply ? 'forum-reply' : 'forum-post');
+        
+        if (RWLogger::IsOn())
+            RWLogger::Log('AddBBPressTopCenterRating', $class . ': ' . var_export($forum_item, true));
 
-        $ratingHtml = $this->EmbedRatingIfVisibleByPost($post, 'forum-post', false, 'fright', 'display: inline; margin-right: 10px;');
+        $ratingHtml = $this->EmbedRatingIfVisibleByPost($forum_item, $class, false, 'fright', 'display: inline; margin-right: 10px;');
         
         echo $ratingHtml;
     }
@@ -4103,9 +4125,19 @@ class RatingWidgetPlugin
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('AddBBPressTopLeftOrRightRating', $params); }
         
-        global $post;
+        $forum_item = bbp_get_reply(bbp_get_reply_id());
+        
+        $is_reply = is_object($forum_item);
+        
+        if (!$is_reply)
+            $forum_item = bbp_get_topic(bbp_get_topic_id());
+        
+        $class = ($is_reply ? 'forum-reply' : 'forum-post');
+        
+        if (RWLogger::IsOn())
+            RWLogger::Log('AddBBPressTopLeftOrRightRating', $class . ': ' . var_export($forum_item, true));
 
-        $ratingHtml = $this->EmbedRatingIfVisibleByPost($post, 'forum-post', false, 'f' . $this->forum_post_align->hor, 'display: inline; margin-' . ('left' === $this->forum_post_align->hor ? 'right' : 'left') . ': 10px;');
+        $ratingHtml = $this->EmbedRatingIfVisibleByPost($forum_item, $class, false, 'f' . $this->forum_post_align->hor, 'display: inline; margin-' . ('left' === $this->forum_post_align->hor ? 'right' : 'left') . ': 10px;');
         
         echo $ratingHtml;
     }
@@ -4246,6 +4278,7 @@ class RatingWidgetPlugin
             
 //            "forum-topic" => array("options" => WP_RW__ACTIVITY_FORUM_TOPICS_OPTIONS),
             "forum-post" => array("options" => WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS),
+            "forum-reply" => array("options" => WP_RW__ACTIVITY_FORUM_POSTS_OPTIONS),
 
             "user" => array("options" => WP_RW__USERS_OPTIONS),
             "user-post" => array("options" => WP_RW__USERS_POSTS_OPTIONS),
@@ -4928,6 +4961,7 @@ class RatingWidgetPlugin
                 $urid = $this->_getCommentRatingGuid($pElementID);
                 break;
             case 'forum-post':
+            case 'forum-reply':
             case 'new-forum-post':
             case 'user-forum-post':
                 $urid = $this->_getForumPostRatingGuid($pElementID);
