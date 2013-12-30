@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.9.6
+Version: 1.9.7
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -297,7 +297,7 @@ class RatingWidgetPlugin
         }
         else
         {
-            if (is_string(WP_RW__USER_KEY) && (!is_string($user_key) || strtolower(WP_RW__USER_KEY) !== strtolower($user_key)))
+            if (is_string(WP_RW__USER_KEY) && (!is_string($user_key) || WP_RW__USER_KEY !== $user_key))
             {
                 // Override user key.
                 $this->SetOption(WP_RW__DB_OPTION_USER_KEY, WP_RW__USER_KEY);
@@ -313,7 +313,7 @@ class RatingWidgetPlugin
         }
         else
         {
-            if (is_string(WP_RW__USER_SECRET) && (!is_string($user_secret) || strtolower(WP_RW__USER_SECRET) !== strtolower($user_secret)))
+            if (is_string(WP_RW__USER_SECRET) && (!is_string($user_secret) || WP_RW__USER_SECRET !== $user_secret))
             {
                 // Override user key.
                 $this->SetOption(WP_RW__DB_OPTION_USER_SECRET, WP_RW__USER_SECRET);
@@ -1363,17 +1363,17 @@ class RatingWidgetPlugin
 <?php        
     }
     
-    public static function _isValidPCId($pPCId)
+    public static function _isValidPCId($pDeviceID)
     {
         // Length check.
-        if (strlen($pPCId) !== 36){
+        if (strlen($pDeviceID) !== 36){
             return false;
         }
         
-        if ($pPCId[8] != "-" ||
-            $pPCId[13] != "-" ||
-            $pPCId[18] != "-" ||
-            $pPCId[23] != "-")
+        if ($pDeviceID[8] != "-" ||
+            $pDeviceID[13] != "-" ||
+            $pDeviceID[18] != "-" ||
+            $pDeviceID[23] != "-")
         {
             return false;
         }
@@ -1383,7 +1383,7 @@ class RatingWidgetPlugin
         {
             if ($i == 8 || $i == 13 || $i == 18 || $i == 23){ $i++; }
             
-            $code = ord($pPCId[$i]);
+            $code = ord($pDeviceID[$i]);
             if ($code < 48 || 
                 $code > 70 || 
                 ($code > 57 && $code < 65))
@@ -2217,13 +2217,13 @@ class RatingWidgetPlugin
                                         <td class="rw-ui-def">
                                             <span>API Key (<code>unique-user-key</code>):</span>
                                         </td>
-                                        <td><span style="font-size: 14px; color: green;"><?php echo (false === WP_RW__USER_KEY) ? "NONE" : strtolower(WP_RW__USER_KEY);?></span></td>
+                                        <td><span style="font-size: 14px; color: green;"><?php echo (false === WP_RW__USER_KEY) ? "NONE" : WP_RW__USER_KEY;?></span></td>
                                     </tr>    
                                     <tr class="rw-even">
                                         <td class="rw-ui-def">
                                             <span>Secret Key (only for <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" target="_blank">pro</a> users):</span>
                                         </td>
-                                        <td><span style="font-size: 14px; color: green;"><?php echo (false === WP_RW__USER_SECRET) ? "NONE" : strtolower(WP_RW__USER_SECRET);?></span></td>
+                                        <td><span style="font-size: 14px; color: green;"><?php echo (false === WP_RW__USER_SECRET) ? "NONE" : WP_RW__USER_SECRET;?></span></td>
                                     </tr>
                                 </table>
                             </div>
@@ -3974,7 +3974,15 @@ class RatingWidgetPlugin
             define('WP_RW__BBP_CONFIG_LOCATION', get_site_option('bb-config-location', ''));
             
             if (!defined('WP_RW__BBP_INSTALLED'))
-                define('WP_RW__BBP_INSTALLED', '' !== WP_RW__BBP_CONFIG_LOCATION);
+            {
+                if ('' !== WP_RW__BBP_CONFIG_LOCATION)
+                    define('WP_RW__BBP_INSTALLED', true);
+                else
+                {
+                    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+                    define('WP_RW__BBP_INSTALLED', is_plugin_active('bbpress/bbpress.php'));
+                }
+            }
         }
 
         if (WP_RW__BBP_INSTALLED && !is_admin() /* && is_bbpress()*/)
@@ -4363,7 +4371,7 @@ class RatingWidgetPlugin
                             {
                     ?>
                     var options = <?php echo !empty($rw_settings[$rclass]["options"]) ? $rw_settings[$rclass]["options"] : '{}'; ?>;
-                    <?php echo $this->GetCustomSettings($rclass); ?>
+                    <?php echo $this->GetCustomSettings(('forum-reply' === $rclass ? 'forum-post' : $rclass)); ?>
                     RW.initClass("<?php echo $rclass; ?>", options);
                     <?php
                             }
