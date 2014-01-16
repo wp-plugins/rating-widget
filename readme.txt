@@ -1,10 +1,10 @@
 === Rating-Widget ===
 Contributors: ratingwidget, svovaf
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VAFEFAZRTLXU4
-Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta
+Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce
 Requires at least: 2.6
 Tested up to: 3.8
-Stable tag: 1.9.7
+Stable tag: 1.9.8
 License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
@@ -106,6 +106,9 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 1.9.8 =
+* Fix: Forum reply's rating style & availability settings are now defined exactly as bbPress topic rating.
+
 = 1.9.7 =
 * New: Added bbPress forum replies section to Top-Rated Widget.
 * Fix: Fixed Chinese translation.

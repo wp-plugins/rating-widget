@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 1.9.7
+Version: 1.9.8
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -4367,11 +4367,14 @@ class RatingWidgetPlugin
                     <?php
                         foreach ($rw_settings as $rclass => $options)
                         {
-                            if (isset($rw_settings[$rclass]["enabled"]) && (true === $rw_settings[$rclass]["enabled"]))
+                            // Forum reply should have exact same settings as forum post.
+                            $alias = ('forum-reply' === $rclass) ? 'forum-post' : $rclass;
+                            
+                            if (isset($rw_settings[$alias]["enabled"]) && (true === $rw_settings[$alias]["enabled"]))
                             {
                     ?>
-                    var options = <?php echo !empty($rw_settings[$rclass]["options"]) ? $rw_settings[$rclass]["options"] : '{}'; ?>;
-                    <?php echo $this->GetCustomSettings(('forum-reply' === $rclass ? 'forum-post' : $rclass)); ?>
+                    var options = <?php echo !empty($rw_settings[$alias]["options"]) ? $rw_settings[$alias]["options"] : '{}'; ?>;
+                    <?php echo $this->GetCustomSettings($alias); ?>
                     RW.initClass("<?php echo $rclass; ?>", options);
                     <?php
                             }
