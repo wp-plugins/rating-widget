@@ -8,15 +8,13 @@
         foreach ($views as $view)
         {
             $settings->{'show_on_' . $view} = isset($_POST['rw_show_on_' . $view]) ? true : false;
-            ratingwidget()->SetOption('rw_show_on_' . $view, json_encode($settings->{'show_on_' . $view}));
+            ratingwidget()->SetOption('rw_show_on_' . $view, $settings->{'show_on_' . $view});
         }
     }
     else
     {
         foreach ($views as $view)
-        {
-            $settings->{'show_on_' . $view} = ('false' !== ratingwidget()->GetOption('rw_show_on_' . $view, false, 'true'));
-        }
+            $settings->{'show_on_' . $view} = (false !== ratingwidget()->GetOption('rw_show_on_' . $view));
     }
  ?>
 <div class="has-sidebar has-right-sidebar">

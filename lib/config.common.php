@@ -4,7 +4,7 @@
 
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__VERSION', '1.9.8');
+    define('WP_RW__VERSION', '1.9.9');
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -53,6 +53,7 @@
     define('WP_RW__DEFAULT_LNG', 'en');
     define('WP_RW__ADMIN_MENU_SLUG', 'ratingwidget');
 
+    define('WP_RW__OPTIONS', 'rw_options');
 
     define('WP_RW__BLOG_POSTS_ALIGN', 'rw_blog_posts_align');
     define('WP_RW__BLOG_POSTS_OPTIONS', 'rw_blog_posts_options');

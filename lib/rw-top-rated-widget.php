@@ -137,7 +137,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         {
             if (isset($instance["show_{$type}"]) && $instance["show_{$type}"] && $instance["{$type}_count"] > 0)
             {
-                $options = json_decode(ratingwidget()->GetOption($type_data["options"]));
+                $options = ratingwidget()->GetOption($type_data["options"]);
 
                 $queries[$type] = array(
                     "rclasses" => $type_data["classes"],
