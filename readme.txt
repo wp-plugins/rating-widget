@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/get-the-word-press-plugin/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce
 Requires at least: 2.6
 Tested up to: 3.8
-Stable tag: 1.9.9
+Stable tag: 2.0.0
 License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
@@ -106,6 +106,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.0.0 =
+* Fix: "Hide Star Rating" in page/post editor was fixed.
+* Fix: Spanish "votes" translation was fixed.
+
 = 1.9.9 =
 * Major Optimization: Aggregated all settings into one DB record to reduce number of Read/Write queries to the WP database. Plus, significantly reduced number of JSON ecodes/decodes.
 

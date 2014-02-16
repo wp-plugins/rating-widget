@@ -10,7 +10,7 @@
         "rateThis" => "Califica este",
         "like" => "Gusta",
         "dislike" => "No gusta",
-        "vote" => "Votar",
+        "vote" => "Voto",
         "votes" => "Votos",
         "thanks" => "Gracias",
         "outOf" => "de cada",
