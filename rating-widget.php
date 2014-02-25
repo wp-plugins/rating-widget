@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.0
+Version: 2.0.1
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -152,6 +152,11 @@ class RatingWidgetPlugin
         RWLogger::Log("WP_RW__CLIENT_ADDR", WP_RW__CLIENT_ADDR);
         RWLogger::Log("WP_RW__PLUGIN_DIR", WP_RW__PLUGIN_DIR);
         RWLogger::Log("WP_RW__PLUGIN_URL", WP_RW__PLUGIN_URL);
+        RWLogger::Log("WP_RW__DEBUG", json_encode(WP_RW__DEBUG));
+        RWLogger::Log("WP_RW__SHOW_PHP_ERRORS", json_encode(WP_RW__SHOW_PHP_ERRORS));
+        RWLogger::Log("WP_RW__LOCALHOST_SCRIPTS", json_encode(WP_RW__LOCALHOST_SCRIPTS));
+        RWLogger::Log("WP_RW__CACHING_ON", json_encode(WP_RW__CACHING_ON));
+        RWLogger::Log("WP_RW__STAGING", json_encode(WP_RW__STAGING));
     }
     
     private function SetupOnDashboard()
@@ -717,10 +722,10 @@ class RatingWidgetPlugin
         return $token;
     }
 
-    public static function AddToken(&$pData, $pServerCall = false)
+    public function AddToken(&$pData, $pServerCall = false)
     {
         $timestamp = time();
-        $token = self::GenerateToken($timestamp, $pServerCall);
+        $token = $this->GenerateToken($timestamp, $pServerCall);
         $pData["timestamp"] = $timestamp;
         $pData["token"] = $token;
         
@@ -735,18 +740,10 @@ class RatingWidgetPlugin
             RWLogger::Log("RemoteCall", 'Address: ' . WP_RW__ADDRESS . "/{$pPage}");
         }
         
-        if (!WP_RW__CACHING_ON)
+        if (false === WP_RW__CACHING_ON)
             // No caching on debug mode.
             $pExpiration = false;
 
-        if (false !== WP_RW__USER_SECRET)
-        {
-            if (RWLogger::IsOn())
-                RWLogger::Log("is secure call", "true");
-            
-            self::AddToken($pData, true);
-        }
-        
         $cacheKey = '';
         if (false !== $pExpiration)
         {
@@ -756,14 +753,28 @@ class RatingWidgetPlugin
             // Try to get cached item.
             $value = get_transient($cacheKey);
             
+            if (RWLogger::IsOn())
+            {
+                RWLogger::Log("RemoteCall", "TRANSIENT_KEY - " . $cacheKey);
+                RWLogger::Log("RemoteCall", "TRANSIENT_VAL - " . $value);
+            }
+
             // If found returned cached value.
             if (false !== $value)
             {
                 if (RWLogger::IsOn())
-                    RWLogger::Log('IS_CACHED', 'true');
+                    RWLogger::Log('RemoteCall', 'IS_CACHED: TRUE');
                 
                 return $value;
             }
+        }
+
+        if (false !== WP_RW__USER_SECRET)
+        {
+            if (RWLogger::IsOn())
+                RWLogger::Log("RemoteCall", "SECURE");
+            
+            $this->AddToken($pData, true);
         }
 
         if (RWLogger::IsOn())
@@ -3477,7 +3488,7 @@ class RatingWidgetPlugin
         
         $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
         
-        if (true === $pAddSchema)
+        if (true === $pAddSchema && 'front-post' !== $this->post_class)
         {
             $data = $this->GetRatingDataByRatingID($pUrid);
             
@@ -5128,6 +5139,6 @@ function ratingwidget() {
 if (defined('WP_RW___LATE_LOAD'))
     add_action('plugins_loaded', 'ratingwidget', (int)WP_RW___LATE_LOAD);
 else
-    $GLOBALS['rw'] = &ratingwidget();
+    $GLOBALS['rw'] = ratingwidget();
 endif;
 ?>

@@ -106,6 +106,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.0.1 =
+* Major Fix: Fixed caching of ratings data for Google Rich-Snippets (for Premium users) and Top-Rated Widget. Should highly improve plugin's load time.
+* Fix: Minor PHP fixes (call to method as if it was static).
+
 = 2.0.0 =
 * Fix: "Hide Star Rating" in page/post editor was fixed.
 * Fix: Spanish "votes" translation was fixed.
