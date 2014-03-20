@@ -605,103 +605,121 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                 $values["{$type}_order"] = WP_RW__TR_DEFAULT_ORDERY;
         }
 ?>
-<div id="rw_wp_top_rated_settings">
-    <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Widget Title', WP_RW__ID); ?>: <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></label></p>
-    <p><label for="<?php echo $this->get_field_id('title_max_length'); ?>"><?php _e('Title Max Length', WP_RW__ID); ?>: <input id="<?php echo $this->get_field_id('title_max_length'); ?>" name="<?php echo $this->get_field_name('title_max_length'); ?>" type="text" value="<?php echo esc_attr( $titleMaxLength ); ?>" /></label></p>
+<div id="rw_wp_top_rated_settings" class="new">
+    <div class="rw-toprated-settings-section">
+        <div class="rw-section-body">
+            <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Widget Title', WP_RW__ID); ?>: <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></label></p>
+            <p><label for="<?php echo $this->get_field_id('title_max_length'); ?>"><?php _e('Title Max Length', WP_RW__ID); ?>: <input style="width: 110px;" id="<?php echo $this->get_field_id('title_max_length'); ?>" name="<?php echo $this->get_field_name('title_max_length'); ?>" type="text" value="<?php echo esc_attr( $titleMaxLength ); ?>" /></label></p>
+        </div>
+    </div>
 <?php
         foreach ($types as $type)
         {
             $typeTitle = ucwords(str_replace("_", " ", $type));
+            $checked = "";
+            $selected = '';
+            if ($values["show_{$type}"] == 1){
+                $checked = ' checked="checked"';
+                $selected = ' selected';
+            }
 ?>
-    <h4><?php echo $typeTitle; ?></h4>
-    <p>
-        <label for="<?php echo $this->get_field_id("show_{$type}"); ?>">
+    <div class="rw-toprated-settings-section<?php echo $selected ?>">
+        <h4>
+            <label for="<?php echo $this->get_field_id("show_{$type}"); ?>" title="On / Off">
+            <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("show_{$type}"); ?>" name="<?php echo $this->get_field_name("show_{$type}"); ?>" value="1"<?php echo ($checked); ?> />
+                <?php echo $typeTitle; ?>
+            </label>
+        </h4>
+        <div class="rw-section-body">
+            <?php if (in_array($type, array('posts', 'pages'))) : ?>
             <?php
-                $checked = "";
-                if ($values["show_{$type}"] == 1){
-                    $checked = ' checked="checked"';
-                }
+                $styles = array(
+                    'legacy' => 'Titles (Legacy)',
+                    'thumbs' => 'Thumbs (160px X 100px) + Titles',
+                    'compact_thumbs' => 'Compact Thumbs (50px X 40px) + Titles',
+                );
             ?>
-        <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("show_{$type}"); ?>" name="<?php echo $this->get_field_name("show_{$type}"); ?>" value="1"<?php echo ($checked); ?> />
-             <?php _e("Show for {$type}", WP_RW__ID); ?>
-        </label>
-    </p>
-    <?php if (in_array($type, array('posts', 'pages'))) : ?>
-    <?php
-        $styles = array(
-            'legacy' => 'Titles (Legacy)',
-            'thumbs' => 'Thumbs (160px X 100px) + Titles',
-            'compact_thumbs' => 'Compact Thumbs (50px X 40px) + Titles',
-        );
-    ?>
-    <p>
-        <select id="<?php echo $this->get_field_id('style'); ?>" name="<?php echo $this->get_field_name("{$type}_style"); ?>" style="font-size: 11px;">
-        <?php $i = 0; // for old versions ?>
-        <?php foreach ($styles as $key => $val) : ?>
-            <option value="<?php echo $key?>"<?php if ($key == $values["{$type}_style"] || $i === $values["{$type}_style"]) echo ' selected="selected"' ?>><?php echo $val; ?></option>
-            <?php $i++; ?>
-        <?php endforeach; ?>
-        </select>
-    </p>
-    <?php endif; ?>
-    <?php
-        /* (1.3.3) - Conditional title display */
-    ?>
-    <p>
-        <label for="<?php echo $this->get_field_id("show_{$type}_title"); ?>">
-            <?php
-                $checked = "";
-                if ($values["show_{$type}_title"] == 1)
-                    $checked = ' checked="checked"';
-            ?>
-        <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("show_{$type}_title"); ?>" name="<?php echo $this->get_field_name("show_{$type}_title"); ?>" value="1"<?php echo ($checked); ?> />
-             <?php _e("Show '" . $type . "' title", WP_RW__ID); ?>
-        </label>
-    </p>
-    <p>
-        <label for="<?php echo $this->get_field_id("{$type}_title"); ?>"><?php _e(ucwords($type) . " Title", WP_RW__ID); ?>:
-            <?php
-                $values["{$type}_title"] = empty($values["{$type}_title"]) ? $typeTitle : $values["{$type}_title"];
-            ?>
-            <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name("{$type}_title"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_title"]); ?>" style="width: 120px;" />
-        </label>
-    </p>
-    <p>
-        <label for="rss-items-<?php echo $values["{$type}_count"];?>"><?php _e("How many {$type} would you like to display?", WP_RW__ID); ?>
-                <select id="<?php echo $this->get_field_id("{$type}_count"); ?>" name="<?php echo $this->get_field_name("{$type}_count"); ?>">
-            <?php
-                for ($i = 1; $i <= 25; $i++){
-                    echo "<option value='{$i}' " . ($values["{$type}_count"] == $i ? "selected='selected'" : '') . ">{$i}</option>";
-                }
-            ?>
+            <p>
+                <select id="<?php echo $this->get_field_id('style'); ?>" name="<?php echo $this->get_field_name("{$type}_style"); ?>" style="font-size: 11px;">
+                <?php $i = 0; // for old versions ?>
+                <?php foreach ($styles as $key => $val) : ?>
+                    <option value="<?php echo $key?>"<?php if ($key == $values["{$type}_style"] || $i === $values["{$type}_style"]) echo ' selected="selected"' ?>><?php echo $val; ?></option>
+                    <?php $i++; ?>
+                <?php endforeach; ?>
                 </select>
-        </label>
-    </p>
-    <p>
-        <label for="<?php echo $this->get_field_id("{$type}_min_votes"); ?>"><?php _e("Min Votes", WP_RW__ID); ?> (>= 1):
-            <input style="width: 40px; text-align: center;" id="<?php echo $this->get_field_id("{$type}_min_votes"); ?>" name="<?php echo $this->get_field_name("{$type}_min_votes"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_min_votes"]); ?>" />
-        </label>
-    </p>
-    <p>
-        <label for="rss-items-<?php echo $values["{$type}_orderby"];?>"><?php _e("Order By", WP_RW__ID); ?>:
-                <select id="<?php echo $this->get_field_id("{$type}_orderby"); ?>" name="<?php echo $this->get_field_name("{$type}_orderby"); ?>">
+            </p>
+            <?php endif; ?>
+            <?php
+                /* (1.3.3) - Conditional title display */
+            ?>
+            <p class="rw-toprated-title">
                 <?php
-                    for ($i = 0, $len = count($orders); $i <  $len; $i++)
+                    $disabled = ' disabled="disabled"';
+                    $checked = "";
+                    if ($values["show_{$type}_title"] == 1)
                     {
-                        echo '<option value="' . $orders[$i] . '"' . ($values["{$type}_orderby"] == $orders[$i] ? "selected='selected'" : '') . '>' . $orders_labels[$i] . '</option>';
+                        $checked = ' checked="checked"';
+                        $disabled = '';
                     }
                 ?>
-                </select>
-        </label>
-    </p>
-    <p>
-        <label for="rss-items-<?php echo $values["{$type}_order"];?>"><?php _e("Order", WP_RW__ID); ?>:
-                <select id="<?php echo $this->get_field_id("{$type}_order"); ?>" name="<?php echo $this->get_field_name("{$type}_order"); ?>">
-                    <option value="DESC"<?php echo ($values["{$type}_order"] == "DESC" ? " selected='selected'" : '');?>>BEST (Descending)</option>
-                    <option value="ASC"<?php echo ($values["{$type}_order"] == "ASC" ? " selected='selected'" : '');?>>WORST (Ascending)</option>
-                </select>
-        </label>
-    </p>
+                <label class="rw-enabler" for="<?php echo $this->get_field_id("show_{$type}_title"); ?>">
+                <input type="checkbox" title="Show Title" class="checkbox" id="<?php echo $this->get_field_id("show_{$type}_title"); ?>" name="<?php echo $this->get_field_name("show_{$type}_title"); ?>" value="1"<?php echo ($checked); ?> />
+                    <?php
+                        $values["{$type}_title"] = empty($values["{$type}_title"]) ? $typeTitle : $values["{$type}_title"];
+                    ?>
+                    <?php _e("Title", WP_RW__ID); ?>:
+                </label>
+                    <input id="<?php echo $this->get_field_id('title'); ?>"<?php echo $disabled;?> name="<?php echo $this->get_field_name("{$type}_title"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_title"]); ?>" style="width: 120px;" />
+            </p>
+            <p>
+                <label for="rss-items-<?php echo $values["{$type}_count"];?>"><?php _e("Max items:", WP_RW__ID); ?>
+                        <select id="<?php echo $this->get_field_id("{$type}_count"); ?>" name="<?php echo $this->get_field_name("{$type}_count"); ?>">
+                    <?php
+                        for ($i = 1; $i <= 25; $i++){
+                            echo "<option value='{$i}' " . ($values["{$type}_count"] == $i ? "selected='selected'" : '') . ">{$i}</option>";
+                        }
+                    ?>
+                        </select>
+                </label>
+            </p>
+            <p>
+                <label for="<?php echo $this->get_field_id("{$type}_min_votes"); ?>"><?php _e("Min Votes", WP_RW__ID); ?> (>= 1):
+                    <input style="width: 40px; text-align: center;" id="<?php echo $this->get_field_id("{$type}_min_votes"); ?>" name="<?php echo $this->get_field_name("{$type}_min_votes"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_min_votes"]); ?>" />
+                </label>
+            </p>
+            <p>
+                <label for="rss-items-<?php echo $values["{$type}_orderby"];?>"><?php _e("Order By", WP_RW__ID); ?>:
+                        <select id="<?php echo $this->get_field_id("{$type}_orderby"); ?>" name="<?php echo $this->get_field_name("{$type}_orderby"); ?>">
+                        <?php
+                            for ($i = 0, $len = count($orders); $i <  $len; $i++)
+                            {
+                                echo '<option value="' . $orders[$i] . '"' . ($values["{$type}_orderby"] == $orders[$i] ? "selected='selected'" : '') . '>' . $orders_labels[$i] . '</option>';
+                            }
+                        ?>
+                        </select>
+                </label>
+            </p>
+            <p>
+                <label for="rss-items-<?php echo $values["{$type}_order"];?>"><?php _e("Order", WP_RW__ID); ?>:
+                        <select id="<?php echo $this->get_field_id("{$type}_order"); ?>" name="<?php echo $this->get_field_name("{$type}_order"); ?>">
+                            <option value="DESC"<?php echo ($values["{$type}_order"] == "DESC" ? " selected='selected'" : '');?>>BEST (Descending)</option>
+                            <option value="ASC"<?php echo ($values["{$type}_order"] == "ASC" ? " selected='selected'" : '');?>>WORST (Ascending)</option>
+                        </select>
+                </label>
+            </p>
+            <!-- <p>
+                <label for="rss-items-<?php echo $values["{$type}_daterange"];?>"><?php _e("Date Range", WP_RW__ID); ?>:
+                        <select id="<?php echo $this->get_field_id("{$type}_daterange"); ?>" name="<?php echo $this->get_field_name("{$type}_daterange"); ?>">
+                            <option value="-1"<?php echo ($values["{$type}_daterange"] == "-1" ? " selected='selected'" : '');?>>All Time</option>
+                            <option value="365"<?php echo ($values["{$type}_daterange"] == "365" ? " selected='selected'" : '');?>>Yearly</option>
+                            <option value="30"<?php echo ($values["{$type}_daterange"] == "30" ? " selected='selected'" : '');?>>Monthly</option>
+                            <option value="7"<?php echo ($values["{$type}_daterange"] == "7" ? " selected='selected'" : '');?>>Weekly</option>
+                            <option value="1"<?php echo ($values["{$type}_daterange"] == "1" ? " selected='selected'" : '');?>>Daily</option>
+                        </select>
+                </label>
+            </p> -->
+        </div>
+    </div>
 <?php        
         }
 ?>
@@ -718,8 +736,9 @@ function rw_toprated_widget_load_style()
 
 function rw_toprated_widget_load_admin_style()
 {
-    rw_enqueue_style('rw_toprated', 'wordpress/toprated.css');
+    rw_enqueue_style('rw_toprated_settings', 'wordpress/toprated-settings.css');
     rw_enqueue_style('rw_recommendations', 'widget/recommendations.css');
+    rw_enqueue_script('rw_toprated_settings', 'wordpress/toprated-settings.js');
 }
 
 function rw_register_toprated_widget()

@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.1
+Version: 2.0.2
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -146,17 +146,19 @@ class RatingWidgetPlugin
         RWLogger::Log("WP_RW__VERSION", WP_RW__VERSION);
         RWLogger::Log("WP_RW__USER_KEY", WP_RW__USER_KEY);
         RWLogger::Log('WP_RW__USER_ID', WP_RW__USER_ID);
-        RWLogger::Log("WP_RW__USER_SECRET", WP_RW__USER_SECRET);
         RWLogger::Log("WP_RW__DOMAIN", WP_RW__DOMAIN);
-        RWLogger::Log("WP_RW__SERVER_ADDR", WP_RW__SERVER_ADDR);
         RWLogger::Log("WP_RW__CLIENT_ADDR", WP_RW__CLIENT_ADDR);
         RWLogger::Log("WP_RW__PLUGIN_DIR", WP_RW__PLUGIN_DIR);
         RWLogger::Log("WP_RW__PLUGIN_URL", WP_RW__PLUGIN_URL);
-        RWLogger::Log("WP_RW__DEBUG", json_encode(WP_RW__DEBUG));
         RWLogger::Log("WP_RW__SHOW_PHP_ERRORS", json_encode(WP_RW__SHOW_PHP_ERRORS));
         RWLogger::Log("WP_RW__LOCALHOST_SCRIPTS", json_encode(WP_RW__LOCALHOST_SCRIPTS));
         RWLogger::Log("WP_RW__CACHING_ON", json_encode(WP_RW__CACHING_ON));
         RWLogger::Log("WP_RW__STAGING", json_encode(WP_RW__STAGING));
+
+        // Don't log secure data.
+//        RWLogger::Log("WP_RW__USER_SECRET", WP_RW__USER_SECRET);
+//        RWLogger::Log("WP_RW__SERVER_ADDR", WP_RW__SERVER_ADDR);
+//        RWLogger::Log("WP_RW__DEBUG", json_encode(WP_RW__DEBUG));
     }
     
     private function SetupOnDashboard()
@@ -593,7 +595,7 @@ class RatingWidgetPlugin
     {
         RWLogger::LogEnterence("MigrateOptions");
 
-        $this->_OPTIONS_CACHE = new stdClass();
+        $this->ClearOptions();
         
         $site_public_key = get_option(WP_RW__DB_OPTION_USER_KEY);
 
@@ -637,6 +639,10 @@ class RatingWidgetPlugin
         if ($pFlush || !isset($this->_OPTIONS_CACHE))
         {
             $this->_OPTIONS_CACHE = wp_cache_get(WP_RW__OPTIONS, WP_RW__ID);
+            
+            if (is_array($this->_OPTIONS_CACHE))
+                $this->ClearOptions();
+            
             $cached = true;
             if (false === $this->_OPTIONS_CACHE)
             {
@@ -645,6 +651,9 @@ class RatingWidgetPlugin
                 if (false !== $this->_OPTIONS_CACHE)
                     $this->_OPTIONS_CACHE = json_decode($this->_OPTIONS_CACHE);
                 
+                if (is_array($this->_OPTIONS_CACHE))
+                    $this->ClearOptions();
+                    
                 $cached = false;
             }
             
@@ -663,7 +672,7 @@ class RatingWidgetPlugin
     
     public function ClearOptions()
     {
-        $this->_OPTIONS_CACHE = array();
+        $this->_OPTIONS_CACHE = new stdClass();
     }
     
     public function GetOption($pOption, $pFlush = false, $pDefault = null)
@@ -672,6 +681,14 @@ class RatingWidgetPlugin
             $pDefault = isset($this->_OPTIONS_DEFAULTS[$pOption]) ? $this->_OPTIONS_DEFAULTS[$pOption] : false;
         
         return isset($this->_OPTIONS_CACHE->{$pOption}) ? $this->_OPTIONS_CACHE->{$pOption} : $pDefault;
+    }
+    
+    public function UnsetOption($pOption)
+    {
+        if (!isset($this->_OPTIONS_CACHE->{$pOption}))
+            return;
+        
+        unset($this->_OPTIONS_CACHE->{$pOption});
     }
     
     public function SetOption($pOption, $pValue)
@@ -1132,7 +1149,7 @@ class RatingWidgetPlugin
             $this->SetOption(WP_RW__DB_OPTION_TRACKING, (isset($_POST['tracking']) && '1' == $_POST['tracking']));
             
             $this->StoreOptions();
-            
+
             // Reload the page with the keys.
             rw_admin_redirect();
         }
@@ -1619,7 +1636,7 @@ class RatingWidgetPlugin
         }
         
         $rating_options = $this->GetOption($rating_options);
-        $rating_type = $rating_options->type;
+        $rating_type = isset($rating_options->type) ? $rating_options->type : 'star';
         $rating_stars = ($rating_type === "star") ? 
                         ((isset($rating_options->advanced) && isset($rating_options->advanced->star) && isset($rating_options->advanced->star->stars)) ? $rating_options->advanced->star->stars : WP_RW__DEF_STARS) :
                         false;
@@ -2222,9 +2239,29 @@ class RatingWidgetPlugin
         if ("true" === $rw_delete_history)
         {
             // Delete user-key & secret.
-            global $wpdb;
-            $ret = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name = 'rw_user_key' OR option_name = 'rw_user_secret'");
+            $this->UnsetOption(WP_RW__DB_OPTION_USER_KEY);
+            $this->UnsetOption(WP_RW__DB_OPTION_USER_ID);
+            $this->UnsetOption(WP_RW__DB_OPTION_USER_SECRET);
+            $this->StoreOptions();
             
+            /*global $wpdb;
+            $options = $wpdb->get_var("SELECT option_value FROM FROM {$wpdb->options} WHERE option_name = '" . WP_RW__OPTIONS . "'");
+            
+            if (is_string($options) && !empty($options))
+            {
+                $options = json_decode($options);
+                if (is_object($options))
+                {
+                    // Unset keys.
+                    unset($options->{WP_RW__USER_SECRET});
+                    unset($options->{WP_RW__USER_KEY});
+                    
+                    $newvalue = json_encode($options);
+                    $newvalue = sanitize_option(WP_RW__OPTIONS, $newvalue);
+                    $result = $wpdb->update( $wpdb->options, array( 'option_value' => $newvalue ), array( 'option_name' => WP_RW__OPTIONS ) );
+                }
+            }*/
+
             // Goto user-key creation page.
             rw_admin_redirect();
         }
@@ -2259,6 +2296,14 @@ class RatingWidgetPlugin
                 // Re-Load all advanced settings.
                     $rw_flash_dependency = $this->GetOption(WP_RW__FLASH_DEPENDENCY);
                     $rw_show_on_mobile = $this->GetOption(WP_RW__SHOW_ON_MOBILE);
+                    $tracking = $this->GetOption(WP_RW__DB_OPTION_TRACKING);
+
+                    $this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
+                    $this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
+                    $this->SetOption(WP_RW__DB_OPTION_TRACKING, $tracking);
+                    $this->SetOption(WP_RW__DB_OPTION_USER_KEY, WP_RW__USER_KEY);
+                    $this->SetOption(WP_RW__DB_OPTION_USER_ID, WP_RW__USER_ID);
+                    $this->SetOption(WP_RW__DB_OPTION_USER_SECRET, WP_RW__USER_SECRET);
             }
             else
             {

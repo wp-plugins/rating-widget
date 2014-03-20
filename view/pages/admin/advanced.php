@@ -116,10 +116,10 @@
                                         <td>
                                             <input type="hidden" id="rw_delete_history" name="rw_delete_history" value="false" />
                                             <span class="rw-ui-button rw-ui-critical">
-                                                <input type="button" style="background: none;" value="Delete History" />
+                                                <input type="button" style="background: none;" value="New Account (Delete History)" />
                                             </span>
                                         </td>
-                                        <td><span>Delete your unique-user-key and generate new one.</span><br /><span><b style="color: red;">Notice: All your ratings data will be deleted.</b></span></td>
+                                        <td><span>Create new FREE ratings account.</span><br /><span><b style="color: red;">Notice: All your current ratings data will be lost.</b></span></td>
                                     </tr>
                                 </table>
                             </div>
