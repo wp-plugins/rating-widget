@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/get-the-word-press-plugin/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce
 Requires at least: 2.6
 Tested up to: 3.8
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
@@ -106,6 +106,13 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.0.3 =
+* Hot Fix: Top-Rated Thumbnail images cache is now automatically cleared after post/page featured image update.
+* Fix: Updated WP_User->id to WP_User->ID due to earlier deprecation.
+* Fix: Account activation is now working correctly on HTTPS management dashboards.
+* Fix: FB Fans widget is working on HTTPS.
+* New: Add quick plugin review link to support the plugin.
+
 = 2.0.2 =
 * Update: Improved Top-Rated Widget UI and UX with accordion style tabs.
 * Fix: Fixed settings saving issues after history cleanup.

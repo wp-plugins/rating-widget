@@ -17,7 +17,7 @@
         define("WP_RW__ADDRESS_IMG", "http://localhost:8080/img/");
         define("WP_RW__ADDRESS_TMB", "http://localhost:8080/apps/thumb/");
     }
-    else if (WP_RW__HTTPS && false !== WP_RW__USER_SECRET)
+    else if (WP_RW__HTTPS)
     {
         define("WP_RW__ADDRESS_CSS", "https://secure." . WP_RW__DOMAIN . "/css/");
         define("WP_RW__ADDRESS_JS", "https://secure." . WP_RW__DOMAIN . "/js/");

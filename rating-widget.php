@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.2
+Version: 2.0.3
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -213,7 +213,8 @@ class RatingWidgetPlugin
         add_action('admin_head', array(&$this, "rw_admin_menu_icon_css"));
         add_action('admin_menu', array(&$this, 'admin_menu'));
         add_action('admin_menu', array(&$this, 'AddPostMetaBox')); // Metabox for posts/pages
-        add_action('save_post', array(&$this, 'SavePostData'));            
+        add_action('save_post', array(&$this, 'SavePostData'));
+        add_action('updated_post_meta', array(&$this, 'PurgePostFeaturedImageTransient'), 10, 4);
         
         if ($this->_inDashboard)
         {
@@ -3038,8 +3039,8 @@ class RatingWidgetPlugin
                     if (false === WP_RW__USER_SECRET)
                         rw_require_once_view('upgrade.php');
                 ?>
-                <?php rw_require_once_view('fb.php'); ?>
-                <?php rw_require_once_view('twitter.php'); ?>
+                <?php //rw_require_once_view('fb.php'); ?>
+                <?php //rw_require_once_view('twitter.php'); ?>
             </div>
         </div>
     </form>
@@ -4308,10 +4309,10 @@ class RatingWidgetPlugin
                             echo ', huid: "' . WP_RW__USER_ID . '"';
                         
                         $user = wp_get_current_user();
-                        if ($user->id !== 0)
+                        if ($user->ID !== 0)
                         {
                             // User logged-in.
-                            $vid = $user->id;
+                            $vid = $user->ID;
                             // Set voter id to logged user id.
                             echo ", vid: {$vid}";
                         }
@@ -4645,6 +4646,12 @@ class RatingWidgetPlugin
         $this->StoreOptions();
         
         if (RWLogger::IsOn()){ RWLogger::LogDeparture("SavePostData"); }
+    }
+    
+    function PurgePostFeaturedImageTransient($meta_id = 0, $post_id = 0, $meta_key = '', $_meta_value = '')
+    {
+        if ('_thumbnail_id' === $meta_key)
+            delete_transient('post_thumb_' . $post_id);
     }
     
     function DumpLog($pElement = false)

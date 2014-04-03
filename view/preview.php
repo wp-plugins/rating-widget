@@ -2,7 +2,32 @@
     $options = rw_options();
 ?>
 <div id="rw_wp_preview" class="postbox rw-body">
+    <table cellpadding="0" cellspacing="0" style="float: right;height: 45px;">
+        <tr>
+            <td style="vertical-align: middle;">
+                <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Frating.widget&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;share=false&amp;height=21&amp;appId=1423642847870677" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px; width: 100px;" allowTransparency="true"></iframe>
+            </td>
+            <td style="vertical-align: middle;">
+                <a href="https://twitter.com/ratingwidget" data-show-screen-name="false" class="twitter-follow-button">Follow</a>
+                <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
+            </td>
+            <td style="vertical-align: middle;">
+<!-- Place this tag where you want the +1 button to render. -->
+<div class="g-plusone" data-size="medium" data-href="http://rating-widget.com"></div>
+
+<!-- Place this tag after the last +1 button tag. -->
+<script type="text/javascript">
+(function() {
+var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+po.src = 'https://apis.google.com/js/platform.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script>
+            </td>
+        </tr>
+    </table>
     <h3>Live Preview</h3>
+    
     <div class="inside" style="padding: 10px;">
         <div id="rw_preview_container" style="text-align: <?php
             if ($options->advanced->layout->align->ver != "middle")
@@ -115,13 +140,17 @@
                 }
             </script>
         </div>
-        <p class="submit" style="margin-top: 10px;">
+        <div class="submit" style="margin-top: 10px; padding: 0;">
             <input type="hidden" name="<?php echo rw_settings()->form_hidden_field_name; ?>" value="Y">
             <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
+
             <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
             <?php if (false === WP_RW__USER_SECRET) : ?>
             <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank">Upgrade Now!</a>
             <?php endif; ?>
-        </p>
+            <span style="margin-left:10px; font-size: 1em;">Like it?  <a href="http://wordpress.org/support/view/plugin-reviews/rating-widget?rate=5#postform" target="_blank" style="
+    font-weight: bold;
+">Support the plugin with ★ 5 Stars</a></span>
+        </div>
     </div>
 </div>
