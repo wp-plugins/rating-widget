@@ -281,7 +281,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                             else if ('private' === $status && !is_user_logged_in())
                             {
                                 if (RWLogger::IsOn())
-                                    RWLogger::Log('POST_PRIVATE && USER_LOGGED_OUT');
+                                    RWLogger::Log('RatingWidgetPlugin_TopRatedWidget::widget', 'POST_PRIVATE && USER_LOGGED_OUT');
 
                                 // Private post but user is not logged in.
                                 continue;
@@ -539,8 +539,8 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         $types = $this->GetTypes();
 
         $instance = $old_instance;
+        $instance['title'] = $new_instance['title'];
         $instance['title_max_length'] = (int)$new_instance['title_max_length'];
-        $instance['title'] = strip_tags($new_instance['title']);
         foreach ($types as $type)
         {
             $instance["show_{$type}"] = (int)$new_instance["show_{$type}"];
@@ -566,7 +566,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         $items = array();
         
         // Update default values.
-        $values = array('title' => '', 'title_max_length' => 30);
+        $values = array('title' => 'Top Rated', 'title_max_length' => 30);
         foreach ($types as $type)
         {
             $values["show_{$type}"] = ('posts' === $type);
@@ -606,7 +606,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         }
 ?>
 <div id="rw_wp_top_rated_settings" class="new">
-    <div class="rw-toprated-settings-section">
+    <div class="rw-toprated-settings-section selected">
         <div class="rw-section-body">
             <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Widget Title', WP_RW__ID); ?>: <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></label></p>
             <p><label for="<?php echo $this->get_field_id('title_max_length'); ?>"><?php _e('Title Max Length', WP_RW__ID); ?>: <input style="width: 110px;" id="<?php echo $this->get_field_id('title_max_length'); ?>" name="<?php echo $this->get_field_name('title_max_length'); ?>" type="text" value="<?php echo esc_attr( $titleMaxLength ); ?>" /></label></p>

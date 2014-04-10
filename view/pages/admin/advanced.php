@@ -36,10 +36,10 @@
                             <h3>Flash Dependency</h3>
                             <div class="inside rw-ui-content-container rw-no-radius" style="padding: 5px; width: 610px;">
                                 <div class="rw-ui-img-radio rw-ui-hor<?php if ($settings->flash_dependency) echo ' rw-selected';?>">
-                                    <i class="rw-ui-sprite rw-ui-flash"></i> <input type="radio" name="rw_flash_dependency" value="true" <?php if ($settings->flash_dependency) echo ' checked="checked"';?>> <span>Enable Flash dependency (track computers using LSO).</span>
+                                    <i class="rw-ui-sprite rw-ui-flash"></i> <input type="radio" name="rw_flash_dependency" value="true" <?php if ($settings->flash_dependency) echo ' checked="checked"';?>> <span>Enable Flash dependency (track devices using LSO).</span>
                                 </div>
                                 <div class="rw-ui-img-radio rw-ui-hor<?php if (!$settings->flash_dependency) echo ' rw-selected';?>">
-                                    <i class="rw-ui-sprite rw-ui-flash-disabled"></i> <input type="radio" name="rw_flash_dependency" value="false" <?php if (!$settings->flash_dependency) echo ' checked="checked"';?>> <span>Disable Flash dependency (computers with identical IPs won't be distinguished).</span>
+                                    <i class="rw-ui-sprite rw-ui-flash-disabled"></i> <input type="radio" name="rw_flash_dependency" value="false" <?php if (!$settings->flash_dependency) echo ' checked="checked"';?>> <span>Disable Flash dependency (devices with identical IPs won't be distinguished).</span>
                                 </div>
                                 <span style="font-size: 10px; background: white; padding: 2px; border: 1px solid gray; display: block; margin-top: 5px; font-weight: bold; background: rgb(240,240,240); color: black;">Flash dependency <b style="text-decoration: underline;">don't</b> means that if a user don't have a flash player installed on his browser then it will stuck. The reason to disable flash is for users which have flash blocking add-ons (e.g. FF Flashblock add-on), which is quite rare.</span>
                             </div>

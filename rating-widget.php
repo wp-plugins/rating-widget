@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget Plugin
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.3
+Version: 2.0.4
 Author: Rating-Widget
 Author URI: http://rating-widget.com/get-the-word-press-plugin/
 License: GPLv2 or later
@@ -2310,9 +2310,7 @@ class RatingWidgetPlugin
             {
                 // Save advanced settings.
                     // Get posted flash dependency.
-                    if (isset($_POST["rw_flash_dependency"]) && 
-                        in_array($_POST["rw_flash_dependency"], array("true", "false")) &&
-                        $_POST["rw_flash_dependency"] != $rw_flash_dependency)
+                    if (isset($_POST["rw_flash_dependency"]) && in_array($_POST["rw_flash_dependency"], array("true", "false")))
                     {
                         $rw_flash_dependency = ('true' == $_POST["rw_flash_dependency"]);
                         // Save flash dependency.
@@ -2320,9 +2318,7 @@ class RatingWidgetPlugin
                     }
 
                     // Get mobile flag.
-                    if (isset($_POST["rw_show_on_mobile"]) && 
-                        in_array($_POST["rw_show_on_mobile"], array("true", "false")) &&
-                        $_POST["rw_show_on_mobile"] != $rw_show_on_mobile)
+                    if (isset($_POST["rw_show_on_mobile"]) && in_array($_POST["rw_show_on_mobile"], array("true", "false")))
                     {
                         $rw_show_on_mobile = ('true' == $_POST["rw_show_on_mobile"]);
                         // Save show on mobile flag.
@@ -4362,7 +4358,8 @@ class RatingWidgetPlugin
                 
                 RW_Advanced_Options = {
                     blockFlash: !(<?php
-                        echo $this->GetOption(WP_RW__FLASH_DEPENDENCY);
+                        $flash = $this->GetOption(WP_RW__FLASH_DEPENDENCY, true);
+                        echo in_array($flash, array('true', 'false')) ? $flash : ((false === $flash) ? 'false' : 'true');
                     ?>)
                 };
                 
