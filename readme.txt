@@ -1,4 +1,4 @@
-=== Rating-Widget: Star Rating System Plugin for WordPress ===
+=== Rating-Widget: Star Rating System ===
 Contributors: ratingwidget, svovaf
 Donate link: http://rating-widget.com/get-the-word-press-plugin/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce
