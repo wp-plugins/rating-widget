@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Rating-Widget: Star Rating System Plugin for WordPress
+Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
 Version: 2.0.5
