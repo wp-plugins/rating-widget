@@ -3,8 +3,8 @@ Contributors: ratingwidget, svovaf
 Donate link: http://rating-widget.com/get-the-word-press-plugin/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce
 Requires at least: 2.6
-Tested up to: 3.8
-Stable tag: 2.0.4
+Tested up to: 3.9
+Stable tag: 2.0.5
 License: GPLv2 or later
 
 Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
@@ -39,7 +39,7 @@ To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-p
 > #### Supported in 40 Languages
 > Rating-Widget star ratings are localizable and currently available in:
 >
-> Afrikaans, Arabic - العربية, Bengali - বাংলা, Bulgarian - български, Catalan - Català, Chinese - 汉语/漢語, Croatian - Hrvatski, Czech - Čeština, Danish - Dansk, English, Estonian - Eesti keel, Finnish - Suomi, French - Français, Georgian - ქართული, German - Deutsch, Greek - Ελληνικά, Hebrew - עברית, Hindi - हिंदी, Hungarian - Magyar, Indonesian - Bahasa Indonesia, Italian - Italiano, Japanese - 日本語, Korean - 한국어/조선말, Lithuanian - Lietuvių, Mongolian - Mongγol Kele, Nederlands - Dutch, Norwegian - Norsk, Persian - فارسی, Polish - Polska, Portuguese - Português, Romanian - Română, Russian - Русский, Serbian - Српски, Slovak - Slovenčina, Slovenian - Slovenščina, Spanish - Español, Swedish - Svenska, Tamil - தமிழ், Turkish - Türkçe, Vietnamese - Tiếng Việt, Ukrainian - Українська Мова
+> Afrikaans, Arabic - العربية, Bengali - বাংলা, Bulgarian - български, Catalan - Català, Chinese - 汉语/漢語, Croatian - Hrvatski, Czech - Čeština, Danish - Dansk, English, Estonian - Eesti keel, Finnish - Suomi, French - Français, Georgian - ქართული, German - Deutsch, Greek - Ελληνικά, Hebrew - עברית, Hindi - हिंदी, Hungarian - Magyar, Indonesian - Bahasa Indonesia, Italian - Italiano, Japanese - 日本語, Korean - 한국어/조선말, Lithuanian - Lietuvių, Maltese - Malti, Mongolian - Mongγol Kele, Nederlands - Dutch, Norwegian - Norsk, Persian - فارسی, Polish - Polska, Portuguese - Português, Romanian - Română, Russian - Русский, Serbian - Српски, Slovak - Slovenčina, Slovenian - Slovenščina, Spanish - Español, Swedish - Svenska, Tamil - தமிழ், Turkish - Türkçe, Vietnamese - Tiếng Việt, Ukrainian - Українська Мова
 >
 > Can't find your language? Help us translate [here](http://rating-widget.com/help-translate/): http://rating-widget.com/help-translate/
 
@@ -106,6 +106,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.0.5 =
+* New: Added Unlimited voting option to voting frequency settings.
+* New: Localized to Maltese.
+
 = 2.0.4 =
 * Fix: Top-Rated sidebar widget title & max length configurations are back.
 * Fix: Fixed advanced settings flash dependency change.

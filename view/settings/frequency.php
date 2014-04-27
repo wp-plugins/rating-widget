@@ -21,6 +21,9 @@
                 <div class="rw-ui-img-radio rw-ui-hor<?php if ($frequency == 365) echo ' rw-selected';?>" onclick="RWM.Set.frequency(RW.FREQUENCY.YEARLY);">
                     <input type="radio" name="rw_frequency" value="365" <?php if ($frequency == 365) echo ' checked="checked"';?>> <span><b>Annually</b> - user can vote once a year (365 days) for every rating.</span>
                 </div>
+                <div class="rw-ui-img-radio rw-ui-hor<?php if ($frequency == 0) echo ' rw-selected';?>" onclick="RWM.Set.frequency(RW.FREQUENCY.UNLIMITED);">
+                    <input type="radio" name="rw_frequency" value="0" <?php if ($frequency == 0) echo ' checked="checked"';?>> <span><b>Unlimited</b> - user can vote as many times as he likes.</span>
+                </div>
             </div>
         </div>
     </div>

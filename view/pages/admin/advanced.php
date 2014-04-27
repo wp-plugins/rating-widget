@@ -23,7 +23,7 @@
                                         <td class="rw-ui-def">
                                             <span>Secret:</span>
                                         </td>
-                                        <td><span style="font-size: 14px; color: green;"><?php echo (false === WP_RW__USER_SECRET) ? "NONE" : WP_RW__USER_SECRET;?></span></td>
+                                        <td><span style="font-size: 14px; color: green;"><?php echo (false === WP_RW__USER_SECRET) ? "NONE" : htmlspecialchars(WP_RW__USER_SECRET);?></span></td>
                                     </tr>
                                 </table>
                             </div>

@@ -27,6 +27,7 @@
 //        'la' => 'Latin',
         'lh' => 'Lithuanian - Lietuvių',
 //        'mk' => 'Macedonian - македонски јазик',
+        'mt' => 'Maltese - Malti',
         'mn' => 'Mongolian - Mongγol Kele',
         'nl' => 'Nederlands - Dutch',
         'no' => 'Norwegian - Norsk',
