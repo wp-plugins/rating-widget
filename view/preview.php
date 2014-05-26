@@ -8,7 +8,7 @@
                 <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Frating.widget&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;share=false&amp;height=21&amp;appId=1423642847870677" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px; width: 100px;" allowTransparency="true"></iframe>
             </td>
             <td style="vertical-align: middle;">
-                <a href="https://twitter.com/ratingwidget" data-show-screen-name="false" class="twitter-follow-button">Follow</a>
+                <a href="https://twitter.com/ratingwidget" data-show-screen-name="false" class="twitter-follow-button"><?php _e('Follow', WP_RW__ID) ?></a>
                 <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
             </td>
             <td style="vertical-align: middle;">
@@ -145,12 +145,12 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
             <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
 
             <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
-            <?php if (false === WP_RW__USER_SECRET) : ?>
-            <a href="<?php echo WP_RW__ADDRESS;?>/get-the-word-press-plugin/" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank">Upgrade Now!</a>
+            <?php if (!ratingwidget()->_c4ca4238a0b923820dcc509a6f75849b()) : ?>
+            <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank">Upgrade Now!</a>
             <?php endif; ?>
-            <span style="margin-left:10px; font-size: 1em;">Like it?  <a href="http://wordpress.org/support/view/plugin-reviews/rating-widget?rate=5#postform" target="_blank" style="
+            <span style="margin-left:10px; font-size: 1em;"><?php _e('Like it?', WP_RW__ID) ?>  <a href="http://wordpress.org/support/view/plugin-reviews/rating-widget?rate=5#postform" target="_blank" style="
     font-weight: bold;
-">Support the plugin with ★ 5 Stars</a></span>
+"><?php _e('Support the plugin with ★ 5 Stars', WP_RW__ID) ?></a></span>
         </div>
     </div>
 </div>

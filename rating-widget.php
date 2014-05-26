@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Rating-Widget: Star Rating System
-Plugin URI: http://rating-widget.com/get-the-word-press-plugin/
+Plugin URI: http://rating-widget.com/pricing/wordpress/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.5
+Version: 2.0.6
 Author: Rating-Widget
-Author URI: http://rating-widget.com/get-the-word-press-plugin/
+Author URI: http://rating-widget.com/pricing/wordpress/
 License: GPLv2 or later
 */
 
@@ -108,15 +108,19 @@ class RatingWidgetPlugin
         if (!$continue)
             return;
 
-        $this->SetupBuddyPress();
-        $this->SetupBBPress();
+        if ($this->_isRegistered)
+        {
+            add_action('init', array(&$this, 'LoadPlan'));
+            add_action('init', array(&$this, 'SetupBuddyPress'));
+            add_action('init', array(&$this, 'SetupBBPress'));
+        }
         
         $this->errors = new WP_Error();
         $this->success = new WP_Error();
 
         /**
         * IMPORTANT: 
-        *   All scripts/styles must be enqueued from those actions, 
+        *   All scripts/styles must be enqueued from these actions, 
         *   otherwise it will mass-up the layout of the admin's dashboard
         *   on RTL WP versions.
         */
@@ -125,6 +129,12 @@ class RatingWidgetPlugin
         require_once(WP_RW__PLUGIN_DIR . "/languages/dir.php");
         $this->languages = $rw_languages;
         $this->languages_short = array_keys($this->languages);
+
+        function rw_load_textdomain() {
+            load_plugin_textdomain( WP_RW__ID, false, dirname( plugin_basename( __FILE__ ) ) . '/langs' );
+        }
+        add_action( 'plugins_loaded', 'rw_load_textdomain' );
+
     }
     
     private function InitLogger()
@@ -144,8 +154,8 @@ class RatingWidgetPlugin
             return;
 
         RWLogger::Log("WP_RW__VERSION", WP_RW__VERSION);
-        RWLogger::Log("WP_RW__USER_KEY", WP_RW__USER_KEY);
-        RWLogger::Log('WP_RW__USER_ID', WP_RW__USER_ID);
+        RWLogger::Log("WP_RW__SITE_PUBLIC_KEY", WP_RW__SITE_PUBLIC_KEY);
+        RWLogger::Log('WP_RW__SITE_ID', WP_RW__SITE_ID);
         RWLogger::Log("WP_RW__DOMAIN", WP_RW__DOMAIN);
         RWLogger::Log("WP_RW__CLIENT_ADDR", WP_RW__CLIENT_ADDR);
         RWLogger::Log("WP_RW__PLUGIN_DIR", WP_RW__PLUGIN_DIR);
@@ -156,15 +166,14 @@ class RatingWidgetPlugin
         RWLogger::Log("WP_RW__STAGING", json_encode(WP_RW__STAGING));
 
         // Don't log secure data.
-//        RWLogger::Log("WP_RW__USER_SECRET", WP_RW__USER_SECRET);
+//        RWLogger::Log("WP_RW__SITE_SECRET_KEY", WP_RW__SITE_SECRET_KEY);
 //        RWLogger::Log("WP_RW__SERVER_ADDR", WP_RW__SERVER_ADDR);
 //        RWLogger::Log("WP_RW__DEBUG", json_encode(WP_RW__DEBUG));
     }
     
     private function SetupOnDashboard()
     {
-        if (RWLogger::IsOn())
-            RWLogger::LogEnterence("SetupOnDashboard");
+        RWLogger::LogEnterence("SetupOnDashboard");
 
         // Init settings.
         $this->settings = new RatingWidgetPlugin_Settings();
@@ -181,8 +190,7 @@ class RatingWidgetPlugin
     
     private function SetupOnSite()
     {
-        if (RWLogger::IsOn())
-            RWLogger::LogEnterence("SetupOnSite");
+        RWLogger::LogEnterence("SetupOnSite");
 
         if ($this->IsHideOnMobile() && $this->IsMobileDevice())
         {
@@ -199,8 +207,7 @@ class RatingWidgetPlugin
     
     private function SetupDashboardActions()
     {
-        if (RWLogger::IsOn())
-            RWLogger::LogEnterence("SetupDashboardActions");
+        RWLogger::LogEnterence("SetupDashboardActions");
 
         // Add link to settings page.
         add_filter('plugin_action_links', array(&$this, 'ModifyPluginActionLinks' ), 10, 2);
@@ -230,8 +237,7 @@ class RatingWidgetPlugin
     
     private function SetupSiteActions()
     {
-        if (RWLogger::IsOn())
-            RWLogger::LogEnterence("SetupSiteActions");
+        RWLogger::LogEnterence("SetupSiteActions");
 
         // If not registered, don't add any actions to site.
         if (!$this->_isRegistered)
@@ -252,8 +258,7 @@ class RatingWidgetPlugin
     
     private function IsHideOnMobile()
     {
-        if (RWLogger::IsOn())
-            RWLogger::LogEnterence("IsHideOnMobile");
+        RWLogger::LogEnterence("IsHideOnMobile");
 
         $rw_show_on_mobile = $this->GetOption(WP_RW__SHOW_ON_MOBILE);
         
@@ -265,8 +270,7 @@ class RatingWidgetPlugin
     
     private function IsMobileDevice()
     {
-        if (RWLogger::IsOn())
-            RWLogger::LogEnterence("IsMobileDevice");
+        RWLogger::LogEnterence("IsMobileDevice");
 
         require_once(WP_RW__PLUGIN_DIR . "/vendors/class.mobile.detect.php");
         $detect = new Mobile_Detect();
@@ -278,10 +282,10 @@ class RatingWidgetPlugin
         return $is_mobile;
     }
     
-    public function RedirectOnUpgrade()
+    function RedirectOnUpgrade()
     {
         if (isset($_GET['page']) && strtolower($_GET['page']) === $this->GetMenuSlug('upgrade'))
-            rw_site_redirect('get-the-word-press-plugin'); 
+            rw_site_redirect($this->GetUpgradeUrl()); 
     }
 
 /* Authentication.
@@ -292,10 +296,56 @@ class RatingWidgetPlugin
     */
     private function Authenticate()
     {
+        RWLogger::LogEnterence("Authenticate");
+
         // Load user key.
         $this->LoadUserKey();
         
-        $this->_isRegistered = (false !== WP_RW__USER_KEY);        
+        $this->_isRegistered = (false !== WP_RW__SITE_PUBLIC_KEY);        
+    }
+    
+    function SecretKeyUpdateConfirmNotice()
+    {
+        $this->Notice('You have successfully updated your Secret Key.', 'update-nag success');
+    }
+
+    function UpdateSecret()
+    {
+        RWLogger::LogEnterence("UpdateSecret");
+
+        if (!rw_request_is_action('update_secret'))
+            return;
+
+        check_admin_referer('update_secret');
+
+        $new_secret = rw_request_get('rw_secret', '');
+        
+        $this->SetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY, $new_secret);
+        $this->StoreOptions();
+        
+        add_action('all_admin_notices', array(&$this, 'SecretKeyUpdateConfirmNotice'));
+        
+        rw_redirect('#');
+    }
+    
+    function LoadPlan()
+    {
+        RWLogger::LogEnterence("LoadPlan");
+
+        eval(base64_decode('DQogICAgICAgICRjdXJyZW50X3NpdGVfcGxhbiA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4pOw0KICAgICAgICANCiAgICAgICAgJHNpdGVfcGxhbiA9ICRjdXJyZW50X3NpdGVfcGxhbjsNCiAgICAgICAgDQogICAgICAgICR1cGRhdGUgPSBmYWxzZTsNCg0KICAgICAgICBpZiAoIWlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSkNCiAgICAgICAgew0KICAgICAgICAgICAgaWYgKCdmcmVlJyAhPT0gJHNpdGVfcGxhbikNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgew0KICAgICAgICAgICAgJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDApOw0KICAgICAgICAgICAgLy8gQ2hlY2sgaWYgdXNlciBhc2tlZCB0byBzeW5jIGxpY2Vuc2UuDQogICAgICAgICAgICBpZiAocndfcmVxdWVzdF9pc19hY3Rpb24oJ3N5bmNfbGljZW5zZScpKQ0KICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgIGNoZWNrX2FkbWluX3JlZmVyZXIoJ3N5bmNfbGljZW5zZScpOw0KICAgICAgICAgICAgICAgICRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICAgICAgLy8gVXBkYXRlIHBsYW4gb25jZSBpbiBldmVyeSAyNCBob3Vycy4NCiAgICAgICAgICAgIGlmIChmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQykpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQogICAgICAgICAgICAgICAgdHJ5DQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZSA9IHJ3YXBpKCktPkFwaSgnP2ZpZWxkcz1pZCxwbGFuJyk7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIGNhdGNoIChcRXhjZXB0aW9uICRlKQ0KICAgICAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHNpdGUgPSBmYWxzZTsNCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgaWYgKGlzX29iamVjdCgkc2l0ZSkgJiYgaXNzZXQoJHNpdGUtPmlkKSAmJiAkc2l0ZS0+aWQgPT0gV1BfUldfX1NJVEVfSUQpDQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQogICAgICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgICAgICAgICAgICAgIA0KICAgICAgICBkZWZpbmUoJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuKTsNCiAgICAgICAgDQogICAgICAgIGlmICgkdXBkYXRlKQ0KICAgICAgICB7DQogICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOLCAkc2l0ZV9wbGFuKTsNCiAgICAgICAgICAgICR0aGlzLT5TZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCB0aW1lKCkpOw0KICAgICAgICAgICAgJHRoaXMtPlN0b3JlT3B0aW9ucygpOw0KICAgICAgICAgICAgDQovLyAgICAgICAgICAgIGlmICgkY3VycmVudF9zaXRlX3BsYW4gIT09ICRzaXRlLT5wbGFuKQ0KLy8gICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAg'));
+    }
+    
+    private function ClearTransients()
+    {
+        global $wpdb;
+
+        // Clear all rw transients.
+        $wpdb->query( 
+            "DELETE FROM 
+                $wpdb->options
+             WHERE
+                option_name LIKE '_transient_rw%'"
+        );
     }
     
     /**
@@ -304,45 +354,9 @@ class RatingWidgetPlugin
     */
     private function LoadUserKey()
     {
-        $site_public_key = $this->GetOption(WP_RW__DB_OPTION_USER_KEY);
-        $site_id = $this->GetOption(WP_RW__DB_OPTION_USER_ID);
+        RWLogger::LogEnterence("LoadUserKey");
 
-        $id_changed = false;
-        
-        if (!defined('WP_RW__USER_KEY'))
-        {
-            define('WP_RW__USER_KEY', $site_public_key);
-            define('WP_RW__USER_ID', $site_id);
-        }
-        else
-        {
-            if (is_string(WP_RW__USER_KEY) && WP_RW__USER_KEY !== $site_public_key)
-            {
-                // Override user key.
-                $this->SetOption(WP_RW__DB_OPTION_USER_KEY, WP_RW__USER_KEY);
-                $this->SetOption(WP_RW__DB_OPTION_USER_ID, WP_RW__USER_ID);
-                $id_changed = true;
-            }
-        }
-
-        $user_secret = $this->GetOption(WP_RW__DB_OPTION_USER_SECRET);
-
-        if (!defined('WP_RW__USER_SECRET'))
-        {
-            define('WP_RW__USER_SECRET', $user_secret);
-        }
-        else
-        {
-            if (is_string(WP_RW__USER_SECRET) && WP_RW__USER_SECRET !== $user_secret)
-            {
-                // Override user key.
-                $this->SetOption(WP_RW__DB_OPTION_USER_SECRET, WP_RW__USER_SECRET);
-                $id_changed = true;
-            }
-        }
-        
-        if ($id_changed)
-            $this->StoreOptions();
+        eval(base64_decode('DQogICAgICAgICRzaXRlX3B1YmxpY19rZXkgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZKTsNCiAgICAgICAgJHNpdGVfaWQgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCk7DQogICAgICAgICRvd25lcl9pZCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCk7DQogICAgICAgICRvd25lcl9lbWFpbCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9FTUFJTCk7DQoNCiAgICAgICAgJHVwZGF0ZSA9IGZhbHNlOw0KICAgICAgICANCiAgICAgICAgaWYgKCFkZWZpbmVkKCdXUF9SV19fU0lURV9QVUJMSUNfS0VZJykpDQogICAgICAgIHsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX1NJVEVfUFVCTElDX0tFWScsICRzaXRlX3B1YmxpY19rZXkpOw0KICAgICAgICAgICAgZGVmaW5lKCdXUF9SV19fU0lURV9JRCcsICRzaXRlX2lkKTsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX09XTkVSX0lEJywgJG93bmVyX2lkKTsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX09XTkVSX0VNQUlMJywgJG93bmVyX2VtYWlsKTsNCiAgICAgICAgfQ0KICAgICAgICBlbHNlDQogICAgICAgIHsNCiAgICAgICAgICAgIGlmIChpc19zdHJpbmcoV1BfUldfX1NJVEVfUFVCTElDX0tFWSkgJiYgV1BfUldfX1NJVEVfUFVCTElDX0tFWSAhPT0gJHNpdGVfcHVibGljX2tleSkNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAvLyBPdmVycmlkZSB1c2VyIGtleS4NCiAgICAgICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZLCBXUF9SV19fU0lURV9QVUJMSUNfS0VZKTsNCiAgICAgICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCwgV1BfUldfX1NJVEVfSUQpOw0KICAgICAgICAgICAgICAgIGlmIChkZWZpbmVkKCdXUF9SV19fT1dORVJfSUQnKSkNCiAgICAgICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX09XTkVSX0lELCBXUF9SV19fT1dORVJfSUQpOw0KICAgICAgICAgICAgICAgIGlmIChkZWZpbmVkKCdXUF9SV19fT1dORVJfRU1BSUwnKSkNCiAgICAgICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX09XTkVSX0VNQUlMLCBXUF9SV19fT1dORVJfRU1BSUwpOw0KICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICAgICAkdXBkYXRlID0gdHJ1ZTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KDQogICAgICAgICR1c2VyX3NlY3JldCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1NFQ1JFVF9LRVkpOw0KDQogICAgICAgIGlmICghZGVmaW5lZCgnV1BfUldfX1NJVEVfU0VDUkVUX0tFWScpKQ0KICAgICAgICB7DQogICAgICAgICAgICBkZWZpbmUoJ1dQX1JXX19TSVRFX1NFQ1JFVF9LRVknLCAkdXNlcl9zZWNyZXQpOw0KICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgew0KICAgICAgICAgICAgaWYgKGlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSAmJiBXUF9SV19fU0lURV9TRUNSRVRfS0VZICE9PSAkdXNlcl9zZWNyZXQpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gT3ZlcnJpZGUgdXNlciBrZXkuDQogICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfU0VDUkVUX0tFWSwgV1BfUldfX1NJVEVfU0VDUkVUX0tFWSk7DQogICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgJHVwZGF0ZSA9IHRydWU7DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICBpZiAoJHVwZGF0ZSkNCiAgICAgICAgICAgICR0aGlzLT5TdG9yZU9wdGlvbnMoKTsNCiAgICAgICAg'));
     }
     
 /* IDs transformations.
@@ -354,7 +368,7 @@ class RatingWidgetPlugin
         return round((double)substr($pUrid, 0, strlen($pUrid) - $pSubLength) - $pSubValue);
     }
 
-    public function _getPostRatingGuid($id = false)
+    function _getPostRatingGuid($id = false)
     {
         if (false === $id){ $id = get_the_ID(); }
         $urid = ($id + 1) . "0";
@@ -424,7 +438,7 @@ class RatingWidgetPlugin
         return self::Urid2Id($pUrid);
     }
     
-    public function _getUserRatingGuid($id = false, $secondery_id = WP_RW__USER_SECONDERY_ID)
+    function _getUserRatingGuid($id = false, $secondery_id = WP_RW__USER_SECONDERY_ID)
     {
         if (false === $id)
             $id = bp_displayed_user_id();
@@ -490,9 +504,9 @@ class RatingWidgetPlugin
         $bottom_left = (object)array('ver' => 'bottom', 'hor' => 'left');
 
         $this->_OPTIONS_DEFAULTS = array(
-            WP_RW__DB_OPTION_USER_KEY => false,
-            WP_RW__DB_OPTION_USER_ID => false,
-            WP_RW__DB_OPTION_USER_SECRET => false,
+            WP_RW__DB_OPTION_SITE_PUBLIC_KEY => false,
+            WP_RW__DB_OPTION_SITE_ID => false,
+            WP_RW__DB_OPTION_SITE_SECRET_KEY => false,
             
             WP_RW__LOGGER => false,
             WP_RW__DB_OPTION_TRACKING => true,
@@ -592,13 +606,13 @@ class RatingWidgetPlugin
     
     private $_OPTIONS_CACHE;
 
-    public function MigrateOptions()
+    function MigrateOptions()
     {
         RWLogger::LogEnterence("MigrateOptions");
 
         $this->ClearOptions();
         
-        $site_public_key = get_option(WP_RW__DB_OPTION_USER_KEY);
+        $site_public_key = get_option(WP_RW__DB_OPTION_SITE_PUBLIC_KEY);
 
         // Only migrate if there's a public key,
         // otherwise new user without options.
@@ -633,7 +647,7 @@ class RatingWidgetPlugin
         RWLogger::LogDeparture("MigrateOptions");
     }
     
-    public function LoadOptions($pFlush = false)
+    function LoadOptions($pFlush = false)
     {
         RWLogger::LogEnterence("LoadOptions");
 
@@ -671,12 +685,12 @@ class RatingWidgetPlugin
         RWLogger::LogDeparture("LoadOptions");
     }
     
-    public function ClearOptions()
+    function ClearOptions()
     {
         $this->_OPTIONS_CACHE = new stdClass();
     }
     
-    public function GetOption($pOption, $pFlush = false, $pDefault = null)
+    function GetOption($pOption, $pFlush = false, $pDefault = null)
     {
         if (null === $pDefault)
             $pDefault = isset($this->_OPTIONS_DEFAULTS[$pOption]) ? $this->_OPTIONS_DEFAULTS[$pOption] : false;
@@ -684,7 +698,7 @@ class RatingWidgetPlugin
         return isset($this->_OPTIONS_CACHE->{$pOption}) ? $this->_OPTIONS_CACHE->{$pOption} : $pDefault;
     }
     
-    public function UnsetOption($pOption)
+    function UnsetOption($pOption)
     {
         if (!isset($this->_OPTIONS_CACHE->{$pOption}))
             return;
@@ -692,14 +706,16 @@ class RatingWidgetPlugin
         unset($this->_OPTIONS_CACHE->{$pOption});
     }
     
-    public function SetOption($pOption, $pValue)
+    function SetOption($pOption, $pValue)
     {
         // Update cache.
         $this->_OPTIONS_CACHE->{$pOption} = $pValue;
     }
     
-    public function StoreOptions()
+    function StoreOptions()
     {
+        RWLogger::LogEnterence("StoreOptions");
+        
         // Update DB.
         update_option(WP_RW__OPTIONS, json_encode($this->_OPTIONS_CACHE));
         // Update cache.
@@ -708,7 +724,7 @@ class RatingWidgetPlugin
 
 /* API.
 --------------------------------------------------------------------------------------------*/
-    public function GenerateToken($pTimestamp, $pServerCall = false)
+    function GenerateToken($pTimestamp, $pServerCall = false)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GenerateToken", $params, true); }
 
@@ -720,8 +736,6 @@ class RatingWidgetPlugin
                 RWLogger::Log("ServerToken", "ServerToken");
                 RWLogger::Log("ServerIP", $ip);
             }
-            
-            $token = md5(/*$ip . */$pTimestamp . /*WP_RW__USER_KEY . */WP_RW__USER_SECRET);
         }
         else
         {
@@ -729,9 +743,9 @@ class RatingWidgetPlugin
                 RWLogger::Log("ClientToken", "ClientToken"); 
                 RWLogger::Log("ClientIP", $ip);
             }
-
-            $token = md5(/*$ip . */$pTimestamp ./* WP_RW__USER_KEY . */ WP_RW__USER_SECRET);
         }
+        
+        $token = md5($pTimestamp . WP_RW__SITE_SECRET_KEY);
         
         if (RWLogger::IsOn()){ RWLogger::Log("TOKEN", $token); }
         
@@ -740,8 +754,10 @@ class RatingWidgetPlugin
         return $token;
     }
 
-    public function AddToken(&$pData, $pServerCall = false)
+    function AddToken(&$pData, $pServerCall = false)
     {
+        RWLogger::LogEnterence("AddToken");
+        
         $timestamp = time();
         $token = $this->GenerateToken($timestamp, $pServerCall);
         $pData["timestamp"] = $timestamp;
@@ -750,7 +766,7 @@ class RatingWidgetPlugin
         return $pData;
     }
     
-    public function RemoteCall($pPage, &$pData, $pExpiration = false)
+    function RemoteCall($pPage, &$pData, $pExpiration = false)
     {
         if (RWLogger::IsOn())
         { 
@@ -766,7 +782,7 @@ class RatingWidgetPlugin
         if (false !== $pExpiration)
         {
             // Calc cache index key.
-            $cacheKey = md5(var_export($pData, true));
+            $cacheKey = 'rw_' . md5(var_export($pData, true));
             
             // Try to get cached item.
             $value = get_transient($cacheKey);
@@ -787,7 +803,7 @@ class RatingWidgetPlugin
             }
         }
 
-        if (false !== WP_RW__USER_SECRET)
+        if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
         {
             if (RWLogger::IsOn())
                 RWLogger::Log("RemoteCall", "SECURE");
@@ -831,7 +847,7 @@ class RatingWidgetPlugin
             );
 
             if (!$fp){
-                $this->errors->add('connect', __("Can't connect to Rating-Widget.com", WP_RW__ID));
+                $this->errors->add('connect', __("Can't connect to rating-widget.com", WP_RW__ID));
                 
                 if (RWLogger::IsOn()){ RWLogger::Log("ret_object", "Can't connect to Rating-Widget.com"); }
                 
@@ -872,7 +888,7 @@ class RatingWidgetPlugin
         return $rw_ret_obj;
     }
 
-    public function QueueRatingData($urid, $title, $permalink, $rclass)
+    function QueueRatingData($urid, $title, $permalink, $rclass)
     {
         if (isset(self::$ratings[$urid])){ return; }
         
@@ -934,7 +950,7 @@ class RatingWidgetPlugin
     
     /* Admin Page Settings
     ---------------------------------------------------------------------------------------------------------------*/
-    public function rw_admin_menu_icon_css()
+    function rw_admin_menu_icon_css()
     {
         global $bp;
     ?>
@@ -951,7 +967,7 @@ class RatingWidgetPlugin
     <?php
     }
     
-    public function GoogleAnalytics()
+    function GoogleAnalytics()
     {
 ?>
 <script type="text/javascript">
@@ -973,9 +989,11 @@ class RatingWidgetPlugin
 <?php        
     }
     
-    public function InitScriptsAndStyles()
+    function InitScriptsAndStyles()
     {
 //        wp_enqueue_script( 'rw-test', "/wp-admin/js/rw-test.js", array( 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable' ), false, 1 );
+        rw_enqueue_style('rw_wp_admin', 'wordpress/admin.css');
+        rw_enqueue_script('rw_wp_admin', 'wordpress/admin.js');
         
         if (!$this->_inDashboard)
             return;
@@ -996,7 +1014,8 @@ class RatingWidgetPlugin
             // Account activation page includes.
             rw_enqueue_script('rw_wp_validation', 'rw/validation.js');
             rw_enqueue_script('rw');
-            rw_enqueue_script('rw_wp_signup', 'wordpress/signup.php');
+//            rw_enqueue_script('rw_wp_signup', 'wordpress/signup.php');
+            wp_enqueue_script('jquery-postmessage', plugins_url('resources/js/jquery.ba-postmessage.min.js' ,__FILE__ ));
         }
         else
         {
@@ -1016,6 +1035,11 @@ class RatingWidgetPlugin
         }
     }
     
+    function ActivationNotice()
+    {
+        $this->Notice('<a href="edit.php?page=' . WP_RW__ADMIN_MENU_SLUG . '">Activate your account now</a> to start seeing the ratings.');
+    }
+    
     function admin_menu()
     {
         $this->is_admin = (bool)current_user_can('manage_options');
@@ -1028,20 +1052,14 @@ class RatingWidgetPlugin
         {
             $pageLoaderFunction = 'rw_user_key_page';
             
-            if ((empty($_GET['page']) || WP_RW__ADMIN_MENU_SLUG != $_GET['page']))
-                add_action('admin_notices', create_function('', 'echo "<div class=\"error\"><p>Rating-Widget is not activated yet. You need to <a class=\"button\" style=\"text-decoration: none; color: inherit;\" href=\"edit.php?page=' . WP_RW__ADMIN_MENU_SLUG . '\">activate the account</a> to start seeing the ratings.</p></div>";'));
-
-/*            add_options_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_user_key_page'));
-            
-            if ( function_exists('add_object_page') ){ // WP 2.7+
-                $hook = add_object_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_user_key_page'), WP_RW__PLUGIN_URL . "icon.png" );
-            }else{
-                $hook = add_management_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, 'rw_user_key_page') );
-            }
-            
-            add_action("load-$hook", array( &$this, 'rw_user_key_page_load'));
-            
-            return;*/
+            if (empty($_GET['page']) || WP_RW__ADMIN_MENU_SLUG != $_GET['page'])
+                add_action('all_admin_notices', array(&$this, 'ActivationNotice'));
+        }
+        
+        if ($this->_isRegistered && !WP_RW__OWNER_ID)
+        {
+            if (!$this->_inDashboard || !$this->TryToConfirmEmail())
+                add_action('all_admin_notices', array(&$this, 'ConfirmationNotice'));
         }
 
         add_options_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, $pageLoaderFunction));
@@ -1053,14 +1071,36 @@ class RatingWidgetPlugin
         
 
         if (!$this->_isRegistered)
-            add_action("load-$hook", array( &$this, 'SignUpPageLoad'));
+            add_action("load-$hook", array(&$this, 'SignUpPageLoad'));
         else
             // Setup menu items.
             $this->SetupMenuItems();
     }
 
-    public function SetupMenuItems()
+    function _cfcd208495d565ef66e7dff9f98764da()
     {
+        return eval(base64_decode('DQogICAgICAgIHJldHVybiAoJ3RyaWFsJyA9PT0gV1BfUldfX1NJVEVfUExBTik7DQogICAgICAgIA=='));
+    }
+    
+    function _c4ca4238a0b923820dcc509a6f75849b()
+    {
+        return (!$this->_cfcd208495d565ef66e7dff9f98764da() && !$this->_c81e728d9d4c2f636f067f89cc14862c());
+    }
+    
+    function _c81e728d9d4c2f636f067f89cc14862c()
+    {
+        return eval(base64_decode('DQogICAgICAgIHJldHVybiAoIWlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSB8fCAnZnJlZScgPT09IFdQX1JXX19TSVRFX1BMQU4gfHwgJ2Jhc2ljJyA9PT0gV1BfUldfX1NJVEVfUExBTik7DQogICAgICAgIA=='));
+    }
+    
+    function _eccbc87e4b5ce2fe28308fd9f2a7baf3()
+    {
+        return eval(base64_decode('DQogICAgICAgIGlmICgkdGhpcy0+X2NmY2QyMDg0OTVkNTY1ZWY2NmU3ZGZmOWY5ODc2NGRhKCkpDQogICAgICAgICAgICByZXR1cm4gdHJ1ZTsNCiAgICAgICAgICAgIA0KICAgICAgICByZXR1cm4gKGlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSAmJiAoJ3Byb2Zlc3Npb25hbCcgPT09IFdQX1JXX19TSVRFX1BMQU4gfHwgJ3ByZW1pdW0nID09PSBXUF9SV19fU0lURV9QTEFOIHx8ICdidXNpbmVzcycgPT09IFdQX1JXX19TSVRFX1BMQU4pKTsNCiAgICAgICAg'));
+    }
+    
+    function SetupMenuItems()
+    {
+        RWLogger::LogEnterence("SetupMenuItems");
+        
         $submenu = array();
 
         // Basic settings.
@@ -1107,14 +1147,20 @@ class RatingWidgetPlugin
             'load_function' => 'AdvancedSettingsPageLoad',
         );
 
-        if (false === WP_RW__USER_SECRET)
+        $submenu[] = array(
+            'menu_title' => 'Account',
+            'function' => 'AccountPageRender',
+            'load_function' => 'UpdateSecret',
+        );
+        
+        if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
             // Upgrade link.
             $submenu[] = array(
                 'menu_title' => '&#9733; Upgrade &#9733;',
                 'slug' => 'upgrade',
                 'function' => 'rw_upgrade_page',
             );
-        else
+        else if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
             // Boosting.
             $submenu[] = array(
                 'menu_title' => 'Boost',
@@ -1138,17 +1184,21 @@ class RatingWidgetPlugin
         }        
     }
     
-    public function SignUpPageLoad()
+    function SignUpPageLoad()
     {
         if ($this->_isRegistered)
             return;
         
         if ('post' === strtolower($_SERVER['REQUEST_METHOD']) && isset($_POST['action']) && 'account' === $_POST['action'])
         {
-            $this->SetOption(WP_RW__DB_OPTION_USER_KEY, $_POST['uid']);
-            $this->SetOption(WP_RW__DB_OPTION_USER_ID, $_POST['huid']);
+            $this->SetOption(WP_RW__DB_OPTION_OWNER_ID, $_POST['user_id']);
+            $this->SetOption(WP_RW__DB_OPTION_OWNER_EMAIL, $_POST['user_email']);
+            $this->SetOption(WP_RW__DB_OPTION_SITE_ID, $_POST['site_id']);
+            $this->SetOption(WP_RW__DB_OPTION_SITE_PUBLIC_KEY, $_POST['public_key']);
+            $this->SetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY, $_POST['secret_key']);
+
             $this->SetOption(WP_RW__DB_OPTION_TRACKING, (isset($_POST['tracking']) && '1' == $_POST['tracking']));
-            
+
             $this->StoreOptions();
 
             // Reload the page with the keys.
@@ -1156,7 +1206,7 @@ class RatingWidgetPlugin
         }
     }
     
-    public function rw_user_key_page()
+    function rw_user_key_page()
     {
         $this->_printErrors();
         rw_require_once_view('userkey_generation.php');
@@ -1261,7 +1311,7 @@ class RatingWidgetPlugin
                         false;
         
         $details = array( 
-            "uid" => WP_RW__USER_KEY,
+            "uid" => WP_RW__SITE_PUBLIC_KEY,
             "rclasses" => $rclass,
             "orderby" => $orderby,
             "order" => $order,
@@ -1287,9 +1337,9 @@ class RatingWidgetPlugin
         }
         
         // Override token to client's call token for iframes.
-        $details["token"] = self::GenerateToken($details["timestamp"], false);
+        $this->AddToken($details, false);
         
-        $empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
+        $empty_result = (!isset($rw_ret_obj->data) || !is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 ?>
 <div class="wrap rw-dir-ltr rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID) . " (" . ucwords($elements) . ")";?></h2>
@@ -1298,8 +1348,8 @@ class RatingWidgetPlugin
     </div>
     <form method="post" action="">
         <div class="tablenav">
-            <div class="actions rw-control-bar">
-                <span>Date Range:</span>
+            <div>
+                <span><?php _e('Date Range:', WP_RW__ID) ?></span>
                 <input type="text" value="<?php echo $date_from;?>" id="rw_date_from" name="rw_date_from" style="width: 90px; text-align: center;" />
                 -
                 <input type="text" value="<?php echo $date_to;?>" id="rw_date_to" name="rw_date_to" style="width: 90px; text-align: center;" />
@@ -1325,7 +1375,7 @@ class RatingWidgetPlugin
                     });
                     jQuery("#rw_date_to").datepicker("setDate", "<?php echo $date_to;?>");
                 </script>
-                <span>Element:</span>
+                <span><?php _e('Element:', WP_RW__ID) ?></span>
                 <select id="rw_elements">
                 <?php
                     $select = array(
@@ -1354,7 +1404,7 @@ class RatingWidgetPlugin
                     }
                 ?>
                 </select>
-                <span>Order By:</span>                
+                <span><?php _e('Order By:', WP_RW__ID) ?></span>
                 <select id="rw_orderby">
                 <?php
                     $select = array(
@@ -1383,7 +1433,7 @@ class RatingWidgetPlugin
         <table class="widefat rw-chart-title">
             <thead>
                 <tr>
-                    <th scope="col" class="manage-column">Votes Timeline</th>
+                    <th scope="col" class="manage-column"><?php _e('Votes Timeline', WP_RW__ID) ?></th>
                 </tr>
             </thead>
         </table>
@@ -1407,7 +1457,7 @@ class RatingWidgetPlugin
         <br /><br />
         <table class="widefat"><?php
         $records_num = $showen_records_num = 0;
-        if (!is_array($rw_ret_obj->data) || count($rw_ret_obj->data) === 0){ ?>
+        if ($empty_result){ ?>
             <tbody>
                 <tr>
                     <td colspan="6"><?php printf(__('No ratings here.', WP_RW__ID), $elements); ?></td>
@@ -1417,12 +1467,12 @@ class RatingWidgetPlugin
             <thead>
                 <tr>
                     <th scope="col" class="manage-column"></th>
-                    <th scope="col" class="manage-column">Title</th>
-                    <th scope="col" class="manage-column">Id</th>
-                    <th scope="col" class="manage-column">Start Date</th>
-                    <th scope="col" class="manage-column">Last Update</th>
-                    <th scope="col" class="manage-column">Votes</th>
-                    <th scope="col" class="manage-column">Average Rate</th>
+                    <th scope="col" class="manage-column"><?php _e('Title', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Id', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Start Date', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Last Update', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Votes', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Average Rate', WP_RW__ID) ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -1446,7 +1496,7 @@ class RatingWidgetPlugin
                             }
                             
                             echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
-                        ?>"><img src="<?php echo WP_RW__ADDRESS_IMG;?>rw.pie.icon.png" alt="" title="Rating Report"></a>
+                        ?>"><img src="<?php echo WP_RW__ADDRESS_IMG;?>rw.pie.icon.png" alt="" title="<?php _e('Rating Report', WP_RW__ID) ?>"></a>
                     </td>
                     <td><strong><a href="<?php echo $rating->url; ?>" target="_blank"><?php
                             echo (mb_strlen($rating->title) > 40) ?
@@ -1643,7 +1693,7 @@ class RatingWidgetPlugin
                         false;
         
         $details = array( 
-            "uid" => WP_RW__USER_KEY,
+            "uid" => WP_RW__SITE_PUBLIC_KEY,
             "rclasses" => $rclass,
             "orderby" => $orderby,
             "order" => $order,
@@ -1684,12 +1734,12 @@ class RatingWidgetPlugin
 <div class="wrap rw-dir-ltr rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID);?></h2>
     <div id="message" class="updated fade">
-        <p><strong style="color: red;">Notic: Data may be delayed 30 minutes.</strong></p>
+        <p><strong style="color: red;"><?php _e('Notic: Data may be delayed 30 minutes.', WP_RW__ID) ?></strong></p>
     </div>
     <form method="post" action="">
         <div class="tablenav">
-            <div class="rw-control-bar actions">
-                <span>Date Range:</span>
+            <div>
+                <span><?php _e('Date Range:', WP_RW__ID) ?></span>
                 <input type="text" value="<?php echo $date_from;?>" id="rw_date_from" name="rw_date_from" style="width: 90px; text-align: center;" />
                 -
                 <input type="text" value="<?php echo $date_to;?>" id="rw_date_to" name="rw_date_to" style="width: 90px; text-align: center;" />
@@ -1715,7 +1765,7 @@ class RatingWidgetPlugin
                     });
                     jQuery("#rw_date_to").datepicker("setDate", "<?php echo $date_to;?>");
                 </script>
-                <span>Order By:</span>                
+                <span><?php _e('Order By:', WP_RW__ID) ?></span>
                 <select id="rw_orderby">
                 <?php
                     $select = array(
@@ -1794,12 +1844,12 @@ class RatingWidgetPlugin
         }else{  ?>
             <thead>
                 <tr>
-                    <th scope="col" class="manage-column">Rating Id</th>
-                    <th scope="col" class="manage-column">User Id</th>
-                    <th scope="col" class="manage-column">PC Id</th>
-                    <th scope="col" class="manage-column">IP</th>
-                    <th scope="col" class="manage-column">Date</th>
-                    <th scope="col" class="manage-column">Rate</th>
+                    <th scope="col" class="manage-column"><?php _e('Rating Id', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('User Id', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('PC Id', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('IP', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Date', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Rate', WP_RW__ID) ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -1888,7 +1938,7 @@ class RatingWidgetPlugin
                 <span style="font-weight: bold; font-size: 12px;"><?php echo ($rw_offset + 1); ?>-<?php echo ($rw_offset + $showen_records_num); ?></span>
             </div>
             <div style="float: right;">
-                <span>Show rows:</span>
+                <span><?php _e('Show rows:', WP_RW__ID) ?></span>
                 <select name="rw_limit" onchange="top.location = RWM.enrichQueryString(top.location.href, ['offset', 'limit'], [0, this.value]);">
                 <?php
                     $limits = array(WP_RW__REPORT_RECORDS_MIN, 25, WP_RW__REPORT_RECORDS_MAX);
@@ -1903,11 +1953,11 @@ class RatingWidgetPlugin
                 <input type="button"<?php if ($rw_offset == 0) echo ' disabled="disabled"';?> class="button button-secondary action" style="margin-left: 20px;" onclick="top.location = '<?php
                     $query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", max(0, $rw_offset - $rw_limit));
                     echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
-                ?>';" value="Previous" />
+                ?>';" value="<?php _e('Previous', WP_RW__ID) ?>" />
                 <input type="button"<?php if ($showen_records_num == $records_num) echo ' disabled="disabled"';?> class="button button-secondary action" onclick="top.location = '<?php
                     $query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", $rw_offset + $rw_limit);
                     echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
-                ?>';" value="Next" />
+                ?>';" value="<?php _e('Next', WP_RW__ID) ?>" />
             </div>
         </div>
         <?php
@@ -1950,7 +2000,7 @@ class RatingWidgetPlugin
         $rw_offset = isset($_REQUEST["offset"]) ? max(0, (int)$_REQUEST["offset"]) : 0;
         
         $details = array( 
-            "uid" => WP_RW__USER_KEY,
+            "uid" => WP_RW__SITE_PUBLIC_KEY,
             "orderby" => $orderby,
             "order" => $order,
             "since" => "{$date_from} 00:00:00",
@@ -1990,12 +2040,12 @@ class RatingWidgetPlugin
 <div class="wrap rw-dir-ltr rw-report">
     <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID) . " (Id = " . $_REQUEST["urid"] . ")";?></h2>
     <div id="message" class="updated fade">
-        <p><strong style="color: red;">Notic: Data may be delayed 30 minutes.</strong></p>
+        <p><strong style="color: red;"><?php _e('Notic: Data may be delayed 30 minutes.', WP_RW__ID) ?></strong></p>
     </div>
     <form method="post" action="">
         <div class="tablenav">
-            <div class="rw-control-bar actions">
-                <span>Date Range:</span>
+            <div>
+                <span><?php _e('Date Range:', WP_RW__ID) ?></span>
                 <input type="text" value="<?php echo $date_from;?>" id="rw_date_from" name="rw_date_from" style="width: 90px; text-align: center;" />
                 -
                 <input type="text" value="<?php echo $date_to;?>" id="rw_date_to" name="rw_date_to" style="width: 90px; text-align: center;" />
@@ -2021,7 +2071,7 @@ class RatingWidgetPlugin
                     });
                     jQuery("#rw_date_to").datepicker("setDate", "<?php echo $date_to;?>");
                 </script>
-                <span>Order By:</span>                
+                <span><?php _e('Order By:', WP_RW__ID) ?></span>
                 <select id="rw_orderby">
                 <?php
                     $select = array(
@@ -2115,11 +2165,11 @@ class RatingWidgetPlugin
         }else{  ?>
             <thead>
                 <tr>
-                    <th scope="col" class="manage-column">User Id</th>
-                    <th scope="col" class="manage-column">PC Id</th>
-                    <th scope="col" class="manage-column">IP</th>
-                    <th scope="col" class="manage-column">Date</th>
-                    <th scope="col" class="manage-column">Rate</th>
+                    <th scope="col" class="manage-column"><?php _e('User Id', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('PC Id', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('IP', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Date', WP_RW__ID) ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Rate', WP_RW__ID) ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -2216,11 +2266,11 @@ class RatingWidgetPlugin
                 <input type="button"<?php if ($rw_offset == 0) echo ' disabled="disabled"';?> class="button button-secondary action" style="margin-left: 20px;" onclick="top.location = '<?php
                     $query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", max(0, $rw_offset - $rw_limit));
                     echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
-                ?>';" value="Previous" />
+                ?>';" value="<?php _e('Previous', WP_RW__ID) ?>" />
                 <input type="button"<?php if ($showen_records_num == $records_num) echo ' disabled="disabled"';?> class="button button-secondary action" onclick="top.location = '<?php
                     $query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", $rw_offset + $rw_limit);
                     echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
-                ?>';" value="Next" />
+                ?>';" value="<?php _e('Next', WP_RW__ID) ?>" />
             </div>
         </div>
         <?php
@@ -2231,38 +2281,25 @@ class RatingWidgetPlugin
 <?php                
     }
     
-    public function AdvancedSettingsPageLoad()
+    function AccountPageRender()
+    {
+        rw_require_once_view('pages/admin/account.php');
+    }
+    
+    function AdvancedSettingsPageLoad()
     {
         $rw_delete_history = (isset($_POST["rw_delete_history"]) && in_array($_POST["rw_delete_history"], array("true", "false"))) ? 
                              $_POST["rw_delete_history"] : 
                              "false";
         
-        if ("true" === $rw_delete_history)
+        if ('true' === $rw_delete_history)
         {
             // Delete user-key & secret.
-            $this->UnsetOption(WP_RW__DB_OPTION_USER_KEY);
-            $this->UnsetOption(WP_RW__DB_OPTION_USER_ID);
-            $this->UnsetOption(WP_RW__DB_OPTION_USER_SECRET);
+            $this->UnsetOption(WP_RW__DB_OPTION_SITE_PUBLIC_KEY);
+            $this->UnsetOption(WP_RW__DB_OPTION_SITE_ID);
+            $this->UnsetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY);
             $this->StoreOptions();
             
-            /*global $wpdb;
-            $options = $wpdb->get_var("SELECT option_value FROM FROM {$wpdb->options} WHERE option_name = '" . WP_RW__OPTIONS . "'");
-            
-            if (is_string($options) && !empty($options))
-            {
-                $options = json_decode($options);
-                if (is_object($options))
-                {
-                    // Unset keys.
-                    unset($options->{WP_RW__USER_SECRET});
-                    unset($options->{WP_RW__USER_KEY});
-                    
-                    $newvalue = json_encode($options);
-                    $newvalue = sanitize_option(WP_RW__OPTIONS, $newvalue);
-                    $result = $wpdb->update( $wpdb->options, array( 'option_value' => $newvalue ), array( 'option_name' => WP_RW__OPTIONS ) );
-                }
-            }*/
-
             // Goto user-key creation page.
             rw_admin_redirect();
         }
@@ -2289,7 +2326,7 @@ class RatingWidgetPlugin
                                  $_POST["rw_restore_defaults"] : 
                                  "false";
 
-            if ("true" === $rw_restore_defaults)
+            if ('true' === $rw_restore_defaults)
             {
                 // Restore to defaults - clear all settings.
                 $this->ClearOptions();
@@ -2302,9 +2339,13 @@ class RatingWidgetPlugin
                     $this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
                     $this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
                     $this->SetOption(WP_RW__DB_OPTION_TRACKING, $tracking);
-                    $this->SetOption(WP_RW__DB_OPTION_USER_KEY, WP_RW__USER_KEY);
-                    $this->SetOption(WP_RW__DB_OPTION_USER_ID, WP_RW__USER_ID);
-                    $this->SetOption(WP_RW__DB_OPTION_USER_SECRET, WP_RW__USER_SECRET);
+                    
+                    // Restore account details.
+                    $this->SetOption(WP_RW__DB_OPTION_SITE_PUBLIC_KEY, WP_RW__SITE_PUBLIC_KEY);
+                    $this->SetOption(WP_RW__DB_OPTION_SITE_ID, WP_RW__SITE_ID);
+                    $this->SetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY, WP_RW__SITE_SECRET_KEY);
+                    $this->SetOption(WP_RW__DB_OPTION_OWNER_ID, WP_RW__OWNER_ID);
+                    $this->SetOption(WP_RW__DB_OPTION_OWNER_EMAIL, WP_RW__OWNER_EMAIL);
             }
             else
             {
@@ -2352,7 +2393,7 @@ class RatingWidgetPlugin
 <div class="wrap rw-dir-ltr rw-wp-container">
     <h2><?php echo __( 'Increase User Retention and Pageviews', WP_RW__ID);?></h2>
     <div>
-        <p style="font-weight: bold; font-size: 14px;">With the Top-Rated Sidebar Widget readers will stay on your site for a longer period of time.</p>
+        <p style="font-weight: bold; font-size: 14px;"><?php _e('With the Top-Rated Sidebar Widget readers will stay on your site for a longer period of time.', WP_RW__ID) ?></p>
         <ul>
             <li>
                 <ul id="screenshots">
@@ -2369,31 +2410,31 @@ class RatingWidgetPlugin
                 <div style="clear: both;"> </div>
             </li>
             <li>
-                <a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary" style="margin-left: 20px; display: block; text-align: center; width: 720px;">Add Widget Now!</a>
+                <a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary" style="margin-left: 20px; display: block; text-align: center; width: 720px;"><?php _e('Add Widget Now!', WP_RW__ID) ?></a>
             </li>
             <li>
-                <h3>How</h3>
-                <p>Expose your readers to the top rated posts onsite that they might not have otherwise noticed and increase your chance to reduce the bounce rate.</p>
+                <h3><?php _e('How', WP_RW__ID) ?></h3>
+                <p><?php _e('Expose your readers to the top rated posts onsite that they might not have otherwise noticed and increase your chance to reduce the bounce rate.', WP_RW__ID) ?></p>
             </li>
             <li>
-                <h3>What</h3>
-                <p>The Top-Rated Widget is a beautiful sidebar widget containing the top rated posts on your blog.</p>
+                <h3><?php _e('What', WP_RW__ID) ?></h3>
+                <p><?php _e('The Top-Rated Widget is a beautiful sidebar widget containing the top rated posts on your blog.', WP_RW__ID) ?></p>
             </li>
             <li>
-                <h3>Install</h3>
-                <p>Go to <b><i><a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary">Appearence > Widgets</a></i></b> and simply drag the <b>Rating-Widget: Top Rated</b> widget to your sidebar.</p>
+                <h3><?php _e('Install', WP_RW__ID) ?></h3>
+                <p><?php _e('Go to', WP_RW__ID) ?> <b><i><a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary">Appearence > Widgets</a></i></b> and simply drag the <b>Rating-Widget: Top Rated</b> widget to your sidebar.</p>
                 <img src="<?php echo rw_get_plugin_img_path('top-rated/add-widget.png');?>" alt="">
             </li>
             <li>
-                <h3>New</h3>
-                <p>Thumbnails: a beautiful new thumbnail display, for themes which use post thumbnails (featured images).</p>
+                <h3><?php _e('New', WP_RW__ID) ?></h3>
+                <p><?php _e('Thumbnails: a beautiful new thumbnail display, for themes which use post thumbnails (featured images).', WP_RW__ID) ?></p>
             </li>
             <li>
-                <h3>Performance</h3>
-                <p>The widget is performant, caching the top posts and featured images' thumbnails as your site is visited.</p>
+                <h3><?php _e('Performance', WP_RW__ID) ?></h3>
+                <p><?php _e('The widget is performant, caching the top posts and featured images\' thumbnails as your site is visited.', WP_RW__ID) ?></p>
             </li>
             <li>
-                <a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary">Add Widget Now!</a>
+                <a href="<?php echo get_admin_url(null, 'widgets.php'); ?>" class="button-primary"><?php _e('Add Widget Now!', WP_RW__ID) ?></a>
             </li>
         </ul>
     </div>
@@ -2402,9 +2443,9 @@ class RatingWidgetPlugin
 <?php        
     }
     
-    public function ReportsPageRender()
+    function ReportsPageRender()
     {
-        if (false === WP_RW__USER_SECRET)
+        if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
         {
             $this->rw_report_example_page();
         }
@@ -2422,7 +2463,7 @@ class RatingWidgetPlugin
         }
     }
     
-    public function rw_upgrade_page()
+    function rw_upgrade_page()
     {
         rw_site_redirect('get-the-wordpress-plugin');
     }
@@ -2437,12 +2478,11 @@ class RatingWidgetPlugin
     *   
     *       get_post_types(array('public'=>true,'_builtin' => false))
     */
-    public function SettingsPage()
+    function SettingsPage()
     {
         // Must check that the user has the required capability.
-        if (!current_user_can('manage_options')){
-          wp_die(__('You do not have sufficient permissions to access this page.', WP_RW__ID) );
-        }
+        if (!current_user_can('manage_options'))
+            wp_die(__('You do not have sufficient permissions to access this page.', WP_RW__ID));
 
         global $plugin_page;
         
@@ -2696,6 +2736,9 @@ class RatingWidgetPlugin
         
         // Some alias.
         $rw_class = $rw_current_settings["class"];
+        
+        // Reset categories.
+        $rw_categories = array();
         
         // See if the user has posted us some information
         // If they did, this hidden field will be set to 'Y'
@@ -3032,7 +3075,7 @@ class RatingWidgetPlugin
             </div>
             <div id="rw_wp_set_widgets">
                 <?php 
-                    if (false === WP_RW__USER_SECRET)
+                    if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
                         rw_require_once_view('upgrade.php');
                 ?>
                 <?php //rw_require_once_view('fb.php'); ?>
@@ -3370,7 +3413,7 @@ class RatingWidgetPlugin
         return isset($this->custom_settings_list->{$pClass}) ? stripslashes($this->custom_settings_list->{$pClass}) : '';
     }
     
-    public function IsVisibleRating($pElementID, $pClass, $pValidateCategory = true, $pValidateVisibility = true)
+    function IsVisibleRating($pElementID, $pClass, $pValidateCategory = true, $pValidateVisibility = true)
     {
         // Check if post category is selected.
         if ($pValidateCategory && false === $this->rw_validate_category_availability($pElementID, $pClass))
@@ -3382,7 +3425,7 @@ class RatingWidgetPlugin
         return true;
     }
     
-    public function IsVisibleCommentRating($pComment)
+    function IsVisibleCommentRating($pComment)
     {
         /**
         * Check if comment category is selected.
@@ -3402,11 +3445,11 @@ class RatingWidgetPlugin
         return true;
     }
 
-    public function GetPostImage($pPost, $pExpiration = false)
+    function GetPostImage($pPost, $pExpiration = false)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetPostImage", $params); }
 
-        $cacheKey = 'post_thumb_' . $pPost->ID;
+        $cacheKey = 'rw_post_thumb_' . $pPost->ID;
         $img = false;
         if (false !== $pExpiration)
         {
@@ -3465,7 +3508,7 @@ class RatingWidgetPlugin
     * 
     * @param {string} $content
     */
-    public function AddPostRating($content)
+    function AddPostRating($content)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("AddPostRating", $params); }
         
@@ -3492,7 +3535,7 @@ class RatingWidgetPlugin
     * 
     * @param {string} $content
     */
-    public function AddCommentRating($content)
+    function AddCommentRating($content)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('AddCommentRating', $params); }
         
@@ -3553,7 +3596,7 @@ class RatingWidgetPlugin
         return $rating_html;
     }
     
-    public function InBuddyPressPage()
+    function InBuddyPressPage()
     {
         if (!$this->IsBuddyPressInstalled())
             return;
@@ -3576,7 +3619,7 @@ class RatingWidgetPlugin
         return $this->_inBuddyPress;
     }
     
-    public function InBBPressPage()
+    function InBBPressPage()
     {
         if (!$this->IsBBPressInstalled())
             return false;
@@ -3600,7 +3643,7 @@ class RatingWidgetPlugin
         return $this->_inBBPress;
     }
     
-    public function IsBBPressInstalled()
+    function IsBBPressInstalled()
     {
         if (!defined('WP_RW__BBP_INSTALLED'))
             define('WP_RW__BBP_INSTALLED', false);
@@ -3608,7 +3651,7 @@ class RatingWidgetPlugin
         return WP_RW__BBP_INSTALLED;// && (!function_exists('is_plugin_active') || is_plugin_active(WP_RW__BP_CORE_FILE));
     }
     
-    public function IsBuddyPressInstalled()
+    function IsBuddyPressInstalled()
     {
         return (defined('WP_RW__BP_INSTALLED') && WP_RW__BP_INSTALLED && (!function_exists('is_plugin_active') || is_plugin_active(WP_RW__BP_CORE_FILE)));
     }
@@ -3909,7 +3952,7 @@ class RatingWidgetPlugin
     
 /* BuddyPress && bbPress.
 --------------------------------------------------------------------------------------------*/
-    private function SetupBuddyPress()
+    function SetupBuddyPress()
     {
         if (RWLogger::IsOn())
             RWLogger::LogEnterence("SetupBuddyPress");
@@ -3926,42 +3969,18 @@ class RatingWidgetPlugin
         }
     }
     
-    private function SetupBBPress()
+    function SetupBBPress()
     {
-        if (RWLogger::IsOn())
-            RWLogger::LogEnterence("SetupBBPress");
-
-        if (false === WP_RW__USER_SECRET)
-        {
-            define('WP_RW__BBP_INSTALLED', false);
-        }
-        else
-        {
-            define('WP_RW__BBP_CONFIG_LOCATION', get_site_option('bb-config-location', ''));
-            
-            if (!defined('WP_RW__BBP_INSTALLED'))
-            {
-                if ('' !== WP_RW__BBP_CONFIG_LOCATION)
-                    define('WP_RW__BBP_INSTALLED', true);
-                else
-                {
-                    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-                    define('WP_RW__BBP_INSTALLED', is_plugin_active('bbpress/bbpress.php'));
-                }
-            }
-        }
-
-        if (WP_RW__BBP_INSTALLED && !is_admin() /* && is_bbpress()*/)
-            $this->SetupBBPressActions();
+        eval(base64_decode('DQogICAgICAgIGlmIChSV0xvZ2dlcjo6SXNPbigpKQ0KICAgICAgICAgICAgUldMb2dnZXI6OkxvZ0VudGVyZW5jZSgiU2V0dXBCQlByZXNzIik7DQoNCiAgICAgICAgaWYgKCEkdGhpcy0+X2VjY2JjODdlNGI1Y2UyZmUyODMwOGZkOWYyYTdiYWYzKCkpDQogICAgICAgIHsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX0JCUF9JTlNUQUxMRUQnLCBmYWxzZSk7DQogICAgICAgIH0NCiAgICAgICAgZWxzZQ0KICAgICAgICB7DQogICAgICAgICAgICBkZWZpbmUoJ1dQX1JXX19CQlBfQ09ORklHX0xPQ0FUSU9OJywgZ2V0X3NpdGVfb3B0aW9uKCdiYi1jb25maWctbG9jYXRpb24nLCAnJykpOw0KICAgICAgICAgICAgDQogICAgICAgICAgICBpZiAoIWRlZmluZWQoJ1dQX1JXX19CQlBfSU5TVEFMTEVEJykpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgaWYgKCcnICE9PSBXUF9SV19fQkJQX0NPTkZJR19MT0NBVElPTikNCiAgICAgICAgICAgICAgICAgICAgZGVmaW5lKCdXUF9SV19fQkJQX0lOU1RBTExFRCcsIHRydWUpOw0KICAgICAgICAgICAgICAgIGVsc2UNCiAgICAgICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgICAgIGluY2x1ZGVfb25jZShBQlNQQVRIIC4gJ3dwLWFkbWluL2luY2x1ZGVzL3BsdWdpbi5waHAnKTsNCiAgICAgICAgICAgICAgICAgICAgZGVmaW5lKCdXUF9SV19fQkJQX0lOU1RBTExFRCcsIGlzX3BsdWdpbl9hY3RpdmUoJ2JicHJlc3MvYmJwcmVzcy5waHAnKSk7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQoNCiAgICAgICAgaWYgKFdQX1JXX19CQlBfSU5TVEFMTEVEICYmICFpc19hZG1pbigpIC8qICYmIGlzX2JicHJlc3MoKSovKQ0KICAgICAgICAgICAgJHRoaXMtPlNldHVwQkJQcmVzc0FjdGlvbnMoKTsNCiAgICAgICAg'));
     }
     
-    public function SetupBBPressActions()
+    function SetupBBPressActions()
     {
         add_filter('bbp_has_replies', array(&$this, 'SetupBBPressTopicActions'));        
         add_action('bbp_template_after_user_profile', array(&$this, 'AddBBPressUserProfileRating'));
     }
     
-    public function SetupBBPressTopicActions($has_replies)
+    function SetupBBPressTopicActions($has_replies)
     {
         if (RWLogger::IsOn())
             RWLogger::LogEnterence("SetupBBPressActions");
@@ -3998,7 +4017,7 @@ class RatingWidgetPlugin
         return $has_replies;
     }
     
-    public function AddBBPressUserProfileRating()
+    function AddBBPressUserProfileRating()
     {
         if ($this->IsHiddenRatingByType('user'))
             return;
@@ -4006,7 +4025,7 @@ class RatingWidgetPlugin
         echo $this->EmbedRatingIfVisibleByUser(bbpress()->displayed_user, 'user');
     }
     
-    public function AddBBPressForumThreadUserRating($author_link)
+    function AddBBPressForumThreadUserRating($author_link)
     {
         global $post;
         
@@ -4045,7 +4064,7 @@ class RatingWidgetPlugin
     * @param mixed $content
     * @param mixed $reply_id
     */
-    public function AddBBPressBottomRating($content, $reply_id = 0)
+    function AddBBPressBottomRating($content, $reply_id = 0)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('AddBBPressBottomRating', $params); }
         
@@ -4070,7 +4089,7 @@ class RatingWidgetPlugin
     * Add bbPress top center rating - just before metadata.
     * Invoked on bbp_theme_after_reply_admin_links
     */
-    public function AddBBPressTopCenterRating()
+    function AddBBPressTopCenterRating()
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('AddBBPressTopCenterRating', $params); }
         
@@ -4095,7 +4114,7 @@ class RatingWidgetPlugin
     * Add bbPress top left & right ratings.
     * Invoked on bbp_theme_before_reply_admin_links.
     */
-    public function AddBBPressTopLeftOrRightRating()
+    function AddBBPressTopLeftOrRightRating()
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('AddBBPressTopLeftOrRightRating', $params); }
         
@@ -4116,7 +4135,7 @@ class RatingWidgetPlugin
         echo $ratingHtml;
     }
 
-    public function InitBuddyPress()
+    function InitBuddyPress()
     {
         if (RWLogger::IsOn())
             RWLogger::LogEnterence("InitBuddyPress");
@@ -4298,11 +4317,11 @@ class RatingWidgetPlugin
                 function RW_Async_Init(){
                     RW.init({<?php 
                         // User key (uid).
-                        echo 'uid: "' . WP_RW__USER_KEY . '"';
+                        echo 'uid: "' . WP_RW__SITE_PUBLIC_KEY . '"';
                         
                         // User id (huid).
-                        if (defined('WP_RW__USER_ID') && is_numeric(WP_RW__USER_ID))
-                            echo ', huid: "' . WP_RW__USER_ID . '"';
+                        if (defined('WP_RW__SITE_ID') && is_numeric(WP_RW__SITE_ID))
+                            echo ', huid: "' . WP_RW__SITE_ID . '"';
                         
                         $user = wp_get_current_user();
                         if ($user->ID !== 0)
@@ -4312,18 +4331,10 @@ class RatingWidgetPlugin
                             // Set voter id to logged user id.
                             echo ", vid: {$vid}";
                         }
-                        
-                        if (false !== WP_RW__USER_SECRET)
-                        {
-                            // Secure connection.
-                            $timestamp = time();
-                            $token = self::GenerateToken($timestamp);
-                            echo ', token: {timestamp: ' . $timestamp . ', token: "' . $token . '"}';
-                        }
                     ?>,
-                        source: "WordPress",
+                        source: "wordpress",
                         options: {
-                            <?php if (false !== WP_RW__USER_SECRET && defined('ICL_LANGUAGE_CODE') && isset($this->languages[ICL_LANGUAGE_CODE])) : ?>
+                            <?php if (eval(base64_decode('JHRoaXMtPl9lY2NiYzg3ZTRiNWNlMmZlMjgzMDhmZDlmMmE3YmFmMygpICYmIGRlZmluZWQoJ0lDTF9MQU5HVUFHRV9DT0RFJykgJiYgaXNzZXQoJHRoaXMtPmxhbmd1YWdlc1tJQ0xfTEFOR1VBR0VfQ09ERV0p'))) : ?>
                             lng: "<?php echo ICL_LANGUAGE_CODE; ?>"
                             <?php endif; ?> 
                         }
@@ -4380,7 +4391,7 @@ class RatingWidgetPlugin
     
     /* Boosting page
     ---------------------------------------------------------------------------------------------------------------*/
-    public function BoostPageLoad()
+    function BoostPageLoad()
     {
         if ('post' != strtolower($_SERVER['REQUEST_METHOD']) ||
             $_POST["rw_boost_posted"] != "Y")
@@ -4429,7 +4440,7 @@ class RatingWidgetPlugin
         }
         
         $details = array(
-            "uid" => WP_RW__USER_KEY,
+            "uid" => WP_RW__SITE_PUBLIC_KEY,
             "urid" => $urid,
             "votes" => $votes,
             "rate" => $rate,
@@ -4447,7 +4458,7 @@ class RatingWidgetPlugin
             $this->success->add('rating_widget_boost', __($rw_ret_obj->msg, WP_RW__ID));
     }
     
-    public function BoostPageRender()
+    function BoostPageRender()
     {
 //        $this->rw_boost_page_load();
 
@@ -4458,32 +4469,32 @@ class RatingWidgetPlugin
     <h2><?php _e( 'Rating-Widget Boosting', WP_RW__ID ); ?></h2>
 
     <p>
-        Here you can boost your ratings.<br /><br />
-        <b style="color: red;">Note: This action impact the rating record directly - it's on your own responsibility!</b><br /><br />
-        Example:<br />
-        <b>Element:</b> <i>Post</i>; <b>Id:</b> <i>2</i>; <b>Votes:</b> <i>3</i>; <b>Rate:</b> <i>4</i>;<br />
-        This will add 3 votes with the rate of 4 stars to Post with Id=2.
+        <?php _e('Here you can boost your ratings.', WP_RW__ID) ?><br /><br />
+        <b style="color: red;"><?php _e('Note: This action impact the rating record directly - it\'s on your own responsibility!', WP_RW__ID) ?></b><br /><br />
+        <?php _e('Example:', WP_RW__ID) ?><br />
+        <b><?php _e('Element:', WP_RW__ID) ?></b> <i><?php _e('Post', WP_RW__ID) ?></i>; <b><?php _e('Id:', WP_RW__ID) ?></b> <i>2</i>; <b><?php _e('Votes:', WP_RW__ID) ?></b> <i>3</i>; <b><?php _e('Rate:', WP_RW__ID) ?></b> <i>4</i>;<br />
+        <?php _e('This will add 3 votes with the rate of 4 stars to Post with Id=2.', WP_RW__ID) ?>
     </p>
 
     <form action="" method="post">
         <input type="hidden" name="rw_boost_posted" value="Y" />
-        <label for="rw_element">Element: 
+        <label for="rw_element"><?php _e('Element:', WP_RW__ID) ?>
             <select id="rw_element" name="rw_element">
-                <option value="post" selected="selected">Post/Page</option>
-                <option value="comment">Comment</option>
-                <option value="activity">Activity Update</option>
-                <option value="forum">Forum Post</option>
-                <option value="user">User</option>
+                <option value="post" selected="selected"><?php _e('Post/Page', WP_RW__ID) ?></option>
+                <option value="comment"><?php _e('Comment', WP_RW__ID) ?></option>
+                <option value="activity"><?php _e('Activity Update', WP_RW__ID) ?></option>
+                <option value="forum"><?php _e('Forum Post', WP_RW__ID) ?></option>
+                <option value="user"><?php _e('User', WP_RW__ID) ?></option>
             </select>
         </label>
         <br /><br />
-        <label for="rw_id">Id: <input type="text" id="rw_id" name="rw_id" value="" /></label>
+        <label for="rw_id"><?php _e('Id:', WP_RW__ID) ?> <input type="text" id="rw_id" name="rw_id" value="" /></label>
         <br /><br />
-        <label for="rw_votes">Votes: <input type="text" id="rw_votes" name="rw_votes" value="" /></label>
+        <label for="rw_votes"><?php _e('Votes:', WP_RW__ID) ?> <input type="text" id="rw_votes" name="rw_votes" value="" /></label>
         <br /><br />
-        <label for="rw_rate">Rate: <input type="text" id="rw_rate" name="rw_rate" value="" /></label>
+        <label for="rw_rate"><?php _e('Rate:', WP_RW__ID) ?> <input type="text" id="rw_rate" name="rw_rate" value="" /></label>
         <br />
-        <b style="font-size: 10px;">Note: Rate must be a number between -5 to 5.</b>
+        <b style="font-size: 10px;"><?php _e('Note: Rate must be a number between -5 to 5.', WP_RW__ID) ?></b>
         <br /><br />
         <input type="submit" value="Boost" />
     </form>
@@ -4661,7 +4672,7 @@ class RatingWidgetPlugin
         }
     }
     
-    public function GetPostExcerpt($pPost, $pWords = 15)
+    function GetPostExcerpt($pPost, $pWords = 15)
     {
         if (!empty($pPost->post_excerpt))
             return trim(strip_tags($pPost->post_excerpt));
@@ -4674,7 +4685,7 @@ class RatingWidgetPlugin
             $strippedContent;
     }
     
-    public function GetPostFeaturedImage($pPostID)
+    function GetPostFeaturedImage($pPostID)
     {
         if (!has_post_thumbnail($pPostID))
             return '';
@@ -4684,7 +4695,7 @@ class RatingWidgetPlugin
         return $image[0];
     }
     
-    public function GetTopRatedData($pTypes = array(), $pLimit = 5, $pOffset = 0, $pMinVotes = 1, $pInclude = false, $pShowOrder = false, $pOrderBy = 'avgrate', $pOrder = 'DESC')
+    function GetTopRatedData($pTypes = array(), $pLimit = 5, $pOffset = 0, $pMinVotes = 1, $pInclude = false, $pShowOrder = false, $pOrderBy = 'avgrate', $pOrder = 'DESC')
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetTopRatedData", $params); }
         
@@ -4737,7 +4748,7 @@ class RatingWidgetPlugin
             return false;
 
         $details = array( 
-            "uid" => WP_RW__USER_KEY,
+            "uid" => WP_RW__SITE_PUBLIC_KEY,
         );
 
         $queries = array();
@@ -4776,7 +4787,7 @@ class RatingWidgetPlugin
         return $rw_ret_obj;
     }
     
-    public function GetTopRated()
+    function GetTopRated()
     {
         $rw_ret_obj = $this->GetTopRatedData(array('posts', 'pages'));
         
@@ -4902,7 +4913,7 @@ class RatingWidgetPlugin
     * @version 1.3.3
     * 
     */
-    public function EmbedRating(
+    function EmbedRating(
         $pElementID,
         $pOwnerID, 
         $pTitle, 
@@ -4978,14 +4989,14 @@ class RatingWidgetPlugin
         return $html;
     }
     
-    public function EmbedRatingIfVisible($pElementID, $pOwnerID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateCategory = true)
+    function EmbedRatingIfVisible($pElementID, $pOwnerID, $pTitle, $pPermalink, $pElementClass, $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateCategory = true)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisible", $params); }
                 
         return $this->EmbedRating($pElementID, $pOwnerID, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions, true, $pValidateCategory);
     }
     
-    public function EmbedRatingByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateVisibility = false)
+    function EmbedRatingByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array(), $pValidateVisibility = false)
     {
         $postImg = $this->GetPostImage($pPost);
         if (false !== $postImg) 
@@ -5008,7 +5019,7 @@ class RatingWidgetPlugin
             $pValidateVisibility);
     }
     
-    public function EmbedRatingIfVisibleByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
+    function EmbedRatingIfVisibleByPost($pPost, $pClass = 'blog-post', $pAddSchema = false, $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisibleByPost", $params); }
         
@@ -5023,7 +5034,7 @@ class RatingWidgetPlugin
         );
     }
     
-    public function EmbedRatingByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array(), $pValidateVisibility = false)
+    function EmbedRatingByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array(), $pValidateVisibility = false)
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingByUser", $params); }
 
@@ -5048,7 +5059,7 @@ class RatingWidgetPlugin
             false);
     }
     
-    public function EmbedRatingIfVisibleByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array())
+    function EmbedRatingIfVisibleByUser($pUser, $pClass = 'user', $pCustomStyle = false, $pOptions = array())
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("EmbedRatingIfVisibleByUser", $params); }
             
@@ -5060,7 +5071,7 @@ class RatingWidgetPlugin
             true);
     }
     
-    public function EmbedRatingByComment($pComment, $pClass = 'comment', $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
+    function EmbedRatingByComment($pComment, $pClass = 'comment', $pHorAlign = false, $pCustomStyle = false, $pOptions = array())
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('EmbedRatingByComment', $params); }
 
@@ -5080,12 +5091,7 @@ class RatingWidgetPlugin
             $pOptions);
     }
     
-    /*public function GetItemOwnerID($item)
-    {
-        
-    }*/
-    
-    public function IsUserAccumulatedRating()
+    function IsUserAccumulatedRating()
     {
         if (!$this->IsBBPressInstalled())
             return false;
@@ -5093,13 +5099,13 @@ class RatingWidgetPlugin
         return $this->GetOption(WP_RW__IS_ACCUMULATED_USER_RATING);
     }
     
-    public function GetRatingDataByRatingID($pRatingID, $pAccuracy = false)
+    function GetRatingDataByRatingID($pRatingID, $pAccuracy = false)
     {
-        if (false === WP_RW__USER_SECRET)
+        if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
             return false;
             
         $details = array( 
-            "uid" => WP_RW__USER_KEY,
+            "uid" => WP_RW__SITE_PUBLIC_KEY,
             "rids" => $pRatingID,
         );
 
@@ -5132,12 +5138,53 @@ class RatingWidgetPlugin
         );
     }
     
-    public function RegisterShortcodes()
+    function RegisterShortcodes()
     {
         add_shortcode('ratingwidget', 'rw_the_post_shortcode');
     }
     
-    public function ModifyPluginActionLinks($links, $file)
+    function GetUpgradeUrl($pImmediate = false, $pPeriod = 'annually', $pPlan = 'professional')
+    {
+        if (!WP_RW__SITE_SECRET_KEY || !defined('WP_RW__SITE_ID'))
+        {
+            // Backwards competability //////////////////////////////////////
+            $params = array(
+                'uid' => WP_RW__SITE_PUBLIC_KEY
+            );
+            
+            if (!$pImmediate)
+                $relative = '/get-the-word-press-plugin/?' . http_build_query($params);
+            else
+            {
+                $params['program'] = 'premium';
+                $params['frequency'] = ('annually' === $pPeriod) ? 12 : 1;
+                $relative = '/get-the-word-press-plugin/subscribe.php?' . http_build_query($params);
+            }
+        }
+        else
+        {
+            // New pricing page ////////////////////////////////////////////
+            $timestamp = time();
+            $params = array(
+                'context_site' => WP_RW__SITE_ID,
+                's_ctx_ts' => $timestamp,
+                's_ctx_secure' => md5($timestamp . WP_RW__SITE_ID . WP_RW__SITE_SECRET_KEY . WP_RW__SITE_PUBLIC_KEY . 'upgrade'),
+            );
+            
+            if (!$pImmediate)
+                $relative = '/pricing/wordpress/?' . http_build_query($params);
+            else
+            {
+                $params['plan'] = $pPlan;
+                $params['period'] = $pPeriod;
+                $relative = '/pricing/express-checkout.php?' . http_build_query($params);
+            }
+        }
+        
+        return rw_get_site_url($relative);
+    }
+    
+    function ModifyPluginActionLinks($links, $file)
     {
         // Return normal links if not BuddyPress
         if (plugin_basename(WP_RW__PLUGIN_FILE_FULL) != $file)
@@ -5147,9 +5194,102 @@ class RatingWidgetPlugin
         return array_merge( $links, array(
             'settings' => '<a href="' . rw_get_admin_url() . '">' . esc_html__('Settings', WP_RW__ADMIN_MENU_SLUG) . '</a>',
             'blog'    => '<a href="' . rw_get_site_url('/blog/') . '">' . esc_html__('Blog', WP_RW__ADMIN_MENU_SLUG) . '</a>',
-            'upgrade'    => '<a href="' . rw_get_site_url('/get-the-word-press-plugin/?uid=' . WP_RW__USER_KEY . '') . '" target="_blank">' . esc_html__('Upgrade', WP_RW__ADMIN_MENU_SLUG) . '</a>'
+            'upgrade'    => '<a href="' . $this->GetUpgradeUrl() . '" target="_blank">' . esc_html__('Upgrade', WP_RW__ADMIN_MENU_SLUG) . '</a>'
         ) );
     }
+
+    function Notice($pNotice, $pType = 'update-nag')
+    {
+?>
+<div class="<?php echo $pType ?> rw-notice"><span class="rw-slug"><b>rating</b><i>widget</i></span> <b class="rw-sep">&#9733;</b> <?php echo $pNotice ?></div>
+<?php
+    }
+
+    /* Email Confirmation Handlers
+    --------------------------------------------------------------------------------------------------------------------*/
+
+    private function GetEmailConfirmationUrl()
+    {
+        $uri = rw_get_admin_url();// ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        
+        $timestamp = time();
+        
+        $params = array(
+            'ts' => $timestamp,
+            'key' => WP_RW__SITE_PUBLIC_KEY,
+            'src' =>  $uri,
+        );
+        
+        $confirmation = $timestamp . WP_RW__SITE_PUBLIC_KEY . $uri;
+
+        $params['s'] = md5($confirmation);
+        
+        $query = http_build_query($params);
+        
+        return rw_get_site_url('/signup/wordpress/confirm/') . '?' . $query;
+    }
+    
+    function ConfirmationNotice()
+    {
+        if (!$this->is_admin)
+            return;
+        
+        $url = $this->GetEmailConfirmationUrl();
+        
+        $this->Notice('New <i>Weekly Rating Reports</i> feature! <a href="' . $url . '" onclick="_rwwp.openConfirm(\'' . $url . '\'); return false;" target="_blank">Please confirm your email address now</a> to receive your upcoming Monday report.');
+    }
+
+    function InvalidEmailConfirmNotice()
+    {
+        $url = $this->GetEmailConfirmationUrl();
+        
+        $this->Notice('Email confirmation has failed. One of the confirmation parameters is invalid. <a href="' . $url . '" onclick="_rwwp.openConfirm(\'' . $url . '\'); return false;" target="_blank">Please try to confirm your email again</a>.');
+    }
+    
+    function SuccessfulEmailConfirmNotice()
+    {
+        $this->Notice('W00t! You have successfully confirmed your email address.', 'update-nag success');
+    }
+    
+    private function TryToConfirmEmail()
+    {
+        if (!rw_request_is_action('confirm', 'rw_action'))
+            return false;
+        
+        // Remove confirmation notice.
+        remove_action('all_admin_notices', array(&$this, 'ConfirmationNotice'));
+
+        $user_id = rw_request_get('user_id');
+        $email = rw_request_get('email');
+        $timestamp = rw_request_get('ts');
+        $secure = rw_request_get('s');
+
+        $is_valid = true;
+        
+        if ($secure !== md5(strtolower($user_id . $email . $timestamp . WP_RW__SITE_PUBLIC_KEY)))
+            $is_valid = false;
+        if (!is_numeric($user_id))    
+            $is_valid = false;
+        if (!is_numeric($timestamp))    
+            $is_valid = false;
+        if (time() > ($timestamp + 14 * 86400))
+            $is_valid = false;
+            
+        if (!$is_valid)
+        {
+            add_action('all_admin_notices', array(&$this, 'InvalidEmailConfirmNotice'));
+            return true;
+        }
+        
+        $this->SetOption(WP_RW__DB_OPTION_OWNER_ID, $user_id);
+        $this->SetOption(WP_RW__DB_OPTION_OWNER_EMAIL, $email);
+        $this->StoreOptions();
+        
+        add_action('all_admin_notices', array(&$this, 'SuccessfulEmailConfirmNotice'));
+        
+        return true;
+    }
+    
 }
 
 
@@ -5176,6 +5316,34 @@ function ratingwidget() {
         
     return $rwp;
 }
+
+function rwapi()
+{
+    global $rwapi;
+    
+    if (!isset($rwapi))
+    {
+        require_once(WP_RW__PLUGIN_LIB_DIR . 'sdk/ratingwidget.php');
+        
+        if (!WP_RW__SITE_SECRET_KEY)
+        {
+            // API can not be accessed without a secret key.
+            $rwapi = false;
+        }
+        else
+        {
+            // Init API.
+            $rwapi = new \RatingWidget\Api\Sdk\RatingWidget(
+                'site',
+                WP_RW__SITE_ID,
+                WP_RW__SITE_PUBLIC_KEY,
+                WP_RW__SITE_SECRET_KEY
+            );
+        }
+    }
+    
+    return $rwapi;
+};
 
 /**
  * Hook Rating-Widget early onto the 'plugins_loaded' action.

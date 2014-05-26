@@ -4,19 +4,43 @@
 
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__VERSION', '2.0.5');
+    define('WP_RW__VERSION', '2.0.6');
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
     define('WP_RW__LOCALHOST', ($_SERVER['HTTP_HOST'] == 'localhost:8080'));
     
+    /* Plugin dir and url
+    -----------------------------------------------------------------------------------------*/
+    define('WP_RW__PLUGIN_DIR', dirname(dirname(__FILE__)));
+    define('WP_RW__PLUGIN_FILE', 'rating-widget.php');
+    define('WP_RW__PLUGIN_FILE_FULL', WP_RW__PLUGIN_DIR . '/' . WP_RW__PLUGIN_FILE);
+    define('WP_RW__PLUGIN_LIB_DIR', WP_RW__PLUGIN_DIR . '/lib/');
+    define('RW__PATH_THEMES', WP_RW__PLUGIN_DIR . '/themes/');
+    define('WP_RW__PLUGIN_VIEW_DIR', WP_RW__PLUGIN_DIR . '/view/');
+    define('WP_RW__PLUGIN_URL', plugins_url() . '/' . dirname(dirname(plugin_basename(__FILE__))) . '/');
+
     /* Load Unique-User-Key & API Secret
     -----------------------------------------------------------------------------------------*/
-    if (file_exists(dirname(__FILE__) . '/key.php')){ require_once(dirname(__FILE__) . '/key.php'); }
+    if (file_exists(dirname(__FILE__) . '/key.php'))
+        require_once(dirname(__FILE__) . '/key.php');
 
+    /* For Rating-Widget development mode.
+    -----------------------------------------------------------------------------------------*/
+    if (file_exists(WP_RW__PLUGIN_LIB_DIR . '_dev_.php'))
+        require_once(WP_RW__PLUGIN_LIB_DIR . '_dev_.php');
+    
+    if (defined('WP_RW__USER_ID'))
+        define('WP_RW__SITE_ID', WP_RW__USER_ID);
+    if (defined('WP_RW__USER_KEY'))
+        define('WP_RW__SITE_PUBLIC_KEY', WP_RW__USER_KEY);
+    if (defined('WP_RW__USER_SECRET'))
+        define('WP_RW__SITE_SECRET_KEY', WP_RW__USER_SECRET);
+    
     /* Load Custom Config.
     -----------------------------------------------------------------------------------------*/
-    if (file_exists(dirname(__FILE__) . '/rw-config-custom.php')){ require_once(dirname(__FILE__) . '/rw-config-custom.php'); }
+    if (file_exists(dirname(__FILE__) . '/rw-config-custom.php'))
+        require_once(dirname(__FILE__) . '/rw-config-custom.php');
 
     /* Server Address & Remote Address
     -----------------------------------------------------------------------------------------*/
@@ -35,6 +59,7 @@
     define('WP_RW__LOCALHOST_SCRIPTS', WP_RW__DEBUG && false);
     define('WP_RW__CACHING_ON', !WP_RW__DEBUG);
     define('WP_RW__STAGING', false);
+    define('WP_RW__LOG_DUMP', false);
 
     // This gives all other plugins the chance to load before Rating-Widget.
 //    define('WP_RW___LATE_LOAD', 999);
@@ -69,9 +94,13 @@
 
     /* User-Key Options Consts.
     -----------------------------------------------------------------------------------------*/
-        define('WP_RW__DB_OPTION_USER_KEY', 'rw_user_key');
-        define('WP_RW__DB_OPTION_USER_ID', 'rw_user_id');
-        define('WP_RW__DB_OPTION_USER_SECRET', 'rw_user_secret');
+        define('WP_RW__DB_OPTION_SITE_ID', 'rw_user_id');
+        define('WP_RW__DB_OPTION_SITE_PUBLIC_KEY', 'rw_user_key');
+        define('WP_RW__DB_OPTION_SITE_SECRET_KEY', 'rw_user_secret');
+        define('WP_RW__DB_OPTION_SITE_PLAN', 'rw_site_plan');
+        define('WP_RW__DB_OPTION_SITE_PLAN_UPDATE', 'rw_site_plan_update');
+        define('WP_RW__DB_OPTION_OWNER_ID', 'rw_owner_id');
+        define('WP_RW__DB_OPTION_OWNER_EMAIL', 'rw_owner_email');
         define('WP_RW__DB_OPTION_TRACKING', 'rw_tracking');
 
     /* BuddyPress
@@ -181,41 +210,45 @@
     define('WP_RW__MIN_STARS', 1);
     define('WP_RW__MAX_STARS', 20);
 
+    define('WP_RW__TIME_5_MIN_IN_SEC', 300);
+    define('WP_RW__TIME_10_MIN_IN_SEC', 600);
+    define('WP_RW__TIME_15_MIN_IN_SEC', 900);
+    define('WP_RW__TIME_24_HOURS_IN_SEC', 86400);
+    define('WP_RW__TIME_WEEK_IN_SEC', 7 * WP_RW__TIME_24_HOURS_IN_SEC);
+    
     /* Local caching
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__CACHE_TIMEOUT_REPORT', 1800);                // 30 min
-    define('WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS', 86400);        // 24 hours
-    define('WP_RW__CACHE_TIMEOUT_TOP_RATED', 300);              // 5 min
-    define('WP_RW__CACHE_TIMEOUT_POST_THUMB_EXTRACT', 86400);   // 24 hours
+    define('WP_RW__CACHE_TIMEOUT_REPORT', WP_RW__TIME_15_MIN_IN_SEC);
+    define('WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS', WP_RW__TIME_24_HOURS_IN_SEC);
+    define('WP_RW__CACHE_TIMEOUT_TOP_RATED', WP_RW__TIME_5_MIN_IN_SEC);
+    define('WP_RW__CACHE_TIMEOUT_POST_THUMB_EXTRACT', WP_RW__TIME_24_HOURS_IN_SEC);
     
-    /* Plugin dir and url
-    -----------------------------------------------------------------------------------------*/
-    define('WP_RW__PLUGIN_DIR', dirname(dirname(__FILE__)));
-    define('WP_RW__PLUGIN_FILE', 'rating-widget.php');
-    define('WP_RW__PLUGIN_FILE_FULL', WP_RW__PLUGIN_DIR . '/' . WP_RW__PLUGIN_FILE);
-    define('WP_RW__PLUGIN_LIB_DIR', WP_RW__PLUGIN_DIR . '/lib/');
-    define('RW__PATH_THEMES', WP_RW__PLUGIN_DIR . '/themes/');
-    define('WP_RW__PLUGIN_VIEW_DIR', WP_RW__PLUGIN_DIR . '/view/');
-    define('WP_RW__PLUGIN_URL', plugins_url() . '/' . dirname(dirname(plugin_basename(__FILE__))) . '/');
-
     /* Rating-Widget URIs
     -----------------------------------------------------------------------------------------*/
     if (!defined('WP_RW__DOMAIN'))
-        define('WP_RW__DOMAIN', (defined('WP_RW__STAGING') && true === WP_RW__STAGING) ? 
-            'staging.rating-widget.com' : ((WP_RW__LOCALHOST && WP_RW__DEBUG) ? $_SERVER['HTTP_HOST'] : 'rating-widget.com'));
+    {
+        if (WP_RW__LOCALHOST_SCRIPTS)
+            define('WP_RW__DOMAIN', 'localhost:8080');
+        else if (defined('WP_RW__STAGING') && true === WP_RW__STAGING)
+            define('WP_RW__DOMAIN', 'staging.rating-widget.com');
+        else if (WP_RW__LOCALHOST && WP_RW__DEBUG)
+            define('WP_RW__DOMAIN', $_SERVER['HTTP_HOST']);
+        else
+            define('WP_RW__DOMAIN', 'rating-widget.com');
+    }
     
+    if (!defined('WP_RW__SECURE_DOMAIN'))
+        define('WP_RW__SECURE_DOMAIN', 'secure.rating-widget.com');
+        
     define('WP_RW__HTTPS', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'));
     define('WP_RW__PROTOCOL', (WP_RW__HTTPS ? 'https' : 'http'));
     
     define('WP_RW__ADDRESS', 'http://' . WP_RW__DOMAIN);
+    define('WP_RW__SECURE_ADDRESS', 'https://' . WP_RW__SECURE_DOMAIN);
     
     // Moved to rw_init_bp().
     // define('WP_RW__BBP_INSTALLED', (WP_RW__BP_INSTALLED && ('' != get_site_option('bb-config-location', ''))));
 
-    /* For Rating-Widget development mode.
-    -----------------------------------------------------------------------------------------*/
-    if (file_exists(WP_RW__PLUGIN_LIB_DIR . '_dev_.php')){ require_once(WP_RW__PLUGIN_LIB_DIR . '_dev_.php'); }
-    
     /* Server Address & Remote Address
     -----------------------------------------------------------------------------------------*/
     if (!defined('WP_RW__SERVER_ADDR'))

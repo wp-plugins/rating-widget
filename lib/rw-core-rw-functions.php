@@ -44,9 +44,20 @@ function rw_get_admin_url($path = 'admin.php', $scheme = 'admin')
 
 function rw_get_site_url($path = '')
 {
+    if (0 === strpos($path, 'http'))
+        return $path;
+        
+    $query = '';
+    $query_pos = strpos($path, '?');
+    if (false !== $query_pos)
+    {
+        $query = substr($path, $query_pos);
+        $path = substr($path, 0, $query_pos);
+    }
+    
     return empty($path) ? 
         WP_RW__ADDRESS : 
-        WP_RW__ADDRESS . '/' . trim($path, '/') . (false === strpos($path, '.') ? '/' : '');
+        WP_RW__ADDRESS . '/' . trim($path, '/') . (false === strpos($path, '.') ? '/' : '') . $query;
 }
 
 function rw_the_site_url($path = '')
@@ -252,4 +263,35 @@ function rw_kses_no_null($string) {
     return $string;
 }
 
-?>
+/* Request handlers.
+--------------------------------------------------------------------------------------------*/
+function rw_request_get($key, $def = false)
+{
+    return isset($_REQUEST[$key]) ? $_REQUEST[$key] : $def;
+}
+
+function rw_request_is_post()
+{
+    return ('post' === strtolower($_SERVER['REQUEST_METHOD']));
+}
+
+function rw_request_is_get()
+{
+    return ('get' === strtolower($_SERVER['REQUEST_METHOD']));
+}
+
+function rw_request_is_action($action, $action_key = 'action')
+{
+    $is_action = (!empty($_REQUEST[$action_key]) && $action === $_REQUEST[$action_key]);
+    
+    if ($is_action)
+        return true;
+    
+    if ($action_key = 'action')
+    {
+        $action_key = 'rw_action';
+        return (!empty($_REQUEST[$action_key]) && $action === $_REQUEST[$action_key]);
+    }
+    
+    return false;
+}

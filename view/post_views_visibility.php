@@ -20,7 +20,7 @@
 <div class="has-sidebar has-right-sidebar">
     <div class="has-sidebar-content">
         <div class="postbox rw-body">
-            <h3>Post Views Visibility Settings</h3>
+            <h3><?php _e('Post Views Visibility Settings', WP_RW__ID) ?></h3>
             <div class="inside rw-ui-content-container rw-no-radius">
             <?php foreach ($views as $view) : ?>
                 <div class="rw-ui-img-radio rw-ui-hor<?php if ($settings->{'show_on_' . $view}) echo ' rw-selected';?>">

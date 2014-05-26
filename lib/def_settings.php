@@ -5,9 +5,15 @@
         $ret->boost = @rw_get_default_value($settings->boost, new stdClass());
         $ret->imgUrl = @rw_get_default_value($settings->imgUrl, new stdClass());
         $ret->label = @rw_get_default_value($settings->label, new stdClass());
+        $ret->label->text = @rw_get_default_value($settings->label->text, new stdClass());
+        $ret->label->text->star = @rw_get_default_value($settings->label->text->star, new stdClass());
+        $ret->label->text->nero = @rw_get_default_value($settings->label->text->nero, new stdClass());
         $ret->advanced = @rw_get_default_value($settings->advanced, new stdClass());
         $ret->advanced->star = @rw_get_default_value($settings->advanced->star, new stdClass());
         $ret->advanced->nero = @rw_get_default_value($settings->advanced->nero, new stdClass());
+        $ret->advanced->nero->text = @rw_get_default_value($settings->advanced->nero->text, new stdClass());
+        $ret->advanced->nero->text->like = @rw_get_default_value($settings->advanced->nero->text->like, new stdClass());
+        $ret->advanced->nero->text->dislike = @rw_get_default_value($settings->advanced->nero->text->dislike, new stdClass());
         $ret->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
         $ret->advanced->font->hover = @rw_get_default_value($settings->advanced->font->hover, new stdClass());
         $ret->advanced->layout = @rw_get_default_value($settings->advanced->layout, new stdClass());
@@ -77,6 +83,12 @@
         $ret->imgUrl->ltr = @rw_get_default_value($settings->imgUrl->ltr, $defaults->imgUrl->ltr);
         $ret->imgUrl->rtl = @rw_get_default_value($settings->imgUrl->rtl, $defaults->imgUrl->rtl);
         $ret->label->background = @rw_get_default_value($settings->label->background, $defaults->label->background);
+        $ret->label->text->star->empty = @rw_get_default_value($settings->label->text->star->empty, $defaults->label->text->star->empty);
+        $ret->label->text->star->normal = @rw_get_default_value($settings->label->text->star->normal, $defaults->label->text->star->normal);
+        $ret->label->text->star->rated = @rw_get_default_value($settings->label->text->star->rated, $defaults->label->text->star->rated);
+        $ret->label->text->nero->empty = @rw_get_default_value($settings->label->text->nero->empty, $defaults->label->text->nero->empty);
+        $ret->label->text->nero->normal = @rw_get_default_value($settings->label->text->nero->normal, $defaults->label->text->nero->normal);
+        $ret->label->text->nero->rated = @rw_get_default_value($settings->label->text->nero->rated, $defaults->label->text->nero->rated);
         $ret->readOnly = @rw_get_default_value($settings->readOnly, $defaults->readOnly);
         $ret->reVote = @rw_get_default_value($settings->reVote, $defaults->reVote);
         $ret->frequency = @rw_get_default_value($settings->frequency, $defaults->frequency);
@@ -84,6 +96,8 @@
         $ret->showTooltip = @rw_get_default_value($settings->showTooltip, $defaults->showTooltip);
         $ret->showAverage = @rw_get_default_value($settings->showAverage, $defaults->showAverage);
         $ret->showReport = @rw_get_default_value($settings->showReport, $defaults->showReport);
+        $ret->showRecommendations = @rw_get_default_value($settings->showRecommendations, $defaults->showRecommendations);
+        $ret->showSponsored = @rw_get_default_value($settings->showSponsored, $defaults->showSponsored);
         $ret->showLoader = @rw_get_default_value($settings->showLoader, $defaults->showLoader);
         $ret->beforeRate = @rw_get_default_value($settings->beforeRate, $defaults->beforeRate);
         $ret->afterRate = @rw_get_default_value($settings->afterRate, $defaults->afterRate);
@@ -95,6 +109,10 @@
 
         $ret->advanced->nero->showDislike = @rw_get_default_value($settings->advanced->nero->showDislike, $defaults->advanced->nero->showDislike);
         $ret->advanced->nero->showLike = @rw_get_default_value($settings->advanced->nero->showLike, $defaults->advanced->nero->showLike);
+        $ret->advanced->nero->text->like->empty = @rw_get_default_value($settings->advanced->nero->text->like->empty, $defaults->advanced->nero->text->like->empty);
+        $ret->advanced->nero->text->like->rated = @rw_get_default_value($settings->advanced->nero->text->like->rated, $defaults->advanced->nero->text->like->rated);
+        $ret->advanced->nero->text->dislike->empty = @rw_get_default_value($settings->advanced->nero->text->dislike->empty, $defaults->advanced->nero->text->dislike->empty);
+        $ret->advanced->nero->text->dislike->rated = @rw_get_default_value($settings->advanced->nero->text->dislike->rated, $defaults->advanced->nero->text->dislike->rated);
 
         $ret->advanced->font->bold = @rw_get_default_value($settings->advanced->font->bold, $defaults->advanced->font->bold);
         $ret->advanced->font->italic = @rw_get_default_value($settings->advanced->font->italic, $defaults->advanced->font->italic);
@@ -158,12 +176,20 @@
         $settings = @rw_get_default_value($settings, new stdClass());
         $settings->boost = @rw_get_default_value($settings->boost, new stdClass());
         $settings->label = @rw_get_default_value($settings->label, new stdClass());
+        $settings->label->text = @rw_get_default_value($settings->label->text, new stdClass());
+        $settings->label->text->star = @rw_get_default_value($settings->label->text->star, new stdClass());
+        $settings->label->text->nero = @rw_get_default_value($settings->label->text->nero, new stdClass());
         $settings->advanced = @rw_get_default_value($settings->advanced, new stdClass());
         $settings->advanced->font = @rw_get_default_value($settings->advanced->font, new stdClass());
         $settings->advanced->font->hover = @rw_get_default_value($settings->advanced->font->hover, new stdClass());
         $settings->advanced->layout = @rw_get_default_value($settings->advanced->layout, new stdClass());
         $settings->advanced->layout->align = @rw_get_default_value($settings->advanced->layout->align, new stdClass());
         $settings->advanced->text = @rw_get_default_value($settings->advanced->text, new stdClass());
+        $settings->advanced->star = @rw_get_default_value($settings->advanced->star, new stdClass());
+        $settings->advanced->nero = @rw_get_default_value($settings->advanced->nero, new stdClass());
+        $settings->advanced->nero->text = @rw_get_default_value($settings->advanced->nero->text, new stdClass());
+        $settings->advanced->nero->text->like = @rw_get_default_value($settings->advanced->nero->text->like, new stdClass());
+        $settings->advanced->nero->text->dislike = @rw_get_default_value($settings->advanced->nero->text->dislike, new stdClass());
         
         $settings->lng = @rw_get_default_value($settings->lng, "en");
         $settings->url = @rw_get_default_value($settings->url, '');
@@ -180,6 +206,8 @@
         $settings->showTooltip = @rw_get_default_value($settings->showTooltip, true);
         $settings->showAverage = @rw_get_default_value($settings->showAverage, true);
         $settings->showReport = @rw_get_default_value($settings->showReport, true);
+        $settings->showRecommendations = @rw_get_default_value($settings->showRecommendations, false);
+        $settings->showSponsored = @rw_get_default_value($settings->showSponsored, false);
         $settings->showLoader = @rw_get_default_value($settings->showLoader, true);
         $settings->beforeRate = @rw_get_default_value($settings->beforeRate, null);
         $settings->afterRate = @rw_get_default_value($settings->beforeRate, null);
@@ -187,14 +215,28 @@
         $settings->boost->votes = @rw_get_default_value($settings->boost->votes, 0);
         $settings->boost->rate = @rw_get_default_value($settings->boost->rate, 5);
 
-        $settings->label->background = @rw_get_default_value($settings->label->background, '#fff');
+        $settings->label->background = @rw_get_default_value($settings->label->background, '#FFFFFF');
+        $settings->label->text->star->empty = @rw_get_default_value($settings->label->text->star->empty, '{{text.rateThis}}');
+        $settings->label->text->star->normal = @rw_get_default_value($settings->label->text->star->normal, '{{text.rateThis}} ({{rating.votes}} {{text.votes}})');
+        $settings->label->text->star->rated = @rw_get_default_value($settings->label->text->star->rated, '{{rating.votes}} {{text.votes}}');
+        $settings->label->text->nero->empty = @rw_get_default_value($settings->label->text->nero->empty, '{{text.rateThis}}');
+        $settings->label->text->nero->normal = @rw_get_default_value($settings->label->text->nero->normal, '{{text.rateThis}}');
+        $settings->label->text->nero->rated = @rw_get_default_value($settings->label->text->nero->rated, '{{rating.votes}} {{text.votes}}');
 
+        $settings->advanced->star->stars = @rw_get_default_value($settings->advanced->star->stars, 5);
+        $settings->advanced->nero->showLike = @rw_get_default_value($settings->advanced->nero->showLike, true);
+        $settings->advanced->nero->showDislike = @rw_get_default_value($settings->advanced->nero->showDislike, true);
+        $settings->advanced->nero->text->like->empty = @rw_get_default_value($settings->advanced->nero->text->like->empty, '{{rating.likes}}');
+        $settings->advanced->nero->text->like->rated = @rw_get_default_value($settings->advanced->nero->text->like->rated, '{{rating.likes}}');
+        $settings->advanced->nero->text->dislike->empty = @rw_get_default_value($settings->advanced->nero->text->dislike->empty, '{{rating.dislikes}}');
+        $settings->advanced->nero->text->dislike->rated = @rw_get_default_value($settings->advanced->nero->text->dislike->rated, '{{rating.dislikes}}');
+        
         $settings->advanced->font->bold = @rw_get_default_value($settings->advanced->font->bold, false);
         $settings->advanced->font->italic = @rw_get_default_value($settings->advanced->font->italic, false);
-        $settings->advanced->font->color = @rw_get_default_value($settings->advanced->font->color, "#000");
+        $settings->advanced->font->color = @rw_get_default_value($settings->advanced->font->color, "#000000");
         $settings->advanced->font->size = @rw_get_default_value($settings->advanced->font->size, "12px");
         $settings->advanced->font->type = @rw_get_default_value($settings->advanced->font->type, "inherit");
-        $settings->advanced->font->hover->color = @rw_get_default_value($settings->advanced->font->hover->color, "#000");
+        $settings->advanced->font->hover->color = @rw_get_default_value($settings->advanced->font->hover->color, "#000000");
 
         $settings->advanced->layout->dir = @rw_get_default_value($settings->advanced->layout->dir, $dir);
         $settings->advanced->layout->lineHeight = @rw_get_default_value($settings->advanced->layout->lineHeight, "18px");

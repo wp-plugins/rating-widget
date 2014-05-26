@@ -1,38 +1,66 @@
 === Rating-Widget: Star Rating System ===
 Contributors: ratingwidget, svovaf
-Donate link: http://rating-widget.com/get-the-word-press-plugin/
-Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce
+Donate link: http://rating-widget.com/pricing/wordpress/
+Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest
 Requires at least: 2.6
 Tested up to: 3.9
-Stable tag: 2.0.5
+Stable tag: 2.0.6
 License: GPLv2 or later
 
-Star Rating System for WordPress - the most beautiful & user-freindly Thumb & Star ratings for WordPress.
+The most popular Five Star Rating System on the web. Add our user-friendly star & thumb ratings to your WordPress posts, pages, comments, BuddyPress status updated and bbPress forum topics.
 
 == Description ==
 
 The Rating-Widget **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The star ratings editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
-The plugin has [PRO VERSIONS](http://rating-widget.com/get-the-word-press-plugin/) with extra features.
+The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with extra features.
 
-> #### Standard Pro Version:
+> #### FREE:
+> * Unlimited ratings
+> * Unlimited pageviews
+> * RatingWidget branded.
+
+> #### STARTER - FREE FROM BRANDING, NO ADS:
 > * Remove (i) icon from Ratings
 > * Secure Connection (Fraud protection)
 > * No Ads in votes overview pop-up
+> * Power User Settings
+> * BuddyPress Ratings
+> * 50k pageviews / month
+> * 1,000 ratings
+> * Unlimited votes
+> * Email Support & [Help Center](http://rating-widget.com/support/)
 
-> #### Premium Pro Version:
-> * Priority Email Support
-> * Remove (i) icon from Ratings
-> * No Ads in votes overview pop-up
+> #### PROFESSIONAL - SEO, DASHBOARD & ADVANCED ANALYTICS:
+> * All Starter Features
 > * Google Rich Snippets (schema.org)
-> * Secure Connection (Fraud protection)
-> * SSL Support
-> * Advanced Ratings' Analytics
+> * Management Dashboard
+> * Analytics
+> * SSL / HTTPS Support
+> * API Access
+> * Custom Ratings Image
 > * WMPL Language Auto-Selection
-> * BuddyPress activity updates, comments and user profiles ratings.
-> * Ratings on bbPress forum replies and replies' authors.
+> * bbPress's Forum Ratings
+> * 250k pageviews / month
+> * 3,000 ratings
+> * Unlimited votes
+> * Priority Email Support & [Help Center](http://rating-widget.com/support/)
 
-To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-plugin/
+> #### BUSINESS - MODERATION & TOP LEVEL SUPPORT:
+> * All Professional Features
+> * Full Moderation
+> * Real-Time Analytics
+> * Personal Success Manager
+> * Fraud Alerts
+> * Data Export
+> * Mobile Optimized
+> * 1M pageviews / month
+> * 10,000 ratings
+> * Unlimited votes
+> * Phone, Email & Chat Support
+
+
+To get the **Pro Version** go to - http://rating-widget.com/pricing/wordpress/
 
 ---
 
@@ -56,7 +84,7 @@ To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-p
 ---
  
 > #### Rating-Widget Support Forum
-> Please visit the [Rating-Widget's Support Forum](http://wordpress.org/support/plugin/rating-widget) for additional help with using this plugin. You may also post feature requests, ideas and bug reports there.
+> Please visit [RatingWidget WordPress FAQ](http://rating-widget.com/support/wordpress/faq/) and [RatingWidget WordPress Support Forum](http://wordpress.org/support/plugin/rating-widget) for additional help with using this plugin. You may also post feature requests, ideas and bug reports there.
 
 == Installation ==
 
@@ -86,15 +114,7 @@ To get the **Pro Version** go to - http://rating-widget.com/get-the-word-press-p
 
 == Frequently Asked Questions ==
 
-= How is Rating-Widget different than some other rating widgets, like starrating.org or polldaddy.com? =
-It's the best one! The Rating-Widget is without registration, fully customizable, cross-browser & multi-language supported - including Right-To-Left languages support, and of course we host it for free.
-
-= How can I change the default stars style with something else? =
-It's very easy. First, go to the Ratings settings. Then, on the Rating-Widget options, select the "Custom" button in the color section, and follow the instructions which will appear in the new window.
-
-= Can my Authors edit my blog ratings? =
-
-Nope. Only administrators can edit the blog ratings.
+Please visit [RatingWidget for WordPress - FAQ](http://rating-widget.com/support/wordpress/faq/)
 
 = The plugin don't work, where are my ratings? =
 
@@ -106,6 +126,13 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.0.6 =
+* New: Getting plugin ready for full localization.
+* New: Added Weekly Rating Reports for WordPress users - requires email confirmation.
+* New: Revamped account activation process for new users.
+* New: Added automated trial period for all users with full plugin's functionality.
+* New: Added new awesome star rating Barrels theme (by [Jeegy Design](http://jeegydesign.com/)).
+
 = 2.0.5 =
 * New: Added Unlimited voting option to voting frequency settings.
 * New: Localized to Maltese.

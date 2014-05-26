@@ -44,7 +44,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
     {
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("RatingWidgetPlugin_TopRatedWidget.widget", $params, true); }
 
-        if (!defined("WP_RW__USER_KEY") || false === WP_RW__USER_KEY)
+        if (!defined("WP_RW__SITE_PUBLIC_KEY") || false === WP_RW__SITE_PUBLIC_KEY)
             return;
         
         if (RatingWidgetPlugin::$WP_RW__HIDE_RATINGS)
@@ -128,7 +128,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         }
         
         $details = array( 
-            "uid" => WP_RW__USER_KEY,
+            "uid" => WP_RW__SITE_PUBLIC_KEY,
         );
 
         $queries = array();
@@ -184,7 +184,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
             ),
         );
         $toprated_data->site = array(
-            'id' => WP_RW__USER_ID,
+            'id' => WP_RW__SITE_ID,
             'domain' => $_SERVER['HTTP_HOST'],
             'type' => 'WordPress',
         );
@@ -457,7 +457,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                         
                         $item = array(
                             'site' => array(
-                                'id' => WP_RW__USER_ID,
+                                'id' => WP_RW__SITE_ID,
                                 'domain' => $_SERVER['HTTP_HOST'],
                             ),
                             'page' => array(

@@ -5,7 +5,7 @@
 <div id="rw_custom_settings" class="has-sidebar has-right-sidebar">
     <div class="has-sidebar-content">
         <div class="postbox rw-body">
-            <h3>Power User Settings</h3>
+            <h3><?php _e('Power User Settings', WP_RW__ID) ?></h3>
             <div class="inside rw-ui-content-container rw-no-radius">
                 <p>Here you can customize the ratings according to our <a href="<?php rw_the_site_url('documentation'); ?>" target="_blank">advanced documentation</a>.</p>
                 <textarea  name="rw_custom_settings" cols="50" rows="10"<?php if (!$custom_settings_enabled) echo ' readonly="readonly"' ?>><?php 

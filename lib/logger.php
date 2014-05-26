@@ -22,33 +22,50 @@
             return self::$_on;
         }
         
-        public static function Log($pId, $pMessage)
+        public static function Log($pId, $pMessage = '')
         {
-            if (false === self::$_on){ return; }
+            if (false === self::$_on)
+                return;
 
-            self::$_log[] = date(WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u") . "  -  {$pId}:  {$pMessage}";
+            $msg = date(WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u") . "  -  {$pId}:  {$pMessage}";
+            
+            self::$_log[] = $msg;
+            
+            if (WP_RW__LOG_DUMP)
+                echo $msg . '<br>';
         }
         
         public static function LogEnterence($pId, $pParams = null, $pLogParams = false)
         {
-            if (false === self::$_on){ return; }
+            if (false === self::$_on)
+                return;
             
-            self::$_log[] = date(WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u") . "  -  {$pId} (Enterence)" . 
+            $msg = date(WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u") . "  -  {$pId} (Enterence)" . 
                             (($pLogParams) ? ":  " . var_export($pParams, true) : "");
+                            
+            self::$_log[] = $msg;
+            
+            if (WP_RW__LOG_DUMP)
+                echo $msg . '<br>';
         }
         
         public static function LogDeparture($pId, $pRet = "")
         {
-            if (false === self::$_on){ return; }
+            if (false === self::$_on)
+                return;
             
-            self::$_log[] = date(WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u") . "  -  {$pId} (Departure):  " . var_export($pRet, true);
+            $msg = date(WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u") . "  -  {$pId} (Departure):  " . var_export($pRet, true);
+            
+            self::$_log[] = $msg;
+            
+            if (WP_RW__LOG_DUMP)
+                echo $msg . '<br>';
         }
         
         public static function Output($pPadding)
         {
-            foreach (self::$_log as $log){
+            foreach (self::$_log as $log)
                 echo "{$pPadding}{$log}\n";
-            }
         }
     }
 ?>

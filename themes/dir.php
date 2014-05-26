@@ -42,6 +42,8 @@
             'star_lean_heart' => array('type' => 'star', 'file' => 'star/lean_heart.php', 'title' => 'Lean Hearts'),
             'star_heart1' => array('type' => 'star', 'file' => 'star/heart_1.php', 'title' => 'Hearts'),
 
+            'star_barrels' => array('type' => 'star', 'file' => 'star/barrels.php', 'title' => 'Jeegy\'s Barrels'),
+            
             'star_flames' => array('type' => 'star', 'file' => 'star/flames.php', 'title' => 'Flames by Giuseppe'),
 
             'star_smiley' => array('type' => 'star', 'file' => 'star/smiley.php', 'title' => 'Smiley by Daya'),
@@ -92,6 +94,8 @@
             'thumbs_bp1' => array('type' => 'nero', 'file' => 'nero/buddypress_1.php', 'title' => 'BuddyPress Thumbs'),
             'arrows_1' => array('type' => 'nero', 'file' => 'nero/n3.php', 'title' => 'Arrows 1'),
             'arrows_2' => array('type' => 'nero', 'file' => 'nero/n4.php', 'title' => 'Arrows 2'),
+            
+            'check' => array('type' => 'nero', 'file' => 'nero/check.php', 'title' => 'Checkboxes (by Trevor H.)'),
 
             'candles' => array('type' => 'nero', 'file' => 'nero/candles.php', 'title' => 'Candles by Avelim'),
             'masks' => array('type' => 'nero', 'file' => 'nero/masks.php', 'title' => 'Masks (by David Shenberger)'),

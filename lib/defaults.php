@@ -26,9 +26,15 @@
         $DEFAULT_OPTIONS->boost = new stdClass();
         $DEFAULT_OPTIONS->imgUrl = new stdClass();
         $DEFAULT_OPTIONS->label = new stdClass();
+        $DEFAULT_OPTIONS->label->text = new stdClass();
+        $DEFAULT_OPTIONS->label->text->star = new stdClass();
+        $DEFAULT_OPTIONS->label->text->nero = new stdClass();
         $DEFAULT_OPTIONS->advanced = new stdClass();
         $DEFAULT_OPTIONS->advanced->star = new stdClass();
         $DEFAULT_OPTIONS->advanced->nero = new stdClass();
+        $DEFAULT_OPTIONS->advanced->nero->text = new stdClass();
+        $DEFAULT_OPTIONS->advanced->nero->text->like = new stdClass();
+        $DEFAULT_OPTIONS->advanced->nero->text->dislike = new stdClass();
         $DEFAULT_OPTIONS->advanced->font = new stdClass();
         $DEFAULT_OPTIONS->advanced->font->hover = new stdClass();
         $DEFAULT_OPTIONS->advanced->text = new stdClass();
@@ -49,6 +55,12 @@
         $DEFAULT_OPTIONS->imgUrl->ltr = '';
         $DEFAULT_OPTIONS->imgUrl->rtl = '';
         $DEFAULT_OPTIONS->label->background = '#FFFFFF';
+        $DEFAULT_OPTIONS->label->text->star->empty = '{{text.rateThis}}';
+        $DEFAULT_OPTIONS->label->text->star->normal = '{{text.rateThis}} ({{rating.votes}} {{text.votes}})';
+        $DEFAULT_OPTIONS->label->text->star->rated = '{{rating.votes}} {{text.votes}}';
+        $DEFAULT_OPTIONS->label->text->nero->empty = '{{text.rateThis}}';
+        $DEFAULT_OPTIONS->label->text->nero->normal = '{{text.rateThis}}';
+        $DEFAULT_OPTIONS->label->text->nero->rated = '{{rating.votes}} {{text.votes}}';
         $DEFAULT_OPTIONS->readOnly = false;
         $DEFAULT_OPTIONS->reVote = true;
         $DEFAULT_OPTIONS->frequency = DEF_FREQUENCY;
@@ -56,6 +68,8 @@
         $DEFAULT_OPTIONS->showTooltip = true;
         $DEFAULT_OPTIONS->showAverage = true;
         $DEFAULT_OPTIONS->showReport = true;
+        $DEFAULT_OPTIONS->showRecommendations = false;
+        $DEFAULT_OPTIONS->showSponsored = false;
         $DEFAULT_OPTIONS->showLoader = true;
         $DEFAULT_OPTIONS->boost->votes = 0;
         $DEFAULT_OPTIONS->boost->rate = 5;
@@ -66,6 +80,10 @@
 
         $DEFAULT_OPTIONS->advanced->nero->showLike = true;
         $DEFAULT_OPTIONS->advanced->nero->showDislike = true;
+        $DEFAULT_OPTIONS->advanced->nero->text->like->empty = '{{rating.likes}}';
+        $DEFAULT_OPTIONS->advanced->nero->text->like->rated = '{{rating.likes}}';
+        $DEFAULT_OPTIONS->advanced->nero->text->dislike->empty = '{{rating.dislikes}}';
+        $DEFAULT_OPTIONS->advanced->nero->text->dislike->rated = '{{rating.dislikes}}';
         
         $DEFAULT_OPTIONS->advanced->font->bold = false;
         $DEFAULT_OPTIONS->advanced->font->italic = false;

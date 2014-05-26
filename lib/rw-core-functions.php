@@ -58,4 +58,3 @@ if (!function_exists('bbp_get_user_display_name'))
         return $author_name;
     }
 }
-?>
