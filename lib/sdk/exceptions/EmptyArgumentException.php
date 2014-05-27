@@ -1,5 +1,3 @@
 <?php
-    namespace RatingWidget\Api\Sdk\Exceptions;
-    
-    class EmptyArgumentException extends \RatingWidget\Api\Sdk\Exceptions\InvalidArgumentException { }
+    class RW_EmptyArgumentException extends RW_InvalidArgumentException { }
 ?>

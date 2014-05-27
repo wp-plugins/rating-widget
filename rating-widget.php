@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/pricing/wordpress/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.6
+Version: 2.0.7
 Author: Rating-Widget
 Author URI: http://rating-widget.com/pricing/wordpress/
 License: GPLv2 or later
@@ -4334,7 +4334,7 @@ class RatingWidgetPlugin
                     ?>,
                         source: "wordpress",
                         options: {
-                            <?php if (eval(base64_decode('JHRoaXMtPl9lY2NiYzg3ZTRiNWNlMmZlMjgzMDhmZDlmMmE3YmFmMygpICYmIGRlZmluZWQoJ0lDTF9MQU5HVUFHRV9DT0RFJykgJiYgaXNzZXQoJHRoaXMtPmxhbmd1YWdlc1tJQ0xfTEFOR1VBR0VfQ09ERV0p'))) : ?>
+                            <?php if (eval(base64_decode('cmV0dXJuICgkdGhpcy0+X2VjY2JjODdlNGI1Y2UyZmUyODMwOGZkOWYyYTdiYWYzKCkgJiYgZGVmaW5lZCgnSUNMX0xBTkdVQUdFX0NPREUnKSAmJiBpc3NldCgkdGhpcy0+bGFuZ3VhZ2VzW0lDTF9MQU5HVUFHRV9DT0RFXSkpOw=='))) : ?>
                             lng: "<?php echo ICL_LANGUAGE_CODE; ?>"
                             <?php endif; ?> 
                         }
@@ -5333,7 +5333,7 @@ function rwapi()
         else
         {
             // Init API.
-            $rwapi = new \RatingWidget\Api\Sdk\RatingWidget(
+            $rwapi = new RatingWidget(
                 'site',
                 WP_RW__SITE_ID,
                 WP_RW__SITE_PUBLIC_KEY,

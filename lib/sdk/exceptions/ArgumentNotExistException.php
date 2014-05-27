@@ -1,4 +1,2 @@
 <?php
-    namespace RatingWidget\Api\Sdk\Exceptions;
-    
-    class ArgumentNotExistException extends \RatingWidget\Api\Sdk\Exceptions\InvalidArgumentException { }
+    class RW_ArgumentNotExistException extends RW_InvalidArgumentException { }

@@ -1,11 +1,9 @@
 <?php
-    namespace RatingWidget\Api\Sdk\Exceptions;
-    
     /**
     * Thrown when an API call returns an exception.
     *
     */
-    class Exception extends \Exception
+    class RW_Exception extends Exception
     {
         protected $_result;
         protected $_type;

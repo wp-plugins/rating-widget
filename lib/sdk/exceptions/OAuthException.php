@@ -1,7 +1,5 @@
 <?php
-    namespace RatingWidget\Api\Sdk\Exceptions;
-    
-    class OAuthException extends \RatingWidget\Api\Sdk\Exceptions\Exception
+    class RW_OAuthException extends RW_Exception
     {
         public function __construct($pResult)
         {

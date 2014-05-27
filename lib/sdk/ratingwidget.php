@@ -14,8 +14,6 @@
      * License for the specific language governing permissions and limitations
      * under the License.
      */
-    namespace RatingWidget\Api\Sdk;
-    
     if (!function_exists('curl_init'))
         throw new Exception('RatingWidget needs the CURL PHP extension.');
 
@@ -66,7 +64,7 @@
                     $pMethod, 
                     array_merge(array('scope' => $this->_scope), $pParams));*/
             }
-            catch (\Exception $e)
+            catch (Exception $e)
             {
                 // Map to SDK exception.
                 $this->ThrowException($e);
@@ -175,7 +173,7 @@
 
             if ($result === false)
             {
-                $e = new \RatingWidget\Api\Sdk\Exceptions\Exception(array(
+                $e = new RW_Exception(array(
                     'error' => array(
                         'code' => curl_errno($ch),
                         'message' => curl_error($ch),

@@ -1,13 +1,13 @@
 === Rating-Widget: Star Rating System ===
 Contributors: ratingwidget, svovaf
 Donate link: http://rating-widget.com/pricing/wordpress/
-Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest
+Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, images, image, links
 Requires at least: 2.6
 Tested up to: 3.9
-Stable tag: 2.0.6
+Stable tag: 2.0.7
 License: GPLv2 or later
 
-The most popular Five Star Rating System on the web. Add our user-friendly star & thumb ratings to your WordPress posts, pages, comments, BuddyPress status updated and bbPress forum topics.
+The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
 
 == Description ==
 
@@ -126,6 +126,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.0.7 =
+* Fix: Removed namespaces from integrated PHP SDK to support PHP versions older than 5.3.
+* Fix: Fixed a bug in the rendering JavaScript.
+
 = 2.0.6 =
 * New: Getting plugin ready for full localization.
 * New: Added Weekly Rating Reports for WordPress users - requires email confirmation.

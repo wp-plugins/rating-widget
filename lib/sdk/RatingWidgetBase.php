@@ -14,15 +14,13 @@
      * License for the specific language governing permissions and limitations
      * under the License.
      */
-    namespace RatingWidget\Api\Sdk;
-
     define('RW_API__VERSION', '1');
     define('RW_API__ADRESS', 'http://api.rating-widget.com');
     define('RW_SDK__PATH', dirname(__FILE__));
     define('RW_SDK__EXCEPTIONS_PATH', RW_SDK__PATH . '/exceptions/');
     
     if (!function_exists('json_decode'))
-        throw new \Exception('RatingWidget needs the JSON PHP extension.');
+        throw new Exception('RatingWidget needs the JSON PHP extension.');
     
     // Include all exception files.
     $exceptions = array(
@@ -87,7 +85,7 @@
                     $base = '/sites/' . $this->_id;
                     break;
                 default:
-                    throw new \RatingWidget\Api\Sdk\Exceptions\Exception('Scope not implemented.');
+                    throw new RW_Exception('Scope not implemented.');
             }
             
             return '/v' . RW_API__VERSION . $base . (!empty($pPath) ? '/' : '') . $pPath . '.' . self::FORMAT . $query;
