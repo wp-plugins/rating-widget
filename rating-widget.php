@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/pricing/wordpress/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.7
+Version: 2.0.8
 Author: Rating-Widget
 Author URI: http://rating-widget.com/pricing/wordpress/
 License: GPLv2 or later
@@ -764,6 +764,49 @@ class RatingWidgetPlugin
         $pData["token"] = $token;
         
         return $pData;
+    }
+    
+    function ApiCall($pPath, $pMethod = 'GET', $pParams = array(), $pExpiration = false)
+    {
+        RWLogger::LogEnterence("ApiCall");
+        
+        if (false === WP_RW__CACHING_ON)
+            // No caching on debug mode.
+            $pExpiration = false;
+
+        $transient = '';
+        if (false !== $pExpiration)
+        {
+            $transient = 'rw_' . md5($pMethod . $pPath . var_export($pParams, true));
+            
+            // Try to get cached item.
+            $cached = get_transient($transient);
+            
+            if (RWLogger::IsOn())
+            {
+                RWLogger::Log("ApiCall", "TRANSIENT_KEY - " . $transient);
+                RWLogger::Log("ApiCall", "TRANSIENT_VAL - " . $cached);
+            }
+
+            // If found returned cached value.
+            if (false !== $cached)
+            {
+                if (RWLogger::IsOn())
+                    RWLogger::Log('ApiCall', 'IS_CACHED: TRUE');
+                
+                return $cached;
+            }
+        }
+
+        $result = rwapi()->Api($pPath, $pMethod, $pParams);
+
+        if (RWLogger::IsOn())
+            RWLogger::Log("ApiCall", 'Result: ' . var_export($result, true));
+
+        if (false !== $pExpiration)
+            set_transient($transient, $result, $pExpiration);
+        
+        return $result;
     }
     
     function RemoteCall($pPage, &$pData, $pExpiration = false)
@@ -3577,7 +3620,7 @@ class RatingWidgetPlugin
         {
             $data = $this->GetRatingDataByRatingID($pUrid);
             
-            if (false !== $data)
+            if (false !== $data && $data['votes'] > 0)
             {
                     $title = mb_convert_to_utf8(trim($pTitle));
                     $rating_html .= ' itemscope itemtype="http://schema.org/Product">
@@ -5101,29 +5144,23 @@ class RatingWidgetPlugin
     
     function GetRatingDataByRatingID($pRatingID, $pAccuracy = false)
     {
-        if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+        if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
             return false;
-            
-        $details = array( 
-            "uid" => WP_RW__SITE_PUBLIC_KEY,
-            "rids" => $pRatingID,
+        
+        $rating = $this->ApiCall(
+            '/ratings/' . $pRatingID . '.json?is_external=true&fields=id,approved_count,avg_rate', 
+            'GET', 
+            array(), 
+            WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS
         );
-
-        $rw_ret_obj = $this->RemoteCall("action/api/rating.php", $details, WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS);
         
-        if (false === $rw_ret_obj)
+        if (isset($rating->error))
             return false;
-            
-        // Decode RW ret object.
-        $rw_ret_obj = json_decode($rw_ret_obj);
 
-        if (true !== $rw_ret_obj->success || !isset($rw_ret_obj->data) || !is_array($rw_ret_obj->data) || count($rw_ret_obj->data) == 0)
-            return false;
-        
-        $rate = (float)$rw_ret_obj->data[0]->rate;
-        $votes = (float)$rw_ret_obj->data[0]->votes;
+        $rate = (float)$rating->avg_rate;
+        $votes = (float)$rating->approved_count;
         $calc_rate = ($votes > 0) ? ((float)$rate / (float)$votes) : 0;
-        
+
         if (is_numeric($pAccuracy))
         {
             $pAccuracy = (int)$pAccuracy;
