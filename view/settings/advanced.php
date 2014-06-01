@@ -8,7 +8,7 @@
                 </div>
                 <div id="rw_advanced_settings" style="display: none;">
                     <br />
-                    <div class="rw-tabs<?php if ($browser_info["browser"] == "msie" && $browser_info["version"] != "8.0") echo " rw-clearfix";?>">
+                    <div class="rw-tabs rw-clearfix">
                         <div class="rw-selected">Font</div>
                         <div>Layout</div>
                         <div>Text</div>

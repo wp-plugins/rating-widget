@@ -1,0 +1,627 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rating-Widget: Star Rating System\n"
+"POT-Creation-Date: 2014-06-01 13:45+0200\n"
+"PO-Revision-Date: 2014-06-01 13:45+0200\n"
+"Last-Translator: RatingWidget <translate@rating-widget.com>\n"
+"Language-Team: RatingWidget <translate@rating-widget.com>\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: lib/rw-top-rated-widget.php:26
+msgid "A list of your top rated posts."
+msgstr "A list of your top rated posts."
+
+#: lib/rw-top-rated-widget.php:163
+msgid "Top Rated"
+msgstr "Top Rated"
+
+#: lib/rw-top-rated-widget.php:611
+msgid "Widget Title"
+msgstr "Widget Title"
+
+#: lib/rw-top-rated-widget.php:612
+msgid "Title Max Length"
+msgstr "Title Max Length"
+
+#: lib/rw-top-rated-widget.php:670 rating-widget.php:1454
+#: rating-widget.php:1513
+msgid "Title"
+msgstr "Title"
+
+#: lib/rw-top-rated-widget.php:675
+msgid "Max Items"
+msgstr "Max Items"
+
+#: lib/rw-top-rated-widget.php:686
+msgid "Min Votes"
+msgstr "Min Votes"
+
+#: lib/rw-top-rated-widget.php:691 rating-widget.php:1450
+#: rating-widget.php:1808 rating-widget.php:2111
+msgid "Order By"
+msgstr "Order By"
+
+#: lib/rw-top-rated-widget.php:703
+msgid "Order"
+msgstr "Order"
+
+#: lib/rw-top-rated-widget.php:711 rating-widget.php:1395
+#: rating-widget.php:1782 rating-widget.php:2085
+msgid "Date Range"
+msgstr "Date Range"
+
+#: rating-widget.php:896
+msgid "Can't connect to rating-widget.com"
+msgstr "Can't connect to rating-widget.com"
+
+#: rating-widget.php:1111 rating-widget.php:1114 rating-widget.php:1116
+msgid "Rating-Widget Settings"
+msgstr "Rating-Widget Settings"
+
+#: rating-widget.php:1111 rating-widget.php:1114 rating-widget.php:1116
+msgid "Ratings"
+msgstr "Ratings"
+
+#: rating-widget.php:1421 rating-widget.php:4475 rating-widget.php:4481
+msgid "Element"
+msgstr "Element"
+
+#: rating-widget.php:1425
+msgid "Posts"
+msgstr "Posts"
+
+#: rating-widget.php:1426
+msgid "Pages"
+msgstr "Pages"
+
+#: rating-widget.php:1427
+msgid "Comments"
+msgstr "Comments"
+
+#: rating-widget.php:1432
+msgid "Activity-Updates"
+msgstr "Activity-Updates"
+
+#: rating-widget.php:1433
+msgid "Activity-Comments"
+msgstr "Activity-Comments"
+
+#: rating-widget.php:1434
+msgid "Users-Profiles"
+msgstr "Users-Profiles"
+
+#: rating-widget.php:1437
+msgid "Forum-Posts"
+msgstr "Forum-Posts"
+
+#: rating-widget.php:1455 rating-widget.php:1514 rating-widget.php:2115
+msgid "Id"
+msgstr "Id"
+
+#: rating-widget.php:1456 rating-widget.php:1515 rating-widget.php:1813
+#: rating-widget.php:2116
+msgid "Start Date"
+msgstr "Start Date"
+
+#: rating-widget.php:1457 rating-widget.php:1516 rating-widget.php:1814
+#: rating-widget.php:2117
+msgid "Last Update"
+msgstr "Last Update"
+
+#: rating-widget.php:1458 rating-widget.php:1517 rating-widget.php:4475
+#: rating-widget.php:4493
+msgid "Votes"
+msgstr "Votes"
+
+#: rating-widget.php:1459 rating-widget.php:1518
+msgid "Average Rate"
+msgstr "Average Rate"
+
+#: rating-widget.php:1472 rating-widget.php:1831 rating-widget.php:2134
+msgid "Show"
+msgstr "Show"
+
+#: rating-widget.php:1479
+msgid "Votes Timeline"
+msgstr "Votes Timeline"
+
+#: rating-widget.php:1506
+msgid "No ratings here."
+msgstr "No ratings here."
+
+#: rating-widget.php:1542
+msgid "Rating Report"
+msgstr "Rating Report"
+
+#: rating-widget.php:1602 rating-widget.php:1981 rating-widget.php:2291
+msgid "Show rows"
+msgstr "Show rows"
+
+#: rating-widget.php:1812 rating-widget.php:1887
+msgid "Rating Id"
+msgstr "Rating Id"
+
+#: rating-widget.php:1815 rating-widget.php:1892 rating-widget.php:2118
+#: rating-widget.php:2209 rating-widget.php:4495
+msgid "Rate"
+msgstr "Rate"
+
+#: rating-widget.php:1816 rating-widget.php:1888 rating-widget.php:2119
+#: rating-widget.php:2205
+msgid "User Id"
+msgstr "User Id"
+
+#: rating-widget.php:1817 rating-widget.php:1889 rating-widget.php:2120
+#: rating-widget.php:2206
+msgid "PC Id"
+msgstr "PC Id"
+
+#: rating-widget.php:1818 rating-widget.php:1890 rating-widget.php:2121
+#: rating-widget.php:2207
+msgid "IP"
+msgstr "IP"
+
+#: rating-widget.php:1881 rating-widget.php:2199
+msgid "No votes here."
+msgstr "No votes here."
+
+#: rating-widget.php:1891 rating-widget.php:2208
+msgid "Date"
+msgstr "Date"
+
+#: rating-widget.php:1996 rating-widget.php:2306
+msgid "Previous"
+msgstr "Previous"
+
+#: rating-widget.php:2000 rating-widget.php:2310
+msgid "Next"
+msgstr "Next"
+
+#: rating-widget.php:2407 rating-widget.php:2855
+msgid "Settings successfully saved."
+msgstr "Settings successfully saved."
+
+#: rating-widget.php:2431
+msgid "Increase User Retention and Pageviews"
+msgstr "Increase User Retention and Pageviews"
+
+#: rating-widget.php:2433
+msgid ""
+"With the Top-Rated Sidebar Widget readers will stay on your site for a "
+"longer period of time."
+msgstr ""
+"With the Top-Rated Sidebar Widget readers will stay on your site for a "
+"longer period of time."
+
+#: rating-widget.php:2450 rating-widget.php:2474
+msgid "Add Widget Now!"
+msgstr "Add Widget Now!"
+
+#: rating-widget.php:2453
+msgid "How"
+msgstr "How"
+
+#: rating-widget.php:2454
+msgid ""
+"Expose your readers to the top rated posts onsite that they might not have "
+"otherwise noticed and increase your chance to reduce the bounce rate."
+msgstr ""
+"Expose your readers to the top rated posts onsite that they might not have "
+"otherwise noticed and increase your chance to reduce the bounce rate."
+
+#: rating-widget.php:2457
+msgid "What"
+msgstr "What"
+
+#: rating-widget.php:2458
+msgid ""
+"The Top-Rated Widget is a beautiful sidebar widget containing the top rated "
+"posts on your blog."
+msgstr ""
+"The Top-Rated Widget is a beautiful sidebar widget containing the top rated "
+"posts on your blog."
+
+#: rating-widget.php:2461
+msgid "Install"
+msgstr "Install"
+
+#: rating-widget.php:2462
+msgid "Go to"
+msgstr "Go to"
+
+#: rating-widget.php:2466
+msgid "New"
+msgstr "New"
+
+#: rating-widget.php:2467
+msgid ""
+"Thumbnails: a beautiful new thumbnail display, for themes which use post "
+"thumbnails (featured images)."
+msgstr ""
+"Thumbnails: a beautiful new thumbnail display, for themes which use post "
+"thumbnails (featured images)."
+
+#: rating-widget.php:2470
+msgid "Performance"
+msgstr "Performance"
+
+#: rating-widget.php:2471
+msgid ""
+"The widget is performant, caching the top posts and featured images' "
+"thumbnails as your site is visited."
+msgstr ""
+"The widget is performant, caching the top posts and featured images' "
+"thumbnails as your site is visited."
+
+#: rating-widget.php:2522
+msgid "You do not have sufficient permissions to access this page."
+msgstr "You do not have sufficient permissions to access this page."
+
+#: rating-widget.php:4405
+msgid "Invalid element selection."
+msgstr "Invalid element selection."
+
+#: rating-widget.php:4410
+msgid "Invalid element id."
+msgstr "Invalid element id."
+
+#: rating-widget.php:4415
+msgid "Invalid votes number."
+msgstr "Invalid votes number."
+
+#: rating-widget.php:4420
+msgid "Invalid votes rate."
+msgstr "Invalid votes rate."
+
+#: rating-widget.php:4469
+msgid "Rating-Widget Boosting"
+msgstr "Rating-Widget Boosting"
+
+#: rating-widget.php:4472
+msgid "Here you can boost your ratings."
+msgstr "Here you can boost your ratings."
+
+#: rating-widget.php:4473
+msgid ""
+"Note: This action impact the rating record directly - it's on your own "
+"responsibility!"
+msgstr ""
+"Note: This action impact the rating record directly - it's on your own "
+"responsibility!"
+
+#: rating-widget.php:4474
+msgid "Example:"
+msgstr "Example:"
+
+#: rating-widget.php:4475
+msgid "Post"
+msgstr "Post"
+
+#: rating-widget.php:4475 rating-widget.php:4491
+msgid "Id:"
+msgstr "Id:"
+
+#: rating-widget.php:4475
+msgid "Rate:"
+msgstr "Rate:"
+
+#: rating-widget.php:4476
+msgid "This will add 3 votes with the rate of 4 stars to Post with Id=2."
+msgstr "This will add 3 votes with the rate of 4 stars to Post with Id=2."
+
+#: rating-widget.php:4483
+msgid "Post/Page"
+msgstr "Post/Page"
+
+#: rating-widget.php:4484
+msgid "Comment"
+msgstr "Comment"
+
+#: rating-widget.php:4485
+msgid "Activity Update"
+msgstr "Activity Update"
+
+#: rating-widget.php:4486
+msgid "Forum Post"
+msgstr "Forum Post"
+
+#: rating-widget.php:4487
+msgid "User"
+msgstr "User"
+
+#: rating-widget.php:4497
+msgid "Note: Rate must be a number between -5 to 5."
+msgstr "Note: Rate must be a number between -5 to 5."
+
+#: rating-widget.php:4590 rating-widget.php:4591
+msgid "Rating-Widget Exclude Option"
+msgstr "Rating-Widget Exclude Option"
+
+#: rating-widget.php:4613
+msgid "Show Rating (Uncheck to Hide)"
+msgstr "Show Rating (Uncheck to Hide)"
+
+#: rating-widget.php:5189
+msgid "Settings"
+msgstr "Settings"
+
+#: rating-widget.php:5190
+msgid "Blog"
+msgstr "Blog"
+
+#: rating-widget.php:5191 view/pages/admin/account.php:7
+#: view/pages/admin/account.php:44
+msgid "Upgrade"
+msgstr "Upgrade"
+
+#: view/availability_options.php:9
+msgid "User Availability Settings"
+msgstr "User Availability Settings"
+
+#: view/categories_availability_options.php:12
+msgid "Categories Visibility Settings"
+msgstr "Categories Visibility Settings"
+
+#: view/categories_availability_options.php:15
+msgid "All Categories"
+msgstr "All Categories"
+
+#: view/fb.php:2
+msgid "Find us on Facebook"
+msgstr "Find us on Facebook"
+
+#: view/options.php:4
+msgid "Rating-Widget Options"
+msgstr "Rating-Widget Options"
+
+#: view/pages/admin/account.php:6
+msgid "Account"
+msgstr "Account"
+
+#: view/pages/admin/account.php:14
+msgid "Account Details"
+msgstr "Account Details"
+
+#: view/pages/admin/account.php:20
+msgid "User ID"
+msgstr "User ID"
+
+#: view/pages/admin/account.php:23
+msgid "User Email"
+msgstr "User Email"
+
+#: view/pages/admin/account.php:26
+msgid "Site ID"
+msgstr "Site ID"
+
+#: view/pages/admin/account.php:28
+msgid "Site Public Key"
+msgstr "Site Public Key"
+
+#: view/pages/admin/account.php:30
+msgid "Site Secret"
+msgstr "Site Secret"
+
+#: view/pages/admin/account.php:30
+msgid "No Secret"
+msgstr "No Secret"
+
+#: view/pages/admin/account.php:33
+msgid "Site Plan"
+msgstr "Site Plan"
+
+#: view/pages/admin/account.php:46
+msgid "Change Plan"
+msgstr "Change Plan"
+
+#: view/pages/admin/account.php:51
+msgid "Sync License"
+msgstr "Sync License"
+
+#: view/pages/admin/account.php:54
+msgid "What is your secret key?"
+msgstr "What is your secret key?"
+
+#: view/pages/admin/account.php:58
+msgid "Update Secret"
+msgstr "Update Secret"
+
+#: view/pages/admin/advanced.php:11
+msgid "Flash Dependency"
+msgstr "Flash Dependency"
+
+#: view/pages/admin/advanced.php:14
+msgid "Enable Flash dependency (track devices using LSO)."
+msgstr "Enable Flash dependency (track devices using LSO)."
+
+#: view/pages/admin/advanced.php:17
+msgid ""
+"Disable Flash dependency (devices with identical IPs won't be distinguished)."
+msgstr ""
+"Disable Flash dependency (devices with identical IPs won't be distinguished)."
+
+#: view/pages/admin/advanced.php:27
+msgid "Mobile Settings"
+msgstr "Mobile Settings"
+
+#: view/pages/admin/advanced.php:42
+msgid "Critical Actions"
+msgstr "Critical Actions"
+
+#: view/pages/admin/advanced.php:88
+msgid "Restore all Rating-Widget settings to factory."
+msgstr "Restore all Rating-Widget settings to factory."
+
+#: view/pages/admin/advanced.php:97
+msgid "Create new FREE ratings account."
+msgstr "Create new FREE ratings account."
+
+#: view/pages/admin/advanced.php:97
+msgid "Notice: All your current ratings data will be lost."
+msgstr "Notice: All your current ratings data will be lost."
+
+#: view/pages/admin/report-dummy.php:4
+msgid "Upgrade now to get reports and more Professional Features"
+msgstr "Upgrade now to get reports and more Professional Features"
+
+#: view/pages/admin/report-dummy.php:10
+msgid ""
+"Reports provides you with an analytical overview of your blog-ratings' votes "
+"in one page.\n"
+"                                Here, you can gain an understanding of how "
+"interesting and attractive your blog elements (e.g. posts, pages),\n"
+"                                how active your users, and check the "
+"segmentation of the votes."
+msgstr ""
+"Reports provides you with an analytical overview of your blog-ratings' votes "
+"in one page.\n"
+"                                Here, you can gain an understanding of how "
+"interesting and attractive your blog elements (e.g. posts, pages),\n"
+"                                how active your users, and check the "
+"segmentation of the votes."
+
+#: view/pages/admin/report-dummy.php:16 view/upgrade.php:16
+msgid "Save 10%"
+msgstr "Save 10%"
+
+#: view/pages/admin/report-dummy.php:22 view/upgrade.php:21
+msgid "Learn More"
+msgstr "Learn More"
+
+#: view/pages/admin/report-dummy.php:29 view/upgrade.php:5
+msgid "Google Rich Snippets (schema.org)"
+msgstr "Google Rich Snippets (schema.org)"
+
+#: view/pages/admin/report-dummy.php:30 view/upgrade.php:6
+msgid "Advanced Ratings' Analytics"
+msgstr "Advanced Ratings' Analytics"
+
+#: view/pages/admin/report-dummy.php:31 view/upgrade.php:7
+msgid "White-labeled - Ads free"
+msgstr "White-labeled - Ads free"
+
+#: view/pages/admin/report-dummy.php:32 view/upgrade.php:8
+msgid "bbPress Forum Ratings"
+msgstr "bbPress Forum Ratings"
+
+#: view/pages/admin/report-dummy.php:33 view/upgrade.php:9
+msgid "User Reputation-Rating (BuddyPress/bbPress)"
+msgstr "User Reputation-Rating (BuddyPress/bbPress)"
+
+#: view/pages/admin/report-dummy.php:34 view/upgrade.php:10
+msgid "Priority Email Support"
+msgstr "Priority Email Support"
+
+#: view/pages/admin/report-dummy.php:35 view/upgrade.php:11
+msgid "SSL Support"
+msgstr "SSL Support"
+
+#: view/pages/admin/report-dummy.php:36 view/upgrade.php:12
+msgid "Secure Connection (Fraud protection)"
+msgstr "Secure Connection (Fraud protection)"
+
+#: view/pages/admin/report-dummy.php:37 view/upgrade.php:13
+msgid "WMPL Language Auto-Selection"
+msgstr "WMPL Language Auto-Selection"
+
+#: view/post_views_visibility.php:23
+msgid "Post Views Visibility Settings"
+msgstr "Post Views Visibility Settings"
+
+#: view/powerusers.php:8
+msgid "Power User Settings"
+msgstr "Power User Settings"
+
+#: view/preview.php:11
+msgid "Follow"
+msgstr "Follow"
+
+#: view/preview.php:147 view/save.php:7
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: view/preview.php:151
+msgid "Like it?"
+msgstr "Like it?"
+
+#: view/preview.php:153
+msgid "Support the plugin with ★ 5 Stars"
+msgstr "Support the plugin with ★ 5 Stars"
+
+#: view/save.php:9
+msgid "Upgrade Now!"
+msgstr "Upgrade Now!"
+
+#: view/twitter.php:2
+msgid "Follow us on Twitter"
+msgstr "Follow us on Twitter"
+
+#: view/twitter.php:5
+msgid "Follow @ratingwidget"
+msgstr "Follow @ratingwidget"
+
+#: view/twitter.php:7
+msgid "Follow @vovafeldman"
+msgstr "Follow @vovafeldman"
+
+#: view/upgrade.php:2
+msgid "Why Go Professional?"
+msgstr "Why Go Professional?"
+
+#: view/user_rating_type_options.php:10
+msgid "Rating Type"
+msgstr "Rating Type"
+
+#: view/user_rating_type_options.php:13
+msgid ""
+"Reputational (Pro Feature) - aggregated average of user's rated elements."
+msgstr ""
+"Reputational (Pro Feature) - aggregated average of user's rated elements."
+
+#: view/user_rating_type_options.php:16
+msgid "Standard - directly affected by rating user's profile page."
+msgstr "Standard - directly affected by rating user's profile page."
+
+#: view/userkey_generation.php:5
+msgid "You are just 30 sec away from boosting your blog with ratings..."
+msgstr "You are just 30 sec away from boosting your blog with ratings..."
+
+#: view/visibility_options.php:21
+msgid "Specific Visibility Settings"
+msgstr "Specific Visibility Settings"
+
+#: view/visibility_options.php:24
+#, php-format
+msgid "Show rating on every %s"
+msgstr "Show rating on every %s"
+
+#: view/visibility_options.php:27
+#, php-format
+msgid "Show rating on every %1$s except the listed %2$s"
+msgstr "Show rating on every %1$s except the listed %2$s"
+
+#: view/visibility_options.php:30
+#, php-format
+msgid "Show rating on only the listed %s"
+msgstr "Show rating on only the listed %s"
+
+#: view/visibility_options.php:32
+msgid "Seperate ids with commas (e.g. \"3,17,8\")."
+msgstr "Seperate ids with commas (e.g. \"3,17,8\")."
+
+#~ msgid "Votes:"
+#~ msgstr "Votes:"
+
+#~ msgid "Order By:"
+#~ msgstr "Order By:"

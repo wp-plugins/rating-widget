@@ -50,13 +50,13 @@
                     "verdana" => 'verdana',
                 );
                 
-                foreach ($fonts as $label => $font)
+                foreach ($fonts as $label => $f)
                 {
             ?>
-            <div class="rw-ui-img-radio<?php if ($font->type == $font) echo " rw-selected";?> rw-font-<?php echo $label;?>" onclick="rwStar.setFontType('<?php echo $font;?>'); rwNero.setFontType('<?php echo $font;?>');">
+            <div class="rw-ui-img-radio<?php if ($font->type == $f) echo " rw-selected";?> rw-font-<?php echo $label;?>" onclick="rwStar.setFontType('<?php echo $f;?>'); rwNero.setFontType('<?php echo $f;?>');">
                 <span class="rw-font-sample">A</span>
                 <span><?php echo ucwords($label);?></span>
-                <input type="radio" name="rw-font-type" value="<?php echo $font;?>"<?php if ($font->type == $font) echo ' checked="checked"';?> />
+                <input type="radio" name="rw-font-type" value="<?php echo $f;?>"<?php if ($font->type == $f) echo ' checked="checked"';?> />
             </div>
             <?php
                 }

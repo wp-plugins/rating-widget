@@ -32,14 +32,24 @@ function rw_last_index_of($haystack, $needle)
 
 /* Url.
 --------------------------------------------------------------------------------------------*/
-function rw_admin_url($path = '', $scheme = 'admin')
+function rw_admin_url($path = 'admin.php', $page = WP_RW__ADMIN_MENU_SLUG, $scheme = 'admin')
 {
-    echo rw_get_admin_url( $path, $scheme );
+    echo rw_get_admin_url($path, $page, $scheme );
 }
 
-function rw_get_admin_url($path = 'admin.php', $scheme = 'admin')
+function rw_get_admin_url($path = 'admin.php', $page = WP_RW__ADMIN_MENU_SLUG, $scheme = 'admin')
 {
-    return add_query_arg(array('page' => WP_RW__ADMIN_MENU_SLUG), admin_url($path, $scheme));
+    return add_query_arg(array('page' => $page), admin_url($path, $scheme));
+}
+
+function rw_admin_plugin_url($slug)
+{
+    echo rw_get_admin_plugin_url($slug);
+}
+
+function rw_get_admin_plugin_url($slug)
+{
+    return rw_get_admin_url('admin.php', WP_RW__ADMIN_MENU_SLUG . '-' . $slug);
 }
 
 function rw_get_site_url($path = '')

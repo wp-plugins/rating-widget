@@ -2,8 +2,6 @@
     $settings = rw_settings();
 ?>
 <div class="wrap rw-dir-ltr">
-    <h2><?php echo __('Rating-Widget Advanced Settings', WP_RW__ID);?></h2>
-    <br />
     <form id="rw_advanced_settings_form" method="post" action="">
         <div id="poststuff">
             <div id="rw_wp_set">

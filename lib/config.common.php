@@ -4,7 +4,7 @@
 
     /* Version
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__VERSION', '2.0.8');
+    define('WP_RW__VERSION', '2.0.9');
 
     /* Localhost.
     -----------------------------------------------------------------------------------------*/
@@ -74,7 +74,7 @@
 
     /* General Consts
     -----------------------------------------------------------------------------------------*/
-    define('WP_RW__ID', 'rating_widget');
+    define('WP_RW__ID', 'ratingwidget');
     define('WP_RW__DEFAULT_LNG', 'en');
     define('WP_RW__ADMIN_MENU_SLUG', 'ratingwidget');
 

@@ -3,10 +3,12 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/pricing/wordpress/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.8
+Version: 2.0.9
 Author: Rating-Widget
 Author URI: http://rating-widget.com/pricing/wordpress/
 License: GPLv2 or later
+Text Domain: ratingwidget
+Domain Path: /langs
 */
 
 // Exit if accessed directly.
@@ -130,11 +132,12 @@ class RatingWidgetPlugin
         $this->languages = $rw_languages;
         $this->languages_short = array_keys($this->languages);
 
-        function rw_load_textdomain() {
-            load_plugin_textdomain( WP_RW__ID, false, dirname( plugin_basename( __FILE__ ) ) . '/langs' );
-        }
-        add_action( 'plugins_loaded', 'rw_load_textdomain' );
-
+        add_action( 'plugins_loaded', array(&$this, 'rw_load_textdomain'));
+    }
+    
+    function rw_load_textdomain()
+    {
+        load_plugin_textdomain('ratingwidget', false, dirname(plugin_basename( __FILE__ )) . '/langs');
     }
     
     private function InitLogger()
@@ -356,7 +359,7 @@ class RatingWidgetPlugin
     {
         RWLogger::LogEnterence("LoadUserKey");
 
-        eval(base64_decode('DQogICAgICAgICRzaXRlX3B1YmxpY19rZXkgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZKTsNCiAgICAgICAgJHNpdGVfaWQgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCk7DQogICAgICAgICRvd25lcl9pZCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCk7DQogICAgICAgICRvd25lcl9lbWFpbCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9FTUFJTCk7DQoNCiAgICAgICAgJHVwZGF0ZSA9IGZhbHNlOw0KICAgICAgICANCiAgICAgICAgaWYgKCFkZWZpbmVkKCdXUF9SV19fU0lURV9QVUJMSUNfS0VZJykpDQogICAgICAgIHsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX1NJVEVfUFVCTElDX0tFWScsICRzaXRlX3B1YmxpY19rZXkpOw0KICAgICAgICAgICAgZGVmaW5lKCdXUF9SV19fU0lURV9JRCcsICRzaXRlX2lkKTsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX09XTkVSX0lEJywgJG93bmVyX2lkKTsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX09XTkVSX0VNQUlMJywgJG93bmVyX2VtYWlsKTsNCiAgICAgICAgfQ0KICAgICAgICBlbHNlDQogICAgICAgIHsNCiAgICAgICAgICAgIGlmIChpc19zdHJpbmcoV1BfUldfX1NJVEVfUFVCTElDX0tFWSkgJiYgV1BfUldfX1NJVEVfUFVCTElDX0tFWSAhPT0gJHNpdGVfcHVibGljX2tleSkNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAvLyBPdmVycmlkZSB1c2VyIGtleS4NCiAgICAgICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZLCBXUF9SV19fU0lURV9QVUJMSUNfS0VZKTsNCiAgICAgICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCwgV1BfUldfX1NJVEVfSUQpOw0KICAgICAgICAgICAgICAgIGlmIChkZWZpbmVkKCdXUF9SV19fT1dORVJfSUQnKSkNCiAgICAgICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX09XTkVSX0lELCBXUF9SV19fT1dORVJfSUQpOw0KICAgICAgICAgICAgICAgIGlmIChkZWZpbmVkKCdXUF9SV19fT1dORVJfRU1BSUwnKSkNCiAgICAgICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX09XTkVSX0VNQUlMLCBXUF9SV19fT1dORVJfRU1BSUwpOw0KICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICAgICAkdXBkYXRlID0gdHJ1ZTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KDQogICAgICAgICR1c2VyX3NlY3JldCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1NFQ1JFVF9LRVkpOw0KDQogICAgICAgIGlmICghZGVmaW5lZCgnV1BfUldfX1NJVEVfU0VDUkVUX0tFWScpKQ0KICAgICAgICB7DQogICAgICAgICAgICBkZWZpbmUoJ1dQX1JXX19TSVRFX1NFQ1JFVF9LRVknLCAkdXNlcl9zZWNyZXQpOw0KICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgew0KICAgICAgICAgICAgaWYgKGlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSAmJiBXUF9SV19fU0lURV9TRUNSRVRfS0VZICE9PSAkdXNlcl9zZWNyZXQpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gT3ZlcnJpZGUgdXNlciBrZXkuDQogICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfU0VDUkVUX0tFWSwgV1BfUldfX1NJVEVfU0VDUkVUX0tFWSk7DQogICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgJHVwZGF0ZSA9IHRydWU7DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICBpZiAoJHVwZGF0ZSkNCiAgICAgICAgICAgICR0aGlzLT5TdG9yZU9wdGlvbnMoKTsNCiAgICAgICAg'));
+        eval(base64_decode('DQogICAgICAgICRzaXRlX3B1YmxpY19rZXkgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZKTsNCiAgICAgICAgJHNpdGVfaWQgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCk7DQogICAgICAgICRvd25lcl9pZCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCk7DQogICAgICAgICRvd25lcl9lbWFpbCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9FTUFJTCk7DQoNCiAgICAgICAgJHVwZGF0ZSA9IGZhbHNlOw0KICAgICAgICANCiAgICAgICAgaWYgKCFkZWZpbmVkKCdXUF9SV19fU0lURV9QVUJMSUNfS0VZJykpDQogICAgICAgIHsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX1NJVEVfUFVCTElDX0tFWScsICRzaXRlX3B1YmxpY19rZXkpOw0KICAgICAgICAgICAgZGVmaW5lKCdXUF9SV19fU0lURV9JRCcsICRzaXRlX2lkKTsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX09XTkVSX0lEJywgJG93bmVyX2lkKTsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX09XTkVSX0VNQUlMJywgJG93bmVyX2VtYWlsKTsNCiAgICAgICAgfQ0KICAgICAgICBlbHNlDQogICAgICAgIHsNCiAgICAgICAgICAgIGlmIChpc19zdHJpbmcoV1BfUldfX1NJVEVfUFVCTElDX0tFWSkgJiYgV1BfUldfX1NJVEVfUFVCTElDX0tFWSAhPT0gJHNpdGVfcHVibGljX2tleSkNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAvLyBPdmVycmlkZSB1c2VyIGtleS4NCiAgICAgICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZLCBXUF9SV19fU0lURV9QVUJMSUNfS0VZKTsNCiAgICAgICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCwgV1BfUldfX1NJVEVfSUQpOw0KICAgICAgICAgICAgICAgIGlmIChkZWZpbmVkKCdXUF9SV19fT1dORVJfSUQnKSkNCiAgICAgICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX09XTkVSX0lELCBXUF9SV19fT1dORVJfSUQpOw0KICAgICAgICAgICAgICAgIGlmIChkZWZpbmVkKCdXUF9SV19fT1dORVJfRU1BSUwnKSkNCiAgICAgICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX09XTkVSX0VNQUlMLCBXUF9SV19fT1dORVJfRU1BSUwpOw0KICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICAgICAkdXBkYXRlID0gdHJ1ZTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KDQogICAgICAgICRzZWNyZXRfa2V5ID0gJHRoaXMtPkdldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfU0VDUkVUX0tFWSk7DQoNCiAgICAgICAgaWYgKCFkZWZpbmVkKCdXUF9SV19fU0lURV9TRUNSRVRfS0VZJykpDQogICAgICAgIHsNCiAgICAgICAgICAgIGRlZmluZSgnV1BfUldfX1NJVEVfU0VDUkVUX0tFWScsICRzZWNyZXRfa2V5KTsNCiAgICAgICAgfQ0KICAgICAgICBlbHNlDQogICAgICAgIHsNCiAgICAgICAgICAgIGlmIChpc19zdHJpbmcoV1BfUldfX1NJVEVfU0VDUkVUX0tFWSkgJiYgV1BfUldfX1NJVEVfU0VDUkVUX0tFWSAhPT0gJHNlY3JldF9rZXkpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gT3ZlcnJpZGUgdXNlciBrZXkuDQogICAgICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfU0VDUkVUX0tFWSwgV1BfUldfX1NJVEVfU0VDUkVUX0tFWSk7DQogICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgJHVwZGF0ZSA9IHRydWU7DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICBpZiAoJHVwZGF0ZSkNCiAgICAgICAgICAgICR0aGlzLT5TdG9yZU9wdGlvbnMoKTsNCiAgICAgICAg'));
     }
     
 /* IDs transformations.
@@ -1047,7 +1050,7 @@ class RatingWidgetPlugin
         
         // Enqueue CSS stylesheets.
         rw_enqueue_style('rw_wp_style', 'wordpress/style.css');
-        rw_enqueue_style('rw', 'settings.php');
+//        rw_enqueue_style('rw', 'settings.php');
         rw_enqueue_style('rw_fonts', add_query_arg(array('family' => 'Noto+Sans:400,700,400italic,700italic'), WP_RW__PROTOCOL . '://fonts.googleapis.com/css'));
 
         rw_register_script('rw', 'index.php');
@@ -1148,19 +1151,11 @@ class RatingWidgetPlugin
 
         // Basic settings.
         $submenu[] = array(
-            'menu_title' => 'Basic',
+            'menu_title' => 'Settings',
             'function' => 'SettingsPage',
             'slug' => '',
         );
         
-        // Top-Rated Promotion Page.
-        $submenu[] = array(
-            'menu_title' => 'Top-Rated Widget',
-            'function' => 'TopRatedSettingsPageRender',
-            'load_function' => 'TopRatedSettingsPageLoad',
-            'slug' => 'toprated',
-        );
-
         if ($this->IsBuddyPressInstalled())
             // BuddyPress settings.
             $submenu[] = array(
@@ -1175,6 +1170,14 @@ class RatingWidgetPlugin
                 'function' => 'SettingsPage',
             );
         
+        // Top-Rated Promotion Page.
+        $submenu[] = array(
+            'menu_title' => 'Top-Rated Widget',
+            'function' => 'TopRatedSettingsPageRender',
+            'load_function' => 'TopRatedSettingsPageLoad',
+            'slug' => 'toprated',
+        );
+
         $user_label = $this->IsBBPressInstalled() ? "User" : "Author";
          
         // Reports.
@@ -1385,14 +1388,11 @@ class RatingWidgetPlugin
         $empty_result = (!isset($rw_ret_obj->data) || !is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 ?>
 <div class="wrap rw-dir-ltr rw-report">
-    <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID) . " (" . ucwords($elements) . ")";?></h2>
-    <div id="message" class="updated fade">
-        <p><strong style="color: red;">Note: data may be delayed 30 minutes.</strong></p>
-    </div>
+    <?php $this->Notice('<strong style="color: red;">Note: data may be delayed 30 minutes.</strong>'); ?>
     <form method="post" action="">
         <div class="tablenav">
             <div>
-                <span><?php _e('Date Range:', WP_RW__ID) ?></span>
+                <span><?php _e('Date Range', WP_RW__ID) ?>:</span>
                 <input type="text" value="<?php echo $date_from;?>" id="rw_date_from" name="rw_date_from" style="width: 90px; text-align: center;" />
                 -
                 <input type="text" value="<?php echo $date_to;?>" id="rw_date_to" name="rw_date_to" style="width: 90px; text-align: center;" />
@@ -1418,7 +1418,7 @@ class RatingWidgetPlugin
                     });
                     jQuery("#rw_date_to").datepicker("setDate", "<?php echo $date_to;?>");
                 </script>
-                <span><?php _e('Element:', WP_RW__ID) ?></span>
+                <span><?php _e('Element', WP_RW__ID) ?>:</span>
                 <select id="rw_elements">
                 <?php
                     $select = array(
@@ -1447,7 +1447,7 @@ class RatingWidgetPlugin
                     }
                 ?>
                 </select>
-                <span><?php _e('Order By:', WP_RW__ID) ?></span>
+                <span><?php _e('Order By', WP_RW__ID) ?>:</span>
                 <select id="rw_orderby">
                 <?php
                     $select = array(
@@ -1599,7 +1599,7 @@ class RatingWidgetPlugin
                 <span style="font-weight: bold; font-size: 12px;"><?php echo ($rw_offset + 1); ?>-<?php echo ($rw_offset + $showen_records_num); ?></span>
             </div>
             <div style="float: right;">
-                <span>Show rows:</span>
+                <span><?php _e('Show rows', WP_RW__ID) ?>:</span>
                 <select name="rw_limit" onchange="top.location = RWM.enrichQueryString(top.location.href, ['offset', 'limit'], [0, this.value]);">
                 <?php
                     $limits = array(WP_RW__REPORT_RECORDS_MIN, 25, WP_RW__REPORT_RECORDS_MAX);
@@ -1775,14 +1775,11 @@ class RatingWidgetPlugin
         $empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 ?>
 <div class="wrap rw-dir-ltr rw-report">
-    <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID);?></h2>
-    <div id="message" class="updated fade">
-        <p><strong style="color: red;"><?php _e('Notic: Data may be delayed 30 minutes.', WP_RW__ID) ?></strong></p>
-    </div>
+    <?php $this->Notice('<strong style="color: red;">Note: data may be delayed 30 minutes.</strong>'); ?>
     <form method="post" action="">
         <div class="tablenav">
             <div>
-                <span><?php _e('Date Range:', WP_RW__ID) ?></span>
+                <span><?php _e('Date Range', WP_RW__ID) ?>:</span>
                 <input type="text" value="<?php echo $date_from;?>" id="rw_date_from" name="rw_date_from" style="width: 90px; text-align: center;" />
                 -
                 <input type="text" value="<?php echo $date_to;?>" id="rw_date_to" name="rw_date_to" style="width: 90px; text-align: center;" />
@@ -1808,7 +1805,7 @@ class RatingWidgetPlugin
                     });
                     jQuery("#rw_date_to").datepicker("setDate", "<?php echo $date_to;?>");
                 </script>
-                <span><?php _e('Order By:', WP_RW__ID) ?></span>
+                <span><?php _e('Order By', WP_RW__ID) ?>:</span>
                 <select id="rw_orderby">
                 <?php
                     $select = array(
@@ -1981,7 +1978,7 @@ class RatingWidgetPlugin
                 <span style="font-weight: bold; font-size: 12px;"><?php echo ($rw_offset + 1); ?>-<?php echo ($rw_offset + $showen_records_num); ?></span>
             </div>
             <div style="float: right;">
-                <span><?php _e('Show rows:', WP_RW__ID) ?></span>
+                <span><?php _e('Show rows', WP_RW__ID) ?>:</span>
                 <select name="rw_limit" onchange="top.location = RWM.enrichQueryString(top.location.href, ['offset', 'limit'], [0, this.value]);">
                 <?php
                     $limits = array(WP_RW__REPORT_RECORDS_MIN, 25, WP_RW__REPORT_RECORDS_MAX);
@@ -2081,14 +2078,11 @@ class RatingWidgetPlugin
         $details["token"] = self::GenerateToken($details["timestamp"], false);
 ?>
 <div class="wrap rw-dir-ltr rw-report">
-    <h2><?php echo __( 'Rating-Widget Reports', WP_RW__ID) . " (Id = " . $_REQUEST["urid"] . ")";?></h2>
-    <div id="message" class="updated fade">
-        <p><strong style="color: red;"><?php _e('Notic: Data may be delayed 30 minutes.', WP_RW__ID) ?></strong></p>
-    </div>
+    <?php $this->Notice('<strong style="color: red;">Note: data may be delayed 30 minutes.</strong>'); ?>
     <form method="post" action="">
         <div class="tablenav">
             <div>
-                <span><?php _e('Date Range:', WP_RW__ID) ?></span>
+                <span><?php _e('Date Range', WP_RW__ID) ?>:</span>
                 <input type="text" value="<?php echo $date_from;?>" id="rw_date_from" name="rw_date_from" style="width: 90px; text-align: center;" />
                 -
                 <input type="text" value="<?php echo $date_to;?>" id="rw_date_to" name="rw_date_to" style="width: 90px; text-align: center;" />
@@ -2114,7 +2108,7 @@ class RatingWidgetPlugin
                     });
                     jQuery("#rw_date_to").datepicker("setDate", "<?php echo $date_to;?>");
                 </script>
-                <span><?php _e('Order By:', WP_RW__ID) ?></span>
+                <span><?php _e('Order By', WP_RW__ID) ?>:</span>
                 <select id="rw_orderby">
                 <?php
                     $select = array(
@@ -2294,7 +2288,7 @@ class RatingWidgetPlugin
                 <span style="font-weight: bold; font-size: 12px;"><?php echo ($rw_offset + 1); ?>-<?php echo ($rw_offset + $showen_records_num); ?></span>
             </div>
             <div style="float: right;">
-                <span>Show rows:</span>
+                <span><?php _e('Show rows', WP_RW__ID) ?>:</span>
                 <select name="rw_limit" onchange="top.location = RWM.enrichQueryString(top.location.href, ['offset', 'limit'], [0, this.value]);">
                 <?php
                     $limits = array(WP_RW__REPORT_RECORDS_MIN, 25, WP_RW__REPORT_RECORDS_MAX);
@@ -2410,7 +2404,7 @@ class RatingWidgetPlugin
                     }
             }
 ?>
-    <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
+    <div class="updated"><p><strong><?php _e('Settings successfully saved.', WP_RW__ID ); ?></strong></p></div>
 <?php
         }
         
@@ -2858,7 +2852,7 @@ class RatingWidgetPlugin
             $this->_visibilityList->{$rw_class}->include = self::IDsCollectionToArray($rw_visibility_include);
             $this->SetOption(WP_RW__VISIBILITY_SETTINGS, $this->_visibilityList);
     ?>
-    <div class="updated"><p><strong><?php _e('settings saved.', WP_RW__ID ); ?></strong></p></div>
+    <div class="updated"><p><strong><?php _e('Settings successfully saved.', WP_RW__ID ); ?></strong></p></div>
     <?php
         }
         else
@@ -2999,28 +2993,11 @@ class RatingWidgetPlugin
 
 ?>
 <div class="wrap rw-dir-ltr rw-wp-container">
-    <h2><?php echo __( 'Rating-Widget Settings', WP_RW__ID);?></h2>
-    <!--<div class="widget-liquid-left widgets-sortables">
-        <div id="widgets-left">
-            <div class="widgets-holder-wrap ui-droppable">
-                <div class="sidebar-name">
-                    <div class="sidebar-name-arrow"><br></div>
-                    <h3>Available Widgets <span id="removing-widget">Deactivate <span></span></span></h3>
-                </div>
-                <div class="widget-holder">
-                    <p class="description">Drag widgets from here to a sidebar on the right to activate them. Drag widgets back here to deactivate them and delete their settings.</p>
-                </div>
-                <br class="clear">
-            </div>
-        </div>
-    </div>
-    <div class="widget-liquid-right">
-        <div id="widgets-right">
-            <div class="widgets-holder-wrap ui-droppable">
-                <?php //require_once(dirname(__FILE__) . "/view/twitter.php"); ?>
-            </div>
-        </div>
-    </div>-->
+    <h2 class="nav-tab-wrapper rw-nav-tab-wrapper">
+    <?php foreach ($settings_data as $key => $settings) : ?>
+        <a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>" class="nav-tab<?php if ($settings_data[$key] == $rw_current_settings) echo ' nav-tab-active' ?>"><?php _e($settings["tab"], WP_RW__ID);?></a>
+    <?php endforeach; ?>
+    </h2>
     
     <form method="post" action="">
         <div id="poststuff">       
@@ -3028,25 +3005,6 @@ class RatingWidgetPlugin
                 <?php rw_require_once_view('preview.php'); ?>
                 <div id="side-sortables"> 
                     <div id="categorydiv" class="categorydiv">
-                        <ul id="category-tabs" class="category-tabs">
-                            <?php
-                                foreach ($settings_data as $key => $settings)
-                                {
-                                    if ($settings_data[$key] == $rw_current_settings)
-                                    {
-                                ?>
-                                    <li class="tabs"><?php echo _e($settings["tab"], WP_RW__ID);?></li>
-                                <?php
-                                    }
-                                    else
-                                    {
-                                ?>
-                                    <li><a href="<?php echo esc_url(add_query_arg(array('rating' => $key, 'message' => false)));?>"><?php echo _e($settings["tab"], WP_RW__ID);?></a></li>
-                                <?php
-                                    }
-                                }
-                            ?>
-                        </ul>
                         <div class="tabs-panel rw-body" id="categories-all">
                             <?php
                                 $enabled = isset($rw_align->ver);
@@ -3059,8 +3017,7 @@ class RatingWidgetPlugin
                                 if (true === $rw_current_settings["show_align"])
                                 {
                             ?>
-                                <div class="rw-post-rating-align">
-                                    <div class="rw-ui-disabled"<?php if ($enabled) echo ' style="display: none;"';?>></div>
+                                <div class="rw-post-rating-align"<?php if (!$enabled) echo ' style="display: none;"';?>>
                                 <?php
                                     $vers = array("top", "bottom");
                                     $hors = array("left", "center", "right");
@@ -4515,13 +4472,13 @@ class RatingWidgetPlugin
         <?php _e('Here you can boost your ratings.', WP_RW__ID) ?><br /><br />
         <b style="color: red;"><?php _e('Note: This action impact the rating record directly - it\'s on your own responsibility!', WP_RW__ID) ?></b><br /><br />
         <?php _e('Example:', WP_RW__ID) ?><br />
-        <b><?php _e('Element:', WP_RW__ID) ?></b> <i><?php _e('Post', WP_RW__ID) ?></i>; <b><?php _e('Id:', WP_RW__ID) ?></b> <i>2</i>; <b><?php _e('Votes:', WP_RW__ID) ?></b> <i>3</i>; <b><?php _e('Rate:', WP_RW__ID) ?></b> <i>4</i>;<br />
+        <b><?php _e('Element', WP_RW__ID) ?>:</b> <i><?php _e('Post', WP_RW__ID) ?></i>; <b><?php _e('Id:', WP_RW__ID) ?></b> <i>2</i>; <b><?php _e('Votes', WP_RW__ID) ?>:</b> <i>3</i>; <b><?php _e('Rate:', WP_RW__ID) ?></b> <i>4</i>;<br />
         <?php _e('This will add 3 votes with the rate of 4 stars to Post with Id=2.', WP_RW__ID) ?>
     </p>
 
     <form action="" method="post">
         <input type="hidden" name="rw_boost_posted" value="Y" />
-        <label for="rw_element"><?php _e('Element:', WP_RW__ID) ?>
+        <label for="rw_element"><?php _e('Element', WP_RW__ID) ?>:
             <select id="rw_element" name="rw_element">
                 <option value="post" selected="selected"><?php _e('Post/Page', WP_RW__ID) ?></option>
                 <option value="comment"><?php _e('Comment', WP_RW__ID) ?></option>
@@ -4533,9 +4490,9 @@ class RatingWidgetPlugin
         <br /><br />
         <label for="rw_id"><?php _e('Id:', WP_RW__ID) ?> <input type="text" id="rw_id" name="rw_id" value="" /></label>
         <br /><br />
-        <label for="rw_votes"><?php _e('Votes:', WP_RW__ID) ?> <input type="text" id="rw_votes" name="rw_votes" value="" /></label>
+        <label for="rw_votes"><?php _e('Votes', WP_RW__ID) ?>: <input type="text" id="rw_votes" name="rw_votes" value="" /></label>
         <br /><br />
-        <label for="rw_rate"><?php _e('Rate:', WP_RW__ID) ?> <input type="text" id="rw_rate" name="rw_rate" value="" /></label>
+        <label for="rw_rate"><?php _e('Rate', WP_RW__ID) ?>: <input type="text" id="rw_rate" name="rw_rate" value="" /></label>
         <br />
         <b style="font-size: 10px;"><?php _e('Note: Rate must be a number between -5 to 5.', WP_RW__ID) ?></b>
         <br /><br />
@@ -5157,21 +5114,21 @@ class RatingWidgetPlugin
         if (isset($rating->error))
             return false;
 
-        $rate = (float)$rating->avg_rate;
-        $votes = (float)$rating->approved_count;
-        $calc_rate = ($votes > 0) ? ((float)$rate / (float)$votes) : 0;
+        $avg_rate = (float)$rating->avg_rate;
+        $votes = (int)$rating->approved_count;
+        $rate = $votes * $avg_rate;
 
         if (is_numeric($pAccuracy))
         {
             $pAccuracy = (int)$pAccuracy;
+            $avg_rate = (float)sprintf("%.{$pAccuracy}f", $avg_rate);
             $rate = (float)sprintf("%.{$pAccuracy}f", $rate);
-            $calc_rate = (float)sprintf("%.{$pAccuracy}f", $calc_rate);
         }
         
         return array(
             'votes' => $votes,
             'totalRate' => $rate,
-            'rate' => $calc_rate,
+            'rate' => $avg_rate,
         );
     }
     

@@ -672,7 +672,7 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
                     <input id="<?php echo $this->get_field_id('title'); ?>"<?php echo $disabled;?> name="<?php echo $this->get_field_name("{$type}_title"); ?>" type="text" value="<?php echo esc_attr($values["{$type}_title"]); ?>" style="width: 120px;" />
             </p>
             <p>
-                <label for="rss-items-<?php echo $values["{$type}_count"];?>"><?php _e("Max items:", WP_RW__ID); ?>
+                <label for="rss-items-<?php echo $values["{$type}_count"];?>"><?php _e("Max Items", WP_RW__ID); ?>:
                         <select id="<?php echo $this->get_field_id("{$type}_count"); ?>" name="<?php echo $this->get_field_name("{$type}_count"); ?>">
                     <?php
                         for ($i = 1; $i <= 25; $i++){

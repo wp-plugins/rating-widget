@@ -1,5 +1,5 @@
 <div id="rw_wp_upgrade_widget" class="postbox">
-    <h3 class="gradient"><?php _e('', WP_RW__ID) ?>Why Go Premium?</h3>
+    <h3 class="gradient"><?php _e('Why Go Professional?', WP_RW__ID) ?></h3>
     <div class="inside">
         <ul id="rw_wp_premium_features">
             <li><b><?php _e('Google Rich Snippets (schema.org)', WP_RW__ID) ?></b></li>

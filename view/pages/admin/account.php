@@ -2,7 +2,10 @@
     $settings = rw_settings();
 ?>
 <div class="wrap rw-dir-ltr">
-    <h2><?php echo __('Rating-Widget Account', WP_RW__ID);?></h2>
+    <h2 class="nav-tab-wrapper rw-nav-tab-wrapper">
+        <a href="<?php rw_admin_plugin_url('account') ?>" class="nav-tab nav-tab-active"><?php _e('Account', WP_RW__ID);?></a>
+        <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" class="nav-tab" target="_blank"><?php _e('Upgrade', WP_RW__ID);?></a>
+    </h2>
     <div id="poststuff">
         <div id="rw_wp_set">
             <div class="has-sidebar has-right-sidebar">
@@ -39,6 +42,8 @@
                                 <?php if ('plan' === $p['id']) : ?>
                                     <?php if (!ratingwidget()->_c4ca4238a0b923820dcc509a6f75849b()) : ?>
                                         <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank" style="float: right; margin-left: 5px;"><?php _e('Upgrade', WP_RW__ID) ?></a> 
+                                    <?php else : ?>
+                                        <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'change-plan', 'wordpress', 'account', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank" style="float: right; margin-left: 5px;"><?php _e('Change Plan', WP_RW__ID) ?></a> 
                                     <?php endif; ?>
                                         <form action="" method="POST">
                                             <input type="hidden" name="rw_action" value="sync_license">
