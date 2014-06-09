@@ -13,15 +13,7 @@
                             </div>
                             <div id="rw_new_wp_subscribe">
                                 <input type="hidden" id="rw_wp_uid" value="<?php echo WP_RW__SITE_PUBLIC_KEY; ?>" />
-                                <label><input type="radio" value="<?php echo ratingwidget()->GetUpgradeUrl(true, 'annually', 'professional') ?>" name="premium_subscription_program" checked="checked"> Annual &nbsp;&nbsp;- &nbsp;<b>$8.99 / mo</b> &nbsp;<span><?php _e('Save 10%', WP_RW__ID) ?></span></label>
-                                <label><input type="radio" value="<?php echo ratingwidget()->GetUpgradeUrl(true, 'monthly', 'professional') ?>" name="premium_subscription_program"> Monthly &nbsp;- &nbsp;<b>$9.99 / mo</b></label>
-                                <div style="text-align: left; margin: 10px 0 0 35px;">
-                                    <a target="_blank" class="subscribe" style="float:left; display: block;" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'paypal_premium_subscribe', 1, true]); _gaq.push(['_link', this.href]); return false;"><img id="rw_wp_premium_subscribe" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" alt="WordPress Rating Plugin Professional Plan Subscription Button"></a>
-                                    <div style="margin-left: 160px;">
-                                        OR 
-                                        <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank" style="height: 50px;line-height: 50px;font-size: 13px;margin-left: 11px;"><?php _e('Learn More', WP_RW__ID) ?></a>
-                                    </div>
-                                </div>
+                                <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-primary gradient" target="_blank" style="display: block; text-align: center;"><?php _e('Learn More', WP_RW__ID) ?></a>
                             </div>
                         </td>
                         <td>

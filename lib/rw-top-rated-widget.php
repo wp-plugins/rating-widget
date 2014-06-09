@@ -536,6 +536,9 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
     }
     function update($new_instance, $old_instance)
     {
+        // Clear transients to refresh data after Top-Rated Widget update.
+        ratingwidget()->ClearTransients();
+        
         $types = $this->GetTypes();
 
         $instance = $old_instance;

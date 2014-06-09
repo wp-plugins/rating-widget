@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/pricing/wordpress/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.0.9
+Version: 2.1.0
 Author: Rating-Widget
 Author URI: http://rating-widget.com/pricing/wordpress/
 License: GPLv2 or later
@@ -228,7 +228,7 @@ class RatingWidgetPlugin
         
         if ($this->_inDashboard)
         {
-            add_action('init', array(&$this, 'RedirectOnUpgrade'));
+            add_action('init', array(&$this, 'RedirectOnLink'));
             
             if ($this->GetOption(WP_RW__DB_OPTION_TRACKING))
                 add_action('admin_head', array(&$this, "GoogleAnalytics"));
@@ -285,10 +285,16 @@ class RatingWidgetPlugin
         return $is_mobile;
     }
     
-    function RedirectOnUpgrade()
+    function RedirectOnLink()
     {
-        if (isset($_GET['page']) && strtolower($_GET['page']) === $this->GetMenuSlug('upgrade'))
+        $page = strtolower(rw_request_get('page', ''));
+        
+        if ($page === $this->GetMenuSlug('upgrade'))
             rw_site_redirect($this->GetUpgradeUrl()); 
+        else if ($page === $this->GetMenuSlug('faq'))
+            rw_site_redirect('support/wordpress/#platform');
+        else if ($page === $this->GetMenuSlug('help'))
+            rw_redirect('http://wordpress.org/support/plugin/rating-widget');
     }
 
 /* Authentication.
@@ -338,7 +344,7 @@ class RatingWidgetPlugin
         eval(base64_decode('DQogICAgICAgICRjdXJyZW50X3NpdGVfcGxhbiA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4pOw0KICAgICAgICANCiAgICAgICAgJHNpdGVfcGxhbiA9ICRjdXJyZW50X3NpdGVfcGxhbjsNCiAgICAgICAgDQogICAgICAgICR1cGRhdGUgPSBmYWxzZTsNCg0KICAgICAgICBpZiAoIWlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSkNCiAgICAgICAgew0KICAgICAgICAgICAgaWYgKCdmcmVlJyAhPT0gJHNpdGVfcGxhbikNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgew0KICAgICAgICAgICAgJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDApOw0KICAgICAgICAgICAgLy8gQ2hlY2sgaWYgdXNlciBhc2tlZCB0byBzeW5jIGxpY2Vuc2UuDQogICAgICAgICAgICBpZiAocndfcmVxdWVzdF9pc19hY3Rpb24oJ3N5bmNfbGljZW5zZScpKQ0KICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgIGNoZWNrX2FkbWluX3JlZmVyZXIoJ3N5bmNfbGljZW5zZScpOw0KICAgICAgICAgICAgICAgICRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICAgICAgLy8gVXBkYXRlIHBsYW4gb25jZSBpbiBldmVyeSAyNCBob3Vycy4NCiAgICAgICAgICAgIGlmIChmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQykpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQogICAgICAgICAgICAgICAgdHJ5DQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZSA9IHJ3YXBpKCktPkFwaSgnP2ZpZWxkcz1pZCxwbGFuJyk7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIGNhdGNoIChcRXhjZXB0aW9uICRlKQ0KICAgICAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHNpdGUgPSBmYWxzZTsNCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgaWYgKGlzX29iamVjdCgkc2l0ZSkgJiYgaXNzZXQoJHNpdGUtPmlkKSAmJiAkc2l0ZS0+aWQgPT0gV1BfUldfX1NJVEVfSUQpDQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQogICAgICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgICAgICAgICAgICAgIA0KICAgICAgICBkZWZpbmUoJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuKTsNCiAgICAgICAgDQogICAgICAgIGlmICgkdXBkYXRlKQ0KICAgICAgICB7DQogICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOLCAkc2l0ZV9wbGFuKTsNCiAgICAgICAgICAgICR0aGlzLT5TZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCB0aW1lKCkpOw0KICAgICAgICAgICAgJHRoaXMtPlN0b3JlT3B0aW9ucygpOw0KICAgICAgICAgICAgDQovLyAgICAgICAgICAgIGlmICgkY3VycmVudF9zaXRlX3BsYW4gIT09ICRzaXRlLT5wbGFuKQ0KLy8gICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAg'));
     }
     
-    private function ClearTransients()
+    public function ClearTransients()
     {
         global $wpdb;
 
@@ -1199,14 +1205,7 @@ class RatingWidgetPlugin
             'load_function' => 'UpdateSecret',
         );
         
-        if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
-            // Upgrade link.
-            $submenu[] = array(
-                'menu_title' => '&#9733; Upgrade &#9733;',
-                'slug' => 'upgrade',
-                'function' => 'rw_upgrade_page',
-            );
-        else if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+        if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && !$this->_cfcd208495d565ef66e7dff9f98764da())
             // Boosting.
             $submenu[] = array(
                 'menu_title' => 'Boost',
@@ -1214,6 +1213,25 @@ class RatingWidgetPlugin
                 'load_function' => 'BoostPageLoad',
             );
         
+        $submenu[] = array(
+            'menu_title' => 'FAQ',
+            'function' => '',
+        );
+
+        $submenu[] = array(
+            'menu_title' => 'Support Forum',
+            'slug' => 'help',
+            'function' => '',
+        );
+
+        if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
+            // Upgrade link.
+            $submenu[] = array(
+                'menu_title' => '&#9733; Upgrade &#9733;',
+                'slug' => 'upgrade',
+                'function' => '',
+            );
+
         foreach ($submenu as $item)
         {
             
@@ -2500,11 +2518,6 @@ class RatingWidgetPlugin
         }
     }
     
-    function rw_upgrade_page()
-    {
-        rw_site_redirect('get-the-wordpress-plugin');
-    }
-    
     private function GetMenuSlug($pSlug = '')
     {
         return WP_RW__ADMIN_MENU_SLUG . (empty($pSlug) ? '' : ('-' . $pSlug));
@@ -2517,6 +2530,8 @@ class RatingWidgetPlugin
     */
     function SettingsPage()
     {
+        RWLogger::LogEnterence("SettingsPage");
+
         // Must check that the user has the required capability.
         if (!current_user_can('manage_options'))
             wp_die(__('You do not have sufficient permissions to access this page.', WP_RW__ID));
@@ -3003,13 +3018,13 @@ class RatingWidgetPlugin
         <div id="poststuff">       
             <div id="rw_wp_set">
                 <?php rw_require_once_view('preview.php'); ?>
-                <div id="side-sortables"> 
-                    <div id="categorydiv" class="categorydiv">
-                        <div class="tabs-panel rw-body" id="categories-all">
+                <div class="has-sidebar has-right-sidebar">
+                    <div class="has-sidebar-content">
+                        <div class="postbox rw-body">
                             <?php
                                 $enabled = isset($rw_align->ver);
                             ?>
-                            <div class="rw-ui-light-bkg">
+                            <div style="padding: 10px;">
                                 <label for="rw_show">
                                     <input id="rw_show" type="checkbox" name="rw_show" value="true"<?php if ($enabled) echo ' checked="checked"';?> onclick="RWM_WP.enable(this);" /> Enable for <?php echo $rw_current_settings["tab"];?>
                                 </label>
@@ -3054,7 +3069,6 @@ class RatingWidgetPlugin
                         </div>
                     </div>
                 </div>
-                <br />
                 <?php
                     if ('users' === $selected_key)
                         rw_require_once_view('user_rating_type_options.php');
@@ -4010,7 +4024,7 @@ class RatingWidgetPlugin
             }
         }
                 
-        if (!$this->IsHiddenRatingByType('user'))
+        if (false !== $this->GetRatingAlignByType(WP_RW__USERS_ALIGN) && !$this->IsHiddenRatingByType('user'))
             // Add user ratings into forum threads.
             add_filter('bbp_get_reply_author_link', array(&$this, 'AddBBPressForumThreadUserRating'));
         

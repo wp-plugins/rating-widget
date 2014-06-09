@@ -57,6 +57,14 @@ function rw_get_site_url($path = '')
     if (0 === strpos($path, 'http'))
         return $path;
         
+    $anchor = '';
+    $anchor_pos = strpos($path, '#');
+    if (false !== $anchor_pos)
+    {
+        $anchor = substr($path, $anchor_pos);
+        $path = substr($path, 0, $anchor_pos);
+    }
+
     $query = '';
     $query_pos = strpos($path, '?');
     if (false !== $query_pos)
@@ -67,7 +75,7 @@ function rw_get_site_url($path = '')
     
     return empty($path) ? 
         WP_RW__ADDRESS : 
-        WP_RW__ADDRESS . '/' . trim($path, '/') . (false === strpos($path, '.') ? '/' : '') . $query;
+        WP_RW__ADDRESS . '/' . trim($path, '/') . (false === strpos($path, '.') ? '/' : '') . $query . $anchor;
 }
 
 function rw_the_site_url($path = '')

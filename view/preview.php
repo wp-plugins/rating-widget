@@ -144,11 +144,11 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
             <input type="hidden" name="<?php echo rw_settings()->form_hidden_field_name; ?>" value="Y">
             <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
 
-            <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
+            <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes', WP_RW__ID) ?>" />
             <?php if (!ratingwidget()->_c4ca4238a0b923820dcc509a6f75849b()) : ?>
-            <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank">Upgrade Now!</a>
+            <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" style="float: right;" target="_blank"><?php _e('Upgrade Now!', WP_RW__ID) ?></a>
             <?php endif; ?>
-            <span style="margin-left:10px; font-size: 1em;"><?php _e('Like it?', WP_RW__ID) ?>  <a href="http://wordpress.org/support/view/plugin-reviews/rating-widget?rate=5#postform" target="_blank" style="
+            <span style="margin: 0 10px; font-size: 1em; float: right; line-height: 30px;"><b style="font-size: 24px;vertical-align: top;color: #999;">&#9829;</b> <?php _e('Like it?', WP_RW__ID) ?>  <a href="http://wordpress.org/support/view/plugin-reviews/rating-widget?rate=5#postform" target="_blank" style="
     font-weight: bold;
 "><?php _e('Support the plugin with ★ 5 Stars', WP_RW__ID) ?></a></span>
         </div>
