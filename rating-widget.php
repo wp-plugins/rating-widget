@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/pricing/wordpress/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.0
+Version: 2.1.1
 Author: Rating-Widget
 Author URI: http://rating-widget.com/pricing/wordpress/
 License: GPLv2 or later
@@ -506,6 +506,19 @@ class RatingWidgetPlugin
             'theme' => 'thumbs_bp1',
         );
 
+        $bp_like = (object)array(
+            'type' => 'nero',
+            'theme' => 'thumbs_bp1',
+            'advanced' => array(
+                'nero' => array(
+                    'showDislike' => false,
+                )
+            )
+        );
+
+        $small_bp_like = clone $bp_like;
+        $small_bp_like->size = 'small';
+        
         $readonly_bp_thumbs = clone $bp_thumbs;
         $readonly_bp_thumbs->readOnly = true;
         
@@ -550,10 +563,10 @@ class RatingWidgetPlugin
                 WP_RW__ACTIVITY_BLOG_COMMENTS_OPTIONS => $bp_thumbs,
 
                 WP_RW__ACTIVITY_UPDATES_ALIGN => $bottom_left,
-                WP_RW__ACTIVITY_UPDATES_OPTIONS => $star_small,
+                WP_RW__ACTIVITY_UPDATES_OPTIONS => $small_bp_like,
 
                 WP_RW__ACTIVITY_COMMENTS_ALIGN => $bottom_left,
-                WP_RW__ACTIVITY_COMMENTS_OPTIONS => $bp_thumbs,
+                WP_RW__ACTIVITY_COMMENTS_OPTIONS => $small_bp_like,
             
             // bbPress
                 /*WP_RW__FORUM_TOPICS_ALIGN => $bottom_left,
@@ -784,6 +797,8 @@ class RatingWidgetPlugin
             $pExpiration = false;
 
         $transient = '';
+        $cached = false;
+        $result = false;
         if (false !== $pExpiration)
         {
             $transient = 'rw_' . md5($pMethod . $pPath . var_export($pParams, true));
@@ -802,18 +817,30 @@ class RatingWidgetPlugin
             {
                 if (RWLogger::IsOn())
                     RWLogger::Log('ApiCall', 'IS_CACHED: TRUE');
-                
-                return $cached;
+                    
+                $result = $cached;
             }
         }
 
-        $result = rwapi()->Api($pPath, $pMethod, $pParams);
+        if (false === $cached)
+        {
+            $result = rwapi()->Api($pPath, $pMethod, $pParams);
 
-        if (RWLogger::IsOn())
-            RWLogger::Log("ApiCall", 'Result: ' . var_export($result, true));
+            if (RWLogger::IsOn())
+                RWLogger::Log("ApiCall", 'Result: ' . var_export($result, true));
 
-        if (false !== $pExpiration)
-            set_transient($transient, $result, $pExpiration);
+            if (false !== $pExpiration)
+                set_transient($transient, $result, $pExpiration);
+        }
+        
+        if (isset($result->error))
+        {
+            if (RWLogger::IsOn())
+                RWLogger::Log("ApiCall", 'API Error: ' . var_export($result, true));
+                
+            if ($this->_inDashboard)
+                $this->errors->add('rw_api_error', 'Unexpected RatingWidget API error: ' . $result->message);
+        }
         
         return $result;
     }
@@ -870,66 +897,21 @@ class RatingWidgetPlugin
             RWLogger::Log("RemoteCall", 'Query: "' . WP_RW__ADDRESS . "/{$pPage}?" . http_build_query($pData) . '"');
         }
             
-        if (function_exists('wp_remote_post')) // WP 2.7+
+        if (RWLogger::IsOn())
+            RWLogger::Log("wp_remote_post", "exist");
+        
+        $rw_ret_obj = wp_remote_post(WP_RW__ADDRESS . "/{$pPage}", array('body' => $pData));
+        
+        if (is_wp_error($rw_ret_obj))
         {
-            if (RWLogger::IsOn())
-                RWLogger::Log("wp_remote_post", "exist");
+            $this->errors = $rw_ret_obj;
             
-            $rw_ret_obj = wp_remote_post(WP_RW__ADDRESS . "/{$pPage}", array('body' => $pData));
+            if (RWLogger::IsOn()){ RWLogger::Log("ret_object", var_export($rw_ret_obj, true)); }
             
-            if (is_wp_error($rw_ret_obj))
-            {
-                $this->errors = $rw_ret_obj;
-                
-                if (RWLogger::IsOn()){ RWLogger::Log("ret_object", var_export($rw_ret_obj, true)); }
-                
-                return false;
-            }
-            
-            $rw_ret_obj = wp_remote_retrieve_body($rw_ret_obj);
-        }        
-        else
-        {
-            $fp = fsockopen(
-                WP_RW__DOMAIN,
-                80,
-                $err_num,
-                $err_str,
-                3
-            );
-
-            if (!$fp){
-                $this->errors->add('connect', __("Can't connect to rating-widget.com", WP_RW__ID));
-                
-                if (RWLogger::IsOn()){ RWLogger::Log("ret_object", "Can't connect to Rating-Widget.com"); }
-                
-                return false;
-            }
-
-            if (function_exists('stream_set_timeout')){
-                stream_set_timeout($fp, 3);
-            }
-
-            global $wp_version;
-
-            $request_body = http_build_query($pData, null, '&');
-
-            $request  = "POST {$pPage} HTTP/1.0\r\n";
-            $request .= "Host: " . WP_RW__DOMAIN . "\r\n";
-            $request .= "User-agent: WordPress/$wp_version\r\n";
-            $request .= 'Content-Type: application/x-www-form-urlencoded; charset=' . get_option('blog_charset') . "\r\n";
-            $request .= 'Content-Length: ' . strlen($request_body) . "\r\n";
-
-            fwrite($fp, "$request\r\n$request_body");
-
-            $response = '';
-            while (!feof($fp)){
-                $response .= fread($fp, 4096);
-            }
-            fclose($fp);
-            
-            list($headers, $rw_ret_obj) = explode("\r\n\r\n", $response, 2);
+            return false;
         }
+        
+        $rw_ret_obj = wp_remote_retrieve_body($rw_ret_obj);
         
         if (RWLogger::IsOn())
             RWLogger::Log("ret_object", var_export($rw_ret_obj, true));
@@ -1176,13 +1158,14 @@ class RatingWidgetPlugin
                 'function' => 'SettingsPage',
             );
         
-        // Top-Rated Promotion Page.
-        $submenu[] = array(
-            'menu_title' => 'Top-Rated Widget',
-            'function' => 'TopRatedSettingsPageRender',
-            'load_function' => 'TopRatedSettingsPageLoad',
-            'slug' => 'toprated',
-        );
+        if (false === is_active_widget(false, false, strtolower('RatingWidgetPlugin_TopRatedWidget'), true))
+            // Top-Rated Promotion Page.
+            $submenu[] = array(
+                'menu_title' => 'Top-Rated Widget',
+                'function' => 'TopRatedSettingsPageRender',
+                'load_function' => 'TopRatedSettingsPageLoad',
+                'slug' => 'toprated',
+            );
 
         $user_label = $this->IsBBPressInstalled() ? "User" : "Author";
          
@@ -3672,9 +3655,9 @@ class RatingWidgetPlugin
     
     /* BuddyPress Support Actions
     ---------------------------------------------------------------------------------------------------------------*/
-    function rw_before_activity_loop($has_activities)
+    function BuddyPressBeforeActivityLoop($has_activities)
     {
-        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_before_activity_loop", $params); }
+        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("BuddyPressBeforeActivityLoop", $params); }
         
         $this->_inBuddyPress = true;
         
@@ -3750,7 +3733,7 @@ class RatingWidgetPlugin
 
     private function GetBuddyPressRating($ver, $horAlign = true)
     {
-        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetBuddyPressRating", $params); }
+        RWLogger::LogEnterence("GetBuddyPressRating");
         
         global $activities_template;
         
@@ -3763,6 +3746,10 @@ class RatingWidgetPlugin
 
         if ($is_forum_topic && !$this->IsBBPressInstalled())
             return false;
+
+        if (!in_array($rclass, array('forum-post', 'forum-reply', 'new-forum-post', 'user-forum-post', 'user', 'activity-update', 'user-activity-update', 'activity-comment', 'user-activity-comment')))
+            // If unknown activity type, change it to activity update.
+            $rclass = 'activity-update';
 
         if ($is_forum_topic)
             $rclass = "new-forum-post";
@@ -3845,7 +3832,7 @@ class RatingWidgetPlugin
     // Activity item top rating.
     function rw_display_activity_rating_top($action)
     {
-        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_activity_rating_top", $params); }
+        RWLogger::LogEnterence("rw_display_activity_rating_top");
         
         $rating_html = $this->GetBuddyPressRating("top");
         
@@ -3855,7 +3842,7 @@ class RatingWidgetPlugin
     // Activity item bottom rating.
     function rw_display_activity_rating_bottom($id = "", $type = "")
     {
-        if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_display_activity_rating_bottom", $params); }
+        RWLogger::LogEnterence("rw_display_activity_rating_bottom");
         
         $rating_html = $this->GetBuddyPressRating("bottom", false);
 
@@ -4160,7 +4147,7 @@ class RatingWidgetPlugin
         if (!is_admin())
         {
             // Activity page.
-            add_action("bp_has_activities", array(&$this, "rw_before_activity_loop"));
+            add_action("bp_has_activities", array(&$this, "BuddyPressBeforeActivityLoop"));
             
             // Forum topic page.
             add_filter("bp_has_topic_posts", array(&$this, "rw_before_forum_loop"));
@@ -4306,12 +4293,15 @@ class RatingWidgetPlugin
                 $rclass = $data["rclass"];
                 if (isset($rw_settings[$rclass]) && !isset($rw_settings[$rclass]["enabled"]))
                 {
+                    // Forum reply should have exact same settings as forum post.
+                    $alias = ('forum-reply' === $rclass) ? 'forum-post' : $rclass;
+                    
                     $rw_settings[$rclass]["enabled"] = true;
 
                     // Get rating front posts settings.
                     $rw_settings[$rclass]["options"] = $this->GetOption($rw_settings[$rclass]["options"]);
 
-                    if (WP_RW__AVAILABILITY_DISABLED === $this->rw_validate_availability($rclass))
+                    if (WP_RW__AVAILABILITY_DISABLED === $this->rw_validate_availability($alias))
                     {
                         // Disable ratings (set them to be readOnly).
                         $rw_settings[$rclass]["options"]->readOnly = true;
@@ -4356,14 +4346,11 @@ class RatingWidgetPlugin
                     <?php
                         foreach ($rw_settings as $rclass => $options)
                         {
-                            // Forum reply should have exact same settings as forum post.
-                            $alias = ('forum-reply' === $rclass) ? 'forum-post' : $rclass;
-                            
-                            if (isset($rw_settings[$alias]["enabled"]) && (true === $rw_settings[$alias]["enabled"]))
+                            if (isset($rw_settings[$rclass]["enabled"]) && (true === $rw_settings[$rclass]["enabled"]))
                             {
                     ?>
-                    var options = <?php echo !empty($rw_settings[$alias]["options"]) ? json_encode($rw_settings[$alias]["options"]) : '{}'; ?>;
-                    <?php echo $this->GetCustomSettings($alias); ?>
+                    var options = <?php echo !empty($rw_settings[$alias]["options"]) ? json_encode($rw_settings[$rclass]["options"]) : '{}'; ?>;
+                    <?php echo $this->GetCustomSettings(('forum-reply' === $rclass) ? 'forum-post' : $rclass); ?>
                     RW.initClass("<?php echo $rclass; ?>", options);
                     <?php
                             }
@@ -4371,7 +4358,7 @@ class RatingWidgetPlugin
                         
                         foreach (self::$ratings as $urid => $data)
                         {
-                            echo 'RW.initRating("' . $urid . '", {title: "' . esc_js($data["title"]) . '", url: "' . esc_js($data["permalink"]) . '"' .
+                            echo 'RW.initRating("' . $urid . '", {title: "' . esc_js(json_encode($data["title"])) . '", url: "' . esc_js($data["permalink"]) . '"' .
                                   (isset($data["img"]) ? 'img: "' . esc_js($data["img"]) . '"' : '')  . '});';
                         }
                     ?>

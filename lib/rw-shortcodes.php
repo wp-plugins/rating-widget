@@ -4,15 +4,15 @@ if (!defined('ABSPATH')) exit;
 
 /* Ratings PHP Shortcodes.
 --------------------------------------------------------------------------------------------*/
-function rw_get_post_rating($postID = false, $class = 'blog-post', $addSchema = false)
+function rw_get_post_rating($postID = false, $class = 'blog-post', $schema = false)
 {
     $postID = (false === $postID) ? get_the_ID() : $postID;
-    return ratingwidget()->EmbedRatingByPost(get_post($postID), $class, $addSchema);
+    return ratingwidget()->EmbedRatingByPost(get_post($postID), $class, $schema);
 }
 
-function rw_the_post_rating($postID = false, $class = 'blog-post', $addSchema = false)
+function rw_the_post_rating($postID = false, $class = 'blog-post', $schema = false)
 {
-    echo rw_get_post_rating($postID, $class, $addSchema);
+    echo rw_get_post_rating($postID, $class, $schema);
 }
 
 /**

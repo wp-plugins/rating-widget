@@ -1,10 +1,10 @@
 === Rating-Widget: Star Rating System ===
 Contributors: ratingwidget, svovaf
 Donate link: http://rating-widget.com/pricing/wordpress/
-Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest
-Requires at least: 2.6
+Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
+Requires at least: 2.8
 Tested up to: 3.9
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -126,6 +126,12 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.1.1 =
+New: Fixed BuddyPress rtMedia rich activities ratings support.
+Optimization: Top-Rated Widget menu item is now being removed after the widget addition to one of the widget areas.
+Fix: Fixed RatingWidget's SDK error handling issue.
+Fix: Fixed bbPress forum replies ratings style starting from the 2nd page and further.
+
 = 2.1.0 =
 * Fix: Fixed bbPress inline user ratings visibility when User ratings are disabled.
 * New: Added menu links to FAQ and Support Forum.

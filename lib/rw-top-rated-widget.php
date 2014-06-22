@@ -22,10 +22,9 @@ class RatingWidgetPlugin_TopRatedWidget extends WP_Widget
         if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("RatingWidgetPlugin_TopRatedWidget Constructor", $params, true); }
         
         $this->rw_address = WP_RW__ADDRESS;
-        
         $widget_ops = array('classname' => 'rw_top_rated', 'description' => __('A list of your top rated posts.'));
-         parent::__construct(strtolower('RatingWidgetPlugin_TopRatedWidget'), "Rating-Widget: Top Rated", $widget_ops);
-        
+        parent::__construct(strtolower('RatingWidgetPlugin_TopRatedWidget'), "Rating-Widget: Top Rated", $widget_ops);
+
         if (RWLogger::IsOn()){ RWLogger::LogDeparture("RatingWidgetPlugin_TopRatedWidget Constructor"); }
     }
 
