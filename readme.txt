@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 3.9
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -15,10 +15,12 @@ The Rating-Widget **Star Ratings WordPress plugin** allows you to create and man
 
 The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with extra features.
 
+[youtube https://www.youtube.com/watch?v=xbo-dlXvB98]
+
 > #### FREE:
 > * Unlimited ratings
-> * Unlimited pageviews
-> * RatingWidget branded.
+> * 2M pageviews / month
+> * RatingWidget branded
 
 > #### STARTER - FREE FROM BRANDING, NO ADS:
 > * Remove (i) icon from Ratings
@@ -126,6 +128,11 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.1.2 =
+New: Added Video for [Plugin Setup and Overview](https://www.youtube.com/watch?v=xbo-dlXvB98).
+Fix: Fixed Persian language translation.
+Update: With the new schema.org objects, we've now modified the type from http://schema.org/Product to http://schema.org/BlogPosting
+
 = 2.1.1 =
 New: Fixed BuddyPress rtMedia rich activities ratings support.
 Optimization: Top-Rated Widget menu item is now being removed after the widget addition to one of the widget areas.

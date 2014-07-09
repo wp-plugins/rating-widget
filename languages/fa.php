@@ -1,18 +1,18 @@
-<?php
+﻿<?php
     $dir = "rtl";
     $hor = "left";
     $dictionary = array(
-        "rateAwful" => "بسیار ید",
-        "ratePoor" => "ید",
+        "rateAwful" => "افتضاح",
+        "ratePoor" => "بد",
         "rateAverage" => "معمولی",
         "rateGood" => "خوب",
         "rateExcellent" => "عالی",
-        "rateThis" => "رتبه دهی",
+        "rateThis" => "رتبه‌دهی",
         "like" => "پسندیدم",
         "dislike" => "نپسندیدم",
-        "vote" => "رای",
-        "votes" => "رای",
-        "thanks" => "متشکریم",
+        "vote" => "رأی",
+        "votes" => "رأی",
+        "thanks" => "ممنون",
         "outOf" => "از",
         "weRecommend" => "پیشنهاد ما",
     );
