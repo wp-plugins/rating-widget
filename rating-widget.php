@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/pricing/wordpress/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.2
+Version: 2.1.3
 Author: Rating-Widget
 Author URI: http://rating-widget.com/pricing/wordpress/
 License: GPLv2 or later
@@ -3570,7 +3570,7 @@ class RatingWidgetPlugin
         
         $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
         
-        eval(base64_decode('DQogICAgICAgIGlmICh0cnVlID09PSAkcEFkZFNjaGVtYSAmJiAnZnJvbnQtcG9zdCcgIT09ICR0aGlzLT5wb3N0X2NsYXNzKQ0KICAgICAgICB7DQogICAgICAgICAgICAkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQpOw0KICAgICAgICAgICAgDQogICAgICAgICAgICBpZiAoZmFsc2UgIT09ICRkYXRhICYmICRkYXRhWyd2b3RlcyddID4gMCkNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHRpdGxlID0gbWJfY29udmVydF90b191dGY4KHRyaW0oJHBUaXRsZSkpOw0KICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJyBpdGVtc2NvcGUgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0Jsb2dQb3N0aW5nIj4NCiAgICA8c3BhbiBpdGVtcHJvcD0iaGVhZGxpbmUiIHN0eWxlPSJwb3NpdGlvbjogZml4ZWQ7IHRvcDogMTAwJTsiPicgLiBlc2NfaHRtbCgkcFRpdGxlKSAuICc8L3NwYW4+DQogICAgPGRpdiBpdGVtcHJvcD0iYWdncmVnYXRlUmF0aW5nIiBpdGVtc2NvcGUgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0FnZ3JlZ2F0ZVJhdGluZyI+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJ3b3JzdFJhdGluZyIgY29udGVudD0iMCIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9ImJlc3RSYXRpbmciIGNvbnRlbnQ9IjUiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJyYXRpbmdWYWx1ZSIgY29udGVudD0iJyAuICRkYXRhWydyYXRlJ10gLiAnIiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nQ291bnQiIGNvbnRlbnQ9IicgLiAkZGF0YVsndm90ZXMnXSAuICciIC8+DQogICAgPC9kaXYnOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIA=='));
+        eval(base64_decode('DQogICAgICAgIGlmICh0cnVlID09PSAkcEFkZFNjaGVtYSAmJiAnZnJvbnQtcG9zdCcgIT09ICR0aGlzLT5wb3N0X2NsYXNzKQ0KICAgICAgICB7DQogICAgICAgICAgICAkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQpOw0KICAgICAgICAgICAgDQogICAgICAgICAgICBpZiAoZmFsc2UgIT09ICRkYXRhICYmICRkYXRhWyd2b3RlcyddID4gMCkNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHRpdGxlID0gbWJfY29udmVydF90b191dGY4KHRyaW0oJHBUaXRsZSkpOw0KICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJyBpdGVtc2NvcGUgaXRlbXByb3A9ImJsb2dQb3N0IiBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQmxvZ1Bvc3RpbmciPg0KICAgIDxzcGFuIGl0ZW1wcm9wPSJoZWFkbGluZSIgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4NCiAgICA8ZGl2IGl0ZW1wcm9wPSJhZ2dyZWdhdGVSYXRpbmciIGl0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQWdncmVnYXRlUmF0aW5nIj4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9IndvcnN0UmF0aW5nIiBjb250ZW50PSIwIiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0iYmVzdFJhdGluZyIgY29udGVudD0iNSIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ1ZhbHVlIiBjb250ZW50PSInIC4gJGRhdGFbJ3JhdGUnXSAuICciIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJyYXRpbmdDb3VudCIgY29udGVudD0iJyAuICRkYXRhWyd2b3RlcyddIC4gJyIgLz4NCiAgICA8L2Rpdic7DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAg'));
         
         $rating_html .= '></div>';
         
@@ -5239,6 +5239,7 @@ class RatingWidgetPlugin
         remove_action('all_admin_notices', array(&$this, 'ConfirmationNotice'));
 
         $user_id = rw_request_get('user_id');
+        $site_id = rw_request_get('site_id');
         $email = rw_request_get('email');
         $timestamp = rw_request_get('ts');
         $secure = rw_request_get('s');
@@ -5262,6 +5263,8 @@ class RatingWidgetPlugin
         
         $this->SetOption(WP_RW__DB_OPTION_OWNER_ID, $user_id);
         $this->SetOption(WP_RW__DB_OPTION_OWNER_EMAIL, $email);
+        $this->SetOption(WP_RW__DB_OPTION_SITE_ID, $site_id);
+        
         $this->StoreOptions();
         
         add_action('all_admin_notices', array(&$this, 'SuccessfulEmailConfirmNotice'));

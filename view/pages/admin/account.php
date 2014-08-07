@@ -29,8 +29,7 @@
 
                                 $profile[] = array('id' => 'secret', 'title' => __('Site Secret', WP_RW__ID), 'value' => ((WP_RW__SITE_SECRET_KEY && '' !== WP_RW__SITE_SECRET_KEY) ? WP_RW__SITE_SECRET_KEY : __('No Secret', WP_RW__ID)));
 
-                                if (WP_RW__SITE_PLAN && '' !== WP_RW__SITE_PLAN)
-                                    $profile[] = array('id' => 'plan', 'title' => __('Site Plan', WP_RW__ID), 'value' => strtoupper(WP_RW__SITE_PLAN));
+                                $profile[] = array('id' => 'plan', 'title' => __('Site Plan', WP_RW__ID), 'value' => is_string(WP_RW__SITE_PLAN) ? strtoupper(WP_RW__SITE_PLAN) : 'FREE');
                             ?>
                             <?php $odd = true; foreach ($profile as $p) : ?>
                                 <tr class="rw-<?php echo $odd ? 'odd' : 'even' ?>">
