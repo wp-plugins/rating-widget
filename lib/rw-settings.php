@@ -23,6 +23,7 @@ class RatingWidgetPlugin_Settings
     
     public $flash_dependency;
     public $show_on_mobile;
+    public $identify_by;
     
     public $rating_type;
     

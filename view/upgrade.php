@@ -6,7 +6,9 @@
             <li><b><?php _e('Advanced Ratings\' Analytics', WP_RW__ID) ?></b></li>
             <li><b><?php _e('White-labeled - Ads free', WP_RW__ID) ?></b></li>
             <li><b><?php _e('bbPress Forum Ratings', WP_RW__ID) ?></b></li>
-            <li><b><?php _e('User Reputation-Rating (BuddyPress/bbPress)', WP_RW__ID) ?></b></li>
+            <li><b><?php _e('Votings Contest: Visitor by IP identification', WP_RW__ID) ?></b></li>
+            <li><b><?php _e('Custom Ratings Image', WP_RW__ID) ?></b></li>
+            <li><?php _e('User Reputation for BuddyPress / bbPress', WP_RW__ID) ?></li>
             <li><?php _e('Priority Email Support', WP_RW__ID) ?></li>
             <li><?php _e('SSL Support', WP_RW__ID) ?></li>
             <li><?php _e('Secure Connection (Fraud protection)', WP_RW__ID) ?></li>

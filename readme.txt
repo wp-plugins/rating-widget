@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 3.9
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -13,9 +13,9 @@ The most popular Five Star Rating System on the web. User-friendly ratings for y
 
 [youtube https://www.youtube.com/watch?v=xbo-dlXvB98]
 
-The Rating-Widget **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The star ratings editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
+The [Rating-Widget](http://rating-widget.com/wordpress-plugin/) **Star Ratings WordPress plugin** allows you to create and manage ratings from within your WordPress dashboard. You can embed thumb & star ratings into your posts, pages or comments. All Rating-Widget star ratings are fully customizable, cross-browser, support multi-language, CSS3 compliant and hosted by Rating-Widget.com. You can create unlimited thumb & star ratings and collect unlimited votes. The star ratings editor allows you to fully customize your ratings and its placement on your blog's layout. You can also avail of the 'Top Rated' widget that will allow you to place the widget in your sidebar. This widget will show you the top rated posts, pages and comments.
 
-The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with extra features.
+The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with [extra features](http://rating-widget.com/wordpress-plugin/).
 
 > #### FREE:
 > * Unlimited ratings
@@ -38,6 +38,7 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with 
 > * Google Rich Snippets (schema.org)
 > * Management Dashboard
 > * Analytics
+> * **Especially for Voting Contests** - Visitor by IP identification
 > * SSL / HTTPS Support
 > * API Access
 > * Custom Ratings Image
@@ -62,7 +63,9 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with 
 > * Phone, Email & Chat Support
 
 
-To get the **Pro Version** go to - http://rating-widget.com/pricing/wordpress/
+Check out the pricing here: http://rating-widget.com/pricing/wordpress/
+
+Check our full features list: http://rating-widget.com/wordpress-plugin/
 
 ---
 
@@ -128,6 +131,10 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.1.4 =
+New: Finally Professional plan users can setup the visitor identification method to IP right from the dashboard.
+Fix: Removed Upgrade tab from Account settings for premium users.
+
 = 2.1.3 =
 Fix: Fixed email confirmation process by extracting site's ID.
 

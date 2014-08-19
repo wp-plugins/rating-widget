@@ -4,7 +4,9 @@
 <div class="wrap rw-dir-ltr">
     <h2 class="nav-tab-wrapper rw-nav-tab-wrapper">
         <a href="<?php rw_admin_plugin_url('account') ?>" class="nav-tab nav-tab-active"><?php _e('Account', WP_RW__ID);?></a>
+    <?php if (!ratingwidget()->_c4ca4238a0b923820dcc509a6f75849b()) : ?>
         <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" class="nav-tab" target="_blank"><?php _e('Upgrade', WP_RW__ID);?></a>
+    <?php endif ?>
     </h2>
     <div id="poststuff">
         <div id="rw_wp_set">

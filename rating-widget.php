@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Rating-Widget: Star Rating System
-Plugin URI: http://rating-widget.com/pricing/wordpress/
+Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.3
+Version: 2.1.4
 Author: Rating-Widget
-Author URI: http://rating-widget.com/pricing/wordpress/
+Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
 Text Domain: ratingwidget
 Domain Path: /langs
@@ -534,6 +534,7 @@ class RatingWidgetPlugin
             WP_RW__DB_OPTION_TRACKING => true,
             WP_RW__IS_ACCUMULATED_USER_RATING => true,
             
+            WP_RW__IDENTIFY_BY => 'laccount',
             WP_RW__FLASH_DEPENDENCY => true,
             WP_RW__SHOW_ON_MOBILE => true,
             
@@ -2350,6 +2351,9 @@ class RatingWidgetPlugin
         // Variables for the field and option names 
         $rw_form_hidden_field_name = "rw_form_hidden_field_name";
 
+        // Get visitor identification method.
+        $rw_identify_by = $this->GetOption(WP_RW__IDENTIFY_BY);
+
         // Get flash dependency.
         $rw_flash_dependency = $this->GetOption(WP_RW__FLASH_DEPENDENCY);
         
@@ -2370,10 +2374,12 @@ class RatingWidgetPlugin
                 $this->ClearOptions();
                 
                 // Re-Load all advanced settings.
+                    $rw_identify_by = $this->GetOption(WP_RW__IDENTIFY_BY);
                     $rw_flash_dependency = $this->GetOption(WP_RW__FLASH_DEPENDENCY);
                     $rw_show_on_mobile = $this->GetOption(WP_RW__SHOW_ON_MOBILE);
                     $tracking = $this->GetOption(WP_RW__DB_OPTION_TRACKING);
 
+                    $this->SetOption(WP_RW__IDENTIFY_BY, $rw_identify_by);
                     $this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
                     $this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
                     $this->SetOption(WP_RW__DB_OPTION_TRACKING, $tracking);
@@ -2388,6 +2394,13 @@ class RatingWidgetPlugin
             else
             {
                 // Save advanced settings.
+                    // Get posted identification method.
+                    if (isset($_POST["rw_identify_by"]) && in_array($_POST["rw_identify_by"], array("ip", "laccount")))
+                    {
+                        $rw_identify_by = $_POST["rw_identify_by"];
+                        $this->SetOption(WP_RW__IDENTIFY_BY, $rw_identify_by);
+                    }
+
                     // Get posted flash dependency.
                     if (isset($_POST["rw_flash_dependency"]) && in_array($_POST["rw_flash_dependency"], array("true", "false")))
                     {
@@ -2410,6 +2423,7 @@ class RatingWidgetPlugin
         }
         
         $this->settings->form_hidden_field_name = $rw_form_hidden_field_name;
+        $this->settings->identify_by = $rw_identify_by;
         $this->settings->flash_dependency = $rw_flash_dependency;
         $this->settings->show_on_mobile = $rw_show_on_mobile;
         
@@ -4325,7 +4339,8 @@ class RatingWidgetPlugin
                             <?php if (eval(base64_decode('cmV0dXJuICgkdGhpcy0+X2VjY2JjODdlNGI1Y2UyZmUyODMwOGZkOWYyYTdiYWYzKCkgJiYgZGVmaW5lZCgnSUNMX0xBTkdVQUdFX0NPREUnKSAmJiBpc3NldCgkdGhpcy0+bGFuZ3VhZ2VzW0lDTF9MQU5HVUFHRV9DT0RFXSkpOw=='))) : ?>
                             lng: "<?php echo ICL_LANGUAGE_CODE; ?>"
                             <?php endif; ?> 
-                        }
+                        },
+                        identifyBy: "<?php echo $this->GetOption(WP_RW__IDENTIFY_BY) ?>"
                     });
                     <?php
                         foreach ($rw_settings as $rclass => $options)
