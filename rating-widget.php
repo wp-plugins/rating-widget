@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.4
+Version: 2.1.5
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -3087,7 +3087,13 @@ class RatingWidgetPlugin
             <div id="rw_wp_set_widgets">
                 <?php 
                     if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
-                        rw_require_once_view('upgrade.php');
+                    {
+                        // Show random.
+                        if (0 == rand(0, 1))
+                            rw_require_once_view('rich-snippets.php');
+                        else
+                            rw_require_once_view('upgrade.php');
+                    }
                 ?>
                 <?php //rw_require_once_view('fb.php'); ?>
                 <?php //rw_require_once_view('twitter.php'); ?>
@@ -3584,7 +3590,7 @@ class RatingWidgetPlugin
         
         $rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
         
-        eval(base64_decode('DQogICAgICAgIGlmICh0cnVlID09PSAkcEFkZFNjaGVtYSAmJiAnZnJvbnQtcG9zdCcgIT09ICR0aGlzLT5wb3N0X2NsYXNzKQ0KICAgICAgICB7DQogICAgICAgICAgICAkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQpOw0KICAgICAgICAgICAgDQogICAgICAgICAgICBpZiAoZmFsc2UgIT09ICRkYXRhICYmICRkYXRhWyd2b3RlcyddID4gMCkNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHRpdGxlID0gbWJfY29udmVydF90b191dGY4KHRyaW0oJHBUaXRsZSkpOw0KICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJyBpdGVtc2NvcGUgaXRlbXByb3A9ImJsb2dQb3N0IiBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQmxvZ1Bvc3RpbmciPg0KICAgIDxzcGFuIGl0ZW1wcm9wPSJoZWFkbGluZSIgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4NCiAgICA8ZGl2IGl0ZW1wcm9wPSJhZ2dyZWdhdGVSYXRpbmciIGl0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQWdncmVnYXRlUmF0aW5nIj4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9IndvcnN0UmF0aW5nIiBjb250ZW50PSIwIiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0iYmVzdFJhdGluZyIgY29udGVudD0iNSIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ1ZhbHVlIiBjb250ZW50PSInIC4gJGRhdGFbJ3JhdGUnXSAuICciIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJyYXRpbmdDb3VudCIgY29udGVudD0iJyAuICRkYXRhWyd2b3RlcyddIC4gJyIgLz4NCiAgICA8L2Rpdic7DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAg'));
+        eval(base64_decode('DQogICAgICAgIGlmICh0cnVlID09PSAkcEFkZFNjaGVtYSAmJiAnZnJvbnQtcG9zdCcgIT09ICR0aGlzLT5wb3N0X2NsYXNzKQ0KICAgICAgICB7DQogICAgICAgICAgICAkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KICAgICAgICAgICAgDQogICAgICAgICAgICBpZiAoZmFsc2UgIT09ICRkYXRhICYmICRkYXRhWyd2b3RlcyddID4gMCkNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHRpdGxlID0gbWJfY29udmVydF90b191dGY4KHRyaW0oJHBUaXRsZSkpOw0KICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJyBpdGVtc2NvcGUgaXRlbXByb3A9ImJsb2dQb3N0IiBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQmxvZ1Bvc3RpbmciPg0KICAgIDxzcGFuIGl0ZW1wcm9wPSJoZWFkbGluZSIgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4NCiAgICA8ZGl2IGl0ZW1wcm9wPSJhZ2dyZWdhdGVSYXRpbmciIGl0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQWdncmVnYXRlUmF0aW5nIj4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9IndvcnN0UmF0aW5nIiBjb250ZW50PSIwIiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0iYmVzdFJhdGluZyIgY29udGVudD0iNSIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ1ZhbHVlIiBjb250ZW50PSInIC4gJGRhdGFbJ3JhdGUnXSAuICciIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJyYXRpbmdDb3VudCIgY29udGVudD0iJyAuICRkYXRhWyd2b3RlcyddIC4gJyIgLz4NCiAgICA8L2Rpdic7DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAg'));
         
         $rating_html .= '></div>';
         
