@@ -4,6 +4,7 @@
         $ret = @rw_get_default_value($settings, new stdClass());
         $ret->boost = @rw_get_default_value($settings->boost, new stdClass());
         $ret->imgUrl = @rw_get_default_value($settings->imgUrl, new stdClass());
+        $ret->mobile = @rw_get_default_value($settings->mobile, new stdClass());
         $ret->label = @rw_get_default_value($settings->label, new stdClass());
         $ret->label->text = @rw_get_default_value($settings->label->text, new stdClass());
         $ret->label->text->star = @rw_get_default_value($settings->label->text->star, new stdClass());
@@ -82,6 +83,8 @@
         $ret->style = @rw_get_default_value($settings->style, $defaults->style);
         $ret->imgUrl->ltr = @rw_get_default_value($settings->imgUrl->ltr, $defaults->imgUrl->ltr);
         $ret->imgUrl->rtl = @rw_get_default_value($settings->imgUrl->rtl, $defaults->imgUrl->rtl);
+        $ret->mobile->optimized = @rw_get_default_value($settings->mobile->optimized, $defaults->mobile->optimized);
+        $ret->mobile->showTrigger = @rw_get_default_value($settings->mobile->showTrigger, $defaults->mobile->showTrigger);
         $ret->label->background = @rw_get_default_value($settings->label->background, $defaults->label->background);
         $ret->label->text->star->empty = @rw_get_default_value($settings->label->text->star->empty, $defaults->label->text->star->empty);
         $ret->label->text->star->normal = @rw_get_default_value($settings->label->text->star->normal, $defaults->label->text->star->normal);
@@ -199,7 +202,10 @@
         $settings->rclass = @rw_get_default_value($settings->rclass, "");
         $settings->size = @rw_get_default_value($settings->size, "small");
         $settings->style = @rw_get_default_value($settings->style, "oxygen");
-        $settings->imgUrl = @rw_get_default_value($settings->imgUrl, "");
+        $settings->imgUrl->ltr = @rw_get_default_value($settings->imgUrl->ltr, "");
+        $settings->imgUrl->rtl = @rw_get_default_value($settings->imgUrl->rtl, "");
+        $settings->mobile->optimized = @rw_get_default_value($settings->mobile->optimized, true);
+        $settings->mobile->showTrigger = @rw_get_default_value($settings->mobile->showTrigger, true);
         $settings->readOnly = @rw_get_default_value($settings->readOnly, false);
         $settings->frequency = @rw_get_default_value($settings->frequency, DEF_FREQUENCY);
         $settings->showInfo = @rw_get_default_value($settings->showInfo, true);
@@ -291,4 +297,3 @@
         
         return $defVal;
     }
-?>

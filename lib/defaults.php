@@ -25,6 +25,7 @@
         $DEFAULT_OPTIONS = new stdClass();
         $DEFAULT_OPTIONS->boost = new stdClass();
         $DEFAULT_OPTIONS->imgUrl = new stdClass();
+        $DEFAULT_OPTIONS->mobile = new stdClass();
         $DEFAULT_OPTIONS->label = new stdClass();
         $DEFAULT_OPTIONS->label->text = new stdClass();
         $DEFAULT_OPTIONS->label->text->star = new stdClass();
@@ -54,6 +55,8 @@
         $DEFAULT_OPTIONS->style = 'oxygen';
         $DEFAULT_OPTIONS->imgUrl->ltr = '';
         $DEFAULT_OPTIONS->imgUrl->rtl = '';
+        $DEFAULT_OPTIONS->mobile->optimized = true;
+        $DEFAULT_OPTIONS->mobile->showTrigger = true;
         $DEFAULT_OPTIONS->label->background = '#FFFFFF';
         $DEFAULT_OPTIONS->label->text->star->empty = '{{text.rateThis}}';
         $DEFAULT_OPTIONS->label->text->star->normal = '{{text.rateThis}} ({{rating.votes}} {{text.votes}})';
@@ -113,5 +116,4 @@
         $DEFAULT_OPTIONS->advanced->text->weRecommend = DUMMY_STR;
         
         $DEFAULT_OPTIONS->advanced->css->container = '';
-    }  
-?>
+    }

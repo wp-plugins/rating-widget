@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.5
+Version: 2.1.6
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -113,6 +113,7 @@ class RatingWidgetPlugin
         if ($this->_isRegistered)
         {
             add_action('init', array(&$this, 'LoadPlan'));
+            add_action('init', array(&$this, 'ClearCache'));
             add_action('init', array(&$this, 'SetupBuddyPress'));
             add_action('init', array(&$this, 'SetupBBPress'));
         }
@@ -336,7 +337,21 @@ class RatingWidgetPlugin
         
         rw_redirect('#');
     }
-    
+
+    /**
+     * In a case of caching plugin installed, and if user's plan supports Rich-Snippets,
+     * clear cache every 24 hours.
+     */
+    function ClearCache()
+    {
+        if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+            return;
+
+        $site_plan_update = $this->GetOption(WP_RW__DB_OPTION_SITE_PLAN_UPDATE, false, 0);
+        if ($site_plan_update < (time() - WP_RW__TIME_24_HOURS_IN_SEC))
+            wp_cache_clear_cache();
+    }
+
     function LoadPlan()
     {
         RWLogger::LogEnterence("LoadPlan");
@@ -5191,11 +5206,17 @@ class RatingWidgetPlugin
             return $links;
 
         // Add a few links to the existing links array
-        return array_merge( $links, array(
+        $links = array_merge( $links, array(
             'settings' => '<a href="' . rw_get_admin_url() . '">' . esc_html__('Settings', WP_RW__ADMIN_MENU_SLUG) . '</a>',
             'blog'    => '<a href="' . rw_get_site_url('/blog/') . '">' . esc_html__('Blog', WP_RW__ADMIN_MENU_SLUG) . '</a>',
-            'upgrade'    => '<a href="' . $this->GetUpgradeUrl() . '" target="_blank">' . esc_html__('Upgrade', WP_RW__ADMIN_MENU_SLUG) . '</a>'
-        ) );
+        ));
+
+        if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
+            $links = array_merge( $links, array(
+                'upgrade'    => '<a href="' . $this->GetUpgradeUrl() . '" target="_blank">' . esc_html__('Upgrade', WP_RW__ADMIN_MENU_SLUG) . '</a>'
+            ));
+
+        return $links;
     }
 
     function Notice($pNotice, $pType = 'update-nag')

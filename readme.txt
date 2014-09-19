@@ -3,8 +3,8 @@ Contributors: ratingwidget, svovaf
 Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
-Tested up to: 3.9
-Stable tag: 2.1.5
+Tested up to: 4.0
+Stable tag: 2.1.6
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -119,6 +119,47 @@ Check our full features list: http://rating-widget.com/wordpress-plugin/
 
 == Frequently Asked Questions ==
 
+If you are here that means you've installed the [RatingWidget for WordPress Plugin](http://rating-widget.com/wordpress-plugin/) (or at least you are trying to). So first of all - thanks! We want to tell you that we appreciate that, and happy to welcome you to our raters family - you are AWESOME!
+
+We know that your time is valuable, therefore we've created this sticky topic to help you find a solution as quickly as possible.
+
+1. If you have a [feature suggestion/request](http://rating-widget.com/contact/?platform=wordpress&topic=feature%20request) please follow [this link](http://rating-widget.com/contact/?platform=wordpress&topic=feature%20request).
+2. If you need some [special customization of the plugin](http://rating-widget.com/contact/?platform=wordpress&subject=customization) for your Blog, please follow [this link](http://rating-widget.com/contact/?platform=wordpress&subject=customization).
+3. If you face a technical problem/issue, please keep reading.
+
+Before you rush into adding another topic to the support forum, please read the following most **Frequently Asked Questions** and solutions:
+
+> **Problem: The WordPress plugin don’t work, where are my ratings?**
+>
+> **Solution:** Don’t panic – you are not alone! Your custom theme’s developer forgot to call `wp_footer()` in the footer template file (usually named footer.php). Our star ratings core JavasSript is loaded on this action hook. Once this fixed the ratings should appear.
+>
+> More info here - [http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks](http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks)
+
+> **Problem: My homepage not showing any ratings, what’s wrong?**
+>
+> **Solution:** Make sure your Front Page ratings are enabled for excerpts. In addition, your theme’s front page template must use `the_excerpt()` method to show/load the excerpts. We use this method’s hook to add the rating code.
+
+> **Problem: The RatingWidget WordPress plugin don’t show ratings on my comments, what’s wrong?**
+>
+> **Solution:** First, make sure you’ve enabled the ratings for comments in your admin’s dashboard. Once you sure it’s enabled, but still doesn’t work, a common cause can be that your theme isn’t using `comment_text()` to display the comments text. A common mistake by theme developers is the use of `get_comment_text()` instead of `comment_text()`. Try to switch between those and it should fix the issue. If you are awesome, contact the theme developer and let him know about the issue so he can fix it for everyone else.
+>
+> **Additional common questions and solutions (follow the links):**
+> * [Can I add a rating inside my WordPress post’s content?](http://rating-widget.com/support/wordpress/can-i-add-a-rating-inside-my-wordpress-posts-content/)
+> * [Is there any PHP shortcodes I can use for my custom posts templates?](http://rating-widget.com/support/wordpress/is-there-any-php-shortcodes-i-can-use-for-my-custom-posts-templates/)
+> * [Do you have a refresh code for Ajax loaded content?](http://rating-widget.com/support/wordpress/do-you-have-a-refresh-code-for-ajax-loaded-content/)
+
+If you didn't find a solution to your problem yet, check out our [WordPress Knowledge Base](http://rating-widget.com/support/wordpress/):
+[http://rating-widget.com/support/wordpress/](http://rating-widget.com/support/wordpress/)
+
+**If you reading this section it means you still didn't find a solution to your problem. Try to [search our WordPress support forum](http://wordpress.org/support/plugin/rating-widget) - maybe someone else already asked it. If you can't find it, it's time  create a new topic in the forum.** To make it super-efficient, please follow this guidelines:
+* The topic title should be short and concise. Don't include your specific blog details in it.
+* Your message should include a full description of the problem.
+* If you are running your WordPress from LOCALHOST, please add a screenshot or a video of the problem you are facing.
+* Otherwise, provide a link to the page that has the ratings code and the problem you are facing.
+
+**Thanks for using our [WordPress plugin](http://rating-widget.com/wordpress-plugin/)**,
+The RatingWidget Team
+
 Please visit [RatingWidget for WordPress - FAQ](http://rating-widget.com/support/wordpress/faq/)
 
 = The plugin don't work, where are my ratings? =
@@ -131,6 +172,11 @@ Check out if you have any active caching plugins in your WordPress, they might c
 
 
 == Change Log ==
+= 2.1.6 =
+Fix: For users that have a caching plugin and their plan is also supporting Rich-Snippets, the cache will be now cleared every 24 hours.
+Fix: In the dashboard plugins page, the upgrade link in the plugin's links collection will be now shown only to non paying users.
+Update: Updated the FAQ section on the plugin's listing.
+
 = 2.1.5 =
 New: Added Rich-Snippets banner for non paying users.
 
