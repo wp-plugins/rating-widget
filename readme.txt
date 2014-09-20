@@ -135,15 +135,19 @@ Before you rush into adding another topic to the support forum, please read the 
 >
 > More info here - [http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks](http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks)
 
+
 > **Problem: My homepage not showing any ratings, what’s wrong?**
 >
 > **Solution:** Make sure your Front Page ratings are enabled for excerpts. In addition, your theme’s front page template must use `the_excerpt()` method to show/load the excerpts. We use this method’s hook to add the rating code.
 
+
 > **Problem: The RatingWidget WordPress plugin don’t show ratings on my comments, what’s wrong?**
 >
 > **Solution:** First, make sure you’ve enabled the ratings for comments in your admin’s dashboard. Once you sure it’s enabled, but still doesn’t work, a common cause can be that your theme isn’t using `comment_text()` to display the comments text. A common mistake by theme developers is the use of `get_comment_text()` instead of `comment_text()`. Try to switch between those and it should fix the issue. If you are awesome, contact the theme developer and let him know about the issue so he can fix it for everyone else.
->
+
+
 > **Additional common questions and solutions (follow the links):**
+>
 > * [Can I add a rating inside my WordPress post’s content?](http://rating-widget.com/support/wordpress/can-i-add-a-rating-inside-my-wordpress-posts-content/)
 > * [Is there any PHP shortcodes I can use for my custom posts templates?](http://rating-widget.com/support/wordpress/is-there-any-php-shortcodes-i-can-use-for-my-custom-posts-templates/)
 > * [Do you have a refresh code for Ajax loaded content?](http://rating-widget.com/support/wordpress/do-you-have-a-refresh-code-for-ajax-loaded-content/)
@@ -152,6 +156,7 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 [http://rating-widget.com/support/wordpress/](http://rating-widget.com/support/wordpress/)
 
 **If you reading this section it means you still didn't find a solution to your problem. Try to [search our WordPress support forum](http://wordpress.org/support/plugin/rating-widget) - maybe someone else already asked it. If you can't find it, it's time  create a new topic in the forum.** To make it super-efficient, please follow this guidelines:
+
 * The topic title should be short and concise. Don't include your specific blog details in it.
 * Your message should include a full description of the problem.
 * If you are running your WordPress from LOCALHOST, please add a screenshot or a video of the problem you are facing.
@@ -159,17 +164,6 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 
 **Thanks for using our [WordPress plugin](http://rating-widget.com/wordpress-plugin/)**,
 The RatingWidget Team
-
-Please visit [RatingWidget for WordPress - FAQ](http://rating-widget.com/support/wordpress/faq/)
-
-= The plugin don't work, where are my ratings? =
-
-Check your theme's footer.php calls wp_footer. The rating javascript is loaded on this action. 
-More info here - http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks
-
-= The ratings on the Top-Rated Widget are not being updated, what's wrong? =
-Check out if you have any active caching plugins in your WordPress, they might cause this affect.
-
 
 == Change Log ==
 = 2.1.6 =
