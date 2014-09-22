@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.6
+Version: 2.1.7
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -349,7 +349,12 @@ class RatingWidgetPlugin
 
         $site_plan_update = $this->GetOption(WP_RW__DB_OPTION_SITE_PLAN_UPDATE, false, 0);
         if ($site_plan_update < (time() - WP_RW__TIME_24_HOURS_IN_SEC))
-            wp_cache_clear_cache();
+        {
+            if (function_exists('prune_super_cache'))
+                prune_super_cache();
+            else if (function_exists('wp_cache_clear_cache'))
+                wp_cache_clear_cache();
+        }
     }
 
     function LoadPlan()
@@ -4378,8 +4383,8 @@ class RatingWidgetPlugin
                         
                         foreach (self::$ratings as $urid => $data)
                         {
-                            echo 'RW.initRating("' . $urid . '", {title: "' . esc_js(json_encode($data["title"])) . '", url: "' . esc_js($data["permalink"]) . '"' .
-                                  (isset($data["img"]) ? 'img: "' . esc_js($data["img"]) . '"' : '')  . '});';
+                            echo 'RW.initRating("' . $urid . '", {title: ' . json_encode(esc_js($data["title"])) . ', url: ' . json_encode(esc_js($data["permalink"])) .
+                                  (isset($data["img"]) ? 'img: ' . json_encode(esc_js($data["img"])) : '')  . '});';
                         }
                     ?>
                     RW.render(null, <?php
@@ -5382,4 +5387,3 @@ if (defined('WP_RW___LATE_LOAD'))
 else
     $GLOBALS['rw'] = ratingwidget();
 endif;
-?>

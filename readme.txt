@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.1.6
+Stable tag: 2.1.7
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -135,18 +135,21 @@ Before you rush into adding another topic to the support forum, please read the 
 >
 > More info here - [http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks](http://codex.wordpress.org/Theme_Development#Plugin_API_Hooks)
 
+---
 
 > **Problem: My homepage not showing any ratings, what’s wrong?**
 >
 > **Solution:** Make sure your Front Page ratings are enabled for excerpts. In addition, your theme’s front page template must use `the_excerpt()` method to show/load the excerpts. We use this method’s hook to add the rating code.
 
+---
 
 > **Problem: The RatingWidget WordPress plugin don’t show ratings on my comments, what’s wrong?**
 >
 > **Solution:** First, make sure you’ve enabled the ratings for comments in your admin’s dashboard. Once you sure it’s enabled, but still doesn’t work, a common cause can be that your theme isn’t using `comment_text()` to display the comments text. A common mistake by theme developers is the use of `get_comment_text()` instead of `comment_text()`. Try to switch between those and it should fix the issue. If you are awesome, contact the theme developer and let him know about the issue so he can fix it for everyone else.
 
+---
 
-> **Additional common questions and solutions (follow the links):**
+> ####Additional common questions and solutions (follow the links):
 >
 > * [Can I add a rating inside my WordPress post’s content?](http://rating-widget.com/support/wordpress/can-i-add-a-rating-inside-my-wordpress-posts-content/)
 > * [Is there any PHP shortcodes I can use for my custom posts templates?](http://rating-widget.com/support/wordpress/is-there-any-php-shortcodes-i-can-use-for-my-custom-posts-templates/)
@@ -166,8 +169,12 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.1.7 =
+Major Fix: Added sanity check before executing Super Cache wp_cache_clear_cache() method.
+Fix: Fixed post title extraction for non-English Unicode letters.
+
 = 2.1.6 =
-Fix: For users that have a caching plugin and their plan is also supporting Rich-Snippets, the cache will be now cleared every 24 hours.
+Fix: For users which are using Super Cache plugin and their plan is also supporting Rich-Snippets, the cache will be now cleared every 24 hours.
 Fix: In the dashboard plugins page, the upgrade link in the plugin's links collection will be now shown only to non paying users.
 Update: Updated the FAQ section on the plugin's listing.
 
