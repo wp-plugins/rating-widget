@@ -46,13 +46,13 @@
                                     <?php else : ?>
                                         <a href="<?php echo ratingwidget()->GetUpgradeUrl() ?>" onclick="_gaq.push(['_trackEvent', 'change-plan', 'wordpress', 'account', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" target="_blank" style="float: right; margin-left: 5px;"><?php _e('Change Plan', WP_RW__ID) ?></a> 
                                     <?php endif; ?>
-                                        <form action="" method="POST">
+                                        <form class="rw-button-form" action="" method="POST">
                                             <input type="hidden" name="rw_action" value="sync_license">
                                             <?php wp_nonce_field('sync_license') ?>
                                             <input type="submit" class="button" value="<?php _e('Sync License', WP_RW__ID) ?>" style="float: right;">
                                         </form>
                                 <?php elseif ('secret' === $p['id']) : ?>
-                                        <form action="" method="POST" onsubmit="var secret = prompt('<?php _e('What is your secret key?', WP_RW__ID) ?>'); if (null == secret || '' === secret) return false; jQuery('input[name=rw_secret]').val(secret); return true;">
+                                        <form class="rw-button-form" action="" method="POST" onsubmit="var secret = prompt('<?php _e('What is your secret key?', WP_RW__ID) ?>'); if (null == secret || '' === secret) return false; jQuery('input[name=rw_secret]').val(secret); return true;">
                                             <input type="hidden" name="rw_action" value="update_secret">
                                             <input type="hidden" name="rw_secret" value="">
                                             <?php wp_nonce_field('update_secret') ?>
@@ -65,6 +65,43 @@
                             </table>
                         </div>
                     </div>
+					<div id="rw_account_actions" class="postbox rw-body">
+						<h3><?php _e('Account Actions', WP_RW__ID) ?></h3>
+						<div class="inside rw-ui-content-container rw-no-radius">
+							<table cellspacing="0">
+								<tr class="rw-odd">
+									<td>
+										<form class="rw-button-form" action="" method="POST" onsubmit="return confirm('<?php _e('Are you sure you want to restore to default settings?', WP_RW__ID) ?>');">
+											<input type="hidden" name="rw_action" value="default_settings">
+											<?php wp_nonce_field('default_settings') ?>
+											<input type="submit" class="button" value="<?php _e('Default Settings', WP_RW__ID) ?>">
+										</form>
+									</td>
+									<td><span><?php _e('Restore the default factory settings.', WP_RW__ID) ?></span></td>
+								</tr>
+								<tr class="rw-even">
+									<td>
+										<form class="rw-button-form" action="" method="POST" onsubmit="return confirm('<?php _e('Are you sure you want to delete all the ratings and votes?', WP_RW__ID) ?>');">
+											<input type="hidden" name="rw_action" value="clear_ratings">
+											<?php wp_nonce_field('clear_ratings') ?>
+											<input type="submit" class="button button-secondary rw-delete-button" value="<?php _e('Clear Ratings', WP_RW__ID) ?>">
+										</form>
+									</td>
+									<td><span><?php _e('Delete all ratings and votes.', WP_RW__ID) ?></span></td>
+								</tr>
+								<tr class="rw-odd">
+									<td>
+										<form class="rw-button-form" action="" method="POST" onsubmit="return confirm('<?php _e('Are you sure you want to delete all the ratings and votes, and restore to default factory settings?', WP_RW__ID) ?>');">
+											<input type="hidden" name="rw_action" value="go_factory">
+											<?php wp_nonce_field('go_factory') ?>
+											<input type="submit" class="button button-secondary rw-delete-button" value="<?php _e('Start Fresh', WP_RW__ID) ?>">
+										</form>
+									</td>
+									<td><span><?php _e('Start fresh as if you just installed the plugin. Delete all your ratings and votes, and restore the default factory settings.', WP_RW__ID) ?></span></td>
+								</tr>
+							</table>
+						</div>
+					</div>
                 </div>
             </div>
         </div>

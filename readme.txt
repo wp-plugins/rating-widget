@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.1.7
+Stable tag: 2.1.8
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -169,6 +169,12 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.1.8 =
+Update: Relocated account actions from "Advanced" to "Account" section.
+New: Added an option to "Clear Ratings" after testing the plugin.
+New: Added an option to "Start Fresh" from factory settings.
+Optimization: Added multiple additional frequently used examples to the "Power User" settings.
+
 = 2.1.7 =
 Major Fix: Added sanity check before executing Super Cache wp_cache_clear_cache() method.
 Fix: Fixed post title extraction for non-English Unicode letters.

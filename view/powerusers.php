@@ -11,8 +11,31 @@
                 <textarea  name="rw_custom_settings" cols="50" rows="10"<?php if (!$custom_settings_enabled) echo ' readonly="readonly"' ?>><?php 
                     echo !empty($custom_settings) ?
                         stripslashes($custom_settings) :
-'// Example: hide stars tooltip.
-options.showTooltip = false;'
+'/*
+ * We recommend to use this section if you are familiar with JavaScript.
+ *
+ * For your convenience, we have collected a set of examples which we are frequently
+ * being asked about. Make sure to delete (or comment) the code you do NOT want to use.
+ */
+
+// Example: Hide ratings tooltip.
+options.showTooltip = false;
+
+// Example: Hide posts recommendations.
+options.showRecommendations = false;
+
+// Example: Hide ratings report.
+options.showReport = false;
+
+// Example: Hide the ratings loading gif.
+options.showLoader = false;
+
+// Example: Hide the text bubble - only show the star ratings.
+options.showInfo = false;
+
+// Example: Disable mobile optimized UI (the fixed star button).
+options.mobile = {"showTrigger": false};
+'
                 ?></textarea>
                 <label><input name="rw_custom_settings_enabled" type="checkbox" value="1"<?php if ($custom_settings_enabled) echo ' checked="checked"' ?> /> Activate / In-Activate</label>
             </div>

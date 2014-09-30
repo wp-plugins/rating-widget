@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.7
+Version: 2.1.8
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -17,8 +17,8 @@ if (!defined('ABSPATH')) exit;
 if (!class_exists('RatingWidgetPlugin')) :
 
 // Load common config.
+require_once(dirname(__FILE__) . "/lib/rw-core-functions.php");
 require_once(dirname(__FILE__) . "/lib/config.common.php");
-require_once(WP_RW__PLUGIN_LIB_DIR . "rw-core-functions.php");
 require_once(WP_RW__PLUGIN_LIB_DIR . "rw-core-rw-functions.php");
 require_once(WP_RW__PLUGIN_LIB_DIR . "rw-core-actions.php");
 require_once(WP_RW__PLUGIN_LIB_DIR . "rw-core-admin.php");
@@ -30,10 +30,9 @@ require_once(WP_RW__PLUGIN_DIR . "/lib/logger.php");
 * Rating-Widget Plugin Class
 * 
 * @package Wordpress
-* @subpackage Rating-Widget Plugin
+* @subpackage RatingWidget Plugin
 * @author Vova Feldman
-* @version 1
-* @copyright Rating-Widget
+* @copyright Rating-Widget, Inc.
 */
 class RatingWidgetPlugin
 {
@@ -67,73 +66,81 @@ class RatingWidgetPlugin
     private static $INSTANCE;
     public static function Instance()
     {
-        if (!isset(self::$INSTANCE))
-        {
-            self::$INSTANCE = new RatingWidgetPlugin();
-        }
-        
-        return self::$INSTANCE;
+	    if ( ! isset( self::$INSTANCE ) )
+		    self::$INSTANCE = new RatingWidgetPlugin();
+
+	    return self::$INSTANCE;
     }
 
 /* Plugin setup.
 --------------------------------------------------------------------------------------------*/
     private function __construct()
     {
-        if (WP_RW__DEBUG)
-            $this->InitLogger();
+	    if ( WP_RW__DEBUG )
+	    {
+		    $this->InitLogger();
+	    }
 
-        // Load plugin options.
-        $this->LoadDefaultOptions();
-        $this->LoadOptions();
-        
-        // Give 2nd chance to logger after options are loaded.
-        if (!RWLogger::IsOn() && $this->GetOption(WP_RW__LOGGER))
-            $this->InitLogger();
+	    // Load plugin options.
+	    $this->LoadDefaultOptions();
+	    $this->LoadOptions();
 
-        // Make sure that matching Rating-Widget account exist.
-        $this->Authenticate();
+	    // Give 2nd chance to logger after options are loaded.
+	    if ( ! RWLogger::IsOn() && $this->GetOption( WP_RW__LOGGER ) )
+	    {
+		    $this->InitLogger();
+	    }
 
-        // If not in admin dashboard and account don't exist, don't continue with plugin init.
-        if (!$this->_isRegistered && !is_admin())
-            return;
+	    // Make sure that matching Rating-Widget account exist.
+	    $this->Authenticate();
 
-        // Load config after keys are loaded.
-        require_once(WP_RW__PLUGIN_DIR . "/lib/config.php");
+	    // If not in admin dashboard and account don't exist, don't continue with plugin init.
+	    if ( ! $this->_isRegistered && ! is_admin() )
+	    {
+		    return;
+	    }
 
-        $this->LogInitialData();
-        
-        // Run plugin setup.
-        $continue = is_admin() ? 
-            $this->SetupOnDashboard() : 
-            $this->SetupOnSite();
-        
-        if (!$continue)
-            return;
+	    // Load config after keys are loaded.
+	    require_once( WP_RW__PLUGIN_DIR . "/lib/config.php" );
 
-        if ($this->_isRegistered)
-        {
-            add_action('init', array(&$this, 'LoadPlan'));
-            add_action('init', array(&$this, 'ClearCache'));
-            add_action('init', array(&$this, 'SetupBuddyPress'));
-            add_action('init', array(&$this, 'SetupBBPress'));
-        }
-        
-        $this->errors = new WP_Error();
-        $this->success = new WP_Error();
+	    $this->LogInitialData();
 
-        /**
-        * IMPORTANT: 
-        *   All scripts/styles must be enqueued from these actions, 
-        *   otherwise it will mass-up the layout of the admin's dashboard
-        *   on RTL WP versions.
-        */
-        add_action('admin_enqueue_scripts', array(&$this, 'InitScriptsAndStyles'));
-        
-        require_once(WP_RW__PLUGIN_DIR . "/languages/dir.php");
-        $this->languages = $rw_languages;
-        $this->languages_short = array_keys($this->languages);
+	    // Run plugin setup.
+	    $continue = is_admin() ?
+		    $this->SetupOnDashboard() :
+		    $this->SetupOnSite();
 
-        add_action( 'plugins_loaded', array(&$this, 'rw_load_textdomain'));
+	    if ( ! $continue )
+	    {
+		    return;
+	    }
+
+	    if ( $this->_isRegistered )
+	    {
+		    add_action( 'init', array( &$this, 'LoadPlan' ) );
+		    // Clear cache has to be executed after LoadPlan, because clear
+		    // cache is has a condition that checks the plan.
+		    add_action( 'init', array( &$this, 'ClearCache' ) );
+		    add_action( 'init', array( &$this, 'SetupBuddyPress' ) );
+		    add_action( 'init', array( &$this, 'SetupBBPress' ) );
+	    }
+
+	    $this->errors  = new WP_Error();
+	    $this->success = new WP_Error();
+
+	    /**
+	     * IMPORTANT:
+	     *   All scripts/styles must be enqueued from these actions,
+	     *   otherwise it will mass-up the layout of the admin's dashboard
+	     *   on RTL WP versions.
+	     */
+	    add_action( 'admin_enqueue_scripts', array( &$this, 'InitScriptsAndStyles' ) );
+
+	    require_once( WP_RW__PLUGIN_DIR . "/languages/dir.php" );
+	    $this->languages       = $rw_languages;
+	    $this->languages_short = array_keys( $this->languages );
+
+	    add_action( 'plugins_loaded', array( &$this, 'rw_load_textdomain' ) );
     }
     
     function rw_load_textdomain()
@@ -313,29 +320,87 @@ class RatingWidgetPlugin
         
         $this->_isRegistered = (false !== WP_RW__SITE_PUBLIC_KEY);        
     }
-    
-    function SecretKeyUpdateConfirmNotice()
-    {
-        $this->Notice('You have successfully updated your Secret Key.', 'update-nag success');
-    }
 
-    function UpdateSecret()
-    {
-        RWLogger::LogEnterence("UpdateSecret");
+	function SecretKeyUpdateConfirmNotice()
+	{
+		$this->Notice('You have successfully updated your Secret Key.', 'update-nag success');
+	}
 
-        if (!rw_request_is_action('update_secret'))
-            return;
+	function RestoreSettingsConfirmNotice()
+	{
+		$this->Notice('Your settings has been successfully restored.', 'update-nag success');
+	}
 
-        check_admin_referer('update_secret');
+	function ClearRatingsConfirmNotice()
+	{
+		$this->Notice('All your ratings has been successfully deleted.', 'update-nag success');
+	}
 
-        $new_secret = rw_request_get('rw_secret', '');
-        
-        $this->SetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY, $new_secret);
-        $this->StoreOptions();
-        
-        add_action('all_admin_notices', array(&$this, 'SecretKeyUpdateConfirmNotice'));
-        
-        rw_redirect('#');
+	function StartFreshConfirmNotice()
+	{
+		$this->Notice('You are fresh like a mentos! All your ratings has been successfully deleted and your settings are back to factory defaults.', 'update-nag success');
+	}
+
+	private function UpdateSecret($new_secret)
+	{
+		RWLogger::LogEnterence( 'UpdateSecret' );
+
+		$this->SetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY, $new_secret);
+		$this->StoreOptions();
+
+		RWLogger::LogDeparture( 'UpdateSecret' );
+	}
+
+    function AccountPageLoad() {
+	    RWLogger::LogEnterence( 'AccountPageLoad' );
+
+	    if ( rw_request_is_action( 'update_secret' ) ) {
+		    check_admin_referer( 'update_secret' );
+
+		    RWLogger::Log( "AccountPageLoad", 'update_secret' );
+
+		    $this->UpdateSecret( rw_request_get( 'rw_secret', '' ) );
+
+		    add_action('all_admin_notices', array(&$this, 'SecretKeyUpdateConfirmNotice'));
+
+		    rw_redirect( '#' );
+	    }
+
+	    if ( rw_request_is_action( 'default_settings' ) ) {
+		    check_admin_referer( 'default_settings' );
+
+		    RWLogger::Log( "AccountPageLoad", 'default_settings' );
+
+		    $this->RestoreDefaultSettings();
+
+		    add_action( 'all_admin_notices', array( &$this, 'RestoreSettingsConfirmNotice' ) );
+	    }
+
+	    if ( rw_request_is_action( 'clear_ratings' ) ) {
+		    check_admin_referer( 'clear_ratings' );
+
+		    RWLogger::Log( "AccountPageLoad", 'clear_ratings' );
+
+		    rwapi()->Api('/ratings.json', 'DELETE');
+
+		    $this->ClearTransients();
+
+		    add_action( 'all_admin_notices', array( &$this, 'ClearRatingsConfirmNotice' ) );
+	    }
+
+	    if ( rw_request_is_action( 'go_factory' ) ) {
+		    check_admin_referer( 'go_factory' );
+
+		    RWLogger::Log( "AccountPageLoad", 'go_factory' );
+
+		    rwapi()->Api('/ratings.json', 'DELETE');
+
+		    $this->ClearTransients();
+
+		    $this->RestoreDefaultSettings();
+
+		    add_action( 'all_admin_notices', array( &$this, 'StartFreshConfirmNotice' ) );
+	    }
     }
 
     /**
@@ -344,6 +409,8 @@ class RatingWidgetPlugin
      */
     function ClearCache()
     {
+        RWLogger::LogEnterence("ClearCache");
+
         if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
             return;
 
@@ -361,7 +428,7 @@ class RatingWidgetPlugin
     {
         RWLogger::LogEnterence("LoadPlan");
 
-        eval(base64_decode('DQogICAgICAgICRjdXJyZW50X3NpdGVfcGxhbiA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4pOw0KICAgICAgICANCiAgICAgICAgJHNpdGVfcGxhbiA9ICRjdXJyZW50X3NpdGVfcGxhbjsNCiAgICAgICAgDQogICAgICAgICR1cGRhdGUgPSBmYWxzZTsNCg0KICAgICAgICBpZiAoIWlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSkNCiAgICAgICAgew0KICAgICAgICAgICAgaWYgKCdmcmVlJyAhPT0gJHNpdGVfcGxhbikNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgew0KICAgICAgICAgICAgJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDApOw0KICAgICAgICAgICAgLy8gQ2hlY2sgaWYgdXNlciBhc2tlZCB0byBzeW5jIGxpY2Vuc2UuDQogICAgICAgICAgICBpZiAocndfcmVxdWVzdF9pc19hY3Rpb24oJ3N5bmNfbGljZW5zZScpKQ0KICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgIGNoZWNrX2FkbWluX3JlZmVyZXIoJ3N5bmNfbGljZW5zZScpOw0KICAgICAgICAgICAgICAgICRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICAgICAgLy8gVXBkYXRlIHBsYW4gb25jZSBpbiBldmVyeSAyNCBob3Vycy4NCiAgICAgICAgICAgIGlmIChmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQykpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQogICAgICAgICAgICAgICAgdHJ5DQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZSA9IHJ3YXBpKCktPkFwaSgnP2ZpZWxkcz1pZCxwbGFuJyk7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIGNhdGNoIChcRXhjZXB0aW9uICRlKQ0KICAgICAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHNpdGUgPSBmYWxzZTsNCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgaWYgKGlzX29iamVjdCgkc2l0ZSkgJiYgaXNzZXQoJHNpdGUtPmlkKSAmJiAkc2l0ZS0+aWQgPT0gV1BfUldfX1NJVEVfSUQpDQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQogICAgICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgICAgICAgICAgICAgIA0KICAgICAgICBkZWZpbmUoJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuKTsNCiAgICAgICAgDQogICAgICAgIGlmICgkdXBkYXRlKQ0KICAgICAgICB7DQogICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOLCAkc2l0ZV9wbGFuKTsNCiAgICAgICAgICAgICR0aGlzLT5TZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCB0aW1lKCkpOw0KICAgICAgICAgICAgJHRoaXMtPlN0b3JlT3B0aW9ucygpOw0KICAgICAgICAgICAgDQovLyAgICAgICAgICAgIGlmICgkY3VycmVudF9zaXRlX3BsYW4gIT09ICRzaXRlLT5wbGFuKQ0KLy8gICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAg'));
+        eval(base64_decode('DQogICAgICAgICRjdXJyZW50X3NpdGVfcGxhbiA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4pOw0KICAgICAgICANCiAgICAgICAgJHNpdGVfcGxhbiA9ICRjdXJyZW50X3NpdGVfcGxhbjsNCiAgICAgICAgDQogICAgICAgICR1cGRhdGUgPSBmYWxzZTsNCg0KICAgICAgICBpZiAoIWlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSkNCiAgICAgICAgew0KICAgICAgICAgICAgaWYgKCdmcmVlJyAhPT0gJHNpdGVfcGxhbikNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgew0KICAgICAgICAgICAgJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDApOw0KICAgICAgICAgICAgLy8gQ2hlY2sgaWYgdXNlciBhc2tlZCB0byBzeW5jIGxpY2Vuc2UuDQogICAgICAgICAgICBpZiAocndfcmVxdWVzdF9pc19hY3Rpb24oJ3N5bmNfbGljZW5zZScpKQ0KICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgIGNoZWNrX2FkbWluX3JlZmVyZXIoJ3N5bmNfbGljZW5zZScpOw0KICAgICAgICAgICAgICAgICRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICAgICAgLy8gVXBkYXRlIHBsYW4gb25jZSBpbiBldmVyeSAyNCBob3Vycy4NCiAgICAgICAgICAgIGlmIChmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQykpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQogICAgICAgICAgICAgICAgdHJ5DQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZSA9IHJ3YXBpKCktPkFwaSgnP2ZpZWxkcz1pZCxwbGFuJyk7DQoNCiAgICAgICAgICAgICAgICAgICAgLy9pZiAoUldMb2dnZXI6OklzT24oKSkNCiAgICAgICAgICAgICAgICAgICAgICAgIC8vUldMb2dnZXI6OkxvZygiY29tbWVudC1pZCIsIHZhcl9leHBvcnQoJHNpdGUsIHRydWUpKTsNCg0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICBjYXRjaCAoXEV4Y2VwdGlvbiAkZSkNCiAgICAgICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgICAgICRzaXRlID0gZmFsc2U7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIA0KICAgICAgICAgICAgICAgIGlmIChpc19vYmplY3QoJHNpdGUpICYmIGlzc2V0KCRzaXRlLT5pZCkgJiYgJHNpdGUtPmlkID09IFdQX1JXX19TSVRFX0lEKQ0KICAgICAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHNpdGVfcGxhbiA9ICRzaXRlLT5wbGFuOw0KICAgICAgICAgICAgICAgICAgICAkdXBkYXRlID0gdHJ1ZTsNCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAgICAgICAgICANCiAgICAgICAgZGVmaW5lKCdXUF9SV19fU0lURV9QTEFOJywgJHNpdGVfcGxhbik7DQogICAgICAgIA0KICAgICAgICBpZiAoJHVwZGF0ZSkNCiAgICAgICAgew0KICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTiwgJHNpdGVfcGxhbik7DQogICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgdGltZSgpKTsNCiAgICAgICAgICAgICR0aGlzLT5TdG9yZU9wdGlvbnMoKTsNCiAgICAgICAgICAgIA0KLy8gICAgICAgICAgICBpZiAoJGN1cnJlbnRfc2l0ZV9wbGFuICE9PSAkc2l0ZS0+cGxhbikNCi8vICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICR0aGlzLT5DbGVhclRyYW5zaWVudHMoKTsNCi8vICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIA=='));
     }
     
     public function ClearTransients()
@@ -1200,13 +1267,13 @@ class RatingWidgetPlugin
         $submenu[] = array(
             'menu_title' => 'Advanced',
             'function' => 'AdvancedSettingsPageRender',
-            'load_function' => 'AdvancedSettingsPageLoad',
+//            'load_function' => 'AdvancedSettingsPageLoad',
         );
 
         $submenu[] = array(
             'menu_title' => 'Account',
             'function' => 'AccountPageRender',
-            'load_function' => 'UpdateSecret',
+            'load_function' => 'AccountPageLoad',
         );
         
         if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && !$this->_cfcd208495d565ef66e7dff9f98764da())
@@ -2345,27 +2412,49 @@ class RatingWidgetPlugin
         rw_require_once_view('pages/admin/account.php');
     }
     
-    function AdvancedSettingsPageLoad()
-    {
-        $rw_delete_history = (isset($_POST["rw_delete_history"]) && in_array($_POST["rw_delete_history"], array("true", "false"))) ? 
-                             $_POST["rw_delete_history"] : 
-                             "false";
-        
-        if ('true' === $rw_delete_history)
-        {
-            // Delete user-key & secret.
-            $this->UnsetOption(WP_RW__DB_OPTION_SITE_PUBLIC_KEY);
-            $this->UnsetOption(WP_RW__DB_OPTION_SITE_ID);
-            $this->UnsetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY);
-            $this->StoreOptions();
-            
-            // Goto user-key creation page.
-            rw_admin_redirect();
-        }
-    }
-    
     /* Advanced Settings
     ---------------------------------------------------------------------------------------------------------------*/
+	private function RestoreDefaultSettings() {
+		RWLogger::LogEnterence( 'RestoreDefaultSettings' );
+
+		// Restore to defaults - clear all settings.
+		$this->ClearOptions();
+
+		// Re-Load all advanced settings.
+//		$rw_identify_by = $this->GetOption(WP_RW__IDENTIFY_BY);
+//		$rw_flash_dependency = $this->GetOption(WP_RW__FLASH_DEPENDENCY);
+//		$rw_show_on_mobile = $this->GetOption(WP_RW__SHOW_ON_MOBILE);
+		$tracking = $this->GetOption( WP_RW__DB_OPTION_TRACKING );
+
+//		$this->SetOption(WP_RW__IDENTIFY_BY, $rw_identify_by);
+//		$this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
+//		$this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
+		$this->SetOption( WP_RW__DB_OPTION_TRACKING, $tracking );
+
+		// Restore account details.
+		$this->SetOption( WP_RW__DB_OPTION_SITE_PUBLIC_KEY, WP_RW__SITE_PUBLIC_KEY );
+		$this->SetOption( WP_RW__DB_OPTION_SITE_ID, WP_RW__SITE_ID );
+		$this->SetOption( WP_RW__DB_OPTION_SITE_SECRET_KEY, WP_RW__SITE_SECRET_KEY );
+		$this->SetOption( WP_RW__DB_OPTION_OWNER_ID, WP_RW__OWNER_ID );
+		$this->SetOption( WP_RW__DB_OPTION_OWNER_EMAIL, WP_RW__OWNER_EMAIL );
+
+		$this->StoreOptions();
+
+		RWLogger::LogDeparture( 'RestoreDefaultSettings' );
+	}
+
+	private function DeleteAndCreateNewAccount() {
+		RWLogger::LogEnterence( 'DeleteAndCreateNewAccount' );
+
+		// Delete user-key & secret.
+		$this->UnsetOption( WP_RW__DB_OPTION_SITE_PUBLIC_KEY );
+		$this->UnsetOption( WP_RW__DB_OPTION_SITE_ID );
+		$this->UnsetOption( WP_RW__DB_OPTION_SITE_SECRET_KEY );
+		$this->StoreOptions();
+
+		RWLogger::LogDeparture( 'DeleteAndCreateNewAccount' );
+	}
+
     function AdvancedSettingsPageRender()
     {
         // Variables for the field and option names 
@@ -2384,58 +2473,28 @@ class RatingWidgetPlugin
         {
             $this->settings->SetSaveMode();
             
-            $rw_restore_defaults = (isset($_POST["rw_restore_defaults"]) && in_array($_POST["rw_restore_defaults"], array("true", "false"))) ? 
-                                 $_POST["rw_restore_defaults"] : 
-                                 "false";
-
-            if ('true' === $rw_restore_defaults)
+			// Save advanced settings.
+            // Get posted identification method.
+            if (isset($_POST["rw_identify_by"]) && in_array($_POST["rw_identify_by"], array("ip", "laccount")))
             {
-                // Restore to defaults - clear all settings.
-                $this->ClearOptions();
-                
-                // Re-Load all advanced settings.
-                    $rw_identify_by = $this->GetOption(WP_RW__IDENTIFY_BY);
-                    $rw_flash_dependency = $this->GetOption(WP_RW__FLASH_DEPENDENCY);
-                    $rw_show_on_mobile = $this->GetOption(WP_RW__SHOW_ON_MOBILE);
-                    $tracking = $this->GetOption(WP_RW__DB_OPTION_TRACKING);
-
-                    $this->SetOption(WP_RW__IDENTIFY_BY, $rw_identify_by);
-                    $this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
-                    $this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
-                    $this->SetOption(WP_RW__DB_OPTION_TRACKING, $tracking);
-                    
-                    // Restore account details.
-                    $this->SetOption(WP_RW__DB_OPTION_SITE_PUBLIC_KEY, WP_RW__SITE_PUBLIC_KEY);
-                    $this->SetOption(WP_RW__DB_OPTION_SITE_ID, WP_RW__SITE_ID);
-                    $this->SetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY, WP_RW__SITE_SECRET_KEY);
-                    $this->SetOption(WP_RW__DB_OPTION_OWNER_ID, WP_RW__OWNER_ID);
-                    $this->SetOption(WP_RW__DB_OPTION_OWNER_EMAIL, WP_RW__OWNER_EMAIL);
+                $rw_identify_by = $_POST["rw_identify_by"];
+                $this->SetOption(WP_RW__IDENTIFY_BY, $rw_identify_by);
             }
-            else
+
+            // Get posted flash dependency.
+            if (isset($_POST["rw_flash_dependency"]) && in_array($_POST["rw_flash_dependency"], array("true", "false")))
             {
-                // Save advanced settings.
-                    // Get posted identification method.
-                    if (isset($_POST["rw_identify_by"]) && in_array($_POST["rw_identify_by"], array("ip", "laccount")))
-                    {
-                        $rw_identify_by = $_POST["rw_identify_by"];
-                        $this->SetOption(WP_RW__IDENTIFY_BY, $rw_identify_by);
-                    }
+                $rw_flash_dependency = ('true' == $_POST["rw_flash_dependency"]);
+                // Save flash dependency.
+                $this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
+            }
 
-                    // Get posted flash dependency.
-                    if (isset($_POST["rw_flash_dependency"]) && in_array($_POST["rw_flash_dependency"], array("true", "false")))
-                    {
-                        $rw_flash_dependency = ('true' == $_POST["rw_flash_dependency"]);
-                        // Save flash dependency.
-                        $this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
-                    }
-
-                    // Get mobile flag.
-                    if (isset($_POST["rw_show_on_mobile"]) && in_array($_POST["rw_show_on_mobile"], array("true", "false")))
-                    {
-                        $rw_show_on_mobile = ('true' == $_POST["rw_show_on_mobile"]);
-                        // Save show on mobile flag.
-                        $this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
-                    }
+            // Get mobile flag.
+            if (isset($_POST["rw_show_on_mobile"]) && in_array($_POST["rw_show_on_mobile"], array("true", "false")))
+            {
+                $rw_show_on_mobile = ('true' == $_POST["rw_show_on_mobile"]);
+                // Save show on mobile flag.
+                $this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
             }
 ?>
     <div class="updated"><p><strong><?php _e('Settings successfully saved.', WP_RW__ID ); ?></strong></p></div>
@@ -3217,7 +3276,7 @@ class RatingWidgetPlugin
                 // Hook post excerpt rating showup.
                 add_action('the_excerpt', array(&$this, 'AddPostRating'));
         }
-        
+
         if (RWLogger::IsOn())
             RWLogger::LogDeparture("rw_before_loop_start");
     }
