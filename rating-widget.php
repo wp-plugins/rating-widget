@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.1.8
+Version: 2.1.9
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -293,16 +293,16 @@ class RatingWidgetPlugin
         return $is_mobile;
     }
     
-    function RedirectOnLink()
-    {
-        $page = strtolower(rw_request_get('page', ''));
-        
-        if ($page === $this->GetMenuSlug('upgrade'))
-            rw_site_redirect($this->GetUpgradeUrl()); 
-        else if ($page === $this->GetMenuSlug('faq'))
-            rw_site_redirect('support/wordpress/#platform');
-        else if ($page === $this->GetMenuSlug('help'))
-            rw_redirect('http://wordpress.org/support/plugin/rating-widget');
+    function RedirectOnLink() {
+	    $page = strtolower( rw_request_get( 'page', '' ) );
+
+	    if ( $page === $this->GetMenuSlug( 'upgrade' ) ) {
+		    rw_site_redirect( $this->GetUpgradeUrl() );
+	    } else if ( $page === $this->GetMenuSlug( 'faq' ) ) {
+		    rw_site_redirect( 'support/wordpress/#platform' );
+	    } else if ( $page === $this->GetMenuSlug( 'help' ) ) {
+		    rw_redirect( 'http://wordpress.org/support/plugin/rating-widget' );
+	    }
     }
 
 /* Authentication.
@@ -336,16 +336,14 @@ class RatingWidgetPlugin
 		$this->Notice('All your ratings has been successfully deleted.', 'update-nag success');
 	}
 
-	function StartFreshConfirmNotice()
-	{
-		$this->Notice('You are fresh like a mentos! All your ratings has been successfully deleted and your settings are back to factory defaults.', 'update-nag success');
+	function StartFreshConfirmNotice() {
+		$this->Notice( 'You are fresh like a mentos! All your ratings has been successfully deleted and your settings are back to factory defaults.', 'update-nag success' );
 	}
 
-	private function UpdateSecret($new_secret)
-	{
+	private function UpdateSecret($new_secret) {
 		RWLogger::LogEnterence( 'UpdateSecret' );
 
-		$this->SetOption(WP_RW__DB_OPTION_SITE_SECRET_KEY, $new_secret);
+		$this->SetOption( WP_RW__DB_OPTION_SITE_SECRET_KEY, $new_secret );
 		$this->StoreOptions();
 
 		RWLogger::LogDeparture( 'UpdateSecret' );
@@ -361,7 +359,7 @@ class RatingWidgetPlugin
 
 		    $this->UpdateSecret( rw_request_get( 'rw_secret', '' ) );
 
-		    add_action('all_admin_notices', array(&$this, 'SecretKeyUpdateConfirmNotice'));
+		    add_action( 'all_admin_notices', array( &$this, 'SecretKeyUpdateConfirmNotice' ) );
 
 		    rw_redirect( '#' );
 	    }
@@ -381,7 +379,7 @@ class RatingWidgetPlugin
 
 		    RWLogger::Log( "AccountPageLoad", 'clear_ratings' );
 
-		    rwapi()->Api('/ratings.json', 'DELETE');
+		    rwapi()->Api( '/ratings.json', 'DELETE' );
 
 		    $this->ClearTransients();
 
@@ -393,7 +391,7 @@ class RatingWidgetPlugin
 
 		    RWLogger::Log( "AccountPageLoad", 'go_factory' );
 
-		    rwapi()->Api('/ratings.json', 'DELETE');
+		    rwapi()->Api( '/ratings.json', 'DELETE' );
 
 		    $this->ClearTransients();
 
@@ -407,28 +405,27 @@ class RatingWidgetPlugin
      * In a case of caching plugin installed, and if user's plan supports Rich-Snippets,
      * clear cache every 24 hours.
      */
-    function ClearCache()
-    {
-        RWLogger::LogEnterence("ClearCache");
+    function ClearCache() {
+	    RWLogger::LogEnterence( "ClearCache" );
 
-        if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
-            return;
+	    if ( ! $this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() ) {
+		    return;
+	    }
 
-        $site_plan_update = $this->GetOption(WP_RW__DB_OPTION_SITE_PLAN_UPDATE, false, 0);
-        if ($site_plan_update < (time() - WP_RW__TIME_24_HOURS_IN_SEC))
-        {
-            if (function_exists('prune_super_cache'))
-                prune_super_cache();
-            else if (function_exists('wp_cache_clear_cache'))
-                wp_cache_clear_cache();
-        }
+	    $site_plan_update = $this->GetOption( WP_RW__DB_OPTION_SITE_PLAN_UPDATE, false, 0 );
+	    if ( $site_plan_update < ( time() - WP_RW__TIME_24_HOURS_IN_SEC ) ) {
+		    if ( function_exists( 'prune_super_cache' ) ) {
+			    prune_super_cache();
+		    } else if ( function_exists( 'wp_cache_clear_cache' ) ) {
+			    wp_cache_clear_cache();
+		    }
+	    }
     }
 
-    function LoadPlan()
-    {
-        RWLogger::LogEnterence("LoadPlan");
+    function LoadPlan() {
+	    RWLogger::LogEnterence( "LoadPlan" );
 
-        eval(base64_decode('DQogICAgICAgICRjdXJyZW50X3NpdGVfcGxhbiA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4pOw0KICAgICAgICANCiAgICAgICAgJHNpdGVfcGxhbiA9ICRjdXJyZW50X3NpdGVfcGxhbjsNCiAgICAgICAgDQogICAgICAgICR1cGRhdGUgPSBmYWxzZTsNCg0KICAgICAgICBpZiAoIWlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSkNCiAgICAgICAgew0KICAgICAgICAgICAgaWYgKCdmcmVlJyAhPT0gJHNpdGVfcGxhbikNCiAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KICAgICAgICAgICAgICAgICR1cGRhdGUgPSB0cnVlOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgew0KICAgICAgICAgICAgJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDApOw0KICAgICAgICAgICAgLy8gQ2hlY2sgaWYgdXNlciBhc2tlZCB0byBzeW5jIGxpY2Vuc2UuDQogICAgICAgICAgICBpZiAocndfcmVxdWVzdF9pc19hY3Rpb24oJ3N5bmNfbGljZW5zZScpKQ0KICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgIGNoZWNrX2FkbWluX3JlZmVyZXIoJ3N5bmNfbGljZW5zZScpOw0KICAgICAgICAgICAgICAgICRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIA0KICAgICAgICAgICAgLy8gVXBkYXRlIHBsYW4gb25jZSBpbiBldmVyeSAyNCBob3Vycy4NCiAgICAgICAgICAgIGlmIChmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQykpDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQogICAgICAgICAgICAgICAgdHJ5DQogICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAkc2l0ZSA9IHJ3YXBpKCktPkFwaSgnP2ZpZWxkcz1pZCxwbGFuJyk7DQoNCiAgICAgICAgICAgICAgICAgICAgLy9pZiAoUldMb2dnZXI6OklzT24oKSkNCiAgICAgICAgICAgICAgICAgICAgICAgIC8vUldMb2dnZXI6OkxvZygiY29tbWVudC1pZCIsIHZhcl9leHBvcnQoJHNpdGUsIHRydWUpKTsNCg0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICBjYXRjaCAoXEV4Y2VwdGlvbiAkZSkNCiAgICAgICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgICAgICRzaXRlID0gZmFsc2U7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIA0KICAgICAgICAgICAgICAgIGlmIChpc19vYmplY3QoJHNpdGUpICYmIGlzc2V0KCRzaXRlLT5pZCkgJiYgJHNpdGUtPmlkID09IFdQX1JXX19TSVRFX0lEKQ0KICAgICAgICAgICAgICAgIHsNCiAgICAgICAgICAgICAgICAgICAgJHNpdGVfcGxhbiA9ICRzaXRlLT5wbGFuOw0KICAgICAgICAgICAgICAgICAgICAkdXBkYXRlID0gdHJ1ZTsNCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAgICAgICAgICANCiAgICAgICAgZGVmaW5lKCdXUF9SV19fU0lURV9QTEFOJywgJHNpdGVfcGxhbik7DQogICAgICAgIA0KICAgICAgICBpZiAoJHVwZGF0ZSkNCiAgICAgICAgew0KICAgICAgICAgICAgJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTiwgJHNpdGVfcGxhbik7DQogICAgICAgICAgICAkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgdGltZSgpKTsNCiAgICAgICAgICAgICR0aGlzLT5TdG9yZU9wdGlvbnMoKTsNCiAgICAgICAgICAgIA0KLy8gICAgICAgICAgICBpZiAoJGN1cnJlbnRfc2l0ZV9wbGFuICE9PSAkc2l0ZS0+cGxhbikNCi8vICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICR0aGlzLT5DbGVhclRyYW5zaWVudHMoKTsNCi8vICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICAgIA=='));
+	    eval(base64_decode('DQoJICAgICRjdXJyZW50X3NpdGVfcGxhbiA9ICR0aGlzLT5HZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOICk7DQoNCgkgICAgJHNpdGVfcGxhbiA9ICRjdXJyZW50X3NpdGVfcGxhbjsNCg0KCSAgICAkdXBkYXRlID0gZmFsc2U7DQoNCgkgICAgaWYgKCAhIGlzX3N0cmluZyggV1BfUldfX1NJVEVfU0VDUkVUX0tFWSApICkgew0KCQkgICAgaWYgKCAnZnJlZScgIT09ICRzaXRlX3BsYW4gKSB7DQoJCQkgICAgJHNpdGVfcGxhbiA9ICdmcmVlJzsNCgkJCSAgICAkdXBkYXRlICAgID0gdHJ1ZTsNCgkJICAgIH0NCgkgICAgfSBlbHNlIHsNCgkJICAgICRzaXRlX3BsYW5fdXBkYXRlID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCBmYWxzZSwgMCApOw0KCQkgICAgLy8gQ2hlY2sgaWYgdXNlciBhc2tlZCB0byBzeW5jIGxpY2Vuc2UuDQoJCSAgICBpZiAoIHJ3X3JlcXVlc3RfaXNfYWN0aW9uKCAnc3luY19saWNlbnNlJyApICkgew0KCQkJICAgIGNoZWNrX2FkbWluX3JlZmVyZXIoICdzeW5jX2xpY2Vuc2UnICk7DQoJCQkgICAgJHNpdGVfcGxhbl91cGRhdGUgPSAwOw0KCQkgICAgfQ0KDQoJCSAgICAvLyBVcGRhdGUgcGxhbiBvbmNlIGluIGV2ZXJ5IDI0IGhvdXJzLg0KCQkgICAgaWYgKCBmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKCB0aW1lKCkgLSBXUF9SV19fVElNRV8yNF9IT1VSU19JTl9TRUMgKSApIHsNCgkJCSAgICAvLyBHZXQgcGxhbiBmcm9tIHJlbW90ZSBzZXJ2ZXIgb25jZSBhIGRheS4NCgkJCSAgICB0cnkgew0KCQkJCSAgICAkc2l0ZSA9IHJ3YXBpKCktPkFwaSggJz9maWVsZHM9aWQscGxhbicgKTsNCg0KCQkJCSAgICAvL2lmIChSV0xvZ2dlcjo6SXNPbigpKQ0KCQkJCSAgICAvL1JXTG9nZ2VyOjpMb2coImNvbW1lbnQtaWQiLCB2YXJfZXhwb3J0KCRzaXRlLCB0cnVlKSk7DQoNCgkJCSAgICB9IGNhdGNoICggXEV4Y2VwdGlvbiAkZSApIHsNCgkJCQkgICAgJHNpdGUgPSBmYWxzZTsNCgkJCSAgICB9DQoNCgkJCSAgICBpZiAoIGlzX29iamVjdCggJHNpdGUgKSAmJiBpc3NldCggJHNpdGUtPmlkICkgJiYgJHNpdGUtPmlkID09IFdQX1JXX19TSVRFX0lEICkgew0KCQkJCSAgICAkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQoJCQkJICAgICR1cGRhdGUgICAgPSB0cnVlOw0KCQkJICAgIH0NCgkJICAgIH0NCgkgICAgfQ0KDQoJICAgIGRlZmluZSggJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuICk7DQoNCgkgICAgaWYgKCAkdXBkYXRlICkgew0KCQkgICAgJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4sICRzaXRlX3BsYW4gKTsNCgkJICAgICR0aGlzLT5TZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgdGltZSgpICk7DQoJCSAgICAkdGhpcy0+U3RvcmVPcHRpb25zKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJICAgICR0aGlzLT5DbGVhclRyYW5zaWVudHMoKTsNCi8vICAgICAgICAgICAgfQ0KCSAgICB9DQoJICAgIA=='));
     }
     
     public function ClearTransients()

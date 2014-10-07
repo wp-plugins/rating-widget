@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.1.8
+Stable tag: 2.1.9
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -169,41 +169,45 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.1.9 =
+* New: Prepared plugin for CloudFlare's FlexibleSSL support.
+* Fix: Minor fix in the cor Multibyte functions test.
+
 = 2.1.8 =
-Update: Relocated account actions from "Advanced" to "Account" section.
-New: Added an option to "Clear Ratings" after testing the plugin.
-New: Added an option to "Start Fresh" from factory settings.
-Optimization: Added multiple additional frequently used examples to the "Power User" settings.
+* Update: Relocated account actions from "Advanced" to "Account" section.
+* New: Added an option to "Clear Ratings" after testing the plugin.
+* New: Added an option to "Start Fresh" from factory settings.
+* Optimization: Added multiple additional frequently used examples to the "Power User" settings.
 
 = 2.1.7 =
-Major Fix: Added sanity check before executing Super Cache wp_cache_clear_cache() method.
-Fix: Fixed post title extraction for non-English Unicode letters.
+* Major Fix: Added sanity check before executing Super Cache wp_cache_clear_cache() method.
+* Fix: Fixed post title extraction for non-English Unicode letters.
 
 = 2.1.6 =
-Fix: For users which are using Super Cache plugin and their plan is also supporting Rich-Snippets, the cache will be now cleared every 24 hours.
-Fix: In the dashboard plugins page, the upgrade link in the plugin's links collection will be now shown only to non paying users.
+* Fix: For users which are using Super Cache plugin and their plan is also supporting Rich-Snippets, the cache will be now cleared every 24 hours.
+* Fix: In the dashboard plugins page, the upgrade link in the plugin's links collection will be now shown only to non paying users.
 Update: Updated the FAQ section on the plugin's listing.
 
 = 2.1.5 =
-New: Added Rich-Snippets banner for non paying users.
+* New: Added Rich-Snippets banner for non paying users.
 
 = 2.1.4 =
-New: Finally Professional plan users can setup the visitor identification method to IP right from the dashboard.
-Fix: Removed Upgrade tab from Account settings for premium users.
+* New: Finally Professional plan users can setup the visitor identification method to IP right from the dashboard.
+* Fix: Removed Upgrade tab from Account settings for premium users.
 
 = 2.1.3 =
-Fix: Fixed email confirmation process by extracting site's ID.
+* Fix: Fixed email confirmation process by extracting site's ID.
 
 = 2.1.2 =
-New: Added Video for [Plugin Setup and Overview](https://www.youtube.com/watch?v=xbo-dlXvB98).
-Fix: Fixed Persian language translation (by Taha Kamkar).
-Update: With the new schema.org objects, we've now modified the type from http://schema.org/Product to http://schema.org/BlogPosting
+* New: Added Video for [Plugin Setup and Overview](https://www.youtube.com/watch?v=xbo-dlXvB98).
+* Fix: Fixed Persian language translation (by Taha Kamkar).
+* Update: With the new schema.org objects, we've now modified the type from http://schema.org/Product to http://schema.org/BlogPosting
 
 = 2.1.1 =
-New: Fixed BuddyPress rtMedia rich activities ratings support.
-Optimization: Top-Rated Widget menu item is now being removed after the widget addition to one of the widget areas.
-Fix: Fixed RatingWidget's SDK error handling issue.
-Fix: Fixed bbPress forum replies ratings style starting from the 2nd page and further.
+* New: Fixed BuddyPress rtMedia rich activities ratings support.
+* Optimization: Top-Rated Widget menu item is now being removed after the widget addition to one of the widget areas.
+* Fix: Fixed RatingWidget's SDK error handling issue.
+* Fix: Fixed bbPress forum replies ratings style starting from the 2nd page and further.
 
 = 2.1.0 =
 * Fix: Fixed bbPress inline user ratings visibility when User ratings are disabled.

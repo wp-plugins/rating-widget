@@ -240,8 +240,14 @@
     
     if (!defined('WP_RW__SECURE_DOMAIN'))
         define('WP_RW__SECURE_DOMAIN', 'secure.rating-widget.com');
-        
-    define('WP_RW__HTTPS', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'));
+
+
+    define('WP_RW__HTTPS',
+	    // Checks if CloudFlare's HTTPS (Flexible SSL support)
+	    (isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && strtolower( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) == 'https') ||
+	    // Check if HTTPS request.
+	    (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'));
+
     define('WP_RW__PROTOCOL', (WP_RW__HTTPS ? 'https' : 'http'));
     
     define('WP_RW__ADDRESS', 'http://' . WP_RW__DOMAIN);
@@ -256,4 +262,3 @@
         define('WP_RW__SERVER_ADDR', $_SERVER['SERVER_ADDR']);
     if (!defined('WP_RW__CLIENT_ADDR'))
         define('WP_RW__CLIENT_ADDR', $_SERVER['REMOTE_ADDR']);
-?>
