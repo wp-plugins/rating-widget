@@ -12,7 +12,7 @@
                     echo !empty($custom_settings) ?
                         stripslashes($custom_settings) :
 '/*
- * We recommend to use this section if you are familiar with JavaScript.
+ * We recommend to use this section only if you familiar with JavaScript.
  *
  * For your convenience, we have collected a set of examples which we are frequently
  * being asked about. Make sure to delete (or comment) the code you do NOT want to use.
@@ -22,7 +22,7 @@
 options.showTooltip = false;
 
 // Example: Hide posts recommendations.
-options.showRecommendations = false;
+options.hideRecommendations = true;
 
 // Example: Hide ratings report.
 options.showReport = false;
@@ -32,6 +32,16 @@ options.showLoader = false;
 
 // Example: Hide the text bubble - only show the star ratings.
 options.showInfo = false;
+
+// Example: Set custom rating file.
+//
+// More information:
+//      http://rating-widget.com/support/how-can-i-customize-the-ratings-image-theme-in-wordpress/
+options.style = RW.CUSTOM;
+options.imgUrl = {
+    ltr: "http://imageaddress.com/img.ltr.png", // Left to Right rating
+    ltr: "http://imageaddress.com/img.rtl.png"  // Right to Left rating
+};
 
 // Example: Disable mobile optimized UI (the fixed star button).
 options.mobile = {"showTrigger": false};

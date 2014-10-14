@@ -43,7 +43,8 @@
             'star_heart1' => array('type' => 'star', 'file' => 'star/heart_1.php', 'title' => 'Hearts'),
 
             'star_barrels' => array('type' => 'star', 'file' => 'star/barrels.php', 'title' => 'Jeegy\'s Barrels'),
-            
+            'star_cups' => array('type' => 'star', 'file' => 'star/cup.php', 'title' => 'Cups by CupO\'Forex'),
+
             'star_flames' => array('type' => 'star', 'file' => 'star/flames.php', 'title' => 'Flames by Giuseppe'),
 
             'star_smiley' => array('type' => 'star', 'file' => 'star/smiley.php', 'title' => 'Smiley by Daya'),
