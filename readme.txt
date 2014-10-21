@@ -15,7 +15,7 @@ The most popular Five Star Rating System on the web. User-friendly ratings for y
 * Posts
 * Pages
 * Comments
-* (WooCommerce Products)[
+* [WooCommerce Products](https://rating-widget.com/blog/woocommerce-product-ratings/)
 * BuddyPress Users and Activities
 * bbPress Forum Topics, Replies and Users ([PROFESSIONAL plan](http://rating-widget.com/pricing/wordpress/))
 * Custom Post Types
