@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.2.0
+Version: 2.2.1
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -11,7 +11,6 @@ Text Domain: ratingwidget
 Domain Path: /langs
 */
 
-// Exit if accessed directly.
 	if (!defined('ABSPATH')) exit;
 
 	if (!class_exists('RatingWidgetPlugin')) :
@@ -102,6 +101,15 @@ Domain Path: /langs
 
 				// Load config after keys are loaded.
 				require_once( WP_RW__PLUGIN_DIR . "/lib/config.php" );
+			}
+
+			function Init()
+			{
+				// Load all extensions.
+				require_once(WP_RW__PLUGIN_LIB_DIR . "rw-extension-abstract.php");
+				require_once(WP_RW__PLUGIN_LIB_DIR_EXT . 'rw-woocommerce.php');
+
+				$this->LoadExtensionsDefaultOptions();
 
 				$this->LogInitialData();
 
@@ -143,6 +151,24 @@ Domain Path: /langs
 				add_action( 'plugins_loaded', array( &$this, 'rw_load_textdomain' ) );
 			}
 
+			private function LoadExtensionsDefaultOptions()
+			{
+				RWLogger::LogEnterence("LoadExtensionsDefaultOptions");
+
+				foreach ($this->_extensions as $ext)
+				{
+					$def_options = $ext->GetDefaultOptions();
+					foreach ($def_options as $k => $v)
+						$this->_OPTIONS_DEFAULTS[$k] = $v;
+
+					$def_align = $ext->GetDefaultAlign();
+					foreach ($def_align as $k => $v)
+						$this->_OPTIONS_DEFAULTS[$k] = $v;
+				}
+
+				RWLogger::LogDeparture("LoadExtensionsDefaultOptions");
+			}
+
 			function rw_load_textdomain()
 			{
 				load_plugin_textdomain('ratingwidget', false, dirname(plugin_basename( __FILE__ )) . '/langs');
@@ -156,7 +182,7 @@ Domain Path: /langs
 				if (is_admin())
 					add_action('admin_footer', array(&$this, "DumpLog"));
 				else
-					add_action('wp_footer', array(&$this, "DumpLog"));
+					add_action('wp_footer', array(&$this, "DumpLog"), 100);
 			}
 
 			protected function LogInitialData()
@@ -246,6 +272,26 @@ Domain Path: /langs
 				}
 			}
 
+			function RegisterExtensionsHooks() {
+				RWLogger::LogEnterence( 'RegisterExtensionsHooks' );
+
+				foreach ( $this->_extensions as $ext ) {
+					RWLogger::Log( 'RegisterExtensionsHooks', 'Processing extension ' . $ext->GetSlug() );
+					if ( $ext->IsExtensionPage() ) {
+						$class = $ext->GetCurrentPageClass();
+
+						RWLogger::Log( 'RegisterExtensionsHooks', 'Extension page for class ' . $class );
+
+						if ( false !== $this->GetRatingAlignByType( $ext->GetAlignOptionNameByClass( $class ) ) && ! $this->IsHiddenRatingByType( $class ) ) {
+							RWLogger::Log( 'RegisterExtensionsHooks', 'Hooking ' . $class );
+							$ext->Hook($class);
+						}
+					}
+				}
+
+				RWLogger::LogDeparture( 'RegisterExtensionsHooks' );
+			}
+
 			private function SetupSiteActions()
 			{
 				RWLogger::LogEnterence("SetupSiteActions");
@@ -257,6 +303,9 @@ Domain Path: /langs
 				// Posts / Pages / Comments.
 				add_action("loop_start", array(&$this, "rw_before_loop_start"));
 
+				// Register extensions hooks.
+				add_action('loop_start', array(&$this, 'RegisterExtensionsHooks'));
+
 				// Register shortcode.
 				add_action('init', array(&$this, 'RegisterShortcodes'));
 
@@ -264,7 +313,7 @@ Domain Path: /langs
 				// add_action('init', array(&$this, 'test_footer_init'));
 
 				// Rating-Widget main javascript load.
-				add_action('wp_footer', array(&$this, "rw_attach_rating_js"));
+				add_action('wp_footer', array(&$this, "rw_attach_rating_js"), 5);
 			}
 
 			private function IsHideOnMobile()
@@ -1009,11 +1058,19 @@ Domain Path: /langs
 
 			function QueueRatingData($urid, $title, $permalink, $rclass)
 			{
-				if (isset(self::$ratings[$urid]))
-					return;
+				RWLogger::LogEnterence('QueueRatingData');
+
+				if (isset(self::$ratings[$urid])) {
+					RWLogger::Log('QueueRatingData', 'Rating ' . $urid .' already queued');
+					return self::$ratings[$urid];
+				}
+
+				RWLogger::Log('QueueRatingData', 'Queue: urid=' . $urid .'; title=' . $title . '; rclass=' . $rclass . ';');
 
 				$permalink = (mb_strlen($permalink) > 512) ? trim(mb_substr($permalink, 0, 512)) . '...' : $permalink;
 				self::$ratings[$urid] = array("title" => $title, "permalink" => $permalink, "rclass" => $rclass);
+
+				return self::$ratings[$urid];
 			}
 
 			/* Messages.
@@ -1071,41 +1128,13 @@ Domain Path: /langs
     ---------------------------------------------------------------------------------------------------------------*/
 			function rw_admin_menu_icon_css()
 			{
-				global $bp;
-				?>
-				<style type="text/css">
-					ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?> .wp-menu-image a
-					{ background-image: url( <?php echo WP_RW__PLUGIN_URL . 'icons.png' ?> ) !important; background-position: -1px -32px; }
-					ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?>:hover .wp-menu-image a,
-					ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?>.wp-has-current-submenu .wp-menu-image a,
-					ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?>.current .wp-menu-image a
-					{ background-position: -1px 0; }
-					ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?> .wp-menu-image a img { display: none; }
-				</style>
-
-			<?php
+				rw_require_view('/pages/admin/menu-item.php');
 			}
 
 			function GoogleAnalytics()
 			{
-				?>
-				<script type="text/javascript">
-					var _gaq = _gaq || [];
-					_gaq.push(['_setAccount', 'UA-20070413-1']);
-					_gaq.push(['_setAllowLinker', true]);
-					_gaq.push(['_setDomainName', 'none']);
-					_gaq.push(['_trackPageview']);
-					<?php if (!$this->_isRegistered) : ?>
-					_gaq.push(['_trackEvent', 'signup', 'wordpress']);
-					<?php endif; ?>
-
-					(function() {
-						var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-						ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-						var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-					})();
-				</script>
-			<?php
+				$params = array('is_registered' => $this->_isRegistered);
+				rw_require_view('/pages/admin/ga.php', $params);
 			}
 
 			function InitScriptsAndStyles()
@@ -1220,6 +1249,26 @@ Domain Path: /langs
 				return eval(base64_decode('DQoJCQkJaWYgKCR0aGlzLT5fY2ZjZDIwODQ5NWQ1NjVlZjY2ZTdkZmY5Zjk4NzY0ZGEoKSkNCgkJCQkJcmV0dXJuIHRydWU7DQoNCgkJCQlyZXR1cm4gKGlzX3N0cmluZyhXUF9SV19fU0lURV9TRUNSRVRfS0VZKSAmJiAoJ3Byb2Zlc3Npb25hbCcgPT09IFdQX1JXX19TSVRFX1BMQU4gfHwgJ3ByZW1pdW0nID09PSBXUF9SV19fU0lURV9QTEFOIHx8ICdidXNpbmVzcycgPT09IFdQX1JXX19TSVRFX1BMQU4pKTsNCgkJCQk='));
 			}
 
+			/**
+			 * @var array of RW_AbstractExtension
+			 */
+			private $_extensions = array();
+
+			/**
+			 * @return array of RW_AbstractExtension
+			 */
+			function GetExtensions()
+			{
+				return $this->_extensions;
+			}
+
+			function RegisterExtension(RW_AbstractExtension $extension)
+			{
+				$slug = $extension->GetSlug();
+
+				$this->_extensions[$slug] = $extension;
+			}
+
 			function SetupMenuItems()
 			{
 				RWLogger::LogEnterence("SetupMenuItems");
@@ -1232,6 +1281,11 @@ Domain Path: /langs
 					'function' => 'SettingsPage',
 					'slug' => '',
 				);
+
+				// Append registered setting menu items.
+				foreach ($this->_extensions as $extension)
+					if ($extension->HasSettingsMenu())
+						$submenu[] = $extension->GetSettingsMenuItem();
 
 				if ($this->IsBuddyPressInstalled())
 					// BuddyPress settings.
@@ -1256,8 +1310,6 @@ Domain Path: /langs
 						'slug' => 'toprated',
 					);
 
-				$user_label = $this->IsBBPressInstalled() ? "User" : "Author";
-
 				// Reports.
 				$submenu[] = array(
 					'menu_title' => 'Reports',
@@ -1268,7 +1320,6 @@ Domain Path: /langs
 				$submenu[] = array(
 					'menu_title' => 'Advanced',
 					'function' => 'AdvancedSettingsPageRender',
-//            'load_function' => 'AdvancedSettingsPageLoad',
 				);
 
 				$submenu[] = array(
@@ -2600,6 +2651,12 @@ Domain Path: /langs
 				return WP_RW__ADMIN_MENU_SLUG . (empty($pSlug) ? '' : ('-' . $pSlug));
 			}
 
+			private function GetFirstKey(array $associative)
+			{
+				reset($associative);
+				return key($associative);
+			}
+
 			/**
 			 * To get a list of all custom user defined posts:
 			 *
@@ -2797,48 +2854,67 @@ Domain Path: /langs
 				}
 				else
 				{
-					$settings_data = array(
-						"blog-posts" => array(
-							"tab" => "Blog Posts",
-							"class" => "blog-post",
-							"options" => WP_RW__BLOG_POSTS_OPTIONS,
-							"align" => WP_RW__BLOG_POSTS_ALIGN,
-							"default_align" => $this->_OPTIONS_DEFAULTS[WP_RW__BLOG_POSTS_ALIGN],
-							"excerpt" => true,
-							"show_align" => true,
-						),
-						"front-posts" => array(
-							"tab" => "Front Page Posts",
-							"class" => "front-post",
-							"options" => WP_RW__FRONT_POSTS_OPTIONS,
-							"align" => WP_RW__FRONT_POSTS_ALIGN,
-							"default_align" => $this->_OPTIONS_DEFAULTS[WP_RW__FRONT_POSTS_ALIGN],
-							"excerpt" => false,
-							"show_align" => true,
-						),
-						"comments" => array(
-							"tab" => "Comments",
-							"class" => "comment",
-							"options" => WP_RW__COMMENTS_OPTIONS,
-							"align" => WP_RW__COMMENTS_ALIGN,
-							"default_align" => $this->_OPTIONS_DEFAULTS[WP_RW__COMMENTS_ALIGN],
-							"excerpt" => false,
-							"show_align" => true,
-						),
-						"pages" => array(
-							"tab" => "Pages",
-							"class" => "page",
-							"options" => WP_RW__PAGES_OPTIONS,
-							"align" => WP_RW__PAGES_ALIGN,
-							"default_align" => $this->_OPTIONS_DEFAULTS[WP_RW__PAGES_ALIGN],
-							"excerpt" => false,
-							"show_align" => true,
-						),
-					);
+					$is_extension = false;
 
-					$selected_key = isset($_GET["rating"]) ? $_GET["rating"] : "blog-posts";
-					if (!isset($settings_data[$selected_key]))
-						$selected_key = "blog-posts";
+					foreach ($this->_extensions as $ext)
+					{
+						if ($plugin_page !== $this->GetMenuSlug($ext->GetSlug()))
+							continue;
+
+						$is_extension = true;
+
+						$settings_data = $ext->GetSettings();
+
+						$selected_key = isset($_GET["rating"]) && isset($settings_data[$_GET["rating"]]) ?
+							$_GET["rating"] :
+							$this->GetFirstKey($settings_data);
+					}
+
+					if (!$is_extension) {
+						$settings_data = array(
+							"blog-posts"  => array(
+								"tab"           => "Blog Posts",
+								"class"         => "blog-post",
+								"options"       => WP_RW__BLOG_POSTS_OPTIONS,
+								"align"         => WP_RW__BLOG_POSTS_ALIGN,
+								"default_align" => $this->_OPTIONS_DEFAULTS[ WP_RW__BLOG_POSTS_ALIGN ],
+								"excerpt"       => true,
+								"show_align"    => true,
+							),
+							"front-posts" => array(
+								"tab"           => "Front Page Posts",
+								"class"         => "front-post",
+								"options"       => WP_RW__FRONT_POSTS_OPTIONS,
+								"align"         => WP_RW__FRONT_POSTS_ALIGN,
+								"default_align" => $this->_OPTIONS_DEFAULTS[ WP_RW__FRONT_POSTS_ALIGN ],
+								"excerpt"       => false,
+								"show_align"    => true,
+							),
+							"comments"    => array(
+								"tab"           => "Comments",
+								"class"         => "comment",
+								"options"       => WP_RW__COMMENTS_OPTIONS,
+								"align"         => WP_RW__COMMENTS_ALIGN,
+								"default_align" => $this->_OPTIONS_DEFAULTS[ WP_RW__COMMENTS_ALIGN ],
+								"excerpt"       => false,
+								"show_align"    => true,
+							),
+							"pages"       => array(
+								"tab"           => "Pages",
+								"class"         => "page",
+								"options"       => WP_RW__PAGES_OPTIONS,
+								"align"         => WP_RW__PAGES_ALIGN,
+								"default_align" => $this->_OPTIONS_DEFAULTS[ WP_RW__PAGES_ALIGN ],
+								"excerpt"       => false,
+								"show_align"    => true,
+							),
+						);
+
+						$selected_key = isset( $_GET["rating"] ) ? $_GET["rating"] : "blog-posts";
+						if ( ! isset( $settings_data[ $selected_key ] ) ) {
+							$selected_key = "blog-posts";
+						}
+					}
 				}
 
 				$rw_current_settings = $settings_data[$selected_key];
@@ -3011,8 +3087,6 @@ Domain Path: /langs
 				global $DEFAULT_OPTIONS;
 				rw_set_language_options($DEFAULT_OPTIONS, $dictionary, $dir, $hor);
 
-				$rating_font_size_set = false;
-				$rating_line_height_set = false;
 				$theme_font_size_set = false;
 				$theme_line_height_set = false;
 
@@ -3211,6 +3285,14 @@ Domain Path: /langs
 			{
 				if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_before_loop_start", $params); }
 
+				foreach ($this->_extensions as $ext)
+					if ($ext->BlockLoopRatings()) {
+						if (RWLogger::IsOn())
+							RWLogger::Log('rw_before_loop_start', 'Blocked by ' . $ext->GetSlug());
+
+						return;
+					}
+
 				// Check if shown on search results.
 				if (is_search() && false === $this->GetOption(WP_RW__SHOW_ON_SEARCH))
 					return;
@@ -3230,7 +3312,6 @@ Domain Path: /langs
 					return;
 
 				$comment_align = $this->GetRatingAlignByType(WP_RW__COMMENTS_ALIGN);
-				$comment_enabled = (isset($comment_align) && isset($comment_align->hor));
 				if (false !== $comment_align && !$this->IsHiddenRatingByType('comment'))
 				{
 					$this->comment_align = $comment_align;
@@ -3240,8 +3321,8 @@ Domain Path: /langs
 				}
 
 				$postType = get_post_type();
-				if (RWLogger::IsOn())
-					RWLogger::Log("rw_before_loop_start", 'Post Type = ' . $postType);
+
+				RWLogger::Log("rw_before_loop_start", 'Post Type = ' . $postType);
 
 				if (in_array($postType, array('forum', 'topic', 'reply')))
 					return;
@@ -3272,12 +3353,15 @@ Domain Path: /langs
 
 					// Hook post rating showup.
 					add_action('the_content', array(&$this, 'AddPostRating'));
-//            add_action('the_title', array(&$this, "rw_add_title_metadata"));
-//            add_action('post_class', array(&$this, "rw_add_article_metadata"));
 
-					if (false !== $this->GetOption(WP_RW__SHOW_ON_EXCERPT))
+					RWLogger::Log("rw_before_loop_start", 'Hooked to the_content()');
+
+					if (false !== $this->GetOption(WP_RW__SHOW_ON_EXCERPT)) {
 						// Hook post excerpt rating showup.
-						add_action('the_excerpt', array(&$this, 'AddPostRating'));
+						add_action( 'the_excerpt', array( &$this, 'AddPostRating' ) );
+
+						RWLogger::Log("rw_before_loop_start", 'Hooked to the_excerpt()');
+					}
 				}
 
 				if (RWLogger::IsOn())
@@ -3672,7 +3756,7 @@ Domain Path: /langs
 
 				$rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
 
-				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHRoaXMtPnBvc3RfY2xhc3MpDQoJCQkJew0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQkkdGl0bGUgPSBtYl9jb252ZXJ0X3RvX3V0ZjgodHJpbSgkcFRpdGxlKSk7DQoJCQkJCQkkcmF0aW5nX2h0bWwgLj0gJyBpdGVtc2NvcGUgaXRlbXByb3A9ImJsb2dQb3N0IiBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQmxvZ1Bvc3RpbmciPg0KICAgIDxzcGFuIGl0ZW1wcm9wPSJoZWFkbGluZSIgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4NCiAgICA8ZGl2IGl0ZW1wcm9wPSJhZ2dyZWdhdGVSYXRpbmciIGl0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQWdncmVnYXRlUmF0aW5nIj4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9IndvcnN0UmF0aW5nIiBjb250ZW50PSIwIiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0iYmVzdFJhdGluZyIgY29udGVudD0iNSIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ1ZhbHVlIiBjb250ZW50PSInIC4gJGRhdGFbJ3JhdGUnXSAuICciIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJyYXRpbmdDb3VudCIgY29udGVudD0iJyAuICRkYXRhWyd2b3RlcyddIC4gJyIgLz4NCiAgICA8L2Rpdic7DQoJCQkJCX0NCgkJCQl9DQoJCQkJ'));
+				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHRoaXMtPnBvc3RfY2xhc3MpDQoJCQkJew0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IHRydWU7DQoNCgkJCQkJCWlmIChzdHJwb3MoJHBFbGVtZW50Q2xhc3MsICdwcm9kdWN0JykpDQoJCQkJCQl7DQoJCQkJCQkJJHNjaGVtYV9yb290ID0gJ2l0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvUHJvZHVjdCInOw0KCQkJCQkJCSRzY2hlbWFfdGl0bGVfcHJvcCA9ICdpdGVtcHJvcD0ibmFtZSInOw0KCQkJCQkJCSRzY2hlbWFfYWRkX3RpdGxlID0gZmFsc2U7DQoJCQkJCQl9DQoJCQkJCQllbHNlDQoJCQkJCQl7DQoJCQkJCQkJJHNjaGVtYV9yb290ID0gJyBpdGVtc2NvcGUgaXRlbXByb3A9ImJsb2dQb3N0IiBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQmxvZ1Bvc3RpbmciJzsNCgkJCQkJCQkkc2NoZW1hX3RpdGxlX3Byb3AgPSAnaXRlbXByb3A9ImhlYWRsaW5lIic7DQoJCQkJCQl9DQoNCi8vCQkJCQkJJHRpdGxlID0gbWJfY29udmVydF90b191dGY4KHRyaW0oJHBUaXRsZSkpOw0KCQkJCQkJJHJhdGluZ19odG1sIC49ICcgJyAuICRzY2hlbWFfcm9vdCAuICc+DQogICAgJyAuICgkc2NoZW1hX2FkZF90aXRsZSA/ICc8c3BhbiAnIC4gJHNjaGVtYV90aXRsZV9wcm9wIC4gJyBzdHlsZT0icG9zaXRpb246IGZpeGVkOyB0b3A6IDEwMCU7Ij4nIC4gZXNjX2h0bWwoJHBUaXRsZSkgLiAnPC9zcGFuPicgOiAnJykgLiAnDQogICAgPGRpdiBpdGVtcHJvcD0iYWdncmVnYXRlUmF0aW5nIiBpdGVtc2NvcGUgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0FnZ3JlZ2F0ZVJhdGluZyI+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJ3b3JzdFJhdGluZyIgY29udGVudD0iMCIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9ImJlc3RSYXRpbmciIGNvbnRlbnQ9IjUiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJyYXRpbmdWYWx1ZSIgY29udGVudD0iJyAuICRkYXRhWydyYXRlJ10gLiAnIiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nQ291bnQiIGNvbnRlbnQ9IicgLiAkZGF0YVsndm90ZXMnXSAuICciIC8+DQogICAgPC9kaXYnOw0KCQkJCQl9DQoJCQkJfQ0KCQkJCQ=='));
 
 				$rating_html .= '></div>';
 
@@ -4369,9 +4453,15 @@ Domain Path: /langs
 					"user-forum-post" => array("options" => WP_RW__USERS_FORUM_POSTS_OPTIONS),
 				);
 
+				foreach ($this->_extensions as $ext) {
+					$ext_settings = $ext->GetSettings();
+					foreach ( $ext_settings as $type => $options ) {
+						$rw_settings[ $options['class'] ] = array( 'options' => $options['options'] );
+					}
+				}
+
 				$attach_js = false;
 
-				$is_logged = is_user_logged_in();
 				if (is_array(self::$ratings) && count(self::$ratings) > 0)
 				{
 					foreach (self::$ratings as $urid => $data)
@@ -4453,8 +4543,21 @@ Domain Path: /langs
                         
                         foreach (self::$ratings as $urid => $data)
                         {
-                            echo 'RW.initRating("' . $urid . '", {title: ' . json_encode(esc_js($data["title"])) . ', url: ' . json_encode(esc_js($data["permalink"])) .
-                                  (isset($data["img"]) ? 'img: ' . json_encode(esc_js($data["img"])) : '')  . '});';
+                            if ((is_string($data["title"]) && !empty($data["title"])) ||
+                            (is_string($data["permalink"]) && !empty($data["permalink"])) ||
+                            isset($data["img"]))
+                            {
+                                $properties = array();
+                                if (is_string($data["title"]) && !empty($data["title"]))
+                                    $properties[] = 'title: ' . json_encode(esc_js($data["title"]));
+                                if (is_string($data["permalink"]) && !empty($data["permalink"]))
+                                    $properties[] = 'url: ' . json_encode(esc_js($data["permalink"]));
+								if (isset($data["img"]))
+                                    $properties[] = 'img: ' . json_encode(esc_js($data["img"]));
+
+
+	                            echo 'RW.initRating("' . $urid . '", {' . implode(', ', $properties) .'});';
+							}
                         }
                     ?>
 							RW.render(null, <?php
@@ -4683,33 +4786,24 @@ Domain Path: /langs
 				if (!(bool)current_user_can('manage_options'))
 					return;
 
-				//add the meta box for posts/pages
-				add_meta_box('rw-post-meta-box', __('Rating-Widget Exclude Option', WP_RW__ID), array(&$this, 'ShowPostMetaBox'), 'post', 'side', 'high');
-				add_meta_box('rw-post-meta-box', __('Rating-Widget Exclude Option', WP_RW__ID), array(&$this, 'ShowPostMetaBox'), 'page', 'side', 'high');
+				$post_types = array('post', 'page');
+				$custom_post_types = get_post_types(array(
+					'public'   => true,
+					'_builtin' => false
+				));
+
+				if (is_array($custom_post_types) && 0 < count($custom_post_types))
+					$post_types = array_merge($post_types, $custom_post_types);
+
+				// Add the meta box.
+				foreach ($post_types as $t)
+					add_meta_box('rw-post-meta-box', __('RatingWidget', WP_RW__ID), array(&$this, 'ShowPostMetaBox'), $t, 'side', 'high');
 			}
 
 			// Callback function to show fields in meta box.
 			function ShowPostMetaBox()
 			{
-				global $post;
-
-				// Use nonce for verification
-				echo '<input type="hidden" name="rw_post_meta_box_nonce" value="', wp_create_nonce(basename(__FILE__)), '" />';
-
-				$postType = get_post_type($post);
-
-				// get whether current post is excluded or not
-				$excluded_post = ('page' == $postType) ?
-					(false === $this->rw_validate_visibility($post->ID, 'page')) :
-					(false === $this->rw_validate_visibility($post->ID, 'front-post') && false === $this->rw_validate_visibility($post->ID, 'blog-post'));
-
-				$checked = $excluded_post ? '' : 'checked="checked"';
-
-				echo '<p>';
-				echo '<label for="rw_include_post"><input type="checkbox" name="rw_include_post" id="rw_include_post" value="1" ', $checked, ' /> ';
-				echo __('Show Rating (Uncheck to Hide)', WP_RW__ID);
-				echo '</label>';
-				echo '</p>';
+				rw_require_view('pages/admin/post-metabox.php');
 			}
 
 			// Save data from meta box.
@@ -4718,7 +4812,7 @@ Domain Path: /langs
 				if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("SavePostData", $params, true); }
 
 				// Verify nonce.
-				if (!isset($_POST['rw_post_meta_box_nonce']) || !wp_verify_nonce($_POST['rw_post_meta_box_nonce'], basename(__FILE__)))
+				if (!isset($_POST['rw_post_meta_box_nonce']) || !wp_verify_nonce($_POST['rw_post_meta_box_nonce'], basename(WP_RW__PLUGIN_FILE_FULL)))
 					return $post_id;
 
 				// Check autosave.
@@ -5033,6 +5127,8 @@ Domain Path: /langs
 				if ($pValidateVisibility && !$this->IsVisibleRating($pElementID, $pElementClass, $pValidateCategory))
 					return '';
 
+				$urid = false;
+
 				switch ($pElementClass)
 				{
 					case 'blog-post':
@@ -5070,6 +5166,18 @@ Domain Path: /langs
 //                $owner_id = $activities['activities'][0]->user_id;
 						$urid = $this->_getActivityRatingGuid($pElementID);
 						break;
+				}
+
+				if (false === $urid)
+				{
+					foreach ($this->_extensions as $ext)
+					{
+						if (in_array($pElementClass, $ext->GetRatingClasses()))
+						{
+							$urid = $ext->GetRatingGuid($pElementID, $pElementClass);
+							break;
+						}
+					}
 				}
 
 				$this->QueueRatingData($urid, $pTitle, $pPermalink, $pElementClass);
@@ -5411,8 +5519,10 @@ Domain Path: /langs
 		function ratingwidget() {
 			global $rwp;
 
-			if (!isset($rwp))
+			if (!isset($rwp)) {
 				$rwp = RatingWidgetPlugin::Instance();
+				$rwp->Init();
+			}
 
 			return $rwp;
 		}

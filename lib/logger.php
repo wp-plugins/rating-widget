@@ -6,9 +6,14 @@
 	class RWLogger {
 		static $_on = false;
 		static $_log = array();
+		static $_start = 0;
 
 		public static function PowerOn() {
 			self::$_on = true;
+
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+			self::$_start = strpos($caller['file'], '/plugins/rating-widget/') + strlen('/plugins/rating-widget');
 		}
 
 		public static function PowerOff() {
@@ -24,7 +29,10 @@
 				return;
 			}
 
-			$msg = date( WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u" ) . "  -  {$pId}:  {$pMessage}";
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+
+			$msg = date( WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u" ) . ' - ' . substr($caller['file'], self::$_start) . ' ' . $caller['line'] . "  -  {$pId}:  {$pMessage}";
 
 			self::$_log[] = $msg;
 
@@ -38,7 +46,10 @@
 				return;
 			}
 
-			$msg = date( WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u" ) . "  -  {$pId} (Enterence)" .
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+
+			$msg = date( WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u" ). ' - ' . substr($caller['file'], self::$_start) . ' ' . $caller['line'] . "  -  {$pId} (Enterence)" .
 			       ( ( $pLogParams ) ? ":  " . var_export( $pParams, true ) : "" );
 
 			self::$_log[] = $msg;
@@ -53,7 +64,10 @@
 				return;
 			}
 
-			$msg = date( WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u" ) . "  -  {$pId} (Departure):  " . var_export( $pRet, true );
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+
+			$msg = date( WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u" ). ' - ' . substr($caller['file'], self::$_start) . ' ' . $caller['line'] . "  -  {$pId} (Departure):  " . var_export( $pRet, true );
 
 			self::$_log[] = $msg;
 

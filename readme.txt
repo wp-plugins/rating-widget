@@ -4,12 +4,22 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
 
 == Description ==
+
+#### Ratings for your:
+* Posts
+* Pages
+* Comments
+* (WooCommerce Products)[
+* BuddyPress Users and Activities
+* bbPress Forum Topics, Replies and Users ([PROFESSIONAL plan](http://rating-widget.com/pricing/wordpress/))
+* Custom Post Types
+* Author Review
 
 [youtube https://www.youtube.com/watch?v=rRGKd_P5Oa4]
 
@@ -171,6 +181,12 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.2.1 =
+* New: WooCommerce full integration! W00t!
+* New: Author review support! You can now set the ratings to ReadOnly, and vote as the admin directly on the Page/Post/Product page.
+* Fix: Fixed Top-Rated Widget ratings style for pages that didn't include ratings but had the Top-Rated sidebar widget.
+* New: Optimized plugin's code to easily add extensions for new rated elements (like WooCommerce products).
+
 = 2.2.0 =
 * New: Added new Cups theme.
 * Fix: Fixed Top-Rated Widget for STARTER plan customers.

@@ -18,6 +18,7 @@
 	define( 'WP_RW__PLUGIN_FILE', 'rating-widget.php' );
 	define( 'WP_RW__PLUGIN_FILE_FULL', WP_RW__PLUGIN_DIR . '/' . WP_RW__PLUGIN_FILE );
 	define( 'WP_RW__PLUGIN_LIB_DIR', WP_RW__PLUGIN_DIR . '/lib/' );
+	define( 'WP_RW__PLUGIN_LIB_DIR_EXT', WP_RW__PLUGIN_LIB_DIR . '/extensions/' );
 	define( 'RW__PATH_THEMES', WP_RW__PLUGIN_DIR . '/themes/' );
 	define( 'WP_RW__PLUGIN_VIEW_DIR', WP_RW__PLUGIN_DIR . '/view/' );
 	define( 'WP_RW__PLUGIN_URL', plugins_url() . '/' . dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/' );
@@ -259,9 +260,6 @@
 
 	define( 'WP_RW__ADDRESS', 'http://' . WP_RW__DOMAIN );
 	define( 'WP_RW__SECURE_ADDRESS', 'https://' . WP_RW__SECURE_DOMAIN );
-
-	// Moved to rw_init_bp().
-	// define('WP_RW__BBP_INSTALLED', (WP_RW__BP_INSTALLED && ('' != get_site_option('bb-config-location', ''))));
 
 	/* Server Address & Remote Address
 	-----------------------------------------------------------------------------------------*/

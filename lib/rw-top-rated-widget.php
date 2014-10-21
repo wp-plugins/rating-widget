@@ -58,58 +58,10 @@
 
 				extract( $args, EXTR_SKIP );
 
-				$types = array(
-					"posts"    => array(
-						"rclass"  => "blog-post",
-						"classes" => "front-post,blog-post,new-blog-post,user-post",
-						"options" => WP_RW__BLOG_POSTS_OPTIONS,
-					),
-					"pages"    => array(
-						"rclass"  => "page",
-						"classes" => "page,user-page",
-						"options" => WP_RW__PAGES_OPTIONS,
-					),
-					"comments" => array(
-						"rclass"  => "comment",
-						"classes" => "comment,new-blog-comment,user-comment",
-						"options" => WP_RW__COMMENTS_OPTIONS,
-					),
-				);
-
 				$bpInstalled = ratingwidget()->IsBuddyPressInstalled();
-
-				if ( $bpInstalled ) {
-					$types['activity_updates']  = array(
-						"rclass"  => "activity-update",
-						"classes" => "activity-update,user-activity-update",
-						"options" => WP_RW__ACTIVITY_UPDATES_OPTIONS,
-					);
-					$types['activity_comments'] = array(
-						"rclass"  => "activity-comment",
-						"classes" => "activity-comment,user-activity-comment",
-						"options" => WP_RW__ACTIVITY_COMMENTS_OPTIONS,
-					);
-					$types['forum_posts']       = array(
-						"rclass"  => "forum-post",
-						"classes" => "forum-post,new-forum-post,user-forum-post",
-						"options" => WP_RW__FORUM_POSTS_OPTIONS,
-					);
-					$types['forum_replies']     = array(
-						"rclass"  => "forum-reply",
-						"classes" => "forum-reply",
-						"options" => WP_RW__FORUM_POSTS_OPTIONS,
-					);
-				}
-
 				$bbInstalled = ratingwidget()->IsBBPressInstalled();
 
-				if ( $bpInstalled || $bbInstalled ) {
-					$types['users'] = array(
-						"rclass"  => "user",
-						"classes" => "user",
-						"options" => WP_RW__USERS_OPTIONS,
-					);
-				}
+				$types = $this->GetTypesInfo();
 
 				$show_any = false;
 
@@ -399,6 +351,8 @@
 											continue;
 										}
 
+										$is_reply = (!$is_topic);
+
 										if ( $is_reply ) {
 											// Get parent topic.
 											$forum_topic = bbp_get_topic( $forum_post->post_parent );
@@ -418,11 +372,36 @@
 									} else {
 										continue;
 									}
+									$types[$type]['handler']->GetElementInfoByRating();
 								} else {
-									continue;
+									$found_handler = false;
+
+									$extensions = ratingwidget()->GetExtensions();
+									foreach ($extensions as $ext)
+									{
+										$result = $ext->GetElementInfoByRating($type, $rating);
+										if (false !== $result) {
+											$found_handler = true;
+											break;
+										}
+									}
+
+									if ($found_handler)
+									{
+										$id = $result['id'];
+										$title = $result['title'];
+										$permalink = $result['permalink'];
+									}
+									else
+									{
+										continue;
+									}
 								}
 
-								ratingwidget()->QueueRatingData( $urid, "", "", $rclass );
+								$queued = ratingwidget()->QueueRatingData( $urid, "", "", $rclass );
+
+								// Override rating class in case the same rating has already been queued with a different rclass.
+								$rclass = $queued['rclass'];
 
 								$short = ( mb_strlen( $title ) > $titleMaxLength ) ? trim( mb_substr( $title, 0, $titleMaxLength ) ) . "..." : $title;
 
@@ -479,24 +458,70 @@
 				}
 			}
 
-			protected function GetTypes() {
-				$types = array( "posts", "pages", "comments" );
+			protected function GetTypesInfo()
+			{
+				$types = array(
+					"posts"    => array(
+						"rclass"  => "blog-post",
+						"classes" => "front-post,blog-post,new-blog-post,user-post",
+						'has_thumbnails' => true,
+						"options" => WP_RW__BLOG_POSTS_OPTIONS,
+						'title' => 'Posts',
+					),
+					"pages"    => array(
+						"rclass"  => "page",
+						"classes" => "page,user-page",
+						'has_thumbnails' => true,
+						'title' => 'Pages',
+						"options" => WP_RW__PAGES_OPTIONS,
+					),
+					"comments" => array(
+						"rclass"  => "comment",
+						"classes" => "comment,new-blog-comment,user-comment",
+						'title' => 'Comments',
+						"options" => WP_RW__COMMENTS_OPTIONS,
+					),
+				);
 
-				$bpInstalled  = ratingwidget()->IsBuddyPressInstalled();
-				$bbpInstalled = ratingwidget()->IsBBPressInstalled();
+				$extensions = ratingwidget()->GetExtensions();
+
+				foreach ($extensions as $ext)
+					$types = array_merge($types, $ext->GetTopRatedInfo());
+
+
+				$bpInstalled = ratingwidget()->IsBuddyPressInstalled();
 
 				if ( $bpInstalled ) {
-					$types[] = "activity_updates";
-					$types[] = "activity_comments";
+					$types['activity_updates']  = array(
+						"rclass"  => "activity-update",
+						"classes" => "activity-update,user-activity-update",
+						"options" => WP_RW__ACTIVITY_UPDATES_OPTIONS,
+					);
+					$types['activity_comments'] = array(
+						"rclass"  => "activity-comment",
+						"classes" => "activity-comment,user-activity-comment",
+						"options" => WP_RW__ACTIVITY_COMMENTS_OPTIONS,
+					);
+					$types['forum_posts']       = array(
+						"rclass"  => "forum-post",
+						"classes" => "forum-post,new-forum-post,user-forum-post",
+						"options" => WP_RW__FORUM_POSTS_OPTIONS,
+					);
+					$types['forum_replies']     = array(
+						"rclass"  => "forum-reply",
+						"classes" => "forum-reply",
+						"options" => WP_RW__FORUM_POSTS_OPTIONS,
+					);
 				}
 
-				if ( $bbpInstalled ) {
-					$types[] = "forum_posts";
-					$types[] = "forum_replies";
-				}
+				$bbInstalled = ratingwidget()->IsBBPressInstalled();
 
-				if ( $bpInstalled || $bbpInstalled ) {
-					$types[] = "users";
+				if ( $bpInstalled || $bbInstalled ) {
+					$types['users'] = array(
+						"rclass"  => "user",
+						"classes" => "user",
+						"options" => WP_RW__USERS_OPTIONS,
+					);
 				}
 
 				return $types;
@@ -506,12 +531,12 @@
 				// Clear transients to refresh data after Top-Rated Widget update.
 				ratingwidget()->ClearTransients();
 
-				$types = $this->GetTypes();
+				$types = $this->GetTypesInfo();
 
 				$instance                     = $old_instance;
 				$instance['title']            = $new_instance['title'];
 				$instance['title_max_length'] = (int) $new_instance['title_max_length'];
-				foreach ( $types as $type ) {
+				foreach ( $types as $type => $info) {
 					$instance["show_{$type}"]       = (int) $new_instance["show_{$type}"];
 					$instance["show_{$type}_title"] = (int) $new_instance["show_{$type}_title"]; /* (1.3.3) - Conditional title display */
 					$instance["{$type}_style"]      = $new_instance["{$type}_style"];
@@ -526,17 +551,14 @@
 			}
 
 			function form( $instance ) {
-				$types = $this->GetTypes();
+				$types = $this->GetTypesInfo();
 
 				$orders        = array( "avgrate", "votes", "likes", "created", "updated" );
 				$orders_labels = array( "Average Rate", "Votes Number", "Likes (for Thumbs)", "Created", "Updated" );
 
-				$show  = array();
-				$items = array();
-
 				// Update default values.
 				$values = array( 'title' => 'Top Rated', 'title_max_length' => 30 );
-				foreach ( $types as $type ) {
+				foreach ( $types as $type => $info ) {
 					$values["show_{$type}"]       = ( 'posts' === $type );
 					$values["{$type}_count"]      = WP_RW__TR_DEFAULT_ITEMS_COUNT;
 					$values["{$type}_min_votes"]  = WP_RW__TR_DEFAULT_MIN_VOTES;
@@ -549,7 +571,7 @@
 				$instance       = wp_parse_args( (array) $instance, $values );
 				$title          = strip_tags( $instance['title'] );
 				$titleMaxLength = (int) $instance['title_max_length'];
-				foreach ( $types as $type ) {
+				foreach ( $types as $type => $info ) {
 					if ( isset( $instance["show_{$type}"] ) ) {
 						$values["show_{$type}"] = (int) $instance["show_{$type}"];
 					}
@@ -599,7 +621,7 @@
 						</div>
 					</div>
 					<?php
-						foreach ( $types as $type ) {
+						foreach ( $types as $type => $info) {
 							$typeTitle = ucwords( str_replace( "_", " ", $type ) );
 							$checked   = "";
 							$selected  = '';
@@ -620,7 +642,7 @@
 								</h4>
 
 								<div class="rw-section-body">
-									<?php if ( in_array( $type, array( 'posts', 'pages' ) ) ) : ?>
+									<?php if (isset($info['has_thumbnails']) && true === $info['has_thumbnails']) : ?>
 										<?php
 										$styles = array(
 											'legacy'         => 'Titles (Legacy)',
@@ -729,7 +751,7 @@
 											</select>
 										</label>
 									</p>
-									<!-- <p>
+									<?php /* <p>
                 <label for="rss-items-<?php echo $values["{$type}_daterange"]; ?>"><?php _e( "Date Range", WP_RW__ID ); ?>:
                         <select id="<?php echo $this->get_field_id( "{$type}_daterange" ); ?>" name="<?php echo $this->get_field_name( "{$type}_daterange" ); ?>">
                             <option value="-1"<?php echo( $values["{$type}_daterange"] == "-1" ? " selected='selected'" : '' ); ?>>All Time</option>
@@ -739,7 +761,7 @@
                             <option value="1"<?php echo( $values["{$type}_daterange"] == "1" ? " selected='selected'" : '' ); ?>>Daily</option>
                         </select>
                 </label>
-            </p> -->
+            </p> */ ?>
 								</div>
 							</div>
 						<?php
