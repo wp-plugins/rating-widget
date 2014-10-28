@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.2.1
+Version: 2.2.2
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -1679,7 +1679,7 @@ Domain Path: /langs
 													$query_string = self::_getAddFilterQueryString($query_string, "stars", $rating_stars);
 												}
 
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><img src="<?php echo WP_RW__ADDRESS_IMG;?>rw.pie.icon.png" alt="" title="<?php _e('Rating Report', WP_RW__ID) ?>"></a>
 										</td>
 										<td><strong><a href="<?php echo $rating->url; ?>" target="_blank"><?php
@@ -1754,11 +1754,11 @@ Domain Path: /langs
 								</select>
 								<input type="button"<?php if ($rw_offset == 0) echo ' disabled="disabled"';?> class="button button-secondary action" style="margin-left: 20px;" onclick="top.location = '<?php
 									$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", max(0, $rw_offset - $rw_limit));
-									echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+									echo WP_RW__SCRIPT_URL . "?" . $query_string;
 								?>';" value="Previous" />
 								<input type="button"<?php if ($showen_records_num == $records_num) echo ' disabled="disabled"';?> class="button button-secondary action" onclick="top.location = '<?php
 									$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", $rw_offset + $rw_limit);
-									echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+									echo WP_RW__SCRIPT_URL . "?" . $query_string;
 								?>';" value="Next" />
 							</div>
 						</div>
@@ -1984,7 +1984,7 @@ Domain Path: /langs
 									<a class="rw-ui-close" href="<?php
 										$query_string = self::_getRemoveFilterFromQueryString($_SERVER["QUERY_STRING"], $filter);
 										$query_string = self::_getRemoveFilterFromQueryString($query_string, "offset");
-										echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+										echo WP_RW__SCRIPT_URL . "?" . $query_string;
 									?>">x</a> |
 									<span class="rw-ui-defenition"><?php echo $filter_data["label"];?>:</span>
 									<span class="rw-ui-value"><?php echo $_REQUEST[$filter];?></span>
@@ -2054,25 +2054,25 @@ Domain Path: /langs
 										<td>
 											<a href="<?php
 												$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "urid", $vote->urid);
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><?php echo $vote->urid;?></a>
 										</td>
 										<td>
 											<a href="<?php
 												$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "vid", $vote->vid);
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><?php echo $user->user_login;?></a>
 										</td>
 										<td>
 											<a href="<?php
 												$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "pcid", $vote->pcid);
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><?php echo ($vote->pcid != "00000000-0000-0000-0000-000000000000") ? $vote->pcid : "Anonymous";?></a>
 										</td>
 										<td>
 											<a href="<?php
 												$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "ip", $vote->ip);
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><?php echo $vote->ip;?></a>
 										</td>
 										<td><?php echo $vote->updated;?></td>
@@ -2133,11 +2133,11 @@ Domain Path: /langs
 								</select>
 								<input type="button"<?php if ($rw_offset == 0) echo ' disabled="disabled"';?> class="button button-secondary action" style="margin-left: 20px;" onclick="top.location = '<?php
 									$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", max(0, $rw_offset - $rw_limit));
-									echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+									echo WP_RW__SCRIPT_URL . "?" . $query_string;
 								?>';" value="<?php _e('Previous', WP_RW__ID) ?>" />
 								<input type="button"<?php if ($showen_records_num == $records_num) echo ' disabled="disabled"';?> class="button button-secondary action" onclick="top.location = '<?php
 									$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", $rw_offset + $rw_limit);
-									echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+									echo WP_RW__SCRIPT_URL . "?" . $query_string;
 								?>';" value="<?php _e('Next', WP_RW__ID) ?>" />
 							</div>
 						</div>
@@ -2287,7 +2287,7 @@ Domain Path: /langs
 									<a class="rw-ui-close" href="<?php
 										$query_string = self::_getRemoveFilterFromQueryString($_SERVER["QUERY_STRING"], $filter);
 										$query_string = self::_getRemoveFilterFromQueryString($query_string, "offset");
-										echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+										echo WP_RW__SCRIPT_URL . "?" . $query_string;
 									?>">x</a> |
 									<span class="rw-ui-defenition"><?php echo $filter_data["label"];?>:</span>
 									<span class="rw-ui-value"><?php echo $_REQUEST[$filter];?></span>
@@ -2371,19 +2371,19 @@ Domain Path: /langs
 										<td>
 											<a href="<?php
 												$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "vid", $vote->vid);
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><?php echo $user->user_login;?></a>
 										</td>
 										<td>
 											<a href="<?php
 												$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "pcid", $vote->pcid);
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><?php echo ($vote->pcid != "00000000-0000-0000-0000-000000000000") ? $vote->pcid : "Anonymous";?></a>
 										</td>
 										<td>
 											<a href="<?php
 												$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "ip", $vote->ip);
-												echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+												echo WP_RW__SCRIPT_URL . "?" . $query_string;
 											?>"><?php echo $vote->ip;?></a>
 										<td><?php echo $vote->updated;?></td>
 										<td>
@@ -2443,11 +2443,11 @@ Domain Path: /langs
 								</select>
 								<input type="button"<?php if ($rw_offset == 0) echo ' disabled="disabled"';?> class="button button-secondary action" style="margin-left: 20px;" onclick="top.location = '<?php
 									$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", max(0, $rw_offset - $rw_limit));
-									echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+									echo WP_RW__SCRIPT_URL . "?" . $query_string;
 								?>';" value="<?php _e('Previous', WP_RW__ID) ?>" />
 								<input type="button"<?php if ($showen_records_num == $records_num) echo ' disabled="disabled"';?> class="button button-secondary action" onclick="top.location = '<?php
 									$query_string = self::_getAddFilterQueryString($_SERVER["QUERY_STRING"], "offset", $rw_offset + $rw_limit);
-									echo $_SERVER["SCRIPT_URI"] . "?" . $query_string;
+									echo WP_RW__SCRIPT_URL . "?" . $query_string;
 								?>';" value="<?php _e('Next', WP_RW__ID) ?>" />
 							</div>
 						</div>
@@ -3756,7 +3756,7 @@ Domain Path: /langs
 
 				$rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
 
-				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHRoaXMtPnBvc3RfY2xhc3MpDQoJCQkJew0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IHRydWU7DQoNCgkJCQkJCWlmIChzdHJwb3MoJHBFbGVtZW50Q2xhc3MsICdwcm9kdWN0JykpDQoJCQkJCQl7DQoJCQkJCQkJJHNjaGVtYV9yb290ID0gJ2l0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvUHJvZHVjdCInOw0KCQkJCQkJCSRzY2hlbWFfdGl0bGVfcHJvcCA9ICdpdGVtcHJvcD0ibmFtZSInOw0KCQkJCQkJCSRzY2hlbWFfYWRkX3RpdGxlID0gZmFsc2U7DQoJCQkJCQl9DQoJCQkJCQllbHNlDQoJCQkJCQl7DQoJCQkJCQkJJHNjaGVtYV9yb290ID0gJyBpdGVtc2NvcGUgaXRlbXByb3A9ImJsb2dQb3N0IiBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvQmxvZ1Bvc3RpbmciJzsNCgkJCQkJCQkkc2NoZW1hX3RpdGxlX3Byb3AgPSAnaXRlbXByb3A9ImhlYWRsaW5lIic7DQoJCQkJCQl9DQoNCi8vCQkJCQkJJHRpdGxlID0gbWJfY29udmVydF90b191dGY4KHRyaW0oJHBUaXRsZSkpOw0KCQkJCQkJJHJhdGluZ19odG1sIC49ICcgJyAuICRzY2hlbWFfcm9vdCAuICc+DQogICAgJyAuICgkc2NoZW1hX2FkZF90aXRsZSA/ICc8c3BhbiAnIC4gJHNjaGVtYV90aXRsZV9wcm9wIC4gJyBzdHlsZT0icG9zaXRpb246IGZpeGVkOyB0b3A6IDEwMCU7Ij4nIC4gZXNjX2h0bWwoJHBUaXRsZSkgLiAnPC9zcGFuPicgOiAnJykgLiAnDQogICAgPGRpdiBpdGVtcHJvcD0iYWdncmVnYXRlUmF0aW5nIiBpdGVtc2NvcGUgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0FnZ3JlZ2F0ZVJhdGluZyI+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJ3b3JzdFJhdGluZyIgY29udGVudD0iMCIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9ImJlc3RSYXRpbmciIGNvbnRlbnQ9IjUiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJyYXRpbmdWYWx1ZSIgY29udGVudD0iJyAuICRkYXRhWydyYXRlJ10gLiAnIiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nQ291bnQiIGNvbnRlbnQ9IicgLiAkZGF0YVsndm90ZXMnXSAuICciIC8+DQogICAgPC9kaXYnOw0KCQkJCQl9DQoJCQkJfQ0KCQkJCQ=='));
+				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHRoaXMtPnBvc3RfY2xhc3MpDQoJCQkJew0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IHRydWU7DQoNCgkJCQkJCWlmIChmYWxzZSAhPT0gc3RycG9zKCRwRWxlbWVudENsYXNzLCAncHJvZHVjdCcpKQ0KCQkJCQkJew0KCQkJCQkJCS8vIFdvb0NvbW1lcmNlIGlzIGFscmVhZHkgYWRkaW5nIGFsbCB0aGUgcHJvZHVjdCBzY2hlbWEgbWV0YWRhdGEuDQoJCQkJCQkJLyokc2NoZW1hX3Jvb3QgPSAnaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9Qcm9kdWN0Iic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJuYW1lIic7DQoJCQkJCQkJKi8NCgkJCQkJCQkkc2NoZW1hX3Jvb3QgPSAnJzsNCgkJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IGZhbHNlOw0KCQkJCQkJfQ0KCQkJCQkJZWxzZQ0KCQkJCQkJew0KCQkJCQkJCSRzY2hlbWFfcm9vdCA9ICcgaXRlbXNjb3BlIGl0ZW1wcm9wPSJibG9nUG9zdCIgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0Jsb2dQb3N0aW5nIic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJoZWFkbGluZSInOw0KCQkJCQkJfQ0KDQovLwkJCQkJCSR0aXRsZSA9IG1iX2NvbnZlcnRfdG9fdXRmOCh0cmltKCRwVGl0bGUpKTsNCgkJCQkJCSRyYXRpbmdfaHRtbCAuPSAnICcgLiAkc2NoZW1hX3Jvb3QgLiAnPg0KICAgICcgLiAoJHNjaGVtYV9hZGRfdGl0bGUgPyAnPHNwYW4gJyAuICRzY2hlbWFfdGl0bGVfcHJvcCAuICcgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4nIDogJycpIC4gJw0KICAgIDxkaXYgaXRlbXByb3A9ImFnZ3JlZ2F0ZVJhdGluZyIgaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9BZ2dyZWdhdGVSYXRpbmciPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0id29yc3RSYXRpbmciIGNvbnRlbnQ9IjAiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJiZXN0UmF0aW5nIiBjb250ZW50PSI1IiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nVmFsdWUiIGNvbnRlbnQ9IicgLiAkZGF0YVsncmF0ZSddIC4gJyIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ0NvdW50IiBjb250ZW50PSInIC4gJGRhdGFbJ3ZvdGVzJ10gLiAnIiAvPg0KICAgIDwvZGl2JzsNCgkJCQkJfQ0KCQkJCX0NCgkJCQk='));
 
 				$rating_html .= '></div>';
 

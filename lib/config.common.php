@@ -245,6 +245,8 @@
 		}
 	}
 
+	define('WP_RW__SCRIPT_URL', substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')));
+
 	if ( ! defined( 'WP_RW__SECURE_DOMAIN' ) ) {
 		define( 'WP_RW__SECURE_DOMAIN', 'secure.rating-widget.com' );
 	}
