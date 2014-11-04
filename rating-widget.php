@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.2.2
+Version: 2.2.3
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -14,16 +14,15 @@ Domain Path: /langs
 	if (!defined('ABSPATH')) exit;
 
 	if (!class_exists('RatingWidgetPlugin')) :
-
-// Load common config.
-		require_once(dirname(__FILE__) . "/lib/rw-core-functions.php");
-		require_once(dirname(__FILE__) . "/lib/config.common.php");
-		require_once(WP_RW__PLUGIN_LIB_DIR . "rw-core-rw-functions.php");
-		require_once(WP_RW__PLUGIN_LIB_DIR . "rw-core-actions.php");
-		require_once(WP_RW__PLUGIN_LIB_DIR . "rw-core-admin.php");
-		require_once(WP_RW__PLUGIN_LIB_DIR . "rw-settings.php");
-		require_once(WP_RW__PLUGIN_LIB_DIR . "rw-shortcodes.php");
-		require_once(WP_RW__PLUGIN_DIR . "/lib/logger.php");
+		// Load common config.
+		require_once( dirname( __FILE__ ) . "/lib/rw-core-functions.php" );
+		require_once( dirname( __FILE__ ) . "/lib/config.common.php" );
+		require_once( WP_RW__PLUGIN_LIB_DIR . "rw-core-rw-functions.php" );
+		require_once( WP_RW__PLUGIN_LIB_DIR . "rw-core-actions.php" );
+		require_once( WP_RW__PLUGIN_LIB_DIR . "rw-core-admin.php" );
+		require_once( WP_RW__PLUGIN_LIB_DIR . "rw-settings.php" );
+		require_once( WP_RW__PLUGIN_LIB_DIR . "rw-shortcodes.php" );
+		require_once( WP_RW__PLUGIN_DIR . "/lib/logger.php" );
 
 		/**
 		 * Rating-Widget Plugin Class
@@ -201,6 +200,10 @@ Domain Path: /langs
 				RWLogger::Log("WP_RW__LOCALHOST_SCRIPTS", json_encode(WP_RW__LOCALHOST_SCRIPTS));
 				RWLogger::Log("WP_RW__CACHING_ON", json_encode(WP_RW__CACHING_ON));
 				RWLogger::Log("WP_RW__STAGING", json_encode(WP_RW__STAGING));
+				RWLogger::Log('WP_RW__HTTPS', json_encode(WP_RW__HTTPS));
+				RWLogger::Log('WP_RW__PROTOCOL', json_encode(WP_RW__PROTOCOL));
+				RWLogger::Log('WP_RW__ADDRESS', json_encode(WP_RW__ADDRESS));
+				RWLogger::Log('WP_RW__SECURE_ADDRESS', json_encode(WP_RW__SECURE_ADDRESS));
 
 				// Don't log secure data.
 //        RWLogger::Log("WP_RW__SITE_SECRET_KEY", WP_RW__SITE_SECRET_KEY);
@@ -360,14 +363,13 @@ Domain Path: /langs
 			 * Authenticate user account.
 			 *
 			 */
-			private function Authenticate()
-			{
-				RWLogger::LogEnterence("Authenticate");
+			private function Authenticate() {
+				RWLogger::LogEnterence( "Authenticate" );
 
 				// Load user key.
 				$this->LoadUserKey();
 
-				$this->_isRegistered = (false !== WP_RW__SITE_PUBLIC_KEY);
+				$this->_isRegistered = ( false !== WP_RW__SITE_PUBLIC_KEY );
 			}
 
 			function SecretKeyUpdateConfirmNotice()
@@ -474,7 +476,7 @@ Domain Path: /langs
 			function LoadPlan() {
 				RWLogger::LogEnterence( "LoadPlan" );
 
-				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCBXUF9SV19fU0lURV9TRUNSRVRfS0VZICkgKSB7DQoJCQkJCWlmICggJ2ZyZWUnICE9PSAkc2l0ZV9wbGFuICkgew0KCQkJCQkJJHNpdGVfcGxhbiA9ICdmcmVlJzsNCgkJCQkJCSR1cGRhdGUgICAgPSB0cnVlOw0KCQkJCQl9DQoJCQkJfSBlbHNlIHsNCgkJCQkJJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIGZhbHNlLCAwICk7DQoJCQkJCS8vIENoZWNrIGlmIHVzZXIgYXNrZWQgdG8gc3luYyBsaWNlbnNlLg0KCQkJCQlpZiAoIHJ3X3JlcXVlc3RfaXNfYWN0aW9uKCAnc3luY19saWNlbnNlJyApICkgew0KCQkJCQkJY2hlY2tfYWRtaW5fcmVmZXJlciggJ3N5bmNfbGljZW5zZScgKTsNCgkJCQkJCSRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCgkJCQkJfQ0KDQoJCQkJCS8vIFVwZGF0ZSBwbGFuIG9uY2UgaW4gZXZlcnkgMjQgaG91cnMuDQoJCQkJCWlmICggZmFsc2UgPT09ICRjdXJyZW50X3NpdGVfcGxhbiB8fCAkc2l0ZV9wbGFuX3VwZGF0ZSA8ICggdGltZSgpIC0gV1BfUldfX1RJTUVfMjRfSE9VUlNfSU5fU0VDICkgKSB7DQoJCQkJCQkvLyBHZXQgcGxhbiBmcm9tIHJlbW90ZSBzZXJ2ZXIgb25jZSBhIGRheS4NCgkJCQkJCXRyeSB7DQoJCQkJCQkJJHNpdGUgPSByd2FwaSgpLT5BcGkoICc/ZmllbGRzPWlkLHBsYW4nICk7DQoNCgkJCQkJCQkvL2lmIChSV0xvZ2dlcjo6SXNPbigpKQ0KCQkJCQkJCS8vUldMb2dnZXI6OkxvZygiY29tbWVudC1pZCIsIHZhcl9leHBvcnQoJHNpdGUsIHRydWUpKTsNCg0KCQkJCQkJfSBjYXRjaCAoIFxFeGNlcHRpb24gJGUgKSB7DQoJCQkJCQkJJHNpdGUgPSBmYWxzZTsNCgkJCQkJCX0NCg0KCQkJCQkJaWYgKCBpc19vYmplY3QoICRzaXRlICkgJiYgaXNzZXQoICRzaXRlLT5pZCApICYmICRzaXRlLT5pZCA9PSBXUF9SV19fU0lURV9JRCApIHsNCgkJCQkJCQkkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQoJCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCQl9DQoJCQkJCX0NCgkJCQl9DQoNCgkJCQlkZWZpbmUoICdXUF9SV19fU0lURV9QTEFOJywgJHNpdGVfcGxhbiApOw0KDQoJCQkJaWYgKCAkdXBkYXRlICkgew0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTiwgJHNpdGVfcGxhbiApOw0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIHRpbWUoKSApOw0KCQkJCQkkdGhpcy0+U3RvcmVPcHRpb25zKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJCQkJJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQoJCQkJfQ0KCQkJCQ=='));
+				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCBXUF9SV19fU0lURV9TRUNSRVRfS0VZICkgKSB7DQoJCQkJCWlmICggJ2ZyZWUnICE9PSAkc2l0ZV9wbGFuICkgew0KCQkJCQkJJHNpdGVfcGxhbiA9ICdmcmVlJzsNCgkJCQkJCSR1cGRhdGUgICAgPSB0cnVlOw0KCQkJCQl9DQoJCQkJfSBlbHNlIHsNCgkJCQkJJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIGZhbHNlLCAwICk7DQoJCQkJCS8vIENoZWNrIGlmIHVzZXIgYXNrZWQgdG8gc3luYyBsaWNlbnNlLg0KCQkJCQlpZiAoIHJ3X3JlcXVlc3RfaXNfYWN0aW9uKCAnc3luY19saWNlbnNlJyApICkgew0KCQkJCQkJY2hlY2tfYWRtaW5fcmVmZXJlciggJ3N5bmNfbGljZW5zZScgKTsNCgkJCQkJCSRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCgkJCQkJfQ0KDQoJCQkJCS8vIFVwZGF0ZSBwbGFuIG9uY2UgaW4gZXZlcnkgMjQgaG91cnMuDQoJCQkJCWlmICggZmFsc2UgPT09ICRjdXJyZW50X3NpdGVfcGxhbiB8fCAkc2l0ZV9wbGFuX3VwZGF0ZSA8ICggdGltZSgpIC0gV1BfUldfX1RJTUVfMjRfSE9VUlNfSU5fU0VDICkgKSB7DQoJCQkJCQkvLyBHZXQgcGxhbiBmcm9tIHJlbW90ZSBzZXJ2ZXIgb25jZSBhIGRheS4NCgkJCQkJCXRyeSB7DQoJCQkJCQkJJHNpdGUgPSByd2FwaSgpLT5BcGkoICc/ZmllbGRzPWlkLHBsYW4nICk7DQoNCgkJCQkJCQkvL2lmIChSV0xvZ2dlcjo6SXNPbigpKQ0KCQkJCQkJCS8vUldMb2dnZXI6OkxvZygiY29tbWVudC1pZCIsIHZhcl9leHBvcnQoJHNpdGUsIHRydWUpKTsNCg0KCQkJCQkJfSBjYXRjaCAoIFxFeGNlcHRpb24gJGUgKSB7DQoJCQkJCQkJJHNpdGUgPSBmYWxzZTsNCgkJCQkJCX0NCg0KCQkJCQkJaWYgKCBpc19vYmplY3QoICRzaXRlICkgJiYgaXNzZXQoICRzaXRlLT5pZCApICYmICRzaXRlLT5pZCA9PSBXUF9SV19fU0lURV9JRCApIHsNCgkJCQkJCQkkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQoJCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCQl9DQoJCQkJCX0NCgkJCQl9DQoNCgkJCQlkZWZpbmUoICdXUF9SV19fU0lURV9QTEFOJywgJHNpdGVfcGxhbiApOw0KDQoJCQkJUldMb2dnZXI6OkxvZygnV1BfUldfX1NJVEVfUExBTicsICRzaXRlX3BsYW4pOw0KDQoJCQkJaWYgKCAkdXBkYXRlICkgew0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTiwgJHNpdGVfcGxhbiApOw0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIHRpbWUoKSApOw0KCQkJCQkkdGhpcy0+U3RvcmVPcHRpb25zKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJCQkJJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQoJCQkJfQ0KCQkJCQ=='));
 			}
 
 			public function ClearTransients()
@@ -483,7 +485,7 @@ Domain Path: /langs
 
 				// Clear all rw transients.
 				$wpdb->query(
-					"DELETE FROM 
+					"DELETE FROM
                 $wpdb->options
              WHERE
                 option_name LIKE '_transient_rw%'"
@@ -2509,7 +2511,7 @@ Domain Path: /langs
 
 			function AdvancedSettingsPageRender()
 			{
-				// Variables for the field and option names 
+				// Variables for the field and option names
 				$rw_form_hidden_field_name = "rw_form_hidden_field_name";
 
 				// Get visitor identification method.
@@ -2672,7 +2674,7 @@ Domain Path: /langs
 
 				global $plugin_page;
 
-				// Variables for the field and option names 
+				// Variables for the field and option names
 				$rw_form_hidden_field_name = "rw_form_hidden_field_name";
 
 				if ($plugin_page === $this->GetMenuSlug('buddypress') && $this->IsBuddyPressInstalled())
@@ -3120,7 +3122,7 @@ Domain Path: /langs
 
 				// If font size and line height isn't explicitly specified on rating
 				// options or rating's theme, updated theme correspondingly
-				// to rating size. 
+				// to rating size.
 				if (isset($rw_options->size))
 				{
 					$SIZE = strtoupper($rw_options->size);
@@ -3189,22 +3191,22 @@ Domain Path: /langs
 																$hors = array("left", "center", "right");
 															?>
 															<select>
-															<?php
-																foreach ($vers as $ver) {
-																	foreach ( $hors as $hor ) {
-																		$checked = false;
-																		if ( $enabled ) {
-																			$checked = ( $ver == $rw_align->ver && $hor == $rw_align->hor );
+																<?php
+																	foreach ($vers as $ver) {
+																		foreach ( $hors as $hor ) {
+																			$checked = false;
+																			if ( $enabled ) {
+																				$checked = ( $ver == $rw_align->ver && $hor == $rw_align->hor );
+																			}
+																			?>
+																			<option
+																				value="<?php echo $ver . " " . $hor; ?>"<?php if ( $checked ) {
+																				echo ' selected="selected"';
+																			} ?>><?php echo ucwords( $ver ) . ' ' . ucwords( $hor ); ?></option>
+																		<?php
 																		}
-																		?>
-																		<option
-																		        value="<?php echo $ver . " " . $hor; ?>"<?php if ( $checked ) {
-																			echo ' selected="selected"';
-																		} ?>><?php echo ucwords( $ver ) . ' ' . ucwords( $hor ); ?></option>
-																	<?php
 																	}
-																}
-															?>
+																?>
 															</select>
 															<input id="rw_align" name="rw_align" type="hidden" value="<?php echo $rw_align->ver . ' ' . $rw_align->hor ?>">
 															<script>
@@ -3735,13 +3737,14 @@ Domain Path: /langs
 			}
 
 			/**
-			 * Return rating's html.
+			 * Generate rating container HTML.
 			 *
-			 * @param {serial} $pUrid User rating id.
-			 * @param {string} $pElementClass Rating element class.
-			 *
-			 * @version 1.3.3
-			 *
+			 * @param $pUrid
+			 * @param $pElementClass
+			 * @param bool $pAddSchema
+			 * @param string $pTitle
+			 * @param array $pOptions
+			 * @return string Rating container HTML.
 			 */
 			private function GetRatingHtml($pUrid, $pElementClass, $pAddSchema = false, $pTitle = "", $pOptions = array())
 			{
@@ -3756,7 +3759,7 @@ Domain Path: /langs
 
 				$rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
 
-				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHRoaXMtPnBvc3RfY2xhc3MpDQoJCQkJew0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IHRydWU7DQoNCgkJCQkJCWlmIChmYWxzZSAhPT0gc3RycG9zKCRwRWxlbWVudENsYXNzLCAncHJvZHVjdCcpKQ0KCQkJCQkJew0KCQkJCQkJCS8vIFdvb0NvbW1lcmNlIGlzIGFscmVhZHkgYWRkaW5nIGFsbCB0aGUgcHJvZHVjdCBzY2hlbWEgbWV0YWRhdGEuDQoJCQkJCQkJLyokc2NoZW1hX3Jvb3QgPSAnaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9Qcm9kdWN0Iic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJuYW1lIic7DQoJCQkJCQkJKi8NCgkJCQkJCQkkc2NoZW1hX3Jvb3QgPSAnJzsNCgkJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IGZhbHNlOw0KCQkJCQkJfQ0KCQkJCQkJZWxzZQ0KCQkJCQkJew0KCQkJCQkJCSRzY2hlbWFfcm9vdCA9ICcgaXRlbXNjb3BlIGl0ZW1wcm9wPSJibG9nUG9zdCIgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0Jsb2dQb3N0aW5nIic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJoZWFkbGluZSInOw0KCQkJCQkJfQ0KDQovLwkJCQkJCSR0aXRsZSA9IG1iX2NvbnZlcnRfdG9fdXRmOCh0cmltKCRwVGl0bGUpKTsNCgkJCQkJCSRyYXRpbmdfaHRtbCAuPSAnICcgLiAkc2NoZW1hX3Jvb3QgLiAnPg0KICAgICcgLiAoJHNjaGVtYV9hZGRfdGl0bGUgPyAnPHNwYW4gJyAuICRzY2hlbWFfdGl0bGVfcHJvcCAuICcgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4nIDogJycpIC4gJw0KICAgIDxkaXYgaXRlbXByb3A9ImFnZ3JlZ2F0ZVJhdGluZyIgaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9BZ2dyZWdhdGVSYXRpbmciPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0id29yc3RSYXRpbmciIGNvbnRlbnQ9IjAiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJiZXN0UmF0aW5nIiBjb250ZW50PSI1IiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nVmFsdWUiIGNvbnRlbnQ9IicgLiAkZGF0YVsncmF0ZSddIC4gJyIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ0NvdW50IiBjb250ZW50PSInIC4gJGRhdGFbJ3ZvdGVzJ10gLiAnIiAvPg0KICAgIDwvZGl2JzsNCgkJCQkJfQ0KCQkJCX0NCgkJCQk='));
+				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHBFbGVtZW50Q2xhc3MgJiYgJHRoaXMtPl9lY2NiYzg3ZTRiNWNlMmZlMjgzMDhmZDlmMmE3YmFmMygpKQ0KCQkJCXsNCgkJCQkJUldMb2dnZXI6OkxvZygnR2V0UmF0aW5nSHRtbCcsICJBZGRpbmcgc2NoZW1hIGZvcjogdXJpZD17JHBVcmlkfTsgcmNsYXNzPXskcEVsZW1lbnRDbGFzc30iKTsNCg0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IHRydWU7DQoNCgkJCQkJCWlmIChmYWxzZSAhPT0gc3RycG9zKCRwRWxlbWVudENsYXNzLCAncHJvZHVjdCcpKQ0KCQkJCQkJew0KCQkJCQkJCS8vIFdvb0NvbW1lcmNlIGlzIGFscmVhZHkgYWRkaW5nIGFsbCB0aGUgcHJvZHVjdCBzY2hlbWEgbWV0YWRhdGEuDQoJCQkJCQkJLyokc2NoZW1hX3Jvb3QgPSAnaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9Qcm9kdWN0Iic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJuYW1lIic7DQoJCQkJCQkJKi8NCgkJCQkJCQkkc2NoZW1hX3Jvb3QgPSAnJzsNCgkJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IGZhbHNlOw0KCQkJCQkJfQ0KCQkJCQkJZWxzZQ0KCQkJCQkJew0KCQkJCQkJCSRzY2hlbWFfcm9vdCA9ICcgaXRlbXNjb3BlIGl0ZW1wcm9wPSJibG9nUG9zdCIgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0Jsb2dQb3N0aW5nIic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJoZWFkbGluZSInOw0KCQkJCQkJfQ0KDQovLwkJCQkJCSR0aXRsZSA9IG1iX2NvbnZlcnRfdG9fdXRmOCh0cmltKCRwVGl0bGUpKTsNCgkJCQkJCSRyYXRpbmdfaHRtbCAuPSAnICcgLiAkc2NoZW1hX3Jvb3QgLiAnPg0KICAgICcgLiAoJHNjaGVtYV9hZGRfdGl0bGUgPyAnPHNwYW4gJyAuICRzY2hlbWFfdGl0bGVfcHJvcCAuICcgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4nIDogJycpIC4gJw0KICAgIDxkaXYgaXRlbXByb3A9ImFnZ3JlZ2F0ZVJhdGluZyIgaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9BZ2dyZWdhdGVSYXRpbmciPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0id29yc3RSYXRpbmciIGNvbnRlbnQ9IjAiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJiZXN0UmF0aW5nIiBjb250ZW50PSI1IiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nVmFsdWUiIGNvbnRlbnQ9IicgLiAkZGF0YVsncmF0ZSddIC4gJyIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ0NvdW50IiBjb250ZW50PSInIC4gJGRhdGFbJ3ZvdGVzJ10gLiAnIiAvPg0KICAgIDwvZGl2JzsNCgkJCQkJfQ0KCQkJCX0NCgkJCQk='));
 
 				$rating_html .= '></div>';
 
@@ -4025,10 +4028,10 @@ Domain Path: /langs
     function rw_get_current_activity_comment($action)
     {
         global $activities_template;
-        
+
         // Set current activity-comment to current activity update (recursive comments).
         $this->current_comment = $activities_template->activity;
-        
+
         return $action;
     }*/
 
@@ -4062,10 +4065,10 @@ Domain Path: /langs
 
         // Get activity comment user-rating-id.
         $comment_urid = $this->_getActivityRatingGuid($this->current_comment->id);
-        
+
         // Queue activity-comment rating.
         $this->QueueRatingData($comment_urid, strip_tags($this->current_comment->content), bp_activity_get_permalink($this->current_comment->id), "activity-comment");
-        
+
         $rw = '<div class="rw-' . $this->activity_align["activity-comment"]->hor . '"><div class="rw-ui-container rw-class-activity-comment rw-urid-' . $comment_urid . '"></div></div><p></p>';
         */
 
@@ -4389,10 +4392,10 @@ Domain Path: /langs
 
         // Get forum-post user-rating-id.
         $post_urid = $this->_getForumPostRatingGuid($post_id);
-        
+
         // Queue activity-comment rating.
         $this->QueueRatingData($post_urid, strip_tags($topic_template->post->post_text), bp_get_the_topic_permalink() . "#post-" . $post_id, $rclass);
-        
+
         $rw = '<div class="rw-' . $this->forum_align[$rclass]->hor . '"><div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $post_urid . '"></div></div>';
         */
 
@@ -4503,14 +4506,14 @@ Domain Path: /langs
 						<script type="text/javascript">
 							// Initialize ratings.
 							function RW_Async_Init(){
-								RW.init({<?php 
+								RW.init({<?php
                         // User key (uid).
                         echo 'uid: "' . WP_RW__SITE_PUBLIC_KEY . '"';
-                        
+
                         // User id (huid).
                         if (defined('WP_RW__SITE_ID') && is_numeric(WP_RW__SITE_ID))
                             echo ', huid: "' . WP_RW__SITE_ID . '"';
-                        
+
                         $user = wp_get_current_user();
                         if ($user->ID !== 0)
                         {
@@ -4540,7 +4543,7 @@ Domain Path: /langs
 							<?php
                             }
                         }
-                        
+
                         foreach (self::$ratings as $urid => $data)
                         {
                             if ((is_string($data["title"]) && !empty($data["title"])) ||
@@ -4746,7 +4749,7 @@ Domain Path: /langs
 				if (!function_exists('home_url'))
 					return;
 
-				// Build the url to call, 
+				// Build the url to call,
 				$url = add_query_arg(array('test-footer' => ''), home_url());
 
 				// Perform the HTTP GET ignoring SSL errors
@@ -5053,7 +5056,7 @@ Domain Path: /langs
         <div class="rw-wp-ui-top-rated-list-item-data">
             <div>
                 <a class="rw-wp-ui-top-rated-list-item-title" href="' . $permalink . '" title="' . $title . '">' . $short . '</a>
-                <div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . ' rw-size-small rw-prop-readOnly-true"></div>
+                <div class="rw-ui-container rw-class-' . $rclass . ' rw-urid-' . $urid . ' rw-size-small rw-prop-readOnly-true" data-sync="false"></div>
             </div>
             <p class="rw-wp-ui-top-rated-list-item-excerpt">' . $excerpt . '</p>
         </div>
@@ -5180,14 +5183,19 @@ Domain Path: /langs
 					}
 				}
 
-				$this->QueueRatingData($urid, $pTitle, $pPermalink, $pElementClass);
+				return $this->EmbedRawRating($urid, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions);
+			}
 
-				$html = $this->GetRatingHtml($urid, $pElementClass, $pAddSchema, $pTitle, $pOptions);
+			function EmbedRawRating($urid, $title, $permalink, $class, $add_schema, $hor_align = false, $custom_style = false, $options = array())
+			{
+				$this->QueueRatingData($urid, $title, $permalink, $class);
 
-				if (false !== ($pHorAlign || $pCustomStyle))
+				$html = $this->GetRatingHtml($urid, $class, $add_schema, $title, $options);
+
+				if (false !== ($hor_align || $custom_style))
 					$html = '<div' .
-					        (false !== $pCustomStyle ? ' style="' . $pCustomStyle . '"' : '') .
-					        (false !== $pHorAlign ? ' class="rw-' . $pHorAlign . '"' : '') . '>'
+					        (false !== $custom_style ? ' style="' . $custom_style . '"' : '') .
+					        (false !== $hor_align ? ' class="rw-' . $hor_align . '"' : '') . '>'
 					        . $html .
 					        '</div>';
 
@@ -5306,6 +5314,8 @@ Domain Path: /langs
 
 			function GetRatingDataByRatingID($pRatingID, $pAccuracy = false)
 			{
+				if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('GetRatingDataByRatingID', $params); }
+
 				if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
 					return false;
 
@@ -5340,6 +5350,7 @@ Domain Path: /langs
 			function RegisterShortcodes()
 			{
 				add_shortcode('ratingwidget', 'rw_the_post_shortcode');
+				add_shortcode('ratingwidget_raw', 'rw_the_rating_shortcode');
 			}
 
 			function GetUpgradeUrl($pImmediate = false, $pPeriod = 'annually', $pPlan = 'professional')
@@ -5456,48 +5467,51 @@ Domain Path: /langs
 				$this->Notice('W00t! You have successfully confirmed your email address.', 'update-nag success');
 			}
 
-			private function TryToConfirmEmail()
-			{
-				if (!rw_request_is_action('confirm', 'rw_action'))
+			private function TryToConfirmEmail() {
+				if ( ! rw_request_is_action( 'confirm', 'rw_action' ) ) {
 					return false;
+				}
 
 				// Remove confirmation notice.
-				remove_action('all_admin_notices', array(&$this, 'ConfirmationNotice'));
+				remove_action( 'all_admin_notices', array( &$this, 'ConfirmationNotice' ) );
 
-				$user_id = rw_request_get('user_id');
-				$site_id = rw_request_get('site_id');
-				$email = rw_request_get('email');
-				$timestamp = rw_request_get('ts');
-				$secure = rw_request_get('s');
+				$user_id   = rw_request_get( 'user_id' );
+				$site_id   = rw_request_get( 'site_id' );
+				$email     = rw_request_get( 'email' );
+				$timestamp = rw_request_get( 'ts' );
+				$secure    = rw_request_get( 's' );
 
 				$is_valid = true;
 
-				if ($secure !== md5(strtolower($user_id . $email . $timestamp . WP_RW__SITE_PUBLIC_KEY)))
+				if ( $secure !== md5( strtolower( $user_id . $email . $timestamp . WP_RW__SITE_PUBLIC_KEY ) ) ) {
 					$is_valid = false;
-				if (!is_numeric($user_id))
+				}
+				if ( ! is_numeric( $user_id ) ) {
 					$is_valid = false;
-				if (!is_numeric($timestamp))
+				}
+				if ( ! is_numeric( $timestamp ) ) {
 					$is_valid = false;
-				if (time() > ($timestamp + 14 * 86400))
+				}
+				if ( time() > ( $timestamp + 14 * 86400 ) ) {
 					$is_valid = false;
+				}
 
-				if (!$is_valid)
-				{
-					add_action('all_admin_notices', array(&$this, 'InvalidEmailConfirmNotice'));
+				if ( ! $is_valid ) {
+					add_action( 'all_admin_notices', array( &$this, 'InvalidEmailConfirmNotice' ) );
+
 					return true;
 				}
 
-				$this->SetOption(WP_RW__DB_OPTION_OWNER_ID, $user_id);
-				$this->SetOption(WP_RW__DB_OPTION_OWNER_EMAIL, $email);
-				$this->SetOption(WP_RW__DB_OPTION_SITE_ID, $site_id);
+				$this->SetOption( WP_RW__DB_OPTION_OWNER_ID, $user_id );
+				$this->SetOption( WP_RW__DB_OPTION_OWNER_EMAIL, $email );
+				$this->SetOption( WP_RW__DB_OPTION_SITE_ID, $site_id );
 
 				$this->StoreOptions();
 
-				add_action('all_admin_notices', array(&$this, 'SuccessfulEmailConfirmNotice'));
+				add_action( 'all_admin_notices', array( &$this, 'SuccessfulEmailConfirmNotice' ) );
 
 				return true;
 			}
-
 		}
 
 

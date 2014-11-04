@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -17,7 +17,7 @@ The most popular Five Star Rating System on the web. User-friendly ratings for y
 * Comments
 * [WooCommerce Products](https://rating-widget.com/blog/woocommerce-product-ratings/)
 * BuddyPress Users and Activities
-* bbPress Forum Topics, Replies and Users ([PROFESSIONAL plan](http://rating-widget.com/pricing/wordpress/))
+* [bbPress Forum Topics](https://rating-widget.com/blog/bbpress-buddypress-star-rating-plugin/), Replies and Users ([PROFESSIONAL plan](http://rating-widget.com/pricing/wordpress/))
 * Custom Post Types
 * Author Review
 
@@ -181,6 +181,13 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.2.3 =
+* Fix: Fixed Japanese translation (thanks to Satoru Steve Naito).
+* Fix: Fixed Rich-Snippets integration bug.
+* Fix: Fixed rating's shortcode Rich-Snippets integration.
+* Fix: Fixed HTTPS identification method for servers that using $_SERVER['SERVER_PORT'] instead of $_SERVER['HTTPS'].
+* New: Added new shortcode [ratingwidget_raw id="{{alphanumeric id}}" title="any title"] for generic ratings embed, whether there's a corresponding WordPress element or not.
+
 = 2.2.2 =
 * Fix: Fixed description page.
 * Fix: Fixed dashboard reports page URLs.

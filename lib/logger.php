@@ -41,7 +41,7 @@
 			}
 		}
 
-		public static function LogEnterence( $pId, $pParams = null, $pLogParams = false ) {
+		public static function LogEnterence( $pId, $pParams = null, $pLogParams = WP_RW__DEBUG_PARAMS ) {
 			if ( false === self::$_on ) {
 				return;
 			}
@@ -50,7 +50,7 @@
 			$caller = array_shift($bt);
 
 			$msg = date( WP_RW__DEFAULT_DATE_FORMAT . " " . WP_RW__DEFAULT_TIME_FORMAT . ":u" ). ' - ' . substr($caller['file'], self::$_start) . ' ' . $caller['line'] . "  -  {$pId} (Enterence)" .
-			       ( ( $pLogParams ) ? ":  " . var_export( $pParams, true ) : "" );
+			       ( ( $pLogParams && is_array($pParams) && 0 < count($pParams) ) ? ":  " . var_export( $pParams, true ) : "" );
 
 			self::$_log[] = $msg;
 

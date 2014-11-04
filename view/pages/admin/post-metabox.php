@@ -32,7 +32,7 @@
 ?>
 <p>
 	<input type="hidden" name="rw_post_meta_box_nonce" value="<?php echo wp_create_nonce(basename(WP_RW__PLUGIN_FILE_FULL)) ?>" />
-	<div class="rw-ui-container rw-class-<?php echo $rclass ?>" data-urid="<?php echo $urid ?>" data-read-only="false"></div>
+	<div class="rw-ui-container rw-class-<?php echo $rclass ?>" data-urid="<?php echo $urid ?>" data-read-only="false" data-sync="false"></div>
 	<br><br>
 	<label for="rw_include_post"><input type="checkbox" name="rw_include_post" id="rw_include_post" value="1"<?php echo $checked ?> /><?php _e('Show Rating (Uncheck to Hide)', WP_RW__ID) ?></label>
 </p>

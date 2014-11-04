@@ -13,6 +13,14 @@
 		echo rw_get_post_rating( $postID, $class, $schema );
 	}
 
+	function rw_get_rating( $urid, $title = '', $permalink = '', $class = 'blog-post', $schema = false ) {
+		return ratingwidget()->EmbedRawRating($urid, $title, $permalink, $class, $schema);
+	}
+
+	function rw_the_rating( $urid, $title = '', $permalink = '', $class = 'blog-post', $schema = false ) {
+		echo rw_get_rating( $urid, $title, $permalink, $class, $schema );
+	}
+
 	/**
 	 * Return rating metadata.
 	 *
@@ -37,14 +45,47 @@
 		echo rw_get_user_rating( $userID );
 	}
 
+	/* General rating shortcode.
+	--------------------------------------------------------------------------------------------*/
+	function rw_the_rating_shortcode( $atts ) {
+		RWLogger::LogEnterence( 'rw_the_rating_shortcode' );
+
+		if ( RWLogger::IsOn() ) {
+			RWLogger::Log( 'rw_the_rating_shortcode', var_export( $atts, true ) );
+		}
+
+		extract( shortcode_atts( array(
+			'id'       => 1,
+			'title'      => '',
+			'permalink'  => '',
+			'type'       => 'blog-post',
+			'add_schema' => false,
+		), $atts ) );
+
+		if ( is_string( $add_schema ) ) {
+			$add_schema = ( 'true' === strtolower( $add_schema ) );
+		}
+
+		return rw_get_rating( $id, $title, $permalink, $type, $add_schema );
+	}
+
 	/* Post inline Shortcodes.
 	--------------------------------------------------------------------------------------------*/
 	function rw_the_post_shortcode( $atts ) {
+		RWLogger::LogEnterence( 'rw_the_post_shortcode' );
+
+		if ( RWLogger::IsOn() ) {
+			RWLogger::Log( 'rw_the_post_shortcode', var_export( $atts, true ) );
+		}
+
 		extract( shortcode_atts( array(
 			'post_id'    => 1,
 			'type'       => 'blog-post',
 			'add_schema' => false,
 		), $atts ) );
+
+		if (is_string($add_schema))
+			$add_schema = ('true' === strtolower($add_schema));
 
 		return rw_get_post_rating( $post_id, $type, $add_schema );
 	}

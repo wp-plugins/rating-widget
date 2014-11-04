@@ -43,8 +43,8 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
                 }
             }
         ?>;">
-            <div id="rw_preview_star" class="rw-ui-container rw-urid-3"></div>
-            <div id="rw_preview_nero" class="rw-ui-container rw-ui-nero rw-urid-17" style="display: none;"></div>
+            <div id="rw_preview_star" class="rw-ui-container rw-urid-3" data-sync="false"></div>
+            <div id="rw_preview_nero" class="rw-ui-container rw-ui-nero rw-urid-17" data-sync="false" style="display: none;"></div>
         </div>
         <div class="rw-js-container">
             <script type="text/javascript">

@@ -93,6 +93,7 @@
         $ret->label->text->nero->normal = @rw_get_default_value($settings->label->text->nero->normal, $defaults->label->text->nero->normal);
         $ret->label->text->nero->rated = @rw_get_default_value($settings->label->text->nero->rated, $defaults->label->text->nero->rated);
         $ret->readOnly = @rw_get_default_value($settings->readOnly, $defaults->readOnly);
+        $ret->sync = @rw_get_default_value($settings->sync, $defaults->sync);
         $ret->reVote = @rw_get_default_value($settings->reVote, $defaults->reVote);
         $ret->frequency = @rw_get_default_value($settings->frequency, $defaults->frequency);
         $ret->showInfo = @rw_get_default_value($settings->showInfo, $defaults->showInfo);
@@ -100,6 +101,7 @@
         $ret->showAverage = @rw_get_default_value($settings->showAverage, $defaults->showAverage);
         $ret->showReport = @rw_get_default_value($settings->showReport, $defaults->showReport);
         $ret->showRecommendations = @rw_get_default_value($settings->showRecommendations, $defaults->showRecommendations);
+        $ret->hideRecommendations = @rw_get_default_value($settings->hideRecommendations, $defaults->hideRecommendations);
         $ret->showSponsored = @rw_get_default_value($settings->showSponsored, $defaults->showSponsored);
         $ret->showLoader = @rw_get_default_value($settings->showLoader, $defaults->showLoader);
         $ret->beforeRate = @rw_get_default_value($settings->beforeRate, $defaults->beforeRate);
@@ -207,12 +209,14 @@
         $settings->mobile->optimized = @rw_get_default_value($settings->mobile->optimized, true);
         $settings->mobile->showTrigger = @rw_get_default_value($settings->mobile->showTrigger, true);
         $settings->readOnly = @rw_get_default_value($settings->readOnly, false);
+        $settings->sync = @rw_get_default_value($settings->sync, false);
         $settings->frequency = @rw_get_default_value($settings->frequency, DEF_FREQUENCY);
         $settings->showInfo = @rw_get_default_value($settings->showInfo, true);
         $settings->showTooltip = @rw_get_default_value($settings->showTooltip, true);
         $settings->showAverage = @rw_get_default_value($settings->showAverage, true);
         $settings->showReport = @rw_get_default_value($settings->showReport, true);
         $settings->showRecommendations = @rw_get_default_value($settings->showRecommendations, false);
+        $settings->hideRecommendations = @rw_get_default_value($settings->hideRecommendations, false);
         $settings->showSponsored = @rw_get_default_value($settings->showSponsored, false);
         $settings->showLoader = @rw_get_default_value($settings->showLoader, true);
         $settings->beforeRate = @rw_get_default_value($settings->beforeRate, null);

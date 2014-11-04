@@ -62,7 +62,8 @@
 
 	/* Uncomment for debug mode.
 	-----------------------------------------------------------------------------------------*/
-	define( 'WP_RW__DEBUG', false || ( ! empty( $_GET['rwdbg'] ) && 'true' === $_GET['rwdbg'] ) );
+	define( 'WP_RW__DEBUG_PARAMS', false || ( ! empty( $_GET['rwdbge'] ) && 'true' === $_GET['rwdbge'] ) );
+	define( 'WP_RW__DEBUG', WP_RW__DEBUG_PARAMS || false || ( ! empty( $_GET['rwdbg'] ) && 'true' === $_GET['rwdbg'] ) );
 	define( 'WP_RW__SHOW_PHP_ERRORS', false );
 	define( 'WP_RW__LOCALHOST_SCRIPTS', WP_RW__DEBUG && false );
 	define( 'WP_RW__CACHING_ON', ! WP_RW__DEBUG );
@@ -254,9 +255,11 @@
 
 	define( 'WP_RW__HTTPS',
 		// Checks if CloudFlare's HTTPS (Flexible SSL support)
-		( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && strtolower( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) == 'https' ) ||
+		( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === strtolower( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) ||
 		// Check if HTTPS request.
-		( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) );
+		( isset( $_SERVER['HTTPS'] ) && 'on' == $_SERVER['HTTPS'] ) ||
+		( isset( $_SERVER['SERVER_PORT'] ) && 443 == $_SERVER['SERVER_PORT'] )
+	);
 
 	define( 'WP_RW__PROTOCOL', ( WP_RW__HTTPS ? 'https' : 'http' ) );
 
