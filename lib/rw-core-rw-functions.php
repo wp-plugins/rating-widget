@@ -105,14 +105,18 @@
 		return WP_RW__ADDRESS_CSS . $css . '?ck=' . rw_get_url_daily_cache_killer();
 	}
 
-	function rw_get_post_thumb_url( $post, $width = 160, $height = 100 ) {
-		$img = ratingwidget()->GetPostImage( $post, WP_RW__CACHE_TIMEOUT_POST_THUMB_EXTRACT );
-
+	function rw_get_thumb_url( $img, $width = 160, $height = 100, $permalink = '') {
 		return rw_get_img_thumb_url(
-			( false !== $img ? $img : get_permalink( $post->ID ) ),
+			(is_string($img) && 0 < count($img)) ? $img : $permalink,
 			$width,
 			$height
 		);
+	}
+
+	function rw_get_post_thumb_url( $post, $width = 160, $height = 100 ) {
+		$img = ratingwidget()->GetPostImage( $post, WP_RW__CACHE_TIMEOUT_POST_THUMB_EXTRACT );
+
+		return rw_get_thumb_url($img, $width, $height, get_permalink( $post->ID ));
 	}
 
 	function rw_get_img_thumb_url( $src, $width = 160, $height = 100 ) {
@@ -187,7 +191,7 @@
 		exit();
 	}
 
-	/* Core Redirect (coppied from BuddyPress).
+	/* Core Redirect (copied from BuddyPress).
 	--------------------------------------------------------------------------------------------*/
 	/**
 	 * Redirects to another page, with a workaround for the IIS Set-Cookie bug.

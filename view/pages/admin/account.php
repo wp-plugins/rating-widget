@@ -99,6 +99,18 @@
 									</td>
 									<td><span><?php _e('Start fresh as if you just installed the plugin. Delete all your ratings and votes, and restore the default factory settings.', WP_RW__ID) ?></span></td>
 								</tr>
+							<?php if (WP_RW__DEBUG) : ?>
+								<tr class="rw-even">
+									<td>
+										<form class="rw-button-form" action="" method="POST" onsubmit="return confirm('<?php _e('Are you sure you want to delete the account?', WP_RW__ID) ?>');">
+											<input type="hidden" name="rw_action" value="delete_account">
+											<?php wp_nonce_field('delete_account') ?>
+											<input type="submit" class="button button-secondary rw-delete-button" value="<?php _e('Delete Account', WP_RW__ID) ?>">
+										</form>
+									</td>
+									<td><span><?php _e('Delete the account.', WP_RW__ID) ?></span></td>
+								</tr>
+							<?php endif ?>
 							</table>
 						</div>
 					</div>

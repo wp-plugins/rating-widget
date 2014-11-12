@@ -202,6 +202,8 @@
 								$rclass = $types[ $type ]["rclass"];
 								$rclasses[$rclass] = true;
 
+								$extension_type = false;
+
 								if ( RWLogger::IsOn() )
 									RWLogger::Log( 'HANDLED_ITEM', 'Urid = ' . $urid . '; Class = ' . $rclass . ';' );
 
@@ -391,6 +393,8 @@
 										$id = $result['id'];
 										$title = $result['title'];
 										$permalink = $result['permalink'];
+										$img = rw_get_thumb_url($result['img'], $thumb_width, $thumb_height, $result['permalink']);
+										$extension_type = true;
 									}
 									else
 									{
@@ -424,7 +428,11 @@
 								);
 
 								// Add thumb url.
-								if ( $has_thumb && in_array( $type, array( 'posts', 'pages' ) ) ) {
+								if ($extension_type && is_string($img))
+								{
+									$item['page']['img'] = $img;
+								}
+								else if ( $has_thumb && (in_array( $type, array( 'posts', 'pages' ) )) ) {
 									$item['page']['img'] = rw_get_post_thumb_url( $post, $thumb_width, $thumb_height );
 								}
 

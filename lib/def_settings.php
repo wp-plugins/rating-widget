@@ -209,7 +209,7 @@
         $settings->mobile->optimized = @rw_get_default_value($settings->mobile->optimized, true);
         $settings->mobile->showTrigger = @rw_get_default_value($settings->mobile->showTrigger, true);
         $settings->readOnly = @rw_get_default_value($settings->readOnly, false);
-        $settings->sync = @rw_get_default_value($settings->sync, false);
+        $settings->sync = @rw_get_default_value($settings->sync, true);
         $settings->frequency = @rw_get_default_value($settings->frequency, DEF_FREQUENCY);
         $settings->showInfo = @rw_get_default_value($settings->showInfo, true);
         $settings->showTooltip = @rw_get_default_value($settings->showTooltip, true);

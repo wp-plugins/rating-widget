@@ -5,9 +5,9 @@
         "rateAwful" => "Terribile",
         "ratePoor" => "Insufficiente",
         "rateAverage" => "Media",
-        "rateGood" => "Buona",
+        "rateGood" => "Buono",
         "rateExcellent" => "Eccellente",
-        "rateThis" => "Vota questo",
+        "rateThis" => "Vota",
         "like" => "Mi piace",
         "dislike" => "Non mi piace",
         "vote" => "Vota",
@@ -16,4 +16,3 @@
         "outOf" => "di",
         "weRecommend" => "Raccomandiamo",
     );
-?>

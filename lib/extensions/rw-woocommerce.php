@@ -188,12 +188,24 @@
 					RWLogger::LogDeparture('WooCommerce_AddCollectionProductRating');
 				}
 
+				private function GetImageSrc($product)
+				{
+					$post_img_html = $product->get_image('large');
+					if (false === $post_img_html)
+						return false;
+
+					preg_match( '@src="([^"]+)"@' , $post_img_html, $match );
+
+					$src = array_pop($match);
+
+					return is_string($src) ? $src : false;
+				}
 
 				function EmbedRatingByProduct($product, $rclass = 'product', $schema = true, $options = array())
 				{
 					RWLogger::LogEnterence('WooCommerce_EmbedRatingByProduct');
 
-					$post_img = $product->get_image();
+					$post_img = $this->GetImageSrc($product);
 					if (false !== $post_img)
 						$options['img'] = $post_img;
 
@@ -203,12 +215,15 @@
 						RWLogger::Log('WooCommerce_EmbedRatingByProduct', var_export($post, true));
 
 					return $this->rw->EmbedRating(
-						$post->ID,
+						$product->id,
 						$post->post_author,
 						$product->get_title(),
 						$product->get_permalink(),
 						$rclass,
-						$schema);
+						$schema,
+						false,
+						false,
+						$options);
 				}
 
 				function GetRatingGuid($element_id, $rclass)
@@ -261,10 +276,14 @@
 						}
 
 						$product = new WC_Product($id);
+
+						$post_img = $this->GetImageSrc($product);
+
 						return array(
 							'id' => $id,
 							'title' => $product->get_title(),
 							'permalink' => $product->get_permalink(),
+							'img' => is_string($post_img) ? $post_img : '',
 						);
 					}
 
