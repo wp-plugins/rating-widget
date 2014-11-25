@@ -4,7 +4,7 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.2.4
+Stable tag: 2.2.5
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
@@ -181,6 +181,11 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.2.5 =
+* Fix: Trashed / Deleted Posts/Pages/Products are now synced with RatingWidget backend, to prevent zombie items in the Top-Rated Widget.
+* Optimized: Modified view of Voting Frequency Settings to work with a dropdown to save space.
+* Update: Updated secure connection domain from https://secure.rating-widget.com to https://rating-widget.com
+
 = 2.2.4 =
 * Fix: Fixed Italian translation.
 * New: Added an option to delete an account locally in debug mode.

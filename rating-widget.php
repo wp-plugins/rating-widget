@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.2.4
+Version: 2.2.5
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2 or later
@@ -261,7 +261,9 @@ Domain Path: /langs
 				add_action('admin_menu', array(&$this, 'admin_menu'));
 				add_action('admin_menu', array(&$this, 'AddPostMetaBox')); // Metabox for posts/pages
 				add_action('save_post', array(&$this, 'SavePostData'));
+				add_action('trashed_post', array(&$this, 'DeletePostData'));
 				add_action('updated_post_meta', array(&$this, 'PurgePostFeaturedImageTransient'), 10, 4);
+
 
 				if ($this->_inDashboard)
 				{
@@ -4170,8 +4172,7 @@ Domain Path: /langs
 
 			function SetupBBPressTopicActions($has_replies)
 			{
-				if (RWLogger::IsOn())
-					RWLogger::LogEnterence("SetupBBPressActions");
+				RWLogger::LogEnterence("SetupBBPressActions");
 
 				$align = $this->GetRatingAlignByType(WP_RW__FORUM_POSTS_ALIGN);
 
@@ -4215,6 +4216,8 @@ Domain Path: /langs
 
 			function AddBBPressForumThreadUserRating($author_link)
 			{
+				RWLogger::LogEnterence('AddBBPressForumThreadUserRating');
+
 				global $post;
 
 				$reply_id = bbp_get_reply_id($post->ID);
@@ -4864,6 +4867,18 @@ Domain Path: /langs
 				if (RWLogger::IsOn()){ RWLogger::LogDeparture("SavePostData"); }
 			}
 
+			function DeletePostData($post_id) {
+				RWLogger::LogEnterence('DeletePostData');
+
+				if ( ! current_user_can( 'delete_posts' ) ) {
+					return;
+				}
+
+				$rating_id = $this->_getPostRatingGuid( $post_id );
+
+				$this->ApiCall( '/ratings/' . $rating_id . '.json?is_external=true', 'DELETE' );
+			}
+
 			function PurgePostFeaturedImageTransient($meta_id = 0, $post_id = 0, $meta_key = '', $_meta_value = '')
 			{
 				if ('_thumbnail_id' === $meta_key)
@@ -4898,7 +4913,6 @@ Domain Path: /langs
 				if (!has_post_thumbnail($pPostID))
 					return '';
 
-				$exceprt = var_export($image, true) . '<br>' . $exceprt;
 				$image = wp_get_attachment_image_src(get_post_thumbnail_id($pPostID), 'single-post-thumbnail');
 				return $image[0];
 			}
