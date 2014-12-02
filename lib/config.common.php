@@ -68,9 +68,9 @@
 	define( 'WP_RW__LOCALHOST_SCRIPTS', WP_RW__DEBUG && false );
 	define( 'WP_RW__CACHING_ON', ! WP_RW__DEBUG );
 	define( 'WP_RW__STAGING', false );
-	define( 'WP_RW__LOG_DUMP', false );
+	define( 'WP_RW__LOG_DUMP', WP_RW__DEBUG &&  ! empty( $_GET['rwdbge'] ));
 
-	// This gives all other plugins the chance to load before Rating-Widget.
+	// This gives all other plugins the chance to load before RatingWidget.
 //    define('WP_RW___LATE_LOAD', 999);
 
 	if ( WP_RW__SHOW_PHP_ERRORS ) {
@@ -82,9 +82,10 @@
 
 	/* General Consts
 	-----------------------------------------------------------------------------------------*/
-	define( 'WP_RW__ID', 'ratingwidget' );
+	define( 'WP_RW__ID', 'rating-widget' );
+	define( 'WP_RW__NAME', 'RatingWidget' );
 	define( 'WP_RW__DEFAULT_LNG', 'en' );
-	define( 'WP_RW__ADMIN_MENU_SLUG', 'ratingwidget' );
+	define( 'WP_RW__ADMIN_MENU_SLUG', WP_RW__ID );
 
 	define( 'WP_RW__OPTIONS', 'rw_options' );
 
@@ -231,6 +232,10 @@
 	define( 'WP_RW__CACHE_TIMEOUT_RICH_SNIPPETS', WP_RW__TIME_24_HOURS_IN_SEC );
 	define( 'WP_RW__CACHE_TIMEOUT_TOP_RATED', WP_RW__TIME_5_MIN_IN_SEC );
 	define( 'WP_RW__CACHE_TIMEOUT_POST_THUMB_EXTRACT', WP_RW__TIME_24_HOURS_IN_SEC );
+
+	/* Freemius Overrides
+	-----------------------------------------------------------------------------------------*/
+//	define('WP_FS__ACCOUNT_OPTION_NAME', WP_RW__OPTIONS);
 
 	/* Rating-Widget URIs
 	-----------------------------------------------------------------------------------------*/

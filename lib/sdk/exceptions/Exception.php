@@ -73,5 +73,3 @@
             return $str . $this->getMessage();
         }
     }
-
-?>

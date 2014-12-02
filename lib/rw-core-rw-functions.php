@@ -293,7 +293,7 @@
 			return true;
 		}
 
-		if ( $action_key = 'action' ) {
+		if ( $action_key == 'action' ) {
 			$action_key = 'rw_action';
 
 			return ( ! empty( $_REQUEST[ $action_key ] ) && $action === $_REQUEST[ $action_key ] );

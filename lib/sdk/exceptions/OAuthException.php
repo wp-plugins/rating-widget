@@ -6,4 +6,3 @@
             parent::__construct($pResult);
         }
     }
-?>

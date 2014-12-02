@@ -191,6 +191,10 @@
 				private function GetImageSrc($product)
 				{
 					$post_img_html = $product->get_image('large');
+
+					if (RWLogger::IsOn())
+						RWLogger::Log('WooCommerce_GetImageSrc', var_export($post_img_html, true));
+
 					if (false === $post_img_html)
 						return false;
 
@@ -223,7 +227,8 @@
 						$schema,
 						false,
 						false,
-						$options);
+						$options,
+						true);
 				}
 
 				function GetRatingGuid($element_id, $rclass)

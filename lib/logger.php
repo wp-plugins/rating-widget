@@ -7,6 +7,7 @@
 		static $_on = false;
 		static $_log = array();
 		static $_start = 0;
+		static $_logger;
 
 		public static function PowerOn() {
 			self::$_on = true;
@@ -14,6 +15,13 @@
 			$bt = debug_backtrace();
 			$caller = array_shift($bt);
 			self::$_start = strpos($caller['file'], '/plugins/rating-widget/') + strlen('/plugins/rating-widget');
+
+			self::$_logger = rw_fs()->get_logger();
+
+			self::$_logger->on();
+
+			if (WP_RW__LOG_DUMP)
+				self::$_logger->echo_on();
 		}
 
 		public static function PowerOff() {
@@ -28,6 +36,9 @@
 			if ( false === self::$_on ) {
 				return;
 			}
+
+			self::$_logger->log($pId . ': ' . $pMessage, true);
+			return;
 
 			$bt = debug_backtrace();
 			$caller = array_shift($bt);
@@ -45,6 +56,9 @@
 			if ( false === self::$_on ) {
 				return;
 			}
+
+			self::$_logger->entrance('', true);
+			return;
 
 			$bt = debug_backtrace();
 			$caller = array_shift($bt);
@@ -64,6 +78,9 @@
 				return;
 			}
 
+			self::$_logger->departure('', true);
+			return;
+
 			$bt = debug_backtrace();
 			$caller = array_shift($bt);
 
@@ -77,8 +94,9 @@
 		}
 
 		public static function Output( $pPadding ) {
-			foreach ( self::$_log as $log ) {
-				echo "{$pPadding}{$log}\n";
-			}
+			self::$_logger->dump();
+//			foreach ( self::$_log as $log ) {
+//				echo "{$pPadding}{$log}\n";
+//			}
 		}
 	}

@@ -1,20 +1,23 @@
 <?php
-	/*
+/*
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.2.5
+Version: 2.2.6
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
-License: GPLv2 or later
+License: GPLv2
 Text Domain: ratingwidget
 Domain Path: /langs
 */
 
-	if (!defined('ABSPATH')) exit;
+	if ( ! defined( 'ABSPATH' ) ) {
+		exit;
+	}
 
 	if (!class_exists('RatingWidgetPlugin')) :
 		// Load common config.
+		require_once( dirname( __FILE__ ) . "/freemius/start.php" );
 		require_once( dirname( __FILE__ ) . "/lib/rw-core-functions.php" );
 		require_once( dirname( __FILE__ ) . "/lib/config.common.php" );
 		require_once( WP_RW__PLUGIN_LIB_DIR . "rw-core-rw-functions.php" );
@@ -39,6 +42,7 @@ Domain Path: /langs
 
 			private $errors;
 			private $success;
+			private $fs;
 			static $ratings = array();
 
 			var $is_admin;
@@ -54,6 +58,7 @@ Domain Path: /langs
 			var $_isRegistered = false;
 			var $_inBuddyPress;
 			var $_inBBPress;
+			var $_options_manager;
 
 			static $VERSION;
 
@@ -74,8 +79,10 @@ Domain Path: /langs
 --------------------------------------------------------------------------------------------*/
 			private function __construct()
 			{
-				if ( WP_RW__DEBUG )
-				{
+				$this->fs = rw_fs();
+				$this->_options_manager = rw_fs_options();
+
+				if ( WP_RW__DEBUG ) {
 					$this->InitLogger();
 				}
 
@@ -89,11 +96,8 @@ Domain Path: /langs
 					$this->InitLogger();
 				}
 
-				// Make sure that matching Rating-Widget account exist.
-				$this->Authenticate();
-
 				// If not in admin dashboard and account don't exist, don't continue with plugin init.
-				if ( ! $this->_isRegistered && ! is_admin() )
+				if ( ! $this->fs->is_registered() && ! is_admin() )
 				{
 					return;
 				}
@@ -122,8 +126,10 @@ Domain Path: /langs
 					return;
 				}
 
-				if ( $this->_isRegistered )
+				if ( $this->fs->is_registered() )
 				{
+					$this->fs->add_submenu_link_item(__('FAQ', WP_RW__ID), rw_get_site_url( 'support/wordpress/#platform' ));
+
 					add_action( 'init', array( &$this, 'LoadPlan' ) );
 					// Clear cache has to be executed after LoadPlan, because clear
 					// cache is has a condition that checks the plan.
@@ -178,10 +184,10 @@ Domain Path: /langs
 				// Start logger.
 				RWLogger::PowerOn();
 
-				if (is_admin())
-					add_action('admin_footer', array(&$this, "DumpLog"));
-				else
-					add_action('wp_footer', array(&$this, "DumpLog"), 100);
+//				if (is_admin())
+//					add_action('admin_footer', array(&$this, "DumpLog"));
+//				else
+//					add_action('wp_footer', array(&$this, "DumpLog"), 100);
 			}
 
 			protected function LogInitialData()
@@ -220,7 +226,7 @@ Domain Path: /langs
 
 				$this->_inDashboard = (isset($_GET['page']) && rw_starts_with($_GET['page'], $this->GetMenuSlug()));
 
-				if (!$this->_isRegistered && $this->_inDashboard && strtolower($_GET['page']) !== $this->GetMenuSlug())
+				if (!$this->fs->is_registered() && $this->_inDashboard && strtolower($_GET['page']) !== $this->GetMenuSlug())
 					rw_admin_redirect();
 
 				$this->SetupDashboardActions();
@@ -249,9 +255,8 @@ Domain Path: /langs
 			{
 				RWLogger::LogEnterence("SetupDashboardActions");
 
-				// Add link to settings page.
-				add_filter('plugin_action_links', array(&$this, 'ModifyPluginActionLinks' ), 10, 2);
-				add_filter('network_admin_plugin_action_links', array(&$this, 'ModifyPluginActionLinks'), 10, 2);
+				$this->fs->add_plugin_action_link(__('Settings', WP_RW__ADMIN_MENU_SLUG), rw_get_admin_url());
+				$this->fs->add_plugin_action_link(__('Blog', WP_RW__ADMIN_MENU_SLUG), rw_get_site_url('/blog/'), true);
 
 				// Add activation and de-activation hooks.
 				register_activation_hook(WP_RW__PLUGIN_FILE_FULL, 'rw_activated');
@@ -265,10 +270,7 @@ Domain Path: /langs
 				add_action('updated_post_meta', array(&$this, 'PurgePostFeaturedImageTransient'), 10, 4);
 
 
-				if ($this->_inDashboard)
 				{
-					add_action('init', array(&$this, 'RedirectOnLink'));
-
 					if ($this->GetOption(WP_RW__DB_OPTION_TRACKING))
 						add_action('admin_head', array(&$this, "GoogleAnalytics"));
 
@@ -302,7 +304,7 @@ Domain Path: /langs
 				RWLogger::LogEnterence("SetupSiteActions");
 
 				// If not registered, don't add any actions to site.
-				if (!$this->_isRegistered)
+				if (!$this->fs->is_registered())
 					return;
 
 				// Posts / Pages / Comments.
@@ -347,36 +349,16 @@ Domain Path: /langs
 				return $is_mobile;
 			}
 
-			function RedirectOnLink() {
-				$page = strtolower( rw_request_get( 'page', '' ) );
-
-				if ( $page === $this->GetMenuSlug( 'upgrade' ) ) {
-					rw_site_redirect( $this->GetUpgradeUrl() );
-				} else if ( $page === $this->GetMenuSlug( 'faq' ) ) {
-					rw_site_redirect( 'support/wordpress/#platform' );
-				} else if ( $page === $this->GetMenuSlug( 'help' ) ) {
-					rw_redirect( 'http://wordpress.org/support/plugin/rating-widget' );
-				}
-			}
-
-			/* Authentication.
---------------------------------------------------------------------------------------------*/
-			/**
-			 * Authenticate user account.
-			 *
-			 */
-			private function Authenticate() {
-				RWLogger::LogEnterence( "Authenticate" );
-
-				// Load user key.
-				$this->LoadUserKey();
-
-				$this->_isRegistered = ( false !== WP_RW__SITE_PUBLIC_KEY );
-			}
-
+			/* Notifications.
+			--------------------------------------------------------------------------------------------*/
 			function SecretKeyUpdateConfirmNotice()
 			{
 				$this->Notice('You have successfully updated your Secret Key.', 'update-nag success');
+			}
+
+			function ClearCacheConfirmNotice()
+			{
+				$this->Notice('All cache was successfully purged.', 'update-nag success');
 			}
 
 			function RestoreSettingsConfirmNotice()
@@ -393,11 +375,11 @@ Domain Path: /langs
 				$this->Notice( 'You are fresh like a mentos! All your ratings has been successfully deleted and your settings are back to factory defaults.', 'update-nag success' );
 			}
 
-			private function UpdateSecret($new_secret) {
+			function UpdateSecret($new_secret) {
 				RWLogger::LogEnterence( 'UpdateSecret' );
 
 				$this->SetOption( WP_RW__DB_OPTION_SITE_SECRET_KEY, $new_secret );
-				$this->StoreOptions();
+				$this->_options_manager->store();
 
 				RWLogger::LogDeparture( 'UpdateSecret' );
 			}
@@ -405,30 +387,26 @@ Domain Path: /langs
 			function AccountPageLoad() {
 				RWLogger::LogEnterence( 'AccountPageLoad' );
 
-				if ( rw_request_is_action( 'update_secret' ) ) {
-					check_admin_referer( 'update_secret' );
-
-					RWLogger::Log( "AccountPageLoad", 'update_secret' );
-
-					$this->UpdateSecret( rw_request_get( 'rw_secret', '' ) );
-
-					add_action( 'all_admin_notices', array( &$this, 'SecretKeyUpdateConfirmNotice' ) );
-
-					rw_redirect( '#' );
-				}
-
 				if ( rw_request_is_action( 'delete_account' ) ) {
 					check_admin_referer( 'delete_account' );
 
 					RWLogger::Log( "AccountPageLoad", 'delete_account' );
 
-					$this->ClearOptions();
-
-					$this->StoreOptions();
+					$this->_options_manager->clear(true);
 
 					$this->ClearTransients();
 
 					rw_redirect( '#' );
+				}
+
+				if ( rw_request_is_action( 'clear_cache' ) ) {
+					check_admin_referer( 'clear_cache' );
+
+					RWLogger::Log( "AccountPageLoad", 'clear_cache' );
+
+					$this->ClearTransients();
+
+					add_action( 'all_admin_notices', array( &$this, 'ClearCacheConfirmNotice' ) );
 				}
 
 				if ( rw_request_is_action( 'default_settings' ) ) {
@@ -492,7 +470,9 @@ Domain Path: /langs
 			function LoadPlan() {
 				RWLogger::LogEnterence( "LoadPlan" );
 
-				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCBXUF9SV19fU0lURV9TRUNSRVRfS0VZICkgKSB7DQoJCQkJCWlmICggJ2ZyZWUnICE9PSAkc2l0ZV9wbGFuICkgew0KCQkJCQkJJHNpdGVfcGxhbiA9ICdmcmVlJzsNCgkJCQkJCSR1cGRhdGUgICAgPSB0cnVlOw0KCQkJCQl9DQoJCQkJfSBlbHNlIHsNCgkJCQkJJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIGZhbHNlLCAwICk7DQoJCQkJCS8vIENoZWNrIGlmIHVzZXIgYXNrZWQgdG8gc3luYyBsaWNlbnNlLg0KCQkJCQlpZiAoIHJ3X3JlcXVlc3RfaXNfYWN0aW9uKCAnc3luY19saWNlbnNlJyApICkgew0KCQkJCQkJY2hlY2tfYWRtaW5fcmVmZXJlciggJ3N5bmNfbGljZW5zZScgKTsNCgkJCQkJCSRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCgkJCQkJfQ0KDQoJCQkJCS8vIFVwZGF0ZSBwbGFuIG9uY2UgaW4gZXZlcnkgMjQgaG91cnMuDQoJCQkJCWlmICggZmFsc2UgPT09ICRjdXJyZW50X3NpdGVfcGxhbiB8fCAkc2l0ZV9wbGFuX3VwZGF0ZSA8ICggdGltZSgpIC0gV1BfUldfX1RJTUVfMjRfSE9VUlNfSU5fU0VDICkgKSB7DQoJCQkJCQkvLyBHZXQgcGxhbiBmcm9tIHJlbW90ZSBzZXJ2ZXIgb25jZSBhIGRheS4NCgkJCQkJCXRyeSB7DQoJCQkJCQkJJHNpdGUgPSByd2FwaSgpLT5BcGkoICc/ZmllbGRzPWlkLHBsYW4nICk7DQoNCgkJCQkJCQkvL2lmIChSV0xvZ2dlcjo6SXNPbigpKQ0KCQkJCQkJCS8vUldMb2dnZXI6OkxvZygiY29tbWVudC1pZCIsIHZhcl9leHBvcnQoJHNpdGUsIHRydWUpKTsNCg0KCQkJCQkJfSBjYXRjaCAoIFxFeGNlcHRpb24gJGUgKSB7DQoJCQkJCQkJJHNpdGUgPSBmYWxzZTsNCgkJCQkJCX0NCg0KCQkJCQkJaWYgKCBpc19vYmplY3QoICRzaXRlICkgJiYgaXNzZXQoICRzaXRlLT5pZCApICYmICRzaXRlLT5pZCA9PSBXUF9SV19fU0lURV9JRCApIHsNCgkJCQkJCQkkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQoJCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCQl9DQoJCQkJCX0NCgkJCQl9DQoNCgkJCQlkZWZpbmUoICdXUF9SV19fU0lURV9QTEFOJywgJHNpdGVfcGxhbiApOw0KDQoJCQkJUldMb2dnZXI6OkxvZygnV1BfUldfX1NJVEVfUExBTicsICRzaXRlX3BsYW4pOw0KDQoJCQkJaWYgKCAkdXBkYXRlICkgew0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTiwgJHNpdGVfcGxhbiApOw0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIHRpbWUoKSApOw0KCQkJCQkkdGhpcy0+U3RvcmVPcHRpb25zKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJCQkJJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQoJCQkJfQ0KCQkJCQ=='));
+				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCBXUF9SV19fU0lURV9TRUNSRVRfS0VZICkgKSB7DQoJCQkJCWlmICggJ2ZyZWUnICE9PSAkc2l0ZV9wbGFuICkgew0KCQkJCQkJJHNpdGVfcGxhbiA9ICdmcmVlJzsNCgkJCQkJCSR1cGRhdGUgICAgPSB0cnVlOw0KCQkJCQl9DQoJCQkJfSBlbHNlIHsNCgkJCQkJJHNpdGVfcGxhbl91cGRhdGUgPSAkdGhpcy0+R2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIGZhbHNlLCAwICk7DQoJCQkJCSRpbl9saWNlbnNlX3N5bmMgPSBmYWxzZTsNCgkJCQkJLy8gQ2hlY2sgaWYgdXNlciBhc2tlZCB0byBzeW5jIGxpY2Vuc2UuDQoJCQkJCWlmICggcndfcmVxdWVzdF9pc19hY3Rpb24oICdzeW5jX2xpY2Vuc2UnICkgKSB7DQoJCQkJCQljaGVja19hZG1pbl9yZWZlcmVyKCAnc3luY19saWNlbnNlJyApOw0KCQkJCQkJJHNpdGVfcGxhbl91cGRhdGUgPSAwOw0KCQkJCQkJJGluX2xpY2Vuc2Vfc3luYyA9IHRydWU7DQoJCQkJCX0NCg0KCQkJCQkvLyBVcGRhdGUgcGxhbiBvbmNlIGluIGV2ZXJ5IDI0IGhvdXJzLg0KCQkJCQlpZiAoIGZhbHNlID09PSAkY3VycmVudF9zaXRlX3BsYW4gfHwgJHNpdGVfcGxhbl91cGRhdGUgPCAoIHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQyApICkgew0KCQkJCQkJLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQoJCQkJCQl0cnkgew0KCQkJCQkJCSRzaXRlID0gcndhcGkoKS0+QXBpKCAnP2ZpZWxkcz1pZCxwbGFuJyApOw0KDQoJCQkJCQkJLy9pZiAoUldMb2dnZXI6OklzT24oKSkNCgkJCQkJCQkvL1JXTG9nZ2VyOjpMb2coImNvbW1lbnQtaWQiLCB2YXJfZXhwb3J0KCRzaXRlLCB0cnVlKSk7DQoNCgkJCQkJCX0gY2F0Y2ggKCBcRXhjZXB0aW9uICRlICkgew0KCQkJCQkJCSRzaXRlID0gZmFsc2U7DQoJCQkJCQl9DQoNCgkJCQkJCWlmICggaXNfb2JqZWN0KCAkc2l0ZSApICYmIGlzc2V0KCAkc2l0ZS0+aWQgKSAmJiAkc2l0ZS0+aWQgPT0gV1BfUldfX1NJVEVfSUQgKSB7DQoJCQkJCQkJJHNpdGVfcGxhbiA9ICRzaXRlLT5wbGFuOw0KCQkJCQkJCSR1cGRhdGUgICAgPSB0cnVlOw0KDQoJCQkJCQkJaWYgKCRpbl9saWNlbnNlX3N5bmMpIHsNCgkJCQkJCQkJaWYgKCAkY3VycmVudF9zaXRlX3BsYW4gIT09ICRzaXRlX3BsYW4gKSB7DQoJCQkJCQkJCQlhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnTGljZW5zZVN5bmNOb3RpY2UnICkgKTsNCgkJCQkJCQkJfSBlbHNlIHsNCgkJCQkJCQkJCWFkZF9hY3Rpb24oICdhbGxfYWRtaW5fbm90aWNlcycsIGFycmF5KCAmJHRoaXMsICdMaWNlbnNlU3luY1NhbWVOb3RpY2UnICkgKTsNCgkJCQkJCQkJfQ0KCQkJCQkJCX0NCgkJCQkJCX0NCgkJCQkJCWVsc2UNCgkJCQkJCXsNCgkJCQkJCQlpZiAoJGluX2xpY2Vuc2Vfc3luYyAmJiAhcndhcGkoKS0+VGVzdCgpKQ0KCQkJCQkJCXsNCgkJCQkJCQkJYWRkX2FjdGlvbiggJ2FsbF9hZG1pbl9ub3RpY2VzJywgYXJyYXkoICYkdGhpcywgJ0FwaUFjY2Vzc0Jsb2NrZWROb3RpY2UnICkgKTsNCgkJCQkJCQl9DQoJCQkJCQl9DQoJCQkJCX0NCgkJCQl9DQoNCgkJCQlkZWZpbmUoICdXUF9SV19fU0lURV9QTEFOJywgJHNpdGVfcGxhbiApOw0KDQoJCQkJUldMb2dnZXI6OkxvZygnV1BfUldfX1NJVEVfUExBTicsICRzaXRlX3BsYW4pOw0KDQoJCQkJaWYgKCAkdXBkYXRlICkgew0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTiwgJHNpdGVfcGxhbiApOw0KCQkJCQkkdGhpcy0+U2V0T3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUExBTl9VUERBVEUsIHRpbWUoKSApOw0KCQkJCQkkdGhpcy0+X29wdGlvbnNfbWFuYWdlci0+c3RvcmUoKTsNCg0KLy8gICAgICAgICAgICBpZiAoJGN1cnJlbnRfc2l0ZV9wbGFuICE9PSAkc2l0ZS0+cGxhbikNCi8vICAgICAgICAgICAgew0KCQkJCQkkdGhpcy0+Q2xlYXJUcmFuc2llbnRzKCk7DQovLyAgICAgICAgICAgIH0NCgkJCQl9DQoJCQkJ'));
+
+				do_action('fs_after_license_loaded');
 			}
 
 			public function ClearTransients()
@@ -508,16 +488,6 @@ Domain Path: /langs
 				);
 			}
 
-			/**
-			 * Load user's Rating-Widget account details.
-			 *
-			 */
-			private function LoadUserKey()
-			{
-				RWLogger::LogEnterence("LoadUserKey");
-
-				eval(base64_decode('DQoJCQkJJHNpdGVfcHVibGljX2tleSA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1BVQkxJQ19LRVkpOw0KCQkJCSRzaXRlX2lkID0gJHRoaXMtPkdldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfSUQpOw0KCQkJCSRvd25lcl9pZCA9ICR0aGlzLT5HZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCk7DQoJCQkJJG93bmVyX2VtYWlsID0gJHRoaXMtPkdldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX09XTkVSX0VNQUlMKTsNCg0KCQkJCSR1cGRhdGUgPSBmYWxzZTsNCg0KCQkJCWlmICghZGVmaW5lZCgnV1BfUldfX1NJVEVfUFVCTElDX0tFWScpKQ0KCQkJCXsNCgkJCQkJZGVmaW5lKCdXUF9SV19fU0lURV9QVUJMSUNfS0VZJywgJHNpdGVfcHVibGljX2tleSk7DQoJCQkJCWRlZmluZSgnV1BfUldfX1NJVEVfSUQnLCAkc2l0ZV9pZCk7DQoJCQkJCWRlZmluZSgnV1BfUldfX09XTkVSX0lEJywgJG93bmVyX2lkKTsNCgkJCQkJZGVmaW5lKCdXUF9SV19fT1dORVJfRU1BSUwnLCAkb3duZXJfZW1haWwpOw0KCQkJCX0NCgkJCQllbHNlDQoJCQkJew0KCQkJCQlpZiAoaXNfc3RyaW5nKFdQX1JXX19TSVRFX1BVQkxJQ19LRVkpICYmIFdQX1JXX19TSVRFX1BVQkxJQ19LRVkgIT09ICRzaXRlX3B1YmxpY19rZXkpDQoJCQkJCXsNCgkJCQkJCS8vIE92ZXJyaWRlIHVzZXIga2V5Lg0KCQkJCQkJJHRoaXMtPlNldE9wdGlvbihXUF9SV19fREJfT1BUSU9OX1NJVEVfUFVCTElDX0tFWSwgV1BfUldfX1NJVEVfUFVCTElDX0tFWSk7DQoJCQkJCQkkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCwgV1BfUldfX1NJVEVfSUQpOw0KCQkJCQkJaWYgKGRlZmluZWQoJ1dQX1JXX19PV05FUl9JRCcpKQ0KCQkJCQkJCSR0aGlzLT5TZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCwgV1BfUldfX09XTkVSX0lEKTsNCgkJCQkJCWlmIChkZWZpbmVkKCdXUF9SV19fT1dORVJfRU1BSUwnKSkNCgkJCQkJCQkkdGhpcy0+U2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fT1dORVJfRU1BSUwsIFdQX1JXX19PV05FUl9FTUFJTCk7DQoNCgkJCQkJCSR1cGRhdGUgPSB0cnVlOw0KCQkJCQl9DQoJCQkJfQ0KDQoJCQkJJHNlY3JldF9rZXkgPSAkdGhpcy0+R2V0T3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9TRUNSRVRfS0VZKTsNCg0KCQkJCWlmICghZGVmaW5lZCgnV1BfUldfX1NJVEVfU0VDUkVUX0tFWScpKQ0KCQkJCXsNCgkJCQkJZGVmaW5lKCdXUF9SV19fU0lURV9TRUNSRVRfS0VZJywgJHNlY3JldF9rZXkpOw0KCQkJCX0NCgkJCQllbHNlDQoJCQkJew0KCQkJCQlpZiAoaXNfc3RyaW5nKFdQX1JXX19TSVRFX1NFQ1JFVF9LRVkpICYmIFdQX1JXX19TSVRFX1NFQ1JFVF9LRVkgIT09ICRzZWNyZXRfa2V5KQ0KCQkJCQl7DQoJCQkJCQkvLyBPdmVycmlkZSB1c2VyIGtleS4NCgkJCQkJCSR0aGlzLT5TZXRPcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX1NFQ1JFVF9LRVksIFdQX1JXX19TSVRFX1NFQ1JFVF9LRVkpOw0KDQoJCQkJCQkkdXBkYXRlID0gdHJ1ZTsNCgkJCQkJfQ0KCQkJCX0NCg0KCQkJCWlmICgkdXBkYXRlKQ0KCQkJCQkkdGhpcy0+U3RvcmVPcHRpb25zKCk7DQoJCQkJ'));
-			}
 
 			/* IDs transformations.
 --------------------------------------------------------------------------------------------*/
@@ -784,7 +754,7 @@ Domain Path: /langs
 			{
 				RWLogger::LogEnterence("MigrateOptions");
 
-				$this->ClearOptions();
+				$this->_options_manager->clear();
 
 				$site_public_key = get_option(WP_RW__DB_OPTION_SITE_PUBLIC_KEY);
 
@@ -801,22 +771,18 @@ Domain Path: /langs
 					if (false !== $v)
 					{
 						if (0 === strpos($v, '{'))
-							$this->_OPTIONS_CACHE->{$o} = json_decode($v);
+							$this->_options_manager->set_option($o, json_decode($v));
 						else if ('true' == $v)
-							$this->_OPTIONS_CACHE->{$o} = true;
+							$this->_options_manager->set_option($o, true);
 						else if ('false' == $v)
-							$this->_OPTIONS_CACHE->{$o} = false;
+							$this->_options_manager->set_option($o, false);
 						else
-							$this->_OPTIONS_CACHE->{$o} = $v;
+							$this->_options_manager->set_option($o, $v);
 					}
 				}
 
 				// Save to new unified options record.
-				$this->StoreOptions();
-
-				// Delete old options.
-//        foreach ($this->_OPTIONS_CACHE as $o => $v)
-//            delete_option($o);
+				$this->_options_manager->store();
 
 				RWLogger::LogDeparture("MigrateOptions");
 			}
@@ -825,43 +791,11 @@ Domain Path: /langs
 			{
 				RWLogger::LogEnterence("LoadOptions");
 
-				if ($pFlush || !isset($this->_OPTIONS_CACHE))
-				{
-					$this->_OPTIONS_CACHE = wp_cache_get(WP_RW__OPTIONS, WP_RW__ID);
-
-					if (is_array($this->_OPTIONS_CACHE))
-						$this->ClearOptions();
-
-					$cached = true;
-					if (false === $this->_OPTIONS_CACHE)
-					{
-						$this->_OPTIONS_CACHE = get_option(WP_RW__OPTIONS);
-
-						if (false !== $this->_OPTIONS_CACHE)
-							$this->_OPTIONS_CACHE = json_decode($this->_OPTIONS_CACHE);
-
-						if (is_array($this->_OPTIONS_CACHE))
-							$this->ClearOptions();
-
-						$cached = false;
-					}
-
-					// Not cached and option doesn't exist
-					// in the DB.
-					if (false === $this->_OPTIONS_CACHE)
-						$this->MigrateOptions();
-
-					if (!$cached)
-						// Set non encoded cache.
-						wp_cache_set(WP_RW__OPTIONS, $this->_OPTIONS_CACHE, WP_RW__ID);
+				if ($this->_options_manager->is_empty()) {
+					$this->MigrateOptions();
 				}
 
 				RWLogger::LogDeparture("LoadOptions");
-			}
-
-			function ClearOptions()
-			{
-				$this->_OPTIONS_CACHE = new stdClass();
 			}
 
 			function GetOption($pOption, $pFlush = false, $pDefault = null)
@@ -869,31 +803,17 @@ Domain Path: /langs
 				if (null === $pDefault)
 					$pDefault = isset($this->_OPTIONS_DEFAULTS[$pOption]) ? $this->_OPTIONS_DEFAULTS[$pOption] : false;
 
-				return isset($this->_OPTIONS_CACHE->{$pOption}) ? $this->_OPTIONS_CACHE->{$pOption} : $pDefault;
+				return $this->_options_manager->get_option($pOption, $pDefault);
 			}
 
 			function UnsetOption($pOption)
 			{
-				if (!isset($this->_OPTIONS_CACHE->{$pOption}))
-					return;
-
-				unset($this->_OPTIONS_CACHE->{$pOption});
+				$this->_options_manager->unset_option($pOption);
 			}
 
 			function SetOption($pOption, $pValue)
 			{
-				// Update cache.
-				$this->_OPTIONS_CACHE->{$pOption} = $pValue;
-			}
-
-			function StoreOptions()
-			{
-				RWLogger::LogEnterence("StoreOptions");
-
-				// Update DB.
-				update_option(WP_RW__OPTIONS, json_encode($this->_OPTIONS_CACHE));
-				// Update cache.
-				wp_cache_set(WP_RW__OPTIONS, $this->_OPTIONS_CACHE, WP_RW__ID);
+				$this->_options_manager->set_option($pOption, $pValue);
 			}
 
 			/* API.
@@ -1151,7 +1071,7 @@ Domain Path: /langs
 
 			function GoogleAnalytics()
 			{
-				$params = array('is_registered' => $this->_isRegistered);
+				$params = array('is_registered' => $this->fs->is_registered());
 				rw_require_view('/pages/admin/ga.php', $params);
 			}
 
@@ -1175,7 +1095,7 @@ Domain Path: /langs
 
 				rw_register_script('rw', 'index.php');
 
-				if (!$this->_isRegistered)
+				if (!$this->fs->is_registered())
 				{
 					// Account activation page includes.
 					rw_enqueue_script('rw_wp_validation', 'rw/validation.js');
@@ -1218,7 +1138,7 @@ Domain Path: /langs
 					return;
 
 				$pageLoaderFunction = 'SettingsPage';
-				if (!$this->_isRegistered)
+				if (!$this->fs->is_registered())
 				{
 					$pageLoaderFunction = 'rw_user_key_page';
 
@@ -1226,21 +1146,23 @@ Domain Path: /langs
 						add_action('all_admin_notices', array(&$this, 'ActivationNotice'));
 				}
 
-				if ($this->_isRegistered && !WP_RW__OWNER_ID)
+				if ($this->fs->is_registered() && !WP_RW__OWNER_ID)
 				{
 					if (!$this->_inDashboard || !$this->TryToConfirmEmail())
 						add_action('all_admin_notices', array(&$this, 'ConfirmationNotice'));
 				}
 
-				add_options_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, $pageLoaderFunction));
+				$title = WP_RW__NAME . ' ' . __('Settings', WP_RW__ID);
+
+				add_options_page($title, WP_RW__NAME, 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, $pageLoaderFunction));
 
 				if ( function_exists('add_object_page') ) // WP 2.7+
-					$hook = add_object_page(__('Rating-Widget Settings', WP_RW__ID), __('Ratings', WP_RW__ID), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, $pageLoaderFunction), WP_RW__PLUGIN_URL . "icon.png" );
+					$hook = add_object_page($title, WP_RW__NAME, 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, $pageLoaderFunction), WP_RW__PLUGIN_URL . "icon.png" );
 				else
-					$hook = add_management_page(__( 'Rating-Widget Settings', WP_RW__ID ), __( 'Ratings', WP_RW__ID ), 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, $pageLoaderFunction) );
+					$hook = add_management_page($title, WP_RW__NAME, 'edit_posts', WP_RW__ADMIN_MENU_SLUG, array(&$this, $pageLoaderFunction) );
 
 
-				if (!$this->_isRegistered)
+				if (!$this->fs->is_registered())
 					add_action("load-$hook", array(&$this, 'SignUpPageLoad'));
 				else
 					// Setup menu items.
@@ -1295,7 +1217,7 @@ Domain Path: /langs
 
 				// Basic settings.
 				$submenu[] = array(
-					'menu_title' => 'Settings',
+					'menu_title' => __('Settings', WP_RW__ID),
 					'function' => 'SettingsPage',
 					'slug' => '',
 				);
@@ -1322,7 +1244,7 @@ Domain Path: /langs
 				if (false === is_active_widget(false, false, strtolower('RatingWidgetPlugin_TopRatedWidget'), true))
 					// Top-Rated Promotion Page.
 					$submenu[] = array(
-						'menu_title' => 'Top-Rated Widget',
+						'menu_title' => __('Top-Rated Widget', WP_RW__ID),
 						'function' => 'TopRatedSettingsPageRender',
 						'load_function' => 'TopRatedSettingsPageLoad',
 						'slug' => 'toprated',
@@ -1330,68 +1252,43 @@ Domain Path: /langs
 
 				// Reports.
 				$submenu[] = array(
-					'menu_title' => 'Reports',
+					'menu_title' => __('Reports', WP_RW__ID),
 					'function' => 'ReportsPageRender',
 				);
 
 				// Advanced settings.
 				$submenu[] = array(
-					'menu_title' => 'Advanced',
+					'menu_title' => __('Advanced', WP_RW__ID),
 					'function' => 'AdvancedSettingsPageRender',
 				);
 
-				$submenu[] = array(
-					'menu_title' => 'Account',
-					'function' => 'AccountPageRender',
-					'load_function' => 'AccountPageLoad',
-				);
+				$this->fs->add_action('fs_after_account_details', array(&$this, 'AccountPageRender'));
+				$this->fs->add_action('fs_account_page_load_before_departure', array(&$this, 'AccountPageLoad'));
 
 				if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && !$this->_cfcd208495d565ef66e7dff9f98764da())
 					// Boosting.
 					$submenu[] = array(
-						'menu_title' => 'Boost',
+						'menu_title' => __('Boost', WP_RW__ID),
 						'function' => 'BoostPageRender',
 						'load_function' => 'BoostPageLoad',
 					);
 
-				$submenu[] = array(
-					'menu_title' => 'FAQ',
-					'function' => '',
-				);
-
-				$submenu[] = array(
-					'menu_title' => 'Support Forum',
-					'slug' => 'help',
-					'function' => '',
-				);
-
-				if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
-					// Upgrade link.
-					$submenu[] = array(
-						'menu_title' => '&#9733; Upgrade &#9733;',
-						'slug' => 'upgrade',
-						'function' => '',
-					);
-
 				foreach ($submenu as $item)
 				{
-
-					$hook = add_submenu_page(
-						WP_RW__ADMIN_MENU_SLUG,
-						__(isset($item['page_title']) ? $item['page_title'] : ('Ratings &ndash; ' . $item['menu_title']), WP_RW__ID),
-						__($item['menu_title'], WP_RW__ID),
-						(isset($item['capability']) ? $item['capability'] : 'edit_posts'),
-						$this->GetMenuSlug(isset($item['slug']) ? $item['slug'] : strtolower($item['menu_title'])),
-						array(&$this, $item['function']));
-
-					if (isset($item['load_function']) && !empty($item['load_function']))
-						add_action("load-$hook", array( &$this, $item['load_function']));
+					$this->fs->add_submenu_item(
+						$item['menu_title'],
+						array(&$this, $item['function']),
+						__('Ratings', WP_RW__ID) . '&ndash;' . $item['menu_title'],
+						'edit_posts',
+						isset($item['slug']) ? $item['slug'] : false,
+						(isset($item['load_function']) && !empty($item['load_function'])) ? array( &$this, $item['load_function']) : false
+					);
 				}
 			}
 
 			function SignUpPageLoad()
 			{
-				if ($this->_isRegistered)
+				if ($this->fs->is_registered())
 					return;
 
 				if ('post' === strtolower($_SERVER['REQUEST_METHOD']) && isset($_POST['action']) && 'account' === $_POST['action'])
@@ -1404,7 +1301,7 @@ Domain Path: /langs
 
 					$this->SetOption(WP_RW__DB_OPTION_TRACKING, (isset($_POST['tracking']) && '1' == $_POST['tracking']));
 
-					$this->StoreOptions();
+					$this->_options_manager->store();
 
 					// Reload the page with the keys.
 					rw_admin_redirect();
@@ -2234,6 +2131,7 @@ Domain Path: /langs
 				$empty_result = (!is_array($rw_ret_obj->data) || 0 == count($rw_ret_obj->data));
 
 				// Override token to client's call token for iframes.
+				$details["timestamp"] = time();
 				$details["token"] = self::GenerateToken($details["timestamp"], false);
 				?>
 				<div class="wrap rw-dir-ltr rw-report">
@@ -2479,7 +2377,7 @@ Domain Path: /langs
 
 			function AccountPageRender()
 			{
-				rw_require_once_view('pages/admin/account.php');
+				rw_require_once_view('pages/admin/account-actions.php');
 			}
 
 			/* Advanced Settings
@@ -2488,17 +2386,11 @@ Domain Path: /langs
 				RWLogger::LogEnterence( 'RestoreDefaultSettings' );
 
 				// Restore to defaults - clear all settings.
-				$this->ClearOptions();
+				$this->_options_manager->clear();
 
 				// Re-Load all advanced settings.
-//		$rw_identify_by = $this->GetOption(WP_RW__IDENTIFY_BY);
-//		$rw_flash_dependency = $this->GetOption(WP_RW__FLASH_DEPENDENCY);
-//		$rw_show_on_mobile = $this->GetOption(WP_RW__SHOW_ON_MOBILE);
 				$tracking = $this->GetOption( WP_RW__DB_OPTION_TRACKING );
 
-//		$this->SetOption(WP_RW__IDENTIFY_BY, $rw_identify_by);
-//		$this->SetOption(WP_RW__FLASH_DEPENDENCY, $rw_flash_dependency);
-//		$this->SetOption(WP_RW__SHOW_ON_MOBILE, $rw_show_on_mobile);
 				$this->SetOption( WP_RW__DB_OPTION_TRACKING, $tracking );
 
 				// Restore account details.
@@ -2508,7 +2400,7 @@ Domain Path: /langs
 				$this->SetOption( WP_RW__DB_OPTION_OWNER_ID, WP_RW__OWNER_ID );
 				$this->SetOption( WP_RW__DB_OPTION_OWNER_EMAIL, WP_RW__OWNER_EMAIL );
 
-				$this->StoreOptions();
+				$this->_options_manager->store();
 
 				RWLogger::LogDeparture( 'RestoreDefaultSettings' );
 			}
@@ -2520,7 +2412,7 @@ Domain Path: /langs
 				$this->UnsetOption( WP_RW__DB_OPTION_SITE_PUBLIC_KEY );
 				$this->UnsetOption( WP_RW__DB_OPTION_SITE_ID );
 				$this->UnsetOption( WP_RW__DB_OPTION_SITE_SECRET_KEY );
-				$this->StoreOptions();
+				$this->_options_manager->store();
 
 				RWLogger::LogDeparture( 'DeleteAndCreateNewAccount' );
 			}
@@ -2580,7 +2472,7 @@ Domain Path: /langs
 
 				// Store options if in save mode.
 				if ($this->settings->IsSaveMode())
-					$this->StoreOptions();
+					$this->_options_manager->store();
 			}
 
 			function TopRatedSettingsPageLoad()
@@ -3283,7 +3175,7 @@ Domain Path: /langs
 
 				// Store options if in save mode.
 				if ($this->settings->IsSaveMode())
-					$this->StoreOptions();
+					$this->_options_manager->store();
 			}
 
 			/* Posts/Pages & Comments Support
@@ -3616,6 +3508,10 @@ Domain Path: /langs
 
 			function IsVisibleRating($pElementID, $pClass, $pValidateCategory = true, $pValidateVisibility = true)
 			{
+				RWLogger::LogEnterence('IsVisibleRating');
+
+				RWLogger::Log('IsVisibleRating', 'class = ' . $pClass);
+
 				// Check if post category is selected.
 				if ($pValidateCategory && false === $this->rw_validate_category_availability($pElementID, $pClass))
 					return false;
@@ -4201,7 +4097,7 @@ Domain Path: /langs
 
 				if (false !== $this->GetRatingAlignByType(WP_RW__USERS_ALIGN) && !$this->IsHiddenRatingByType('user'))
 					// Add user ratings into forum threads.
-					add_filter('bbp_get_reply_author_link', array(&$this, 'AddBBPressForumThreadUserRating'));
+					add_filter('bbp_get_reply_author_link', array(&$this, 'AddBBPressForumThreadUserRating'), 10, 2);
 
 				return $has_replies;
 			}
@@ -4214,32 +4110,42 @@ Domain Path: /langs
 				echo $this->EmbedRatingIfVisibleByUser(bbpress()->displayed_user, 'user');
 			}
 
-			function AddBBPressForumThreadUserRating($author_link)
-			{
-				RWLogger::LogEnterence('AddBBPressForumThreadUserRating');
+			function AddBBPressForumThreadUserRating($author_link, $args) {
+				RWLogger::LogEnterence( 'AddBBPressForumThreadUserRating' );
 
-				global $post;
+				$defaults = array(
+					'post_id'    => 0,
+					'link_title' => '',
+					'type'       => 'both',
+					'size'       => 80,
+					'sep'        => '&nbsp;'
+				);
+				$r        = wp_parse_args( $args, $defaults );
+				extract( $r );
 
-				$reply_id = bbp_get_reply_id($post->ID);
+				$reply_id = bbp_get_reply_id( $post_id );
 
-				if (bbp_is_reply_anonymous($reply_id))
+				RWLogger::Log( 'AddBBPressForumThreadUserRating', 'post_id = ' . $post_id );
+				RWLogger::Log( 'AddBBPressForumThreadUserRating', 'reply_id = ' . $reply_id );
+
+				if ( bbp_is_reply_anonymous( $reply_id ) ) {
 					return $author_link;
+				}
 
-				$options = array('show-info' => 'false');
+				$options = array( 'show-info' => 'false' );
 				// If accumulated user rating, then make sure it can not be directly rated.
-				if ($this->IsUserAccumulatedRating())
-				{
-					$options['read-only'] = 'true';
+				if ( $this->IsUserAccumulatedRating() ) {
+					$options['read-only']   = 'true';
 					$options['show-report'] = 'false';
 				}
 
-				$author_id = bbp_get_reply_author_id($reply_id);
+				$author_id = bbp_get_reply_author_id( $reply_id );
 
 				return $author_link . $this->EmbedRatingIfVisible(
 					$author_id,
 					$author_id,
-					bbp_get_reply_author_display_name($reply_id),
-					bbp_get_reply_author_url($reply_id),
+					bbp_get_reply_author_display_name( $reply_id ),
+					bbp_get_reply_author_url( $reply_id ),
 					'user',
 					false,
 					false,
@@ -4800,12 +4706,8 @@ Domain Path: /langs
 
 			/* Post/Page Exclude Checkbox
     ---------------------------------------------------------------------------------------------------------------*/
-			function AddPostMetaBox()
+			function get_all_post_types()
 			{
-				// Make sure only admin can exclude ratings.
-				if (!(bool)current_user_can('manage_options'))
-					return;
-
 				$post_types = array('post', 'page');
 				$custom_post_types = get_post_types(array(
 					'public'   => true,
@@ -4815,9 +4717,20 @@ Domain Path: /langs
 				if (is_array($custom_post_types) && 0 < count($custom_post_types))
 					$post_types = array_merge($post_types, $custom_post_types);
 
+				return $post_types;
+			}
+
+			function AddPostMetaBox()
+			{
+				// Make sure only admin can exclude ratings.
+				if (!(bool)current_user_can('manage_options'))
+					return;
+
+				$post_types = $this->get_all_post_types();
+
 				// Add the meta box.
 				foreach ($post_types as $t)
-					add_meta_box('rw-post-meta-box', __('RatingWidget', WP_RW__ID), array(&$this, 'ShowPostMetaBox'), $t, 'side', 'high');
+					add_meta_box('rw-post-meta-box', WP_RW__NAME, array(&$this, 'ShowPostMetaBox'), $t, 'side', 'high');
 			}
 
 			// Callback function to show fields in meta box.
@@ -4835,7 +4748,7 @@ Domain Path: /langs
 				if (!isset($_POST['rw_post_meta_box_nonce']) || !wp_verify_nonce($_POST['rw_post_meta_box_nonce'], basename(WP_RW__PLUGIN_FILE_FULL)))
 					return $post_id;
 
-				// Check autosave.
+				// Check auto-save.
 				if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
 					return $post_id;
 
@@ -4855,14 +4768,28 @@ Domain Path: /langs
 				//check whether this post/page is to be excluded
 				$includePost = (isset($_POST['rw_include_post']) && "1" == $_POST['rw_include_post']);
 
+				$classes = array();
+				switch ($_POST['post_type']) {
+					case 'page':
+						$classes = array('page');
+						break;
+					case 'product':
+						$classes = array('collection-product', 'product');
+						break;
+					case 'post':
+					default:
+						$classes = array('front-post', 'blog-post');
+						break;
+				}
+
 				$this->AddToVisibility(
 					$_POST['ID'],
-					(('page' == $_POST['post_type']) ? array('page') : array('front-post', 'blog-post')),
+					$classes,
 					$includePost);
 
 				$this->SetOption(WP_RW__VISIBILITY_SETTINGS, $this->_visibilityList);
 
-				$this->StoreOptions();
+				$this->_options_manager->store();
 
 				if (RWLogger::IsOn()){ RWLogger::LogDeparture("SavePostData"); }
 			}
@@ -4889,9 +4816,11 @@ Domain Path: /langs
 			{
 				if (RWLogger::IsOn())
 				{
-					echo "\n<!-- RATING-WIDGET LOG START\n\n";
-					RWLogger::Output("    ");
-					echo "\n RATING-WIDGET LOG END-->\n";
+//					echo "\n<!-- RATING-WIDGET LOG START\n\n";
+//					RWLogger::Output("    ");
+//					echo "\n RATING-WIDGET LOG END-->\n";
+
+					fs_dump_log();
 				}
 			}
 
@@ -5422,26 +5351,6 @@ Domain Path: /langs
 				return rw_get_site_url($relative);
 			}
 
-			function ModifyPluginActionLinks($links, $file)
-			{
-				// Return normal links if not BuddyPress
-				if (plugin_basename(WP_RW__PLUGIN_FILE_FULL) != $file)
-					return $links;
-
-				// Add a few links to the existing links array
-				$links = array_merge( $links, array(
-					'settings' => '<a href="' . rw_get_admin_url() . '">' . esc_html__('Settings', WP_RW__ADMIN_MENU_SLUG) . '</a>',
-					'blog'    => '<a href="' . rw_get_site_url('/blog/') . '">' . esc_html__('Blog', WP_RW__ADMIN_MENU_SLUG) . '</a>',
-				));
-
-				if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
-					$links = array_merge( $links, array(
-						'upgrade'    => '<a href="' . $this->GetUpgradeUrl() . '" target="_blank">' . esc_html__('Upgrade', WP_RW__ADMIN_MENU_SLUG) . '</a>'
-					));
-
-				return $links;
-			}
-
 			function Notice($pNotice, $pType = 'update-nag')
 			{
 				?>
@@ -5495,6 +5404,21 @@ Domain Path: /langs
 				$this->Notice('W00t! You have successfully confirmed your email address.', 'update-nag success');
 			}
 
+			function ApiAccessBlockedNotice()
+			{
+				$this->Notice('Oops... your server is blocking the access to our API, therefore your license can NOT be synced. <br>Please contact your host to enable remote access to: <ul><li><code><a href="' . RW_API__ADDRESS . '" target="_blank">' . RW_API__ADDRESS . '</a></code></li><li><code><a href="' . WP_RW__ADDRESS . '" target="_blank">' . WP_RW__ADDRESS . '</a></code></li><li><code><a href="' . WP_RW__SECURE_ADDRESS . '" target="_blank">' . WP_RW__SECURE_ADDRESS . '</a></code></li></ul>');
+			}
+
+			function LicenseSyncNotice()
+			{
+				$this->Notice('Ye-ha! Your license has been successfully synced.', 'update-nag success');
+			}
+
+			function LicenseSyncSameNotice()
+			{
+				$this->Notice('Hmm... it looks like your license remained the same. If you did upgrade, it\'s probably an issue on our side (sorry). Please contact us <a href="' . rw_get_site_url('/contact/?' . http_build_query(array('topic' => 'Report an Issue', 'email' => WP_RW__OWNER_EMAIL, 'website' => get_site_url(), 'platform' => 'wordpress', 'message' => 'I\'ve upgraded my account but when I try to Sync the License in my WordPress Dashboard -> Ratings -> Account, the license remains the same.' . "\n" . 'Your Upgraded Plan: [REPLACE WITH PLAN NAME]' . "\n" . 'Your PayPal Email: [REPLACE WITH PAYPAL ADDRESS]'))) . '" target="_blank">here</a>.');
+			}
+
 			private function TryToConfirmEmail() {
 				if ( ! rw_request_is_action( 'confirm', 'rw_action' ) ) {
 					return false;
@@ -5534,7 +5458,7 @@ Domain Path: /langs
 				$this->SetOption( WP_RW__DB_OPTION_OWNER_EMAIL, $email );
 				$this->SetOption( WP_RW__DB_OPTION_SITE_ID, $site_id );
 
-				$this->StoreOptions();
+				$this->_options_manager->store();
 
 				add_action( 'all_admin_notices', array( &$this, 'SuccessfulEmailConfirmNotice' ) );
 
@@ -5548,7 +5472,7 @@ Domain Path: /langs
 		/* Plugin page extra links.
 --------------------------------------------------------------------------------------------*/
 		/**
-		 * The main function responsible for returning the one true RatingWidgetPlugin Instance
+		 * The main function responsible for returning the one true RatingWidgetPlugin instance
 		 * to functions everywhere.
 		 *
 		 * Use this function like you would a global variable, except without needing
@@ -5556,17 +5480,50 @@ Domain Path: /langs
 		 *
 		 * Example: <?php $rw = ratingwidget(); ?>
 		 *
-		 * @return RatingWidgetPlugin The one true RatingWidgetPlugin Instance
+		 * @return RatingWidgetPlugin The one true RatingWidgetPlugin instance
 		 */
 		function ratingwidget() {
 			global $rwp;
 
 			if (!isset($rwp)) {
+				rw_fs();
 				$rwp = RatingWidgetPlugin::Instance();
 				$rwp->Init();
 			}
 
 			return $rwp;
+		}
+
+		function rw_fs() {
+			global $rw_fs;
+
+			if ( ! isset( $rw_fs ) ) {
+				$rw_fs = fs_init( WP_RW__ID, 1, 'mypublickey', array(
+						'menu' => array(
+							'wp_support_forum' => true,
+							'upgrade'          => true,
+						)
+					)
+				);
+			}
+
+			return $rw_fs;
+		}
+
+		function rw_fs_options()
+		{
+			global $rw_fs_options;
+
+			if ( ! isset( $rw_fs_options ) ) {
+				$rw_fs_options = rw_fs()->get_options_manager( WP_RW__OPTIONS, true, false );
+			}
+
+			return $rw_fs_options;
+		}
+
+		function fs_load_external_account()
+		{
+			return eval(base64_decode('DQoJCQkkb3B0aW9ucyA9IEZTX09wdGlvbl9NYW5hZ2VyOjpnZXRfbWFuYWdlcihXUF9SV19fT1BUSU9OUywgdHJ1ZSk7DQoNCgkJCSRzaXRlX3B1YmxpY19rZXkgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BVQkxJQ19LRVksIGZhbHNlICk7DQoJCQkkc2l0ZV9pZCAgICAgICAgID0gJG9wdGlvbnMtPmdldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCwgZmFsc2UgKTsNCgkJCSRvd25lcl9pZCAgICAgICAgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCwgZmFsc2UgKTsNCgkJCSRvd25lcl9lbWFpbCAgICAgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9FTUFJTCwgZmFsc2UgKTsNCg0KCQkJJHVwZGF0ZSA9IGZhbHNlOw0KDQoJCQlpZiAoICEgZGVmaW5lZCggJ1dQX1JXX19TSVRFX1BVQkxJQ19LRVknICkgKSB7DQoJCQkJZGVmaW5lKCAnV1BfUldfX1NJVEVfUFVCTElDX0tFWScsICRzaXRlX3B1YmxpY19rZXkgKTsNCgkJCQlkZWZpbmUoICdXUF9SV19fU0lURV9JRCcsICRzaXRlX2lkICk7DQoJCQkJZGVmaW5lKCAnV1BfUldfX09XTkVSX0lEJywgJG93bmVyX2lkICk7DQoJCQkJZGVmaW5lKCAnV1BfUldfX09XTkVSX0VNQUlMJywgJG93bmVyX2VtYWlsICk7DQoJCQl9IGVsc2Ugew0KCQkJCWlmICggaXNfc3RyaW5nKCBXUF9SV19fU0lURV9QVUJMSUNfS0VZICkgJiYgV1BfUldfX1NJVEVfUFVCTElDX0tFWSAhPT0gJHNpdGVfcHVibGljX2tleSApIHsNCgkJCQkJLy8gT3ZlcnJpZGUgdXNlciBrZXkuDQoJCQkJCSRvcHRpb25zLT5zZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUFVCTElDX0tFWSwgV1BfUldfX1NJVEVfUFVCTElDX0tFWSApOw0KCQkJCQkkb3B0aW9ucy0+c2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX0lELCBXUF9SV19fU0lURV9JRCApOw0KCQkJCQlpZiAoIGRlZmluZWQoICdXUF9SV19fT1dORVJfSUQnICkgKSB7DQoJCQkJCQkkb3B0aW9ucy0+c2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCwgV1BfUldfX09XTkVSX0lEICk7DQoJCQkJCX0NCgkJCQkJaWYgKCBkZWZpbmVkKCAnV1BfUldfX09XTkVSX0VNQUlMJyApICkgew0KCQkJCQkJJG9wdGlvbnMtPnNldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fT1dORVJfRU1BSUwsIFdQX1JXX19PV05FUl9FTUFJTCApOw0KCQkJCQl9DQoNCgkJCQkJJHVwZGF0ZSA9IHRydWU7DQoJCQkJfQ0KCQkJfQ0KDQoJCQkkc2VjcmV0X2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfU0VDUkVUX0tFWSwgZmFsc2UgKTsNCg0KCQkJaWYgKCAhIGRlZmluZWQoICdXUF9SV19fU0lURV9TRUNSRVRfS0VZJyApICkgew0KCQkJCWRlZmluZSggJ1dQX1JXX19TSVRFX1NFQ1JFVF9LRVknLCAkc2VjcmV0X2tleSApOw0KCQkJfSBlbHNlIHsNCgkJCQlpZiAoIGlzX3N0cmluZyggV1BfUldfX1NJVEVfU0VDUkVUX0tFWSApICYmIFdQX1JXX19TSVRFX1NFQ1JFVF9LRVkgIT09ICRzZWNyZXRfa2V5ICkgew0KCQkJCQkvLyBPdmVycmlkZSB1c2VyIGtleS4NCgkJCQkJJG9wdGlvbnMtPnNldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9TRUNSRVRfS0VZLCBXUF9SV19fU0lURV9TRUNSRVRfS0VZICk7DQoNCgkJCQkJJHVwZGF0ZSA9IHRydWU7DQoJCQkJfQ0KCQkJfQ0KDQoJCQlpZiAoICR1cGRhdGUgKSB7DQoJCQkJJG9wdGlvbnMtPnN0b3JlKCk7DQoJCQl9DQoNCgkJCSRzaXRlID0gZmFsc2U7DQoJCQkkdXNlciA9IGZhbHNlOw0KDQoJCQlpZiAoZmFsc2UgIT09IFdQX1JXX19TSVRFX1BVQkxJQ19LRVkpIHsNCgkJCQkkc2l0ZSA9IG5ldyBGU19TaXRlKCk7DQoJCQkJJHNpdGUtPmlkID0gJG9wdGlvbnMtPmdldF9vcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX0lEKTsNCgkJCQkkc2l0ZS0+cHVibGljX2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZKTsNCgkJCQkkc2l0ZS0+c2VjcmV0X2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9TRUNSRVRfS0VZKTsNCg0KCQkJCSR1c2VyID0gbmV3IEZTX1VzZXIoKTsNCgkJCQkkdXNlci0+aWQgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCApOw0KCQkJCSR1c2VyLT5lbWFpbCA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX09XTkVSX0VNQUlMICk7DQoJCQl9DQoNCgkJCXJldHVybiBhcnJheSgndXNlcicgPT4gJHVzZXIsICdzaXRlJyA9PiAkc2l0ZSk7DQoNCgkJCQ=='));
 		}
 
 		function rwapi()

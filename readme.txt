@@ -4,10 +4,10 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.2.5
+Stable tag: 2.2.6
 License: GPLv2 or later
 
-The most popular Five Star Rating System on the web. User-friendly ratings for your posts, pages, comments, BuddyPress and bbPress forum topics.
+The most popular Five Star Rating System on the web. User-friendly ratings for: posts, pages, comments, WooCommerce, BuddyPress and bbPress forums.
 
 == Description ==
 
@@ -181,6 +181,13 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.2.6 =
+* New: Added an option to clear plugin's cache (including Top-Rated Widget's cache).
+* New: Added custom notifications to Sync License functionality.
+* Fix: WooCommerce product "Show Rating (Uncheck to Hide)" metabox is now fully functional.
+* Fix: Added notification for management dashboard when there's a connectivity problem with RatingWidget's API.
+* Fix: Fixed bbPress forum reply author ID extraction to make sure user's forum rating/reputation is showing the correct rating.
+
 = 2.2.5 =
 * Fix: Trashed / Deleted Posts/Pages/Products are now synced with RatingWidget backend, to prevent zombie items in the Top-Rated Widget.
 * Optimized: Modified view of Voting Frequency Settings to work with a dropdown to save space.
