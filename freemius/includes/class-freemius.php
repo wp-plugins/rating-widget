@@ -89,7 +89,7 @@
 		function init( $id, $public_key, $options ) {
 			$this->_logger->entrance();
 
-			if ( ! is_plugin_active( 'rating-widget/rating-widget.php' ) ) {
+			if ( ! is_plugin_active( 'rating-widget/rating-widget.php' ) && file_exists(WP_FS__DIR_INCLUDES . '/class-dummy-rw-plugin.php') ) {
 				require_once WP_FS__DIR_INCLUDES . '/class-dummy-rw-plugin.php';
 			}
 
