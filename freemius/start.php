@@ -17,7 +17,6 @@
 		require_once WP_FS__DIR_INCLUDES . '/class-fs-logger.php';
 
 		require_once WP_FS__DIR_INCLUDES . '/fs-core-functions.php';
-		require_once WP_FS__DIR_INCLUDES . '/abstract-freemius.php';
 		require_once WP_FS__DIR_INCLUDES . '/class-fs-option-manager.php';
 		require_once WP_FS__DIR_INCLUDES . '/class-fs-user.php';
 		require_once WP_FS__DIR_INCLUDES . '/class-fs-site.php';
