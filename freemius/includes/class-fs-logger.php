@@ -91,8 +91,9 @@
 
 			$bt     = debug_backtrace();
 			$depth = $wrapper ? 3 : 2;
-			if ('eval' === $bt[$depth]['function'])
-				$depth++;
+			while ($depth < count($bt) - 1 && 'eval' === $bt[$depth]['function']) {
+				$depth ++;
+			}
 
 			$caller = $bt[$depth];
 

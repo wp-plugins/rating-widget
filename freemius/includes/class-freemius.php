@@ -7,7 +7,7 @@
 		/**
 		 * @var string
 		 */
-		public $version = '1.0.0';
+		public $version = '1.0.1';
 
 		private $_id;
 		private $_public_key;
@@ -348,6 +348,15 @@
 
 		/* Account Page
 		------------------------------------------------------------------------------------------------------------------*/
+		static function _secret_key_updated_message() {
+			$vars = array(
+				"message" => "You have successfully updated your Secret Key.",
+				"type"    => "update-nag success"
+			);
+
+			fs_require_once_template( "admin-notice.php", $vars );
+		}
+
 		function _account_page_load() {
 			$this->_logger->entrance();
 
@@ -362,15 +371,8 @@
 
 				ratingwidget()->UpdateSecret( fs_request_get( 'fs_site_secret_' . $this->_slug, '' ) );
 
-				add_action( 'all_admin_notices', function () {
-					$vars = array(
-						'message' => 'You have successfully updated your Secret Key.',
-						'type'    => 'update-nag success'
-					);
-					fs_require_once_template( 'admin-notice.php', $vars );
-				} );
-
-				fs_redirect( '#' );
+				// Anonymous functions are only available since PHP 5.3
+				add_action( 'all_admin_notices', array('Freemius', '_secret_key_updated_message') );
 			}
 
 			$this->do_action( 'fs_account_page_load_before_departure' );

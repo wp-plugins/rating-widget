@@ -57,7 +57,7 @@
 													<?php endif; ?>
 												</form>
 											<?php elseif ('secret' === $p['id']) : ?>
-												<form action="" method="POST" onsubmit="var secret = prompt('<?php _e('What is your secret key?', WP_FS__SLUG) ?>'); if (null == secret || '' === secret) return false; jQuery('input[name=fs_site_secret_<?php echo $slug ?>]').val(secret); return true;">
+												<form action="" method="POST" onsubmit="var secret = prompt('<?php _e('What is your secret key?', WP_FS__SLUG) ?>', '<?php echo ((is_string($site->secret_key)) ? $site->secret_key : '') ?>'); if (null == secret || '' === secret) return false; jQuery('input[name=fs_site_secret_<?php echo $slug ?>]').val(secret); return true;">
 													<input type="hidden" name="fs_action" value="update_secret">
 													<input type="hidden" name="fs_site_secret_<?php echo $slug ?>" value="">
 													<?php wp_nonce_field('update_secret') ?>
