@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.2.9
+Version: 2.3.0
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2
@@ -14,6 +14,7 @@ Domain Path: /langs
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;
 	}
+
 
 	if (!class_exists('RatingWidgetPlugin')) :
 		// Load common config.
@@ -251,28 +252,53 @@ Domain Path: /langs
 				return true;
 			}
 
-			private function SetupDashboardActions()
+			function _update_account($type, $property, $value)
 			{
-				RWLogger::LogEnterence("SetupDashboardActions");
+				if ('site' !== $type)
+					return;
 
-				$this->fs->add_plugin_action_link(__('Settings', WP_RW__ADMIN_MENU_SLUG), rw_get_admin_url());
-				$this->fs->add_plugin_action_link(__('Blog', WP_RW__ADMIN_MENU_SLUG), rw_get_site_url('/blog/'), true);
+				switch ($property)
+				{
+					case 'id':
+						$this->SetOption( WP_RW__DB_OPTION_SITE_ID, $value );
+						break;
+					case 'public_key':
+						$this->SetOption( WP_RW__DB_OPTION_SITE_PUBLIC_KEY, $value );
+						break;
+					case 'secret_key':
+						$this->SetOption( WP_RW__DB_OPTION_SITE_SECRET_KEY, $value );
+						break;
+					default:
+						return;
+				}
+
+				$this->_options_manager->store();
+			}
+
+			private function SetupDashboardActions() {
+				RWLogger::LogEnterence( "SetupDashboardActions" );
+
+				$this->fs->add_plugin_action_link( __( 'Settings', WP_RW__ADMIN_MENU_SLUG ), rw_get_admin_url() );
+				$this->fs->add_plugin_action_link( __( 'Blog', WP_RW__ADMIN_MENU_SLUG ), rw_get_site_url( '/blog/' ), true );
+
+
+				add_action( 'fs_account_property_edit_' . WP_RW__ID, array( &$this, '_update_account' ), 10, 3 );
 
 				// Add activation and de-activation hooks.
-				register_activation_hook(WP_RW__PLUGIN_FILE_FULL, 'rw_activated');
-				register_deactivation_hook(WP_RW__PLUGIN_FILE_FULL, 'rw_deactivated');
+				register_activation_hook( WP_RW__PLUGIN_FILE_FULL, 'rw_activated' );
 
-				add_action('admin_head', array(&$this, "rw_admin_menu_icon_css"));
-				add_action('admin_menu', array(&$this, 'admin_menu'));
-				add_action('admin_menu', array(&$this, 'AddPostMetaBox')); // Metabox for posts/pages
-				add_action('save_post', array(&$this, 'SavePostData'));
-				add_action('trashed_post', array(&$this, 'DeletePostData'));
-				add_action('updated_post_meta', array(&$this, 'PurgePostFeaturedImageTransient'), 10, 4);
+				add_action( 'admin_head', array( &$this, "rw_admin_menu_icon_css" ) );
+				add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+				add_action( 'admin_menu', array( &$this, 'AddPostMetaBox' ) ); // Metabox for posts/pages
+				add_action( 'save_post', array( &$this, 'SavePostData' ) );
+				add_action( 'trashed_post', array( &$this, 'DeletePostData' ) );
+				add_action( 'updated_post_meta', array( &$this, 'PurgePostFeaturedImageTransient' ), 10, 4 );
 
 
 				{
-					if ($this->GetOption(WP_RW__DB_OPTION_TRACKING))
-						add_action('admin_head', array(&$this, "GoogleAnalytics"));
+					if ( $this->GetOption( WP_RW__DB_OPTION_TRACKING ) ) {
+//						add_action( 'admin_head', array( &$this, "GoogleAnalytics" ) );
+					}
 
 					// wp_footer call validation.
 					// add_action('init', array(&$this, 'test_footer_init'));
@@ -392,6 +418,8 @@ Domain Path: /langs
 
 					RWLogger::Log( "AccountPageLoad", 'delete_account' );
 
+					$this->fs->delete_account_event();
+
 					$this->_options_manager->clear(true);
 
 					$this->ClearTransients();
@@ -459,9 +487,9 @@ Domain Path: /langs
 
 				$site_plan_update = $this->GetOption( WP_RW__DB_OPTION_SITE_PLAN_UPDATE, false, 0 );
 				if ( $site_plan_update < ( time() - WP_RW__TIME_24_HOURS_IN_SEC ) ) {
-					if ( function_exists( 'prune_super_cache' ) ) {
+					/*if ( function_exists( 'prune_super_cache' ) ) {
 						prune_super_cache();
-					} else if ( function_exists( 'wp_cache_clear_cache' ) ) {
+					} else */if ( function_exists( 'wp_cache_clear_cache' ) ) {
 						wp_cache_clear_cache();
 					}
 				}
@@ -652,7 +680,7 @@ Domain Path: /langs
 					WP_RW__DB_OPTION_SITE_SECRET_KEY => false,
 
 					WP_RW__LOGGER => false,
-					WP_RW__DB_OPTION_TRACKING => true,
+					WP_RW__DB_OPTION_TRACKING => false,
 					WP_RW__IS_ACCUMULATED_USER_RATING => true,
 
 					WP_RW__IDENTIFY_BY => 'laccount',
@@ -1265,13 +1293,13 @@ Domain Path: /langs
 				$this->fs->add_action('fs_after_account_details', array(&$this, 'AccountPageRender'));
 				$this->fs->add_action('fs_account_page_load_before_departure', array(&$this, 'AccountPageLoad'));
 
-				if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && !$this->_cfcd208495d565ef66e7dff9f98764da())
+				/*if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && !$this->_cfcd208495d565ef66e7dff9f98764da())
 					// Boosting.
 					$submenu[] = array(
 						'menu_title' => __('Boost', WP_RW__ID),
 						'function' => 'BoostPageRender',
 						'load_function' => 'BoostPageLoad',
-					);
+					);*/
 
 				foreach ($submenu as $item)
 				{
@@ -3658,7 +3686,7 @@ Domain Path: /langs
 			 * @param array $pOptions
 			 * @return string Rating container HTML.
 			 */
-			private function GetRatingHtml($pUrid, $pElementClass, $pAddSchema = false, $pTitle = "", $pOptions = array())
+			private function GetRatingHtml($pUrid, $pElementClass, $pAddSchema = false, $pTitle = "", $pPermaink = '', $pOptions = array())
 			{
 				if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("GetRatingHtml", $params); }
 
@@ -3671,7 +3699,7 @@ Domain Path: /langs
 
 				$rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
 
-				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHBFbGVtZW50Q2xhc3MgJiYgJHRoaXMtPl9lY2NiYzg3ZTRiNWNlMmZlMjgzMDhmZDlmMmE3YmFmMygpKQ0KCQkJCXsNCgkJCQkJUldMb2dnZXI6OkxvZygnR2V0UmF0aW5nSHRtbCcsICJBZGRpbmcgc2NoZW1hIGZvcjogdXJpZD17JHBVcmlkfTsgcmNsYXNzPXskcEVsZW1lbnRDbGFzc30iKTsNCg0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IHRydWU7DQoNCgkJCQkJCWlmIChmYWxzZSAhPT0gc3RycG9zKCRwRWxlbWVudENsYXNzLCAncHJvZHVjdCcpKQ0KCQkJCQkJew0KCQkJCQkJCS8vIFdvb0NvbW1lcmNlIGlzIGFscmVhZHkgYWRkaW5nIGFsbCB0aGUgcHJvZHVjdCBzY2hlbWEgbWV0YWRhdGEuDQoJCQkJCQkJLyokc2NoZW1hX3Jvb3QgPSAnaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9Qcm9kdWN0Iic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJuYW1lIic7DQoJCQkJCQkJKi8NCgkJCQkJCQkkc2NoZW1hX3Jvb3QgPSAnJzsNCgkJCQkJCQkkc2NoZW1hX2FkZF90aXRsZSA9IGZhbHNlOw0KCQkJCQkJfQ0KCQkJCQkJZWxzZQ0KCQkJCQkJew0KCQkJCQkJCSRzY2hlbWFfcm9vdCA9ICcgaXRlbXNjb3BlIGl0ZW1wcm9wPSJibG9nUG9zdCIgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0Jsb2dQb3N0aW5nIic7DQoJCQkJCQkJJHNjaGVtYV90aXRsZV9wcm9wID0gJ2l0ZW1wcm9wPSJoZWFkbGluZSInOw0KCQkJCQkJfQ0KDQovLwkJCQkJCSR0aXRsZSA9IG1iX2NvbnZlcnRfdG9fdXRmOCh0cmltKCRwVGl0bGUpKTsNCgkJCQkJCSRyYXRpbmdfaHRtbCAuPSAnICcgLiAkc2NoZW1hX3Jvb3QgLiAnPg0KICAgICcgLiAoJHNjaGVtYV9hZGRfdGl0bGUgPyAnPHNwYW4gJyAuICRzY2hlbWFfdGl0bGVfcHJvcCAuICcgc3R5bGU9InBvc2l0aW9uOiBmaXhlZDsgdG9wOiAxMDAlOyI+JyAuIGVzY19odG1sKCRwVGl0bGUpIC4gJzwvc3Bhbj4nIDogJycpIC4gJw0KICAgIDxkaXYgaXRlbXByb3A9ImFnZ3JlZ2F0ZVJhdGluZyIgaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9BZ2dyZWdhdGVSYXRpbmciPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0id29yc3RSYXRpbmciIGNvbnRlbnQ9IjAiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJiZXN0UmF0aW5nIiBjb250ZW50PSI1IiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nVmFsdWUiIGNvbnRlbnQ9IicgLiAkZGF0YVsncmF0ZSddIC4gJyIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ0NvdW50IiBjb250ZW50PSInIC4gJGRhdGFbJ3ZvdGVzJ10gLiAnIiAvPg0KICAgIDwvZGl2JzsNCgkJCQkJfQ0KCQkJCX0NCgkJCQk='));
+				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHBFbGVtZW50Q2xhc3MgJiYgJHRoaXMtPl9lY2NiYzg3ZTRiNWNlMmZlMjgzMDhmZDlmMmE3YmFmMygpKQ0KCQkJCXsNCgkJCQkJUldMb2dnZXI6OkxvZygnR2V0UmF0aW5nSHRtbCcsICJBZGRpbmcgc2NoZW1hIGZvcjogdXJpZD17JHBVcmlkfTsgcmNsYXNzPXskcEVsZW1lbnRDbGFzc30iKTsNCg0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQlpZiAoZmFsc2UgIT09IHN0cnBvcygkcEVsZW1lbnRDbGFzcywgJ3Byb2R1Y3QnKSkNCgkJCQkJCXsNCgkJCQkJCQkvLyBXb29Db21tZXJjZSBpcyBhbHJlYWR5IGFkZGluZyBhbGwgdGhlIHByb2R1Y3Qgc2NoZW1hIG1ldGFkYXRhLg0KCQkJCQkJCS8qJHNjaGVtYV9yb290ID0gJ2l0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvUHJvZHVjdCInOw0KCQkJCQkJCSRzY2hlbWFfdGl0bGVfcHJvcCA9ICdpdGVtcHJvcD0ibmFtZSInOw0KCQkJCQkJCSovDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgJHJhdGluZ19odG1sIC49ICc+JzsNCgkJCQkJCX0NCgkJCQkJCWVsc2UNCgkJCQkJCXsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJyBpdGVtc2NvcGUgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0FydGljbGUiPic7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKCFlbXB0eSgkcFRpdGxlKSkNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJHJhdGluZ19odG1sIC49ICc8bWV0YSBpdGVtcHJvcD0ibmFtZSIgY29udGVudD0iJyAuIGVzY19hdHRyKCRwVGl0bGUpIC4gJyIgLz4nOw0KLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgJHJhdGluZ19odG1sIC49ICc8bWV0YSBpdGVtcHJvcD0iZGVzY3JpcHRpb24iIGNvbnRlbnQ9IicgLiBlc2NfYXR0cigkcFRpdGxlKSAuICciIC8+JzsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWVtcHR5KCRwUGVybWFpbmspKQ0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJzxtZXRhIGl0ZW1wcm9wPSJ1cmwiIGNvbnRlbnQ9IicgLiBlc2NfYXR0cigkcFBlcm1haW5rKSAuICciIC8+JzsNCgkJCQkJCX0NCg0KLy8JCQkJCQkkdGl0bGUgPSBtYl9jb252ZXJ0X3RvX3V0ZjgodHJpbSgkcFRpdGxlKSk7DQoJCQkJCQkkcmF0aW5nX2h0bWwgLj0gJw0KICAgIDxkaXYgaXRlbXByb3A9ImFnZ3JlZ2F0ZVJhdGluZyIgaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9BZ2dyZWdhdGVSYXRpbmciPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0id29yc3RSYXRpbmciIGNvbnRlbnQ9IjAiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJiZXN0UmF0aW5nIiBjb250ZW50PSI1IiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nVmFsdWUiIGNvbnRlbnQ9IicgLiAkZGF0YVsncmF0ZSddIC4gJyIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ0NvdW50IiBjb250ZW50PSInIC4gJGRhdGFbJ3ZvdGVzJ10gLiAnIiAvPg0KICAgIDwvZGl2JzsNCgkJCQkJfQ0KCQkJCX0NCgkJCQk='));
 
 				$rating_html .= '></div>';
 
@@ -5147,7 +5175,7 @@ Domain Path: /langs
 			{
 				$this->QueueRatingData($urid, $title, $permalink, $class);
 
-				$html = $this->GetRatingHtml($urid, $class, $add_schema, $title, $options);
+				$html = $this->GetRatingHtml($urid, $class, $add_schema, $title, $permalink, $options);
 
 				if (false !== ($hor_align || $custom_style))
 					$html = '<div' .
@@ -5484,9 +5512,9 @@ Domain Path: /langs
 		 */
 		function ratingwidget() {
 			global $rwp;
-
 			if (!isset($rwp)) {
 				rw_fs();
+				load_constants();
 				$rwp = RatingWidgetPlugin::Instance();
 				$rwp->Init();
 			}
@@ -5521,10 +5549,47 @@ Domain Path: /langs
 			return $rw_fs_options;
 		}
 
-		function fs_load_external_account()
+		/**
+		 * Load RW constants based on FS account (used after migration).
+		 * @todo Should be removed after changing all constants to the relevant properties from Freemius.
+		 */
+		function load_constants() {
+			$fs   = rw_fs();
+			$site = $fs->get_site();
+			$user = $fs->get_user();
+
+			if ( is_object( $site ) ) {
+				if ( ! defined( 'WP_RW__SITE_ID' ) ) {
+					define( 'WP_RW__SITE_ID', $site->id );
+				}
+				if ( ! defined( 'WP_RW__SITE_PUBLIC_KEY' ) ) {
+					define( 'WP_RW__SITE_PUBLIC_KEY', $site->public_key );
+				}
+				if ( ! defined( 'WP_RW__SITE_SECRET_KEY' ) ) {
+					define( 'WP_RW__SITE_SECRET_KEY', $site->secret_key );
+				}
+			}
+			if ( is_object( $user ) ) {
+				if ( ! defined( 'WP_RW__OWNER_ID' ) ) {
+					define( 'WP_RW__OWNER_ID', $user->id );
+				}
+				if ( ! defined( 'WP_RW__OWNER_EMAIL' ) ) {
+					define( 'WP_RW__OWNER_EMAIL', $user->email );
+				}
+			}
+		}
+
+		/**
+		 * Load account information from RatingWidget to Freemius.
+		 * It's a migration method that should be only executed once.
+		 * @return array
+		 */
+		function rw_fs_load_external_account()
 		{
 			return eval(base64_decode('DQoJCQkkb3B0aW9ucyA9IEZTX09wdGlvbl9NYW5hZ2VyOjpnZXRfbWFuYWdlcihXUF9SV19fT1BUSU9OUywgdHJ1ZSk7DQoNCgkJCSRzaXRlX3B1YmxpY19rZXkgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BVQkxJQ19LRVksIGZhbHNlICk7DQoJCQkkc2l0ZV9pZCAgICAgICAgID0gJG9wdGlvbnMtPmdldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCwgZmFsc2UgKTsNCgkJCSRvd25lcl9pZCAgICAgICAgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCwgZmFsc2UgKTsNCgkJCSRvd25lcl9lbWFpbCAgICAgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9FTUFJTCwgZmFsc2UgKTsNCg0KCQkJJHVwZGF0ZSA9IGZhbHNlOw0KDQoJCQlpZiAoICEgZGVmaW5lZCggJ1dQX1JXX19TSVRFX1BVQkxJQ19LRVknICkgKSB7DQoJCQkJZGVmaW5lKCAnV1BfUldfX1NJVEVfUFVCTElDX0tFWScsICRzaXRlX3B1YmxpY19rZXkgKTsNCgkJCQlkZWZpbmUoICdXUF9SV19fU0lURV9JRCcsICRzaXRlX2lkICk7DQoJCQkJZGVmaW5lKCAnV1BfUldfX09XTkVSX0lEJywgJG93bmVyX2lkICk7DQoJCQkJZGVmaW5lKCAnV1BfUldfX09XTkVSX0VNQUlMJywgJG93bmVyX2VtYWlsICk7DQoJCQl9IGVsc2Ugew0KCQkJCWlmICggaXNfc3RyaW5nKCBXUF9SV19fU0lURV9QVUJMSUNfS0VZICkgJiYgV1BfUldfX1NJVEVfUFVCTElDX0tFWSAhPT0gJHNpdGVfcHVibGljX2tleSApIHsNCgkJCQkJLy8gT3ZlcnJpZGUgdXNlciBrZXkuDQoJCQkJCSRvcHRpb25zLT5zZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUFVCTElDX0tFWSwgV1BfUldfX1NJVEVfUFVCTElDX0tFWSApOw0KCQkJCQkkb3B0aW9ucy0+c2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX0lELCBXUF9SV19fU0lURV9JRCApOw0KCQkJCQlpZiAoIGRlZmluZWQoICdXUF9SV19fT1dORVJfSUQnICkgKSB7DQoJCQkJCQkkb3B0aW9ucy0+c2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCwgV1BfUldfX09XTkVSX0lEICk7DQoJCQkJCX0NCgkJCQkJaWYgKCBkZWZpbmVkKCAnV1BfUldfX09XTkVSX0VNQUlMJyApICkgew0KCQkJCQkJJG9wdGlvbnMtPnNldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fT1dORVJfRU1BSUwsIFdQX1JXX19PV05FUl9FTUFJTCApOw0KCQkJCQl9DQoNCgkJCQkJJHVwZGF0ZSA9IHRydWU7DQoJCQkJfQ0KCQkJfQ0KDQoJCQkkc2VjcmV0X2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfU0VDUkVUX0tFWSwgZmFsc2UgKTsNCg0KCQkJaWYgKCAhIGRlZmluZWQoICdXUF9SV19fU0lURV9TRUNSRVRfS0VZJyApICkgew0KCQkJCWRlZmluZSggJ1dQX1JXX19TSVRFX1NFQ1JFVF9LRVknLCAkc2VjcmV0X2tleSApOw0KCQkJfSBlbHNlIHsNCgkJCQlpZiAoIGlzX3N0cmluZyggV1BfUldfX1NJVEVfU0VDUkVUX0tFWSApICYmIFdQX1JXX19TSVRFX1NFQ1JFVF9LRVkgIT09ICRzZWNyZXRfa2V5ICkgew0KCQkJCQkvLyBPdmVycmlkZSB1c2VyIGtleS4NCgkJCQkJJG9wdGlvbnMtPnNldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9TRUNSRVRfS0VZLCBXUF9SV19fU0lURV9TRUNSRVRfS0VZICk7DQoNCgkJCQkJJHVwZGF0ZSA9IHRydWU7DQoJCQkJfQ0KCQkJfQ0KDQoJCQlpZiAoICR1cGRhdGUgKSB7DQoJCQkJJG9wdGlvbnMtPnN0b3JlKCk7DQoJCQl9DQoNCgkJCSRzaXRlID0gZmFsc2U7DQoJCQkkdXNlciA9IGZhbHNlOw0KDQoJCQlpZiAoZmFsc2UgIT09IFdQX1JXX19TSVRFX1BVQkxJQ19LRVkpIHsNCgkJCQkkc2l0ZSA9IG5ldyBGU19TaXRlKCk7DQoJCQkJJHNpdGUtPmlkID0gJG9wdGlvbnMtPmdldF9vcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX0lEKTsNCgkJCQkkc2l0ZS0+cHVibGljX2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZKTsNCgkJCQkkc2l0ZS0+c2VjcmV0X2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9TRUNSRVRfS0VZKTsNCg0KCQkJCSR1c2VyID0gbmV3IEZTX1VzZXIoKTsNCgkJCQkkdXNlci0+aWQgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCApOw0KCQkJCSR1c2VyLT5lbWFpbCA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX09XTkVSX0VNQUlMICk7DQoJCQl9DQoNCgkJCXJldHVybiBhcnJheSgndXNlcicgPT4gJHVzZXIsICdzaXRlJyA9PiAkc2l0ZSk7DQoNCgkJCQ=='));
 		}
+
+		add_filter('fs_load_account_' . WP_RW__ID, 'rw_fs_load_external_account');
 
 		function rwapi()
 		{
