@@ -7,6 +7,10 @@
 	{ background-position: -1px 0; }
 	ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?> .wp-menu-image a img { display: none; }
 <?php if (!ratingwidget()->_c4ca4238a0b923820dcc509a6f75849b()) : ?>
-	ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?> ul li:last-child a { color: yellowgreen; }
+	ul#adminmenu li.toplevel_page_<?php echo WP_RW__ADMIN_MENU_SLUG;?> ul li:last-child a {
+		color: yellowgreen;
+		font-weight: bold;
+		text-transform: uppercase;
+	}
 <?php endif; ?>
 </style>

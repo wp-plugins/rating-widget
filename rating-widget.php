@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.3.1
+Version: 2.3.2
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2
@@ -43,7 +43,7 @@ Domain Path: /langs
 
 			private $errors;
 			private $success;
-			private $fs;
+			public $fs;
 			static $ratings = array();
 
 			var $is_admin;
@@ -129,7 +129,7 @@ Domain Path: /langs
 
 				if ( $this->fs->is_registered() )
 				{
-					$this->fs->add_submenu_link_item(__('FAQ', WP_RW__ID), rw_get_site_url( 'support/wordpress/#platform' ));
+					$this->fs->add_submenu_link_item(__('FAQ', WP_RW__ID), rw_get_site_url( 'support/wordpress/#platform' ), false, 'read', 25);
 
 					add_action( 'init', array( &$this, 'LoadPlan' ) );
 					// Clear cache has to be executed after LoadPlan, because clear
@@ -498,7 +498,7 @@ Domain Path: /langs
 			function LoadPlan() {
 				RWLogger::LogEnterence( "LoadPlan" );
 
-				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCAkdGhpcy0+ZnMtPmdldF9zaXRlKCktPnNlY3JldF9rZXkgKSApIHsNCgkJCQkJaWYgKCAnZnJlZScgIT09ICRzaXRlX3BsYW4gKSB7DQoJCQkJCQkkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCX0NCgkJCQl9IGVsc2Ugew0KCQkJCQkkc2l0ZV9wbGFuX3VwZGF0ZSA9ICR0aGlzLT5HZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDAgKTsNCgkJCQkJJGluX2xpY2Vuc2Vfc3luYyA9IGZhbHNlOw0KCQkJCQkvLyBDaGVjayBpZiB1c2VyIGFza2VkIHRvIHN5bmMgbGljZW5zZS4NCgkJCQkJaWYgKCByd19yZXF1ZXN0X2lzX2FjdGlvbiggJ3N5bmNfbGljZW5zZScgKSApIHsNCgkJCQkJCWNoZWNrX2FkbWluX3JlZmVyZXIoICdzeW5jX2xpY2Vuc2UnICk7DQoJCQkJCQkkc2l0ZV9wbGFuX3VwZGF0ZSA9IDA7DQoJCQkJCQkkaW5fbGljZW5zZV9zeW5jID0gdHJ1ZTsNCgkJCQkJfQ0KDQoJCQkJCS8vIFVwZGF0ZSBwbGFuIG9uY2UgaW4gZXZlcnkgMjQgaG91cnMuDQoJCQkJCWlmICggZmFsc2UgPT09ICRjdXJyZW50X3NpdGVfcGxhbiB8fCAkc2l0ZV9wbGFuX3VwZGF0ZSA8ICggdGltZSgpIC0gV1BfUldfX1RJTUVfMjRfSE9VUlNfSU5fU0VDICkgKSB7DQoJCQkJCQkvLyBHZXQgcGxhbiBmcm9tIHJlbW90ZSBzZXJ2ZXIgb25jZSBhIGRheS4NCgkJCQkJCXRyeSB7DQoJCQkJCQkJJHNpdGUgPSByd2FwaSgpLT5BcGkoICc/ZmllbGRzPWlkLHBsYW4nICk7DQoNCgkJCQkJCQkvL2lmIChSV0xvZ2dlcjo6SXNPbigpKQ0KCQkJCQkJCS8vUldMb2dnZXI6OkxvZygiY29tbWVudC1pZCIsIHZhcl9leHBvcnQoJHNpdGUsIHRydWUpKTsNCg0KCQkJCQkJfSBjYXRjaCAoIFxFeGNlcHRpb24gJGUgKSB7DQoJCQkJCQkJJHNpdGUgPSBmYWxzZTsNCgkJCQkJCX0NCg0KCQkJCQkJaWYgKCBpc19vYmplY3QoICRzaXRlICkgJiYgaXNzZXQoICRzaXRlLT5pZCApICYmICRzaXRlLT5pZCA9PSBXUF9SV19fU0lURV9JRCApIHsNCgkJCQkJCQkkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQoJCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoNCgkJCQkJCQlpZiAoJGluX2xpY2Vuc2Vfc3luYykgew0KCQkJCQkJCQlpZiAoICRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGVfcGxhbiApIHsNCgkJCQkJCQkJCWFkZF9hY3Rpb24oICdhbGxfYWRtaW5fbm90aWNlcycsIGFycmF5KCAmJHRoaXMsICdMaWNlbnNlU3luY05vdGljZScgKSApOw0KCQkJCQkJCQl9IGVsc2Ugew0KCQkJCQkJCQkJYWRkX2FjdGlvbiggJ2FsbF9hZG1pbl9ub3RpY2VzJywgYXJyYXkoICYkdGhpcywgJ0xpY2Vuc2VTeW5jU2FtZU5vdGljZScgKSApOw0KCQkJCQkJCQl9DQoJCQkJCQkJfQ0KCQkJCQkJfQ0KCQkJCQkJZWxzZQ0KCQkJCQkJew0KCQkJCQkJCWlmICgkaW5fbGljZW5zZV9zeW5jICYmICFyd2FwaSgpLT5UZXN0KCkpDQoJCQkJCQkJew0KCQkJCQkJCQlhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnQXBpQWNjZXNzQmxvY2tlZE5vdGljZScgKSApOw0KCQkJCQkJCX0NCgkJCQkJCX0NCgkJCQkJfQ0KCQkJCX0NCg0KCQkJCWRlZmluZSggJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuICk7DQoNCgkJCQlSV0xvZ2dlcjo6TG9nKCdXUF9SV19fU0lURV9QTEFOJywgJHNpdGVfcGxhbik7DQoNCgkJCQlpZiAoICR1cGRhdGUgKSB7DQoJCQkJCSR0aGlzLT5TZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOLCAkc2l0ZV9wbGFuICk7DQoJCQkJCSR0aGlzLT5TZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgdGltZSgpICk7DQoJCQkJCSR0aGlzLT5fb3B0aW9uc19tYW5hZ2VyLT5zdG9yZSgpOw0KDQovLyAgICAgICAgICAgIGlmICgkY3VycmVudF9zaXRlX3BsYW4gIT09ICRzaXRlLT5wbGFuKQ0KLy8gICAgICAgICAgICB7DQoJCQkJCSR0aGlzLT5DbGVhclRyYW5zaWVudHMoKTsNCi8vICAgICAgICAgICAgfQ0KCQkJCX0NCgkJCQk='));
+				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCAkdGhpcy0+ZnMtPmdldF9zaXRlKCktPnNlY3JldF9rZXkgKSApIHsNCgkJCQkJaWYgKCAnZnJlZScgIT09ICRzaXRlX3BsYW4gKSB7DQoJCQkJCQkkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCX0NCgkJCQl9IGVsc2Ugew0KCQkJCQkkc2l0ZV9wbGFuX3VwZGF0ZSA9ICR0aGlzLT5HZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDAgKTsNCgkJCQkJJGluX2xpY2Vuc2Vfc3luYyA9IGZhbHNlOw0KCQkJCQkvLyBDaGVjayBpZiB1c2VyIGFza2VkIHRvIHN5bmMgbGljZW5zZS4NCgkJCQkJaWYgKCByd19yZXF1ZXN0X2lzX2FjdGlvbiggJ3N5bmNfbGljZW5zZScgKSApIHsNCi8vCQkJCQkJY2hlY2tfYWRtaW5fcmVmZXJlciggJ3N5bmNfbGljZW5zZScgKTsNCgkJCQkJCSRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCgkJCQkJCSRpbl9saWNlbnNlX3N5bmMgPSB0cnVlOw0KCQkJCQl9DQoNCgkJCQkJLy8gVXBkYXRlIHBsYW4gb25jZSBpbiBldmVyeSAyNCBob3Vycy4NCgkJCQkJaWYgKCBmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKCB0aW1lKCkgLSBXUF9SV19fVElNRV8yNF9IT1VSU19JTl9TRUMgKSApIHsNCgkJCQkJCS8vIEdldCBwbGFuIGZyb20gcmVtb3RlIHNlcnZlciBvbmNlIGEgZGF5Lg0KCQkJCQkJdHJ5IHsNCgkJCQkJCQkkc2l0ZSA9IHJ3YXBpKCktPkFwaSggJz9maWVsZHM9aWQscGxhbicgKTsNCg0KCQkJCQkJCS8vaWYgKFJXTG9nZ2VyOjpJc09uKCkpDQoJCQkJCQkJLy9SV0xvZ2dlcjo6TG9nKCJjb21tZW50LWlkIiwgdmFyX2V4cG9ydCgkc2l0ZSwgdHJ1ZSkpOw0KDQoJCQkJCQl9IGNhdGNoICggXEV4Y2VwdGlvbiAkZSApIHsNCgkJCQkJCQkkc2l0ZSA9IGZhbHNlOw0KCQkJCQkJfQ0KDQoJCQkJCQlpZiAoIGlzX29iamVjdCggJHNpdGUgKSAmJiBpc3NldCggJHNpdGUtPmlkICkgJiYgJHNpdGUtPmlkID09IFdQX1JXX19TSVRFX0lEICkgew0KCQkJCQkJCSRzaXRlX3BsYW4gPSAkc2l0ZS0+cGxhbjsNCgkJCQkJCQkkdXBkYXRlICAgID0gdHJ1ZTsNCg0KCQkJCQkJCWlmICgkaW5fbGljZW5zZV9zeW5jKSB7DQoJCQkJCQkJCWlmICggJGN1cnJlbnRfc2l0ZV9wbGFuICE9PSAkc2l0ZV9wbGFuICkgew0KCQkJCQkJCQkJYWRkX2FjdGlvbiggJ2FsbF9hZG1pbl9ub3RpY2VzJywgYXJyYXkoICYkdGhpcywgJ0xpY2Vuc2VTeW5jTm90aWNlJyApICk7DQoJCQkJCQkJCX0gZWxzZSB7DQoJCQkJCQkJCQlhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnTGljZW5zZVN5bmNTYW1lTm90aWNlJyApICk7DQoJCQkJCQkJCX0NCgkJCQkJCQl9DQoJCQkJCQl9DQoJCQkJCQllbHNlDQoJCQkJCQl7DQoJCQkJCQkJaWYgKCRpbl9saWNlbnNlX3N5bmMgJiYgIXJ3YXBpKCktPlRlc3QoKSkNCgkJCQkJCQl7DQoJCQkJCQkJCWFkZF9hY3Rpb24oICdhbGxfYWRtaW5fbm90aWNlcycsIGFycmF5KCAmJHRoaXMsICdBcGlBY2Nlc3NCbG9ja2VkTm90aWNlJyApICk7DQoJCQkJCQkJfQ0KCQkJCQkJfQ0KCQkJCQl9DQoJCQkJfQ0KDQoJCQkJZGVmaW5lKCAnV1BfUldfX1NJVEVfUExBTicsICRzaXRlX3BsYW4gKTsNCg0KCQkJCVJXTG9nZ2VyOjpMb2coJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuKTsNCg0KCQkJCWlmICggJHVwZGF0ZSApIHsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4sICRzaXRlX3BsYW4gKTsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCB0aW1lKCkgKTsNCgkJCQkJJHRoaXMtPl9vcHRpb25zX21hbmFnZXItPnN0b3JlKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJCQkJJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQoJCQkJfQ0KCQkJCQ=='));
 
 				do_action('fs_after_license_loaded');
 			}
@@ -1129,7 +1129,7 @@ Domain Path: /langs
 					// Account activation page includes.
 					rw_enqueue_script('rw_wp_validation', 'rw/validation.js');
 					rw_enqueue_script('rw');
-//            rw_enqueue_script('rw_wp_signup', 'wordpress/signup.php');
+					// rw_enqueue_script('rw_wp_signup', 'wordpress/signup.php');
 					wp_enqueue_script('jquery-postmessage', plugins_url('resources/js/jquery.ba-postmessage.min.js' ,__FILE__ ));
 				}
 				else
@@ -4535,6 +4535,12 @@ Domain Path: /langs
 
 			/* Final Rating-Widget JS attach (before </body>)
     ---------------------------------------------------------------------------------------------------------------*/
+
+			/**
+			 * Generates the main JavaScript which renders all the ratings on the page.
+			 *
+			 * @param bool $pElement
+			 */
 			function rw_attach_rating_js($pElement = false)
 			{
 				if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence("rw_attach_rating_js", $params); }
@@ -5641,7 +5647,7 @@ Domain Path: /langs
 
 			function LicenseSyncSameNotice()
 			{
-				$this->Notice('Hmm... it looks like your license remained the same. If you did upgrade, it\'s probably an issue on our side (sorry). Please contact us <a href="' . rw_get_site_url('/contact/?' . http_build_query(array('topic' => 'Report an Issue', 'email' => WP_RW__OWNER_EMAIL, 'website' => get_site_url(), 'platform' => 'wordpress', 'message' => 'I\'ve upgraded my account but when I try to Sync the License in my WordPress Dashboard -> Ratings -> Account, the license remains the same.' . "\n" . 'Your Upgraded Plan: [REPLACE WITH PLAN NAME]' . "\n" . 'Your PayPal Email: [REPLACE WITH PAYPAL ADDRESS]'))) . '" target="_blank">here</a>.');
+				$this->Notice('Hmm... it looks like your license remained the same. If you did upgrade, it\'s probably an issue on our side (sorry). Please contact us <a href="' . rw_get_site_url('/contact/?' . http_build_query(array('topic' => 'Report an Issue', 'email' => WP_RW__OWNER_EMAIL, 'site_id' => $this->fs->get_site()->id, 'user_id' => $this->fs->get_user()->id, 'website' => get_site_url(), 'platform' => 'wordpress', 'message' => 'I\'ve upgraded my account but when I try to Sync the License in my WordPress Dashboard -> Ratings -> Account, the license remains the same.' . "\n" . 'Your Upgraded Plan: [REPLACE WITH PLAN NAME]' . "\n" . 'Your PayPal Email: [REPLACE WITH PAYPAL ADDRESS]'))) . '" target="_blank">here</a>.');
 			}
 
 			private function TryToConfirmEmail() {
@@ -5684,6 +5690,8 @@ Domain Path: /langs
 				$this->SetOption( WP_RW__DB_OPTION_SITE_ID, $site_id );
 
 				$this->_options_manager->store();
+
+				$this->fs->update_account($user_id, $email, $site_id);
 
 				add_action( 'all_admin_notices', array( &$this, 'SuccessfulEmailConfirmNotice' ) );
 

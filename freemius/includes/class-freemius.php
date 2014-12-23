@@ -15,6 +15,8 @@
 		private $_slug;
 		private $_logger;
 		private $_plugin_basename;
+		private $_plugin_dir_path;
+		private $_plugin_dir_name;
 		private $_plugin_main_file_path;
 		private $_plugin_data;
 
@@ -49,10 +51,19 @@
 			}
 
 			$this->_plugin_main_file_path = $bt[ $i ]['file'];
+			$this->_plugin_dir_path       = plugin_dir_path( $this->_plugin_main_file_path );
 			$this->_plugin_basename       = plugin_basename( $this->_plugin_main_file_path );
 			$this->_plugin_data           = get_plugin_data( $this->_plugin_main_file_path );
 
-			$this->_logger->info( 'plugin_basename = ' . $this->_plugin_basename );
+			$base_name_split = explode('/', $this->_plugin_basename);
+			$this->_plugin_dir_name = $base_name_split[0];
+
+			if ($this->_logger->is_on()) {
+				$this->_logger->info( 'plugin_main_file_path = ' . $this->_plugin_main_file_path );
+				$this->_logger->info( 'plugin_dir_path = ' . $this->_plugin_dir_path );
+				$this->_logger->info( 'plugin_basename = ' . $this->_plugin_basename );
+				$this->_logger->info( 'plugin_dir_name = ' . $this->_plugin_dir_name );
+			}
 
 			// Hook to plugin activation
 			register_activation_hook( $this->_plugin_main_file_path, array( &$this, '_activate_plugin_event' ) );
@@ -108,7 +119,7 @@
 		private function _load_account() {
 			$this->_logger->entrance();
 
-			eval(base64_decode('CgkJCSRzaXRlcyA9IHNlbGY6OiRfYWNjb3VudHMtPmdldF9vcHRpb24oICdzaXRlcycgKTsKCQkJJHVzZXJzID0gc2VsZjo6JF9hY2NvdW50cy0+Z2V0X29wdGlvbiggJ3VzZXJzJyApOwoKCQkJaWYgKCAhIGlzX2FycmF5KCAkc2l0ZXMgKSApIHsKCQkJCSRzaXRlcyA9IGFycmF5KCk7CgkJCX0KCgkJCWlmICggISBpc19hcnJheSggJHVzZXJzICkgKSB7CgkJCQkkdXNlcnMgPSBhcnJheSgpOwoJCQl9CgoJCQlpZiAoICR0aGlzLT5fbG9nZ2VyLT5pc19vbigpICkgewoJCQkJJHRoaXMtPl9sb2dnZXItPmxvZyggJ3NpdGUgPSAnIC4gdmFyX2V4cG9ydCggJHNpdGVzLCB0cnVlICkgKTsKCQkJfQoKCQkJaWYgKCBpc3NldCggJHNpdGVzWyAkdGhpcy0+X3BsdWdpbl9iYXNlbmFtZSBdICkgJiYgaXNfb2JqZWN0KCAkc2l0ZXNbICR0aGlzLT5fcGx1Z2luX2Jhc2VuYW1lIF0gKSApIHsKCQkJCS8vIExvYWQgc2l0ZS4KCQkJCSR0aGlzLT5fc2l0ZSA9ICRzaXRlc1sgJHRoaXMtPl9wbHVnaW5fYmFzZW5hbWUgXTsKCQkJCS8vIExvYWQgcmVsZXZhbnQgdXNlci4KCQkJCSR0aGlzLT5fdXNlciA9ICR1c2Vyc1sgJHRoaXMtPl9zaXRlLT51c2VyX2lkIF07CgkJCX0gZWxzZSB7CgkJCQlzZWxmOjokX3N0YXRpY19sb2dnZXItPmluZm8oICdUcnlpbmcgdG8gbG9hZCBhY2NvdW50IGZyb20gZXh0ZXJuYWwgc291cmNlIHdpdGggJyAuICdmc19sb2FkX2FjY291bnRfJyAuICR0aGlzLT5fc2x1ZyApOwoKCQkJCSRhY2NvdW50ID0gYXBwbHlfZmlsdGVycyggJ2ZzX2xvYWRfYWNjb3VudF8nIC4gJHRoaXMtPl9zbHVnLCBmYWxzZSApOwoKCQkJCWlmICggZmFsc2UgIT09ICRhY2NvdW50ICkgewoJCQkJCSR0aGlzLT5fc2l0ZSA9ICRhY2NvdW50WydzaXRlJ107CgkJCQkJJHRoaXMtPl91c2VyID0gJGFjY291bnRbJ3VzZXInXTsKCgkJCQkJaWYgKCBpc19vYmplY3QoICR0aGlzLT5fc2l0ZSApICkgewoJCQkJCQlzZWxmOjokX3N0YXRpY19sb2dnZXItPmluZm8oICdBY2NvdW50IGxvYWRlZDogdXNlcl9pZCA9ICcgLiAkdGhpcy0+X3VzZXItPmlkIC4gJzsgc2l0ZV9pZCA9ICcgLiAkdGhpcy0+X3NpdGUtPmlkIC4gJzsnICk7CgoJCQkJCQkkdGhpcy0+X3NpdGUtPnNsdWcgICAgICAgICAgICAgICAgPSAkdGhpcy0+X3NsdWc7CgkJCQkJCSR0aGlzLT5fc2l0ZS0+dXNlcl9pZCAgICAgICAgICAgICA9ICR0aGlzLT5fdXNlci0+aWQ7CgkJCQkJCSR0aGlzLT5fc2l0ZS0+dmVyc2lvbiAgICAgICAgICAgICA9ICR0aGlzLT5nZXRfcGx1Z2luX3ZlcnNpb24oKTsKCQkJCQkJJHNpdGVzWyAkdGhpcy0+X3BsdWdpbl9iYXNlbmFtZSBdID0gJHRoaXMtPl9zaXRlOwoJCQkJCQkkdXNlcnNbICR0aGlzLT5fdXNlci0+aWQgXSAgICAgICAgPSAkdGhpcy0+X3VzZXI7CgoJCQkJCQlzZWxmOjokX2FjY291bnRzLT5zZXRfb3B0aW9uKCAnc2l0ZXMnLCAkc2l0ZXMgKTsKCQkJCQkJc2VsZjo6JF9hY2NvdW50cy0+c2V0X29wdGlvbiggJ3VzZXJzJywgJHVzZXJzICk7CgoJCQkJCQkvLyBTdG9yZSBuZXcgYWNjb3VudCBpbmZvcm1hdGlvbiBhZnRlciBsb2FkaW5nIGZyb20gZXh0ZXJuYWwgc291cmNlLgoJCQkJCQlzZWxmOjokX2FjY291bnRzLT5zdG9yZSgpOwoJCQkJCX0KCQkJCX0KCQkJfQoJCQk='));
+			eval(base64_decode('CgkJCSRzaXRlcyA9IHNlbGY6OiRfYWNjb3VudHMtPmdldF9vcHRpb24oICdzaXRlcycgKTsKCQkJJHVzZXJzID0gc2VsZjo6JF9hY2NvdW50cy0+Z2V0X29wdGlvbiggJ3VzZXJzJyApOwoKCQkJaWYgKCAhIGlzX2FycmF5KCAkc2l0ZXMgKSApIHsKCQkJCSRzaXRlcyA9IGFycmF5KCk7CgkJCX0KCgkJCWlmICggISBpc19hcnJheSggJHVzZXJzICkgKSB7CgkJCQkkdXNlcnMgPSBhcnJheSgpOwoJCQl9CgoJCQlpZiAoICR0aGlzLT5fbG9nZ2VyLT5pc19vbigpICYmIGlzX2FkbWluKCkgKSB7CgkJCQkkdGhpcy0+X2xvZ2dlci0+bG9nKCAnc2l0ZSA9ICcgLiB2YXJfZXhwb3J0KCAkc2l0ZXMsIHRydWUgKSApOwoJCQl9CgoJCQlpZiAoIGlzc2V0KCAkc2l0ZXNbICR0aGlzLT5fcGx1Z2luX2Jhc2VuYW1lIF0gKSAmJiBpc19vYmplY3QoICRzaXRlc1sgJHRoaXMtPl9wbHVnaW5fYmFzZW5hbWUgXSApICkgewoJCQkJLy8gTG9hZCBzaXRlLgoJCQkJJHRoaXMtPl9zaXRlID0gJHNpdGVzWyAkdGhpcy0+X3BsdWdpbl9iYXNlbmFtZSBdOwoJCQkJLy8gTG9hZCByZWxldmFudCB1c2VyLgoJCQkJJHRoaXMtPl91c2VyID0gJHVzZXJzWyAkdGhpcy0+X3NpdGUtPnVzZXJfaWQgXTsKCQkJfSBlbHNlIHsKCQkJCXNlbGY6OiRfc3RhdGljX2xvZ2dlci0+aW5mbyggJ1RyeWluZyB0byBsb2FkIGFjY291bnQgZnJvbSBleHRlcm5hbCBzb3VyY2Ugd2l0aCAnIC4gJ2ZzX2xvYWRfYWNjb3VudF8nIC4gJHRoaXMtPl9zbHVnICk7CgoJCQkJJGFjY291bnQgPSBhcHBseV9maWx0ZXJzKCAnZnNfbG9hZF9hY2NvdW50XycgLiAkdGhpcy0+X3NsdWcsIGZhbHNlICk7CgoJCQkJaWYgKCBmYWxzZSAhPT0gJGFjY291bnQgKSB7CgkJCQkJJHRoaXMtPl9zaXRlID0gJGFjY291bnRbJ3NpdGUnXTsKCQkJCQkkdGhpcy0+X3VzZXIgPSAkYWNjb3VudFsndXNlciddOwoKCQkJCQlpZiAoIGlzX29iamVjdCggJHRoaXMtPl9zaXRlICkgKSB7CgkJCQkJCXNlbGY6OiRfc3RhdGljX2xvZ2dlci0+aW5mbyggJ0FjY291bnQgbG9hZGVkOiB1c2VyX2lkID0gJyAuICR0aGlzLT5fdXNlci0+aWQgLiAnOyBzaXRlX2lkID0gJyAuICR0aGlzLT5fc2l0ZS0+aWQgLiAnOycgKTsKCgkJCQkJCSR0aGlzLT5fc2l0ZS0+c2x1ZyAgICAgICAgICAgICAgICA9ICR0aGlzLT5fc2x1ZzsKCQkJCQkJJHRoaXMtPl9zaXRlLT51c2VyX2lkICAgICAgICAgICAgID0gJHRoaXMtPl91c2VyLT5pZDsKCQkJCQkJJHRoaXMtPl9zaXRlLT52ZXJzaW9uICAgICAgICAgICAgID0gJHRoaXMtPmdldF9wbHVnaW5fdmVyc2lvbigpOwoJCQkJCQkkc2l0ZXNbICR0aGlzLT5fcGx1Z2luX2Jhc2VuYW1lIF0gPSAkdGhpcy0+X3NpdGU7CgkJCQkJCSR1c2Vyc1sgJHRoaXMtPl91c2VyLT5pZCBdICAgICAgICA9ICR0aGlzLT5fdXNlcjsKCgkJCQkJCXNlbGY6OiRfYWNjb3VudHMtPnNldF9vcHRpb24oICdzaXRlcycsICRzaXRlcyApOwoJCQkJCQlzZWxmOjokX2FjY291bnRzLT5zZXRfb3B0aW9uKCAndXNlcnMnLCAkdXNlcnMgKTsKCgkJCQkJCS8vIFN0b3JlIG5ldyBhY2NvdW50IGluZm9ybWF0aW9uIGFmdGVyIGxvYWRpbmcgZnJvbSBleHRlcm5hbCBzb3VyY2UuCgkJCQkJCXNlbGY6OiRfYWNjb3VudHMtPnN0b3JlKCk7CgkJCQkJfQoJCQkJfQoJCQl9CgkJCQ=='));
 		}
 
 		function init( $id, $public_key, $options ) {
@@ -249,6 +260,15 @@
 
 		}
 
+		function update_account($user_id, $user_email, $site_id)
+		{
+			$this->_user->id = $user_id;
+			$this->_user->email = $user_email;
+			$this->_site->user_id = $user_id;
+			$this->_site->id = $site_id;
+			$this->_store_account();
+		}
+
 		/* Licensing
 		------------------------------------------------------------------------------------------------------------------*/
 		function _a87ff679a2f3e71d9181a67b7542122c() {
@@ -269,6 +289,11 @@
 			return eval(base64_decode('CgoJCQlyZXR1cm4gZmFsc2U7CgkJCQ=='));
 		}
 
+		function is_feature_supported($feature_id)
+		{
+			throw new Exception('not implemented');
+		}
+
 		function _8f14e45fceea167a5a36dedd4bea2543() {
 			eval(base64_decode('CgkJCXJldHVybgoJCQkJLy8gQ2hlY2tzIGlmIENsb3VkRmxhcmUncyBIVFRQUyAoRmxleGlibGUgU1NMIHN1cHBvcnQpCgkJCQkoIGlzc2V0KCAkX1NFUlZFUlsnSFRUUF9YX0ZPUldBUkRFRF9QUk9UTyddICkgJiYgJ2h0dHBzJyA9PT0gc3RydG9sb3dlciggJF9TRVJWRVJbJ0hUVFBfWF9GT1JXQVJERURfUFJPVE8nXSApICkgfHwKCQkJCS8vIENoZWNrIGlmIEhUVFBTIHJlcXVlc3QuCgkJCQkoIGlzc2V0KCAkX1NFUlZFUlsnSFRUUFMnXSApICYmICdvbicgPT0gJF9TRVJWRVJbJ0hUVFBTJ10gKSB8fAoJCQkJKCBpc3NldCggJF9TRVJWRVJbJ1NFUlZFUl9QT1JUJ10gKSAmJiA0NDMgPT0gJF9TRVJWRVJbJ1NFUlZFUl9QT1JUJ10gKTsKCQkJ'));
 		}
@@ -280,7 +305,22 @@
 		function get_upgrade_url( $plan = WP_FS__PLAN_DEFAULT_PAID, $period = WP_FS__PERIOD_ANNUALLY ) {
 			$this->_logger->entrance();
 
-			return ratingwidget()->GetUpgradeUrl( false, $period, $plan );
+			if (!($this->_site->secret_key) || !defined('WP_RW__SITE_ID'))
+			{
+				// Backwards compatibility //////////////////////////////////////
+				$params = array(
+					'uid' => WP_RW__SITE_PUBLIC_KEY
+				);
+
+				$relative = '/get-the-word-press-plugin/?' . http_build_query($params);
+
+				return rw_get_site_url($relative);
+			}
+			else
+			{
+				// New in-plugin pricing page ////////////////////////////////////////////
+				return fs_get_admin_plugin_url('pricing');
+			}
 		}
 
 		function get_pricing_url( $period = WP_FS__PERIOD_ANNUALLY ) {
@@ -352,7 +392,6 @@
 		------------------------------------------------------------------------------------------------------------------*/
 		private $_has_menu = false;
 		private $_menu_items = array();
-		private $_menu_link_items = array();
 
 		function _redirect_on_clicked_menu_link() {
 			$this->_logger->entrance();
@@ -362,12 +401,14 @@
 			$this->_logger->log( 'page = ' . $page );
 
 
-			foreach ( $this->_menu_link_items as $priority => $items) {
+			foreach ( $this->_menu_items as $priority => $items) {
 				foreach ( $items as $item ) {
-					if ( $page === $item['menu_slug'] ) {
-						$this->_logger->log( 'Redirecting to ' . $item['url'] );
+					if (isset($item['url'])) {
+						if ( $page === $item['menu_slug'] ) {
+							$this->_logger->log( 'Redirecting to ' . $item['url'] );
 
-						fs_redirect( $item['url'] );
+							fs_redirect( $item['url'] );
+						}
 					}
 				}
 			}
@@ -386,33 +427,46 @@
 				array( &$this, '_account_page_load' )
 			);
 
-			foreach ( $this->_menu_items as $item ) {
-				$hook = add_submenu_page(
-					$this->_slug,
-					$item['page_title'],
-					$item['menu_title'],
-					$item['capability'],
-					$item['menu_slug'],
-					$item['render_function']
-				);
 
-				if ( false !== $item['before_render_function'] ) {
-					add_action( "load-$hook", $item['before_render_function'] );
-				}
-			}
+			// Add upgrade/pricing page.
+			$this->add_submenu_item(
+				( $this->_e4da3b7fbbce2345d7772b0674a318d5() ? __( 'Pricing', $this->_slug ) : __( 'Upgrade', $this->_slug ) . '&nbsp;&nbsp;&#x27a4;' ),
+				array( &$this, '_pricing_page_render' ),
+				$this->_plugin_data['Name'] . ' &ndash; ' . __( 'Pricing', $this->_slug ),
+				'manage_options',
+				'pricing',
+				false,
+				WP_FS__LOWEST_PRIORITY
+			);
 
-			ksort($this->_menu_link_items);
 
-			foreach ( $this->_menu_link_items as $priority => $items) {
+			ksort( $this->_menu_items );
+
+			foreach ( $this->_menu_items as $priority => $items ) {
 				foreach ( $items as $item ) {
-					add_submenu_page(
-						$this->_slug,
-						$item['page_title'],
-						$item['menu_title'],
-						$item['capability'],
-						$item['menu_slug'],
-						array( $this, '' )
-					);
+					if (!isset($item['url'])) {
+						$hook = add_submenu_page(
+							$this->_slug,
+							$item['page_title'],
+							$item['menu_title'],
+							$item['capability'],
+							$item['menu_slug'],
+							$item['render_function']
+						);
+
+						if ( false !== $item['before_render_function'] ) {
+							add_action( "load-$hook", $item['before_render_function'] );
+						}
+					}else {
+						add_submenu_page(
+							$this->_slug,
+							$item['page_title'],
+							$item['menu_title'],
+							$item['capability'],
+							$item['menu_slug'],
+							array( $this, '' )
+						);
+					}
 				}
 			}
 		}
@@ -422,10 +476,6 @@
 				return;
 
 			$this->add_submenu_link_item( __( 'Support Forum', $this->_slug ), 'https://wordpress.org/support/plugin/' . $this->_slug, 'wp-support-forum', 'read', 50 );
-
-			if ( ! $this->_e4da3b7fbbce2345d7772b0674a318d5() ) {
-				$this->add_submenu_link_item( '&#9733; ' . __( 'Upgrade', $this->_slug ) . ' &#9733;', $this->get_upgrade_url(), 'upgrade', 'read', 100 );
-			}
 		}
 
 		function set_has_menu() {
@@ -438,10 +488,13 @@
 			return $this->_slug . ( empty( $slug ) ? '' : ( '-' . $slug ) );
 		}
 
-		function add_submenu_item( $menu_title, $render_function, $page_title = false, $capability = 'manage_options', $menu_slug = false, $before_render_function = false ) {
-			$this->_logger->entrance();
+		function add_submenu_item( $menu_title, $render_function, $page_title = false, $capability = 'manage_options', $menu_slug = false, $before_render_function = false, $priority = 10  ) {
+			$this->_logger->entrance('Title = ' . $menu_title );
 
-			$this->_menu_items[] = array(
+			if (!isset($this->_menu_items[$priority]))
+				$this->_menu_items[$priority] = array();
+
+			$this->_menu_items[$priority][] = array(
 				'page_title'             => is_string( $page_title ) ? $page_title : $menu_title,
 				'menu_title'             => $menu_title,
 				'capability'             => $capability,
@@ -456,10 +509,10 @@
 		function add_submenu_link_item( $menu_title, $url, $menu_slug = false, $capability = 'read', $priority = 10 ) {
 			$this->_logger->entrance('Title = ' . $menu_title . '; Url = ' . $url);
 
-			if (!isset($this->_menu_link_items[$priority]))
-				$this->_menu_link_items[$priority] = array();
+			if (!isset($this->_menu_items[$priority]))
+				$this->_menu_items[$priority] = array();
 
-			$this->_menu_link_items[$priority][] = array(
+			$this->_menu_items[$priority][] = array(
 				'menu_title'             => $menu_title,
 				'capability'             => $capability,
 				'menu_slug'              => $this->_get_menu_slug( is_string( $menu_slug ) ? $menu_slug : strtolower( $menu_title ) ),
@@ -497,11 +550,23 @@
 			fs_require_once_template( "admin-notice.php", $vars );
 		}
 
-		private function _store_site()
+		private function _store_site($store = true) {
+			$sites                            = self::$_accounts->get_option( 'sites' );
+			$sites[ $this->_plugin_basename ] = $this->_site;
+			self::$_accounts->set_option( 'sites', $sites, $store );
+		}
+
+		private function _store_user($store = true) {
+			$users                     = self::$_accounts->get_option( 'users' );
+			$users[ $this->_user->id ] = $this->_user;
+			self::$_accounts->set_option( 'users', $users, $store );
+		}
+
+		private function _store_account()
 		{
-			$sites = self::$_accounts->get_option( 'sites' );
-			$sites[ $this->_plugin_basename ] = $this->get_site();
-			self::$_accounts->set_option( 'sites', $sites, true );
+			$this->_store_site(false);
+			$this->_store_user(false);
+			self::$_accounts->store();
 		}
 
 		private function _handle_account_edits()
@@ -550,6 +615,25 @@
 			$vars = array( 'slug' => $this->_slug );
 			fs_require_once_template( 'user-account.php', $vars );
 		}
+
+		/* Pricing & Upgrade
+		------------------------------------------------------------------------------------------------------------------*/
+		function _pricing_page_render() {
+			$this->_logger->entrance();
+
+			$vars = array( 'slug' => $this->_slug );
+			fs_require_once_template( 'pricing.php', $vars );
+		}
+
+		/* CSS & JavaScript
+		------------------------------------------------------------------------------------------------------------------*/
+/*		function _enqueue_script($handle, $src) {
+			$url = plugins_url( substr( WP_FS__DIR_JS, strlen( $this->_plugin_dir_path ) ) . '/assets/js/' . $src );
+
+			$this->_logger->entrance( 'script = ' . $url );
+
+			wp_enqueue_script( $handle, $url );
+		}*/
 
 		/* Action Links
 		------------------------------------------------------------------------------------------------------------------*/
@@ -603,6 +687,9 @@
 			}
 		}
 
+		/**
+		 * Adds Upgrade link to the main Plugins page plugin link actions collection.
+		 */
 		function _add_upgrade_action_link() {
 			$this->_logger->entrance();
 
