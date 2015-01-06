@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.3.3
+Version: 2.3.4
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2
@@ -498,7 +498,7 @@ Domain Path: /langs
 			function LoadPlan() {
 				RWLogger::LogEnterence( "LoadPlan" );
 
-				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCAkdGhpcy0+ZnMtPmdldF9zaXRlKCktPnNlY3JldF9rZXkgKSApIHsNCgkJCQkJaWYgKCAnZnJlZScgIT09ICRzaXRlX3BsYW4gKSB7DQoJCQkJCQkkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCX0NCgkJCQl9IGVsc2Ugew0KCQkJCQkkc2l0ZV9wbGFuX3VwZGF0ZSA9ICR0aGlzLT5HZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDAgKTsNCgkJCQkJJGluX2xpY2Vuc2Vfc3luYyA9IGZhbHNlOw0KCQkJCQkvLyBDaGVjayBpZiB1c2VyIGFza2VkIHRvIHN5bmMgbGljZW5zZS4NCgkJCQkJaWYgKCByd19yZXF1ZXN0X2lzX2FjdGlvbiggJ3N5bmNfbGljZW5zZScgKSApIHsNCi8vCQkJCQkJY2hlY2tfYWRtaW5fcmVmZXJlciggJ3N5bmNfbGljZW5zZScgKTsNCgkJCQkJCSRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCgkJCQkJCSRpbl9saWNlbnNlX3N5bmMgPSB0cnVlOw0KCQkJCQl9DQoNCgkJCQkJLy8gVXBkYXRlIHBsYW4gb25jZSBpbiBldmVyeSAyNCBob3Vycy4NCgkJCQkJaWYgKCBmYWxzZSA9PT0gJGN1cnJlbnRfc2l0ZV9wbGFuIHx8ICRzaXRlX3BsYW5fdXBkYXRlIDwgKCB0aW1lKCkgLSBXUF9SV19fVElNRV8yNF9IT1VSU19JTl9TRUMgKSApIHsNCgkJCQkJCS8vIEdldCBwbGFuIGZyb20gcmVtb3RlIHNlcnZlciBvbmNlIGEgZGF5Lg0KCQkJCQkJdHJ5IHsNCgkJCQkJCQkkc2l0ZSA9IHJ3YXBpKCktPkFwaSggJz9maWVsZHM9aWQscGxhbicgKTsNCg0KCQkJCQkJCS8vaWYgKFJXTG9nZ2VyOjpJc09uKCkpDQoJCQkJCQkJLy9SV0xvZ2dlcjo6TG9nKCJjb21tZW50LWlkIiwgdmFyX2V4cG9ydCgkc2l0ZSwgdHJ1ZSkpOw0KDQoJCQkJCQl9IGNhdGNoICggXEV4Y2VwdGlvbiAkZSApIHsNCgkJCQkJCQkkc2l0ZSA9IGZhbHNlOw0KCQkJCQkJfQ0KDQoJCQkJCQlpZiAoIGlzX29iamVjdCggJHNpdGUgKSAmJiBpc3NldCggJHNpdGUtPmlkICkgJiYgJHNpdGUtPmlkID09IFdQX1JXX19TSVRFX0lEICkgew0KCQkJCQkJCSRzaXRlX3BsYW4gPSAkc2l0ZS0+cGxhbjsNCgkJCQkJCQkkdXBkYXRlICAgID0gdHJ1ZTsNCg0KCQkJCQkJCWlmICgkaW5fbGljZW5zZV9zeW5jKSB7DQoJCQkJCQkJCWlmICggJGN1cnJlbnRfc2l0ZV9wbGFuICE9PSAkc2l0ZV9wbGFuICkgew0KCQkJCQkJCQkJYWRkX2FjdGlvbiggJ2FsbF9hZG1pbl9ub3RpY2VzJywgYXJyYXkoICYkdGhpcywgJ0xpY2Vuc2VTeW5jTm90aWNlJyApICk7DQoJCQkJCQkJCX0gZWxzZSB7DQoJCQkJCQkJCQlhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnTGljZW5zZVN5bmNTYW1lTm90aWNlJyApICk7DQoJCQkJCQkJCX0NCgkJCQkJCQl9DQoJCQkJCQl9DQoJCQkJCQllbHNlDQoJCQkJCQl7DQoJCQkJCQkJaWYgKCRpbl9saWNlbnNlX3N5bmMgJiYgIXJ3YXBpKCktPlRlc3QoKSkNCgkJCQkJCQl7DQoJCQkJCQkJCWFkZF9hY3Rpb24oICdhbGxfYWRtaW5fbm90aWNlcycsIGFycmF5KCAmJHRoaXMsICdBcGlBY2Nlc3NCbG9ja2VkTm90aWNlJyApICk7DQoJCQkJCQkJfQ0KCQkJCQkJfQ0KCQkJCQl9DQoJCQkJfQ0KDQoJCQkJZGVmaW5lKCAnV1BfUldfX1NJVEVfUExBTicsICRzaXRlX3BsYW4gKTsNCg0KCQkJCVJXTG9nZ2VyOjpMb2coJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuKTsNCg0KCQkJCWlmICggJHVwZGF0ZSApIHsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4sICRzaXRlX3BsYW4gKTsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCB0aW1lKCkgKTsNCgkJCQkJJHRoaXMtPl9vcHRpb25zX21hbmFnZXItPnN0b3JlKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJCQkJJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQoJCQkJfQ0KCQkJCQ=='));
+				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KICAgICAgICAgICAgICAgIGlmIChpc19hZG1pbigpKSB7DQogICAgICAgICAgICAgICAgICAgIFJXTG9nZ2VyOjpMb2coJ0xvYWRQbGFuJywgJ2N1cnJlbnRfcGxhbiA9ICcgLiAkY3VycmVudF9zaXRlX3BsYW4pOw0KICAgICAgICAgICAgICAgIH0NCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCAkdGhpcy0+ZnMtPmdldF9zaXRlKCktPnNlY3JldF9rZXkgKSApIHsNCgkJCQkJaWYgKCAnZnJlZScgIT09ICRzaXRlX3BsYW4gKSB7DQoJCQkJCQkkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCX0NCgkJCQl9IGVsc2Ugew0KCQkJCQkkc2l0ZV9wbGFuX3VwZGF0ZSA9ICR0aGlzLT5HZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDAgKTsNCgkJCQkJJGluX2xpY2Vuc2Vfc3luYyA9IGZhbHNlOw0KCQkJCQkvLyBDaGVjayBpZiB1c2VyIGFza2VkIHRvIHN5bmMgbGljZW5zZS4NCgkJCQkJaWYgKCByd19yZXF1ZXN0X2lzX2FjdGlvbiggJ3N5bmNfbGljZW5zZScgKSApIHsNCi8vCQkJCQkJY2hlY2tfYWRtaW5fcmVmZXJlciggJ3N5bmNfbGljZW5zZScgKTsNCgkJCQkJCSRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCgkJCQkJCSRpbl9saWNlbnNlX3N5bmMgPSB0cnVlOw0KCQkJCQl9DQoNCiAgICAgICAgICAgICAgICAgICAgUldMb2dnZXI6OkxvZygnTG9hZFBsYW4nLCAnaW5fbGljZW5zZV9zeW5jID0gJyAuIGpzb25fZW5jb2RlKCRpbl9saWNlbnNlX3N5bmMpKTsNCg0KCQkJCQkvLyBVcGRhdGUgcGxhbiBvbmNlIGluIGV2ZXJ5IDI0IGhvdXJzLg0KCQkJCQlpZiAoIGZhbHNlID09PSAkY3VycmVudF9zaXRlX3BsYW4gfHwgJHNpdGVfcGxhbl91cGRhdGUgPCAoIHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQyApICkgew0KCQkJCQkJLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQoJCQkJCQl0cnkgew0KCQkJCQkJCSRzaXRlID0gcndhcGkoKS0+QXBpKCAnP2ZpZWxkcz1pZCxwbGFuJyApOw0KCQkJCQkJfSBjYXRjaCAoIFxFeGNlcHRpb24gJGUgKSB7DQoJCQkJCQkJJHNpdGUgPSBmYWxzZTsNCgkJCQkJCX0NCg0KCQkJCQkJaWYgKCBpc19vYmplY3QoICRzaXRlICkgJiYgaXNzZXQoICRzaXRlLT5pZCApICYmICRzaXRlLT5pZCA9PSBXUF9SV19fU0lURV9JRCApIHsNCgkJCQkJCQkkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQoJCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoNCgkJCQkJCQlpZiAoJGluX2xpY2Vuc2Vfc3luYykgew0KCQkJCQkJCQlpZiAoICRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGVfcGxhbiApIHsNCgkJCQkJCQkJCWFkZF9hY3Rpb24oICdhbGxfYWRtaW5fbm90aWNlcycsIGFycmF5KCAmJHRoaXMsICdMaWNlbnNlU3luY05vdGljZScgKSApOw0KCQkJCQkJCQl9IGVsc2Ugew0KCQkJCQkJCQkJYWRkX2FjdGlvbiggJ2FsbF9hZG1pbl9ub3RpY2VzJywgYXJyYXkoICYkdGhpcywgJ0xpY2Vuc2VTeW5jU2FtZU5vdGljZScgKSApOw0KCQkJCQkJCQl9DQoJCQkJCQkJfQ0KCQkJCQkJfQ0KCQkJCQkJZWxzZQ0KCQkJCQkJew0KCQkJCQkJCWlmICgkaW5fbGljZW5zZV9zeW5jICYmICFyd2FwaSgpLT5UZXN0KCkpDQoJCQkJCQkJew0KCQkJCQkJCQlhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnQXBpQWNjZXNzQmxvY2tlZE5vdGljZScgKSApOw0KCQkJCQkJCX0NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnQXBpVW5hdXRob3JpemVkQWNjZXNzTm90aWNlJyApICk7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQ0KCQkJCQkJfQ0KCQkJCQl9DQoJCQkJfQ0KDQoJCQkJZGVmaW5lKCAnV1BfUldfX1NJVEVfUExBTicsICRzaXRlX3BsYW4gKTsNCg0KCQkJCVJXTG9nZ2VyOjpMb2coJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuKTsNCg0KCQkJCWlmICggJHVwZGF0ZSApIHsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4sICRzaXRlX3BsYW4gKTsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCB0aW1lKCkgKTsNCgkJCQkJJHRoaXMtPl9vcHRpb25zX21hbmFnZXItPnN0b3JlKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJCQkJJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQoJCQkJfQ0KCQkJCQ=='));
 
 				do_action('fs_after_license_loaded');
 			}
@@ -5343,11 +5343,32 @@ Domain Path: /langs
 					return '';
 
 				$urid = $this->get_rating_id_by_element($pElementID, $pElementClass);
-                                
-                // Get the read-only state of the exact post type, e.g.: post or product
-				if ($this->is_rating_readonly($pElementID, get_post_type($pElementID)))
-                    $pOptions['read-only'] = 'true';
-                                
+
+				// Get the read-only state of the exact post type, e.g.: post or product
+				$is_rating_readonly = $this->is_rating_readonly($pElementID, get_post_type($pElementID));
+
+				if (!$is_rating_readonly) {
+					if ( is_buddypress() ) {
+						// Get the user ID associated with the current BuddyPress page being viewed.
+						$buddypress_user_id = ( 'user' === $pElementClass ) ? $pElementID : $pOwnerID;
+
+						// Set the rating to read-only if the current logged in user ID
+						// is equal to the current BuddyPress user ID.
+						$is_rating_readonly = ( get_current_user_id() == $buddypress_user_id );
+					} else if ( is_bbpress() ) {
+						// Get the user ID associated with the current bbPress item being viewed.
+						$bbpress_user_id = ( 'user' === $pElementClass ) ? $pElementID : $pOwnerID;
+
+						// Set the rating to read-only if the current logged in user ID
+						// is equal to the current bbPress user ID.
+						$is_rating_readonly = ( get_current_user_id() == $bbpress_user_id );
+					}
+				}
+
+				if ($is_rating_readonly) {
+					$pOptions['read-only'] = 'true';
+				}
+
 				if (false === $urid)
 				{
 					foreach ($this->_extensions as $ext)
@@ -5635,12 +5656,17 @@ Domain Path: /langs
 				$this->Notice('W00t! You have successfully confirmed your email address.', 'update-nag success');
 			}
 
-			function ApiAccessBlockedNotice()
-			{
-				$this->Notice('Oops... your server is blocking the access to our API, therefore your license can NOT be synced. <br>Please contact your host to enable remote access to: <ul><li><code><a href="' . RW_API__ADDRESS . '" target="_blank">' . RW_API__ADDRESS . '</a></code></li><li><code><a href="' . WP_RW__ADDRESS . '" target="_blank">' . WP_RW__ADDRESS . '</a></code></li><li><code><a href="' . WP_RW__SECURE_ADDRESS . '" target="_blank">' . WP_RW__SECURE_ADDRESS . '</a></code></li></ul>');
-			}
+            function ApiAccessBlockedNotice()
+            {
+                $this->Notice('Oops... your server is blocking the access to our API, therefore your license can NOT be synced. <br>Please contact your host to enable remote access to: <ul><li><code><a href="' . RW_API__ADDRESS . '" target="_blank">' . RW_API__ADDRESS . '</a></code></li><li><code><a href="' . WP_RW__ADDRESS . '" target="_blank">' . WP_RW__ADDRESS . '</a></code></li><li><code><a href="' . WP_RW__SECURE_ADDRESS . '" target="_blank">' . WP_RW__SECURE_ADDRESS . '</a></code></li></ul>');
+            }
 
-			function LicenseSyncNotice()
+            function ApiUnauthorizedAccessNotice()
+            {
+                $this->Notice('Oops... seems like one of the authentication parameters is wrong. Update your Public Key, Secret Key & User ID, and try again.');
+            }
+
+            function LicenseSyncNotice()
 			{
 				$this->Notice('Ye-ha! Your license has been successfully synced.', 'update-nag success');
 			}
