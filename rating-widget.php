@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.3.4
+Version: 2.3.5
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2
@@ -498,7 +498,84 @@ Domain Path: /langs
 			function LoadPlan() {
 				RWLogger::LogEnterence( "LoadPlan" );
 
-				eval(base64_decode('DQoJCQkJJGN1cnJlbnRfc2l0ZV9wbGFuID0gJHRoaXMtPkdldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4gKTsNCg0KICAgICAgICAgICAgICAgIGlmIChpc19hZG1pbigpKSB7DQogICAgICAgICAgICAgICAgICAgIFJXTG9nZ2VyOjpMb2coJ0xvYWRQbGFuJywgJ2N1cnJlbnRfcGxhbiA9ICcgLiAkY3VycmVudF9zaXRlX3BsYW4pOw0KICAgICAgICAgICAgICAgIH0NCg0KCQkJCSRzaXRlX3BsYW4gPSAkY3VycmVudF9zaXRlX3BsYW47DQoNCgkJCQkkdXBkYXRlID0gZmFsc2U7DQoNCgkJCQlpZiAoICEgaXNfc3RyaW5nKCAkdGhpcy0+ZnMtPmdldF9zaXRlKCktPnNlY3JldF9rZXkgKSApIHsNCgkJCQkJaWYgKCAnZnJlZScgIT09ICRzaXRlX3BsYW4gKSB7DQoJCQkJCQkkc2l0ZV9wbGFuID0gJ2ZyZWUnOw0KCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoJCQkJCX0NCgkJCQl9IGVsc2Ugew0KCQkJCQkkc2l0ZV9wbGFuX3VwZGF0ZSA9ICR0aGlzLT5HZXRPcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9QTEFOX1VQREFURSwgZmFsc2UsIDAgKTsNCgkJCQkJJGluX2xpY2Vuc2Vfc3luYyA9IGZhbHNlOw0KCQkJCQkvLyBDaGVjayBpZiB1c2VyIGFza2VkIHRvIHN5bmMgbGljZW5zZS4NCgkJCQkJaWYgKCByd19yZXF1ZXN0X2lzX2FjdGlvbiggJ3N5bmNfbGljZW5zZScgKSApIHsNCi8vCQkJCQkJY2hlY2tfYWRtaW5fcmVmZXJlciggJ3N5bmNfbGljZW5zZScgKTsNCgkJCQkJCSRzaXRlX3BsYW5fdXBkYXRlID0gMDsNCgkJCQkJCSRpbl9saWNlbnNlX3N5bmMgPSB0cnVlOw0KCQkJCQl9DQoNCiAgICAgICAgICAgICAgICAgICAgUldMb2dnZXI6OkxvZygnTG9hZFBsYW4nLCAnaW5fbGljZW5zZV9zeW5jID0gJyAuIGpzb25fZW5jb2RlKCRpbl9saWNlbnNlX3N5bmMpKTsNCg0KCQkJCQkvLyBVcGRhdGUgcGxhbiBvbmNlIGluIGV2ZXJ5IDI0IGhvdXJzLg0KCQkJCQlpZiAoIGZhbHNlID09PSAkY3VycmVudF9zaXRlX3BsYW4gfHwgJHNpdGVfcGxhbl91cGRhdGUgPCAoIHRpbWUoKSAtIFdQX1JXX19USU1FXzI0X0hPVVJTX0lOX1NFQyApICkgew0KCQkJCQkJLy8gR2V0IHBsYW4gZnJvbSByZW1vdGUgc2VydmVyIG9uY2UgYSBkYXkuDQoJCQkJCQl0cnkgew0KCQkJCQkJCSRzaXRlID0gcndhcGkoKS0+QXBpKCAnP2ZpZWxkcz1pZCxwbGFuJyApOw0KCQkJCQkJfSBjYXRjaCAoIFxFeGNlcHRpb24gJGUgKSB7DQoJCQkJCQkJJHNpdGUgPSBmYWxzZTsNCgkJCQkJCX0NCg0KCQkJCQkJaWYgKCBpc19vYmplY3QoICRzaXRlICkgJiYgaXNzZXQoICRzaXRlLT5pZCApICYmICRzaXRlLT5pZCA9PSBXUF9SV19fU0lURV9JRCApIHsNCgkJCQkJCQkkc2l0ZV9wbGFuID0gJHNpdGUtPnBsYW47DQoJCQkJCQkJJHVwZGF0ZSAgICA9IHRydWU7DQoNCgkJCQkJCQlpZiAoJGluX2xpY2Vuc2Vfc3luYykgew0KCQkJCQkJCQlpZiAoICRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGVfcGxhbiApIHsNCgkJCQkJCQkJCWFkZF9hY3Rpb24oICdhbGxfYWRtaW5fbm90aWNlcycsIGFycmF5KCAmJHRoaXMsICdMaWNlbnNlU3luY05vdGljZScgKSApOw0KCQkJCQkJCQl9IGVsc2Ugew0KCQkJCQkJCQkJYWRkX2FjdGlvbiggJ2FsbF9hZG1pbl9ub3RpY2VzJywgYXJyYXkoICYkdGhpcywgJ0xpY2Vuc2VTeW5jU2FtZU5vdGljZScgKSApOw0KCQkJCQkJCQl9DQoJCQkJCQkJfQ0KCQkJCQkJfQ0KCQkJCQkJZWxzZQ0KCQkJCQkJew0KCQkJCQkJCWlmICgkaW5fbGljZW5zZV9zeW5jICYmICFyd2FwaSgpLT5UZXN0KCkpDQoJCQkJCQkJew0KCQkJCQkJCQlhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnQXBpQWNjZXNzQmxvY2tlZE5vdGljZScgKSApOw0KCQkJCQkJCX0NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgew0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhZGRfYWN0aW9uKCAnYWxsX2FkbWluX25vdGljZXMnLCBhcnJheSggJiR0aGlzLCAnQXBpVW5hdXRob3JpemVkQWNjZXNzTm90aWNlJyApICk7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQ0KCQkJCQkJfQ0KCQkJCQl9DQoJCQkJfQ0KDQoJCQkJZGVmaW5lKCAnV1BfUldfX1NJVEVfUExBTicsICRzaXRlX3BsYW4gKTsNCg0KCQkJCVJXTG9nZ2VyOjpMb2coJ1dQX1JXX19TSVRFX1BMQU4nLCAkc2l0ZV9wbGFuKTsNCg0KCQkJCWlmICggJHVwZGF0ZSApIHsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU4sICRzaXRlX3BsYW4gKTsNCgkJCQkJJHRoaXMtPlNldE9wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BMQU5fVVBEQVRFLCB0aW1lKCkgKTsNCgkJCQkJJHRoaXMtPl9vcHRpb25zX21hbmFnZXItPnN0b3JlKCk7DQoNCi8vICAgICAgICAgICAgaWYgKCRjdXJyZW50X3NpdGVfcGxhbiAhPT0gJHNpdGUtPnBsYW4pDQovLyAgICAgICAgICAgIHsNCgkJCQkJJHRoaXMtPkNsZWFyVHJhbnNpZW50cygpOw0KLy8gICAgICAgICAgICB9DQoJCQkJfQ0KCQkJCQ=='));
+				
+				$current_site_plan = $this->GetOption( WP_RW__DB_OPTION_SITE_PLAN );
+
+                if (is_admin()) {
+                    RWLogger::Log('LoadPlan', 'current_plan = ' . $current_site_plan);
+                }
+
+				$site_plan = $current_site_plan;
+
+				$update = false;
+
+				if ( ! is_string( $this->fs->get_site()->secret_key ) ) {
+					if ( 'free' !== $site_plan ) {
+						$site_plan = 'free';
+						$update    = true;
+					}
+				} else {
+					$site_plan_update = $this->GetOption( WP_RW__DB_OPTION_SITE_PLAN_UPDATE, false, 0 );
+					$in_license_sync = false;
+					// Check if user asked to sync license.
+					if ( rw_request_is_action( 'sync_license' ) ) {
+//						check_admin_referer( 'sync_license' );
+						$site_plan_update = 0;
+						$in_license_sync = true;
+					}
+
+                    RWLogger::Log('LoadPlan', 'in_license_sync = ' . json_encode($in_license_sync));
+
+					// Update plan once in every 24 hours.
+					if ( false === $current_site_plan || $site_plan_update < ( time() - WP_RW__TIME_24_HOURS_IN_SEC ) ) {
+						// Get plan from remote server once a day.
+						try {
+							$site = rwapi()->Api( '?fields=id,plan' );
+						} catch ( \Exception $e ) {
+							$site = false;
+						}
+
+						if ( is_object( $site ) && isset( $site->id ) && $site->id == WP_RW__SITE_ID ) {
+							$site_plan = $site->plan;
+							$update    = true;
+
+							if ($in_license_sync) {
+								if ( $current_site_plan !== $site_plan ) {
+									add_action( 'all_admin_notices', array( &$this, 'LicenseSyncNotice' ) );
+								} else {
+									add_action( 'all_admin_notices', array( &$this, 'LicenseSyncSameNotice' ) );
+								}
+							}
+						}
+						else
+						{
+							if ($in_license_sync && !rwapi()->Test())
+							{
+								add_action( 'all_admin_notices', array( &$this, 'ApiAccessBlockedNotice' ) );
+							}
+                            else
+                            {
+                                add_action( 'all_admin_notices', array( &$this, 'ApiUnauthorizedAccessNotice' ) );
+                            }
+						}
+					}
+				}
+
+				define( 'WP_RW__SITE_PLAN', $site_plan );
+
+				RWLogger::Log('WP_RW__SITE_PLAN', $site_plan);
+
+				if ( $update ) {
+					$this->SetOption( WP_RW__DB_OPTION_SITE_PLAN, $site_plan );
+					$this->SetOption( WP_RW__DB_OPTION_SITE_PLAN_UPDATE, time() );
+					$this->_options_manager->store();
+
+//            if ($current_site_plan !== $site->plan)
+//            {
+					$this->ClearTransients();
+//            }
+				}
+				
 
 				do_action('fs_after_license_loaded');
 			}
@@ -1200,7 +1277,9 @@ Domain Path: /langs
 
 			function _cfcd208495d565ef66e7dff9f98764da()
 			{
-				return eval(base64_decode('DQoJCQkJcmV0dXJuICgndHJpYWwnID09PSBXUF9SV19fU0lURV9QTEFOKTsNCgkJCQk='));
+				
+				return ('trial' === WP_RW__SITE_PLAN);
+				
 			}
 
 			function _c4ca4238a0b923820dcc509a6f75849b()
@@ -1210,12 +1289,19 @@ Domain Path: /langs
 
 			function _c81e728d9d4c2f636f067f89cc14862c()
 			{
-				return eval(base64_decode('DQoJCQkJcmV0dXJuICghaXNfc3RyaW5nKCR0aGlzLT5mcy0+Z2V0X3NpdGUoKS0+c2VjcmV0X2tleSkgfHwgJ2ZyZWUnID09PSBXUF9SV19fU0lURV9QTEFOIHx8ICdiYXNpYycgPT09IFdQX1JXX19TSVRFX1BMQU4pOw0KCQkJCQ=='));
+				
+				return (!is_string($this->fs->get_site()->secret_key) || 'free' === WP_RW__SITE_PLAN || 'basic' === WP_RW__SITE_PLAN);
+				
 			}
 
 			function _eccbc87e4b5ce2fe28308fd9f2a7baf3()
 			{
-				return eval(base64_decode('DQoJCQkJaWYgKCR0aGlzLT5fY2ZjZDIwODQ5NWQ1NjVlZjY2ZTdkZmY5Zjk4NzY0ZGEoKSkNCgkJCQkJcmV0dXJuIHRydWU7DQoNCgkJCQlyZXR1cm4gKGlzX3N0cmluZygkdGhpcy0+ZnMtPmdldF9zaXRlKCktPnNlY3JldF9rZXkpICYmICgncHJvZmVzc2lvbmFsJyA9PT0gV1BfUldfX1NJVEVfUExBTiB8fCAncHJlbWl1bScgPT09IFdQX1JXX19TSVRFX1BMQU4gfHwgJ2J1c2luZXNzJyA9PT0gV1BfUldfX1NJVEVfUExBTikpOw0KCQkJCQ=='));
+				
+				if ($this->_cfcd208495d565ef66e7dff9f98764da())
+					return true;
+
+				return (is_string($this->fs->get_site()->secret_key) && ('professional' === WP_RW__SITE_PLAN || 'premium' === WP_RW__SITE_PLAN || 'business' === WP_RW__SITE_PLAN));
+				
 			}
 
 			/**
@@ -3857,7 +3943,44 @@ Domain Path: /langs
 
 				$rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
 
-				eval(base64_decode('DQoJCQkJaWYgKHRydWUgPT09ICRwQWRkU2NoZW1hICYmICdmcm9udC1wb3N0JyAhPT0gJHBFbGVtZW50Q2xhc3MgJiYgJHRoaXMtPl9lY2NiYzg3ZTRiNWNlMmZlMjgzMDhmZDlmMmE3YmFmMygpKQ0KCQkJCXsNCgkJCQkJUldMb2dnZXI6OkxvZygnR2V0UmF0aW5nSHRtbCcsICJBZGRpbmcgc2NoZW1hIGZvcjogdXJpZD17JHBVcmlkfTsgcmNsYXNzPXskcEVsZW1lbnRDbGFzc30iKTsNCg0KCQkJCQkkZGF0YSA9ICR0aGlzLT5HZXRSYXRpbmdEYXRhQnlSYXRpbmdJRCgkcFVyaWQsIDIpOw0KDQoJCQkJCWlmIChmYWxzZSAhPT0gJGRhdGEgJiYgJGRhdGFbJ3ZvdGVzJ10gPiAwKQ0KCQkJCQl7DQoJCQkJCQlpZiAoZmFsc2UgIT09IHN0cnBvcygkcEVsZW1lbnRDbGFzcywgJ3Byb2R1Y3QnKSkNCgkJCQkJCXsNCgkJCQkJCQkvLyBXb29Db21tZXJjZSBpcyBhbHJlYWR5IGFkZGluZyBhbGwgdGhlIHByb2R1Y3Qgc2NoZW1hIG1ldGFkYXRhLg0KCQkJCQkJCS8qJHNjaGVtYV9yb290ID0gJ2l0ZW1zY29wZSBpdGVtdHlwZT0iaHR0cDovL3NjaGVtYS5vcmcvUHJvZHVjdCInOw0KCQkJCQkJCSRzY2hlbWFfdGl0bGVfcHJvcCA9ICdpdGVtcHJvcD0ibmFtZSInOw0KCQkJCQkJCSovDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgJHJhdGluZ19odG1sIC49ICc+JzsNCgkJCQkJCX0NCgkJCQkJCWVsc2UNCgkJCQkJCXsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJyBpdGVtc2NvcGUgaXRlbXR5cGU9Imh0dHA6Ly9zY2hlbWEub3JnL0FydGljbGUiPic7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKCFlbXB0eSgkcFRpdGxlKSkNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJHJhdGluZ19odG1sIC49ICc8bWV0YSBpdGVtcHJvcD0ibmFtZSIgY29udGVudD0iJyAuIGVzY19hdHRyKCRwVGl0bGUpIC4gJyIgLz4nOw0KLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgJHJhdGluZ19odG1sIC49ICc8bWV0YSBpdGVtcHJvcD0iZGVzY3JpcHRpb24iIGNvbnRlbnQ9IicgLiBlc2NfYXR0cigkcFRpdGxlKSAuICciIC8+JzsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWVtcHR5KCRwUGVybWFpbmspKQ0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAkcmF0aW5nX2h0bWwgLj0gJzxtZXRhIGl0ZW1wcm9wPSJ1cmwiIGNvbnRlbnQ9IicgLiBlc2NfYXR0cigkcFBlcm1haW5rKSAuICciIC8+JzsNCgkJCQkJCX0NCg0KLy8JCQkJCQkkdGl0bGUgPSBtYl9jb252ZXJ0X3RvX3V0ZjgodHJpbSgkcFRpdGxlKSk7DQoJCQkJCQkkcmF0aW5nX2h0bWwgLj0gJw0KICAgIDxkaXYgaXRlbXByb3A9ImFnZ3JlZ2F0ZVJhdGluZyIgaXRlbXNjb3BlIGl0ZW10eXBlPSJodHRwOi8vc2NoZW1hLm9yZy9BZ2dyZWdhdGVSYXRpbmciPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0id29yc3RSYXRpbmciIGNvbnRlbnQ9IjAiIC8+DQogICAgICAgIDxtZXRhIGl0ZW1wcm9wPSJiZXN0UmF0aW5nIiBjb250ZW50PSI1IiAvPg0KICAgICAgICA8bWV0YSBpdGVtcHJvcD0icmF0aW5nVmFsdWUiIGNvbnRlbnQ9IicgLiAkZGF0YVsncmF0ZSddIC4gJyIgLz4NCiAgICAgICAgPG1ldGEgaXRlbXByb3A9InJhdGluZ0NvdW50IiBjb250ZW50PSInIC4gJGRhdGFbJ3ZvdGVzJ10gLiAnIiAvPg0KICAgIDwvZGl2JzsNCgkJCQkJfQ0KCQkJCX0NCgkJCQk='));
+				
+				if (true === $pAddSchema && 'front-post' !== $pElementClass && $this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+				{
+					RWLogger::Log('GetRatingHtml', "Adding schema for: urid={$pUrid}; rclass={$pElementClass}");
+
+					$data = $this->GetRatingDataByRatingID($pUrid, 2);
+
+					if (false !== $data && $data['votes'] > 0)
+					{
+						if (false !== strpos($pElementClass, 'product'))
+						{
+							// WooCommerce is already adding all the product schema metadata.
+							/*$schema_root = 'itemscope itemtype="http://schema.org/Product"';
+							$schema_title_prop = 'itemprop="name"';
+							*/
+                            $rating_html .= '>';
+						}
+						else
+						{
+                            $rating_html .= ' itemscope itemtype="http://schema.org/Article">';
+                            if (!empty($pTitle))
+                                $rating_html .= '<meta itemprop="name" content="' . esc_attr($pTitle) . '" />';
+//                            $rating_html .= '<meta itemprop="description" content="' . esc_attr($pTitle) . '" />';
+                            if (!empty($pPermaink))
+                                $rating_html .= '<meta itemprop="url" content="' . esc_attr($pPermaink) . '" />';
+						}
+
+//						$title = mb_convert_to_utf8(trim($pTitle));
+						$rating_html .= '
+    <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+        <meta itemprop="worstRating" content="0" />
+        <meta itemprop="bestRating" content="5" />
+        <meta itemprop="ratingValue" content="' . $data['rate'] . '" />
+        <meta itemprop="ratingCount" content="' . $data['votes'] . '" />
+    </div';
+					}
+				}
+				
 
 				$rating_html .= '></div>';
 
@@ -4243,7 +4366,33 @@ Domain Path: /langs
 
 			function SetupBBPress()
 			{
-				eval(base64_decode('DQoJCQkJaWYgKFJXTG9nZ2VyOjpJc09uKCkpDQoJCQkJCVJXTG9nZ2VyOjpMb2dFbnRlcmVuY2UoIlNldHVwQkJQcmVzcyIpOw0KDQoJCQkJaWYgKCEkdGhpcy0+X2VjY2JjODdlNGI1Y2UyZmUyODMwOGZkOWYyYTdiYWYzKCkpDQoJCQkJew0KCQkJCQlkZWZpbmUoJ1dQX1JXX19CQlBfSU5TVEFMTEVEJywgZmFsc2UpOw0KCQkJCX0NCgkJCQllbHNlDQoJCQkJew0KCQkJCQlkZWZpbmUoJ1dQX1JXX19CQlBfQ09ORklHX0xPQ0FUSU9OJywgZ2V0X3NpdGVfb3B0aW9uKCdiYi1jb25maWctbG9jYXRpb24nLCAnJykpOw0KDQoJCQkJCWlmICghZGVmaW5lZCgnV1BfUldfX0JCUF9JTlNUQUxMRUQnKSkNCgkJCQkJew0KCQkJCQkJaWYgKCcnICE9PSBXUF9SV19fQkJQX0NPTkZJR19MT0NBVElPTikNCgkJCQkJCQlkZWZpbmUoJ1dQX1JXX19CQlBfSU5TVEFMTEVEJywgdHJ1ZSk7DQoJCQkJCQllbHNlDQoJCQkJCQl7DQoJCQkJCQkJaW5jbHVkZV9vbmNlKEFCU1BBVEggLiAnd3AtYWRtaW4vaW5jbHVkZXMvcGx1Z2luLnBocCcpOw0KCQkJCQkJCWRlZmluZSgnV1BfUldfX0JCUF9JTlNUQUxMRUQnLCBpc19wbHVnaW5fYWN0aXZlKCdiYnByZXNzL2JicHJlc3MucGhwJykpOw0KCQkJCQkJfQ0KCQkJCQl9DQoJCQkJfQ0KDQoJCQkJaWYgKFdQX1JXX19CQlBfSU5TVEFMTEVEICYmICFpc19hZG1pbigpIC8qICYmIGlzX2JicHJlc3MoKSovKQ0KCQkJCQkkdGhpcy0+U2V0dXBCQlByZXNzQWN0aW9ucygpOw0KCQkJCQ=='));
+				
+				if (RWLogger::IsOn())
+					RWLogger::LogEnterence("SetupBBPress");
+
+				if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+				{
+					define('WP_RW__BBP_INSTALLED', false);
+				}
+				else
+				{
+					define('WP_RW__BBP_CONFIG_LOCATION', get_site_option('bb-config-location', ''));
+
+					if (!defined('WP_RW__BBP_INSTALLED'))
+					{
+						if ('' !== WP_RW__BBP_CONFIG_LOCATION)
+							define('WP_RW__BBP_INSTALLED', true);
+						else
+						{
+							include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+							define('WP_RW__BBP_INSTALLED', is_plugin_active('bbpress/bbpress.php'));
+						}
+					}
+				}
+
+				if (WP_RW__BBP_INSTALLED && !is_admin() /* && is_bbpress()*/)
+					$this->SetupBBPressActions();
+				
 			}
 
 			function SetupBBPressActions()
@@ -4640,7 +4789,7 @@ Domain Path: /langs
                     ?>,
 									source: "wordpress",
 									options: {
-									<?php if (eval(base64_decode('cmV0dXJuICgkdGhpcy0+X2VjY2JjODdlNGI1Y2UyZmUyODMwOGZkOWYyYTdiYWYzKCkgJiYgZGVmaW5lZCgnSUNMX0xBTkdVQUdFX0NPREUnKSAmJiBpc3NldCgkdGhpcy0+bGFuZ3VhZ2VzW0lDTF9MQU5HVUFHRV9DT0RFXSkpOw=='))) : ?>
+									<?php if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && defined('ICL_LANGUAGE_CODE') && isset($this->languages[ICL_LANGUAGE_CODE])) : ?>
 									lng: "<?php echo ICL_LANGUAGE_CODE; ?>"
 									<?php endif; ?>
 								},
@@ -5348,22 +5497,22 @@ Domain Path: /langs
 				$is_rating_readonly = $this->is_rating_readonly($pElementID, get_post_type($pElementID));
 
 				if (!$is_rating_readonly) {
-					if ( is_buddypress() ) {
-						// Get the user ID associated with the current BuddyPress page being viewed.
-						$buddypress_user_id = ( 'user' === $pElementClass ) ? $pElementID : $pOwnerID;
+                    if (function_exists('is_buddypress') && is_buddypress()) {
+                        // Get the user ID associated with the current BuddyPress page being viewed.
+                        $buddypress_user_id = ('user' === $pElementClass) ? $pElementID : $pOwnerID;
 
-						// Set the rating to read-only if the current logged in user ID
-						// is equal to the current BuddyPress user ID.
-						$is_rating_readonly = ( get_current_user_id() == $buddypress_user_id );
-					} else if ( is_bbpress() ) {
-						// Get the user ID associated with the current bbPress item being viewed.
-						$bbpress_user_id = ( 'user' === $pElementClass ) ? $pElementID : $pOwnerID;
+                        // Set the rating to read-only if the current logged in user ID
+                        // is equal to the current BuddyPress user ID.
+                        $is_rating_readonly = (get_current_user_id() == $buddypress_user_id);
+                    } else if (function_exists('is_bbpress') && is_bbpress()) {
+                        // Get the user ID associated with the current bbPress item being viewed.
+                        $bbpress_user_id = ('user' === $pElementClass) ? $pElementID : $pOwnerID;
 
-						// Set the rating to read-only if the current logged in user ID
-						// is equal to the current bbPress user ID.
-						$is_rating_readonly = ( get_current_user_id() == $bbpress_user_id );
-					}
-				}
+                        // Set the rating to read-only if the current logged in user ID
+                        // is equal to the current bbPress user ID.
+                        $is_rating_readonly = (get_current_user_id() == $bbpress_user_id);
+                    }
+                }
 
 				if ($is_rating_readonly) {
 					$pOptions['read-only'] = 'true';
@@ -5817,7 +5966,71 @@ Domain Path: /langs
 		 */
 		function rw_fs_load_external_account()
 		{
-			return eval(base64_decode('DQoJCQkkb3B0aW9ucyA9IEZTX09wdGlvbl9NYW5hZ2VyOjpnZXRfbWFuYWdlcihXUF9SV19fT1BUSU9OUywgdHJ1ZSk7DQoNCgkJCSRzaXRlX3B1YmxpY19rZXkgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX1BVQkxJQ19LRVksIGZhbHNlICk7DQoJCQkkc2l0ZV9pZCAgICAgICAgID0gJG9wdGlvbnMtPmdldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9JRCwgZmFsc2UgKTsNCgkJCSRvd25lcl9pZCAgICAgICAgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCwgZmFsc2UgKTsNCgkJCSRvd25lcl9lbWFpbCAgICAgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9FTUFJTCwgZmFsc2UgKTsNCg0KCQkJJHVwZGF0ZSA9IGZhbHNlOw0KDQoJCQlpZiAoICEgZGVmaW5lZCggJ1dQX1JXX19TSVRFX1BVQkxJQ19LRVknICkgKSB7DQoJCQkJZGVmaW5lKCAnV1BfUldfX1NJVEVfUFVCTElDX0tFWScsICRzaXRlX3B1YmxpY19rZXkgKTsNCgkJCQlkZWZpbmUoICdXUF9SV19fU0lURV9JRCcsICRzaXRlX2lkICk7DQoJCQkJZGVmaW5lKCAnV1BfUldfX09XTkVSX0lEJywgJG93bmVyX2lkICk7DQoJCQkJZGVmaW5lKCAnV1BfUldfX09XTkVSX0VNQUlMJywgJG93bmVyX2VtYWlsICk7DQoJCQl9IGVsc2Ugew0KCQkJCWlmICggaXNfc3RyaW5nKCBXUF9SV19fU0lURV9QVUJMSUNfS0VZICkgJiYgV1BfUldfX1NJVEVfUFVCTElDX0tFWSAhPT0gJHNpdGVfcHVibGljX2tleSApIHsNCgkJCQkJLy8gT3ZlcnJpZGUgdXNlciBrZXkuDQoJCQkJCSRvcHRpb25zLT5zZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfUFVCTElDX0tFWSwgV1BfUldfX1NJVEVfUFVCTElDX0tFWSApOw0KCQkJCQkkb3B0aW9ucy0+c2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9TSVRFX0lELCBXUF9SV19fU0lURV9JRCApOw0KCQkJCQlpZiAoIGRlZmluZWQoICdXUF9SV19fT1dORVJfSUQnICkgKSB7DQoJCQkJCQkkb3B0aW9ucy0+c2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCwgV1BfUldfX09XTkVSX0lEICk7DQoJCQkJCX0NCgkJCQkJaWYgKCBkZWZpbmVkKCAnV1BfUldfX09XTkVSX0VNQUlMJyApICkgew0KCQkJCQkJJG9wdGlvbnMtPnNldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fT1dORVJfRU1BSUwsIFdQX1JXX19PV05FUl9FTUFJTCApOw0KCQkJCQl9DQoNCgkJCQkJJHVwZGF0ZSA9IHRydWU7DQoJCQkJfQ0KCQkJfQ0KDQoJCQkkc2VjcmV0X2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX1NJVEVfU0VDUkVUX0tFWSwgZmFsc2UgKTsNCg0KCQkJaWYgKCAhIGRlZmluZWQoICdXUF9SV19fU0lURV9TRUNSRVRfS0VZJyApICkgew0KCQkJCWRlZmluZSggJ1dQX1JXX19TSVRFX1NFQ1JFVF9LRVknLCAkc2VjcmV0X2tleSApOw0KCQkJfSBlbHNlIHsNCgkJCQlpZiAoIGlzX3N0cmluZyggV1BfUldfX1NJVEVfU0VDUkVUX0tFWSApICYmIFdQX1JXX19TSVRFX1NFQ1JFVF9LRVkgIT09ICRzZWNyZXRfa2V5ICkgew0KCQkJCQkvLyBPdmVycmlkZSB1c2VyIGtleS4NCgkJCQkJJG9wdGlvbnMtPnNldF9vcHRpb24oIFdQX1JXX19EQl9PUFRJT05fU0lURV9TRUNSRVRfS0VZLCBXUF9SV19fU0lURV9TRUNSRVRfS0VZICk7DQoNCgkJCQkJJHVwZGF0ZSA9IHRydWU7DQoJCQkJfQ0KCQkJfQ0KDQoJCQlpZiAoICR1cGRhdGUgKSB7DQoJCQkJJG9wdGlvbnMtPnN0b3JlKCk7DQoJCQl9DQoNCgkJCSRzaXRlID0gZmFsc2U7DQoJCQkkdXNlciA9IGZhbHNlOw0KDQoJCQlpZiAoZmFsc2UgIT09IFdQX1JXX19TSVRFX1BVQkxJQ19LRVkpIHsNCgkJCQkkc2l0ZSA9IG5ldyBGU19TaXRlKCk7DQoJCQkJJHNpdGUtPmlkID0gJG9wdGlvbnMtPmdldF9vcHRpb24oV1BfUldfX0RCX09QVElPTl9TSVRFX0lEKTsNCgkJCQkkc2l0ZS0+cHVibGljX2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9QVUJMSUNfS0VZKTsNCgkJCQkkc2l0ZS0+c2VjcmV0X2tleSA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKFdQX1JXX19EQl9PUFRJT05fU0lURV9TRUNSRVRfS0VZKTsNCg0KCQkJCSR1c2VyID0gbmV3IEZTX1VzZXIoKTsNCgkJCQkkdXNlci0+aWQgPSAkb3B0aW9ucy0+Z2V0X29wdGlvbiggV1BfUldfX0RCX09QVElPTl9PV05FUl9JRCApOw0KCQkJCSR1c2VyLT5lbWFpbCA9ICRvcHRpb25zLT5nZXRfb3B0aW9uKCBXUF9SV19fREJfT1BUSU9OX09XTkVSX0VNQUlMICk7DQoJCQl9DQoNCgkJCXJldHVybiBhcnJheSgndXNlcicgPT4gJHVzZXIsICdzaXRlJyA9PiAkc2l0ZSk7DQoNCgkJCQ=='));
+			
+			$options = FS_Option_Manager::get_manager(WP_RW__OPTIONS, true);
+
+			$site_public_key = $options->get_option( WP_RW__DB_OPTION_SITE_PUBLIC_KEY, false );
+			$site_id         = $options->get_option( WP_RW__DB_OPTION_SITE_ID, false );
+			$owner_id        = $options->get_option( WP_RW__DB_OPTION_OWNER_ID, false );
+			$owner_email     = $options->get_option( WP_RW__DB_OPTION_OWNER_EMAIL, false );
+
+			$update = false;
+
+			if ( ! defined( 'WP_RW__SITE_PUBLIC_KEY' ) ) {
+				define( 'WP_RW__SITE_PUBLIC_KEY', $site_public_key );
+				define( 'WP_RW__SITE_ID', $site_id );
+				define( 'WP_RW__OWNER_ID', $owner_id );
+				define( 'WP_RW__OWNER_EMAIL', $owner_email );
+			} else {
+				if ( is_string( WP_RW__SITE_PUBLIC_KEY ) && WP_RW__SITE_PUBLIC_KEY !== $site_public_key ) {
+					// Override user key.
+					$options->set_option( WP_RW__DB_OPTION_SITE_PUBLIC_KEY, WP_RW__SITE_PUBLIC_KEY );
+					$options->set_option( WP_RW__DB_OPTION_SITE_ID, WP_RW__SITE_ID );
+					if ( defined( 'WP_RW__OWNER_ID' ) ) {
+						$options->set_option( WP_RW__DB_OPTION_OWNER_ID, WP_RW__OWNER_ID );
+					}
+					if ( defined( 'WP_RW__OWNER_EMAIL' ) ) {
+						$options->set_option( WP_RW__DB_OPTION_OWNER_EMAIL, WP_RW__OWNER_EMAIL );
+					}
+
+					$update = true;
+				}
+			}
+
+			$secret_key = $options->get_option( WP_RW__DB_OPTION_SITE_SECRET_KEY, false );
+
+			if ( ! defined( 'WP_RW__SITE_SECRET_KEY' ) ) {
+				define( 'WP_RW__SITE_SECRET_KEY', $secret_key );
+			} else {
+				if ( is_string( WP_RW__SITE_SECRET_KEY ) && WP_RW__SITE_SECRET_KEY !== $secret_key ) {
+					// Override user key.
+					$options->set_option( WP_RW__DB_OPTION_SITE_SECRET_KEY, WP_RW__SITE_SECRET_KEY );
+
+					$update = true;
+				}
+			}
+
+			if ( $update ) {
+				$options->store();
+			}
+
+			$site = false;
+			$user = false;
+
+			if (false !== WP_RW__SITE_PUBLIC_KEY) {
+				$site = new FS_Site();
+				$site->id = $options->get_option(WP_RW__DB_OPTION_SITE_ID);
+				$site->public_key = $options->get_option(WP_RW__DB_OPTION_SITE_PUBLIC_KEY);
+				$site->secret_key = $options->get_option(WP_RW__DB_OPTION_SITE_SECRET_KEY);
+
+				$user = new FS_User();
+				$user->id = $options->get_option( WP_RW__DB_OPTION_OWNER_ID );
+				$user->email = $options->get_option( WP_RW__DB_OPTION_OWNER_EMAIL );
+			}
+
+			return array('user' => $user, 'site' => $site);
+
+			
 		}
 
 		add_filter('fs_load_account_' . WP_RW__ID, 'rw_fs_load_external_account');

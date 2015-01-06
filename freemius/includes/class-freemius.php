@@ -119,7 +119,54 @@
 		private function _load_account() {
 			$this->_logger->entrance();
 
-			eval(base64_decode('CgkJCSRzaXRlcyA9IHNlbGY6OiRfYWNjb3VudHMtPmdldF9vcHRpb24oICdzaXRlcycgKTsKCQkJJHVzZXJzID0gc2VsZjo6JF9hY2NvdW50cy0+Z2V0X29wdGlvbiggJ3VzZXJzJyApOwoKCQkJaWYgKCAhIGlzX2FycmF5KCAkc2l0ZXMgKSApIHsKCQkJCSRzaXRlcyA9IGFycmF5KCk7CgkJCX0KCgkJCWlmICggISBpc19hcnJheSggJHVzZXJzICkgKSB7CgkJCQkkdXNlcnMgPSBhcnJheSgpOwoJCQl9CgoJCQlpZiAoICR0aGlzLT5fbG9nZ2VyLT5pc19vbigpICYmIGlzX2FkbWluKCkgKSB7CgkJCQkkdGhpcy0+X2xvZ2dlci0+bG9nKCAnc2l0ZSA9ICcgLiB2YXJfZXhwb3J0KCAkc2l0ZXMsIHRydWUgKSApOwoJCQl9CgoJCQlpZiAoIGlzc2V0KCAkc2l0ZXNbICR0aGlzLT5fcGx1Z2luX2Jhc2VuYW1lIF0gKSAmJiBpc19vYmplY3QoICRzaXRlc1sgJHRoaXMtPl9wbHVnaW5fYmFzZW5hbWUgXSApICkgewoJCQkJLy8gTG9hZCBzaXRlLgoJCQkJJHRoaXMtPl9zaXRlID0gJHNpdGVzWyAkdGhpcy0+X3BsdWdpbl9iYXNlbmFtZSBdOwoJCQkJLy8gTG9hZCByZWxldmFudCB1c2VyLgoJCQkJJHRoaXMtPl91c2VyID0gJHVzZXJzWyAkdGhpcy0+X3NpdGUtPnVzZXJfaWQgXTsKCQkJfSBlbHNlIHsKCQkJCXNlbGY6OiRfc3RhdGljX2xvZ2dlci0+aW5mbyggJ1RyeWluZyB0byBsb2FkIGFjY291bnQgZnJvbSBleHRlcm5hbCBzb3VyY2Ugd2l0aCAnIC4gJ2ZzX2xvYWRfYWNjb3VudF8nIC4gJHRoaXMtPl9zbHVnICk7CgoJCQkJJGFjY291bnQgPSBhcHBseV9maWx0ZXJzKCAnZnNfbG9hZF9hY2NvdW50XycgLiAkdGhpcy0+X3NsdWcsIGZhbHNlICk7CgoJCQkJaWYgKCBmYWxzZSAhPT0gJGFjY291bnQgKSB7CgkJCQkJJHRoaXMtPl9zaXRlID0gJGFjY291bnRbJ3NpdGUnXTsKCQkJCQkkdGhpcy0+X3VzZXIgPSAkYWNjb3VudFsndXNlciddOwoKCQkJCQlpZiAoIGlzX29iamVjdCggJHRoaXMtPl9zaXRlICkgKSB7CgkJCQkJCXNlbGY6OiRfc3RhdGljX2xvZ2dlci0+aW5mbyggJ0FjY291bnQgbG9hZGVkOiB1c2VyX2lkID0gJyAuICR0aGlzLT5fdXNlci0+aWQgLiAnOyBzaXRlX2lkID0gJyAuICR0aGlzLT5fc2l0ZS0+aWQgLiAnOycgKTsKCgkJCQkJCSR0aGlzLT5fc2l0ZS0+c2x1ZyAgICAgICAgICAgICAgICA9ICR0aGlzLT5fc2x1ZzsKCQkJCQkJJHRoaXMtPl9zaXRlLT51c2VyX2lkICAgICAgICAgICAgID0gJHRoaXMtPl91c2VyLT5pZDsKCQkJCQkJJHRoaXMtPl9zaXRlLT52ZXJzaW9uICAgICAgICAgICAgID0gJHRoaXMtPmdldF9wbHVnaW5fdmVyc2lvbigpOwoJCQkJCQkkc2l0ZXNbICR0aGlzLT5fcGx1Z2luX2Jhc2VuYW1lIF0gPSAkdGhpcy0+X3NpdGU7CgkJCQkJCSR1c2Vyc1sgJHRoaXMtPl91c2VyLT5pZCBdICAgICAgICA9ICR0aGlzLT5fdXNlcjsKCgkJCQkJCXNlbGY6OiRfYWNjb3VudHMtPnNldF9vcHRpb24oICdzaXRlcycsICRzaXRlcyApOwoJCQkJCQlzZWxmOjokX2FjY291bnRzLT5zZXRfb3B0aW9uKCAndXNlcnMnLCAkdXNlcnMgKTsKCgkJCQkJCS8vIFN0b3JlIG5ldyBhY2NvdW50IGluZm9ybWF0aW9uIGFmdGVyIGxvYWRpbmcgZnJvbSBleHRlcm5hbCBzb3VyY2UuCgkJCQkJCXNlbGY6OiRfYWNjb3VudHMtPnN0b3JlKCk7CgkJCQkJfQoJCQkJfQoJCQl9CgkJCQ=='));
+			
+			$sites = self::$_accounts->get_option( 'sites' );
+			$users = self::$_accounts->get_option( 'users' );
+
+			if ( ! is_array( $sites ) ) {
+				$sites = array();
+			}
+
+			if ( ! is_array( $users ) ) {
+				$users = array();
+			}
+
+			if ( $this->_logger->is_on() && is_admin() ) {
+				$this->_logger->log( 'site = ' . var_export( $sites, true ) );
+			}
+
+			if ( isset( $sites[ $this->_plugin_basename ] ) && is_object( $sites[ $this->_plugin_basename ] ) ) {
+				// Load site.
+				$this->_site = $sites[ $this->_plugin_basename ];
+				// Load relevant user.
+				$this->_user = $users[ $this->_site->user_id ];
+			} else {
+				self::$_static_logger->info( 'Trying to load account from external source with ' . 'fs_load_account_' . $this->_slug );
+
+				$account = apply_filters( 'fs_load_account_' . $this->_slug, false );
+
+				if ( false !== $account ) {
+					$this->_site = $account['site'];
+					$this->_user = $account['user'];
+
+					if ( is_object( $this->_site ) ) {
+						self::$_static_logger->info( 'Account loaded: user_id = ' . $this->_user->id . '; site_id = ' . $this->_site->id . ';' );
+
+						$this->_site->slug                = $this->_slug;
+						$this->_site->user_id             = $this->_user->id;
+						$this->_site->version             = $this->get_plugin_version();
+						$sites[ $this->_plugin_basename ] = $this->_site;
+						$users[ $this->_user->id ]        = $this->_user;
+
+						self::$_accounts->set_option( 'sites', $sites );
+						self::$_accounts->set_option( 'users', $users );
+
+						// Store new account information after loading from external source.
+						self::$_accounts->store();
+					}
+				}
+			}
+			
 		}
 
 		function init( $id, $public_key, $options ) {
@@ -274,19 +321,28 @@
 		function _a87ff679a2f3e71d9181a67b7542122c() {
 			$this->_logger->entrance();
 
-			return eval(base64_decode('CgoJCQlyZXR1cm4gcmF0aW5nd2lkZ2V0KCktPl9jZmNkMjA4NDk1ZDU2NWVmNjZlN2RmZjlmOTg3NjRkYSgpOwoJCQk='));
+			
+
+			return ratingwidget()->_cfcd208495d565ef66e7dff9f98764da();
+			
 		}
 
 		function _e4da3b7fbbce2345d7772b0674a318d5() {
 			$this->_logger->entrance();
 
-			return eval(base64_decode('CgoJCQlyZXR1cm4gcmF0aW5nd2lkZ2V0KCktPl9jNGNhNDIzOGEwYjkyMzgyMGRjYzUwOWE2Zjc1ODQ5YigpOwoJCQk='));
+			
+
+			return ratingwidget()->_c4ca4238a0b923820dcc509a6f75849b();
+			
 		}
 
 		function _1679091c5a880faf6fb5e6087eb1b2dc( $plan, $exact = false ) {
 			$this->_logger->entrance();
 
-			return eval(base64_decode('CgoJCQlyZXR1cm4gZmFsc2U7CgkJCQ=='));
+			
+
+			return false;
+			
 		}
 
 		function is_feature_supported($feature_id)
@@ -295,7 +351,14 @@
 		}
 
 		function _8f14e45fceea167a5a36dedd4bea2543() {
-			eval(base64_decode('CgkJCXJldHVybgoJCQkJLy8gQ2hlY2tzIGlmIENsb3VkRmxhcmUncyBIVFRQUyAoRmxleGlibGUgU1NMIHN1cHBvcnQpCgkJCQkoIGlzc2V0KCAkX1NFUlZFUlsnSFRUUF9YX0ZPUldBUkRFRF9QUk9UTyddICkgJiYgJ2h0dHBzJyA9PT0gc3RydG9sb3dlciggJF9TRVJWRVJbJ0hUVFBfWF9GT1JXQVJERURfUFJPVE8nXSApICkgfHwKCQkJCS8vIENoZWNrIGlmIEhUVFBTIHJlcXVlc3QuCgkJCQkoIGlzc2V0KCAkX1NFUlZFUlsnSFRUUFMnXSApICYmICdvbicgPT0gJF9TRVJWRVJbJ0hUVFBTJ10gKSB8fAoJCQkJKCBpc3NldCggJF9TRVJWRVJbJ1NFUlZFUl9QT1JUJ10gKSAmJiA0NDMgPT0gJF9TRVJWRVJbJ1NFUlZFUl9QT1JUJ10gKTsKCQkJ'));
+			
+			return
+				// Checks if CloudFlare's HTTPS (Flexible SSL support)
+				( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === strtolower( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) ||
+				// Check if HTTPS request.
+				( isset( $_SERVER['HTTPS'] ) && 'on' == $_SERVER['HTTPS'] ) ||
+				( isset( $_SERVER['SERVER_PORT'] ) && 443 == $_SERVER['SERVER_PORT'] );
+			
 		}
 
 		function _c9f0f895fb98ab9159f51fd0297e236d( $plan, $exact = false ) {
