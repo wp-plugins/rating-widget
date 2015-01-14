@@ -318,25 +318,25 @@
 
 		/* Licensing
 		------------------------------------------------------------------------------------------------------------------*/
-		function _a87ff679a2f3e71d9181a67b7542122c() {
+		function _rw_compare_with_prev() {
 			$this->_logger->entrance();
 
 			
 
-			return ratingwidget()->_cfcd208495d565ef66e7dff9f98764da();
+			return ratingwidget()->_rw_potential();
 			
 		}
 
-		function _e4da3b7fbbce2345d7772b0674a318d5() {
+		function _rw_execute_over() {
 			$this->_logger->entrance();
 
 			
 
-			return ratingwidget()->_c4ca4238a0b923820dcc509a6f75849b();
+			return ratingwidget()->_rw_setup_extension();
 			
 		}
 
-		function _1679091c5a880faf6fb5e6087eb1b2dc( $plan, $exact = false ) {
+		function _rw_worker_test( $plan, $exact = false ) {
 			$this->_logger->entrance();
 
 			
@@ -350,7 +350,7 @@
 			throw new Exception('not implemented');
 		}
 
-		function _8f14e45fceea167a5a36dedd4bea2543() {
+		function _rw_wp_check() {
 			
 			return
 				// Checks if CloudFlare's HTTPS (Flexible SSL support)
@@ -361,8 +361,8 @@
 			
 		}
 
-		function _c9f0f895fb98ab9159f51fd0297e236d( $plan, $exact = false ) {
-			return ( $this->_8f14e45fceea167a5a36dedd4bea2543() && $this->_1679091c5a880faf6fb5e6087eb1b2dc( $plan, $exact ) );
+		function _rw_progress_report( $plan, $exact = false ) {
+			return ( $this->_rw_wp_check() && $this->_rw_worker_test( $plan, $exact ) );
 		}
 
 		function get_upgrade_url( $plan = WP_FS__PLAN_DEFAULT_PAID, $period = WP_FS__PERIOD_ANNUALLY ) {
@@ -493,7 +493,7 @@
 
 			// Add upgrade/pricing page.
 			$this->add_submenu_item(
-				( $this->_e4da3b7fbbce2345d7772b0674a318d5() ? __( 'Pricing', $this->_slug ) : __( 'Upgrade', $this->_slug ) . '&nbsp;&nbsp;&#x27a4;' ),
+				( $this->_rw_execute_over() ? __( 'Pricing', $this->_slug ) : __( 'Upgrade', $this->_slug ) . '&nbsp;&nbsp;&#x27a4;' ),
 				array( &$this, '_pricing_page_render' ),
 				$this->_plugin_data['Name'] . ' &ndash; ' . __( 'Pricing', $this->_slug ),
 				'manage_options',
@@ -756,7 +756,7 @@
 		function _add_upgrade_action_link() {
 			$this->_logger->entrance();
 
-			if ( ! $this->_e4da3b7fbbce2345d7772b0674a318d5() ) {
+			if ( ! $this->_rw_execute_over() ) {
 				$this->add_plugin_action_link( __( 'Upgrade', $this->_slug ), $this->get_upgrade_url(), true, 20, 'upgrade' );
 			}
 		}

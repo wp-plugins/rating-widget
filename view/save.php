@@ -5,7 +5,7 @@
             <input type="hidden" name="<?php echo rw_settings()->form_hidden_field_name; ?>" value="Y">
             <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
             <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
-            <?php if (!rw_fs()->_e4da3b7fbbce2345d7772b0674a318d5()) : ?>
+            <?php if (!rw_fs()->_rw_execute_over()) : ?>
             <a href="<?php echo rw_fs()->get_upgrade_url() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button"><?php _e('Upgrade Now!', WP_RW__ID) ?></a>
             <?php endif; ?>
         </p>

@@ -1,7 +1,18 @@
 <?php
+	$class = rtrim(rw_settings_rating_type(), 's');
+	$has_multi_rating = ratingwidget()->has_multirating_options($class);
+	
+	if ($has_multi_rating) {
+		$multirating_options = ratingwidget()->multirating_settings_list->{$class};
+		
+		// Check if there are more than one criteria so that we can hide or show additional options
+		$total_criteria = count($multirating_options->criteria);
+		$is_multicriteria = $total_criteria > 1;
+	}
+	
     $options = rw_options();
 ?>
-<div id="rw_wp_preview" class="postbox rw-body">
+<div id="rw_wp_preview" class="postbox rw-body<?php echo $is_multicriteria ? ' multi-rating' : ''; echo ' rw-' . $options->advanced->layout->dir; ?>">
     <table cellpadding="0" cellspacing="0" style="float: right;height: 45px;">
         <tr>
             <td style="vertical-align: middle;">
@@ -26,33 +37,140 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
             </td>
         </tr>
     </table>
-    <h3>Live Preview</h3>
-    
+	<h3>Live Preview</h3>
+	
     <div class="inside" style="padding: 10px;">
-        <div id="rw_preview_container" style="text-align: <?php
-            if ($options->advanced->layout->align->ver != "middle")
-            {
-                echo "center";
-            }
-            else
-            {
-                if ($options->advanced->layout->align->hor == "right"){
-                    echo "left";
-                }else{
-                    echo "right";
-                }
-            }
-        ?>;">
-            <div id="rw_preview_star" class="rw-ui-container rw-urid-3" data-sync="false"></div>
-            <div id="rw_preview_nero" class="rw-ui-container rw-ui-nero rw-urid-17" data-sync="false" style="display: none;"></div>
-        </div>
+		<div id="rw-preview-scrollable">
+			<div id="rw_preview_container" style="text-align: <?php
+				if ($options->advanced->layout->align->ver != "middle")
+				{
+					echo "center";
+				}
+				else
+				{
+					if ($options->advanced->layout->align->hor == "right"){
+						echo "left";
+					}else{
+						echo "right";
+					}
+				}
+			?>;">
+				<?php
+				if ($has_multi_rating) { ?>
+					<!--
+						The base rating widgets whose options are used as the basis for initializing the
+						criteria widgets' options.
+					-->
+					<div id="base-rating" style="display: none;">
+						<div class="rw-ui-container rw-urid-3" data-sync="false"></div>
+						<div class="rw-ui-container rw-ui-nero rw-urid-17" data-sync="false"></div>
+					</div>
+					<table class="rw-preview rw-preview-<?php echo $options->type; ?>">
+						<?php
+						foreach ($multirating_options->criteria as $criteria_id => $criteria) {
+						?>
+							<tr class="rw-rating" data-cid="<?php echo $criteria_id; ?>">
+								<td>
+									<span class="rw-add-label"><a href="#" data-placeholder="<?php _e('Add Label', WP_RW__ID); ?>" class="<?php echo (isset($criteria['label']) && $criteria['label'] != __('Add Label', WP_RW__ID)) ? 'has-custom-value' : ''; ?>"><nobr><?php echo (isset($criteria['label']) ? $criteria['label'] : __('Add Label', WP_RW__ID)); ?></nobr></a></span>
+								</td>
+								<td class="rw-rating-type">
+									<div class="rw-ui-container rw-ui-star rw-urid-<?php echo $criteria_id; ?>0" data-uarid="<?php echo $multirating_options->summary_preview_rating_star_urid; ?>"></div>
+									<div class="rw-ui-container rw-ui-nero rw-urid-<?php echo $criteria_id; ?>1" data-uarid="<?php echo $multirating_options->summary_preview_rating_nero_urid; ?>"></div>
+								</td>
+								<td class="rw-action">
+									<span class="rw-remove"><a href="#" class="rw-remove-button"></a></span>
+								</td>
+								<input type="hidden" class="multi-rating-label" name="multi_rating[criteria][<?php echo $criteria_id; ?>][label]" value="<?php echo (isset($criteria['label']) ? $criteria['label'] : ''); ?>" />
+							</tr>
+						<?php
+						}
+						?>
+						<tr class="rw-add-rating-container">
+							<td colspan="3">
+								<div class="rw-dash">
+									<?php
+                                        $upgrade_label_text = __('Upgrade to Professional for Unlimited Criteria', WP_RW__ID);
+									if ($total_criteria >= 3 && !ratingwidget()->_rw_is_running()) { ?>
+									<a class="rw-add-rating upgrade" href="<?php echo rw_fs()->get_upgrade_url(); ?>" data-upgrade-href="<?php echo rw_fs()->get_upgrade_url(); ?>" data-upgrade-text="[+] <?php echo $upgrade_label_text ?>" data-default-text="[+] <?php _e('Add Rating / Criteria', WP_RW__ID); ?>">[+] <?php echo $upgrade_label_text ?></a>
+									<?php
+									} else { ?>
+									<a class="rw-add-rating" href="#" data-upgrade-href="<?php echo rw_fs()->get_upgrade_url(); ?>" data-upgrade-text="[+] <?php echo $upgrade_label_text ?>" data-default-text="[+] <?php _e('Add Rating / Criteria', WP_RW__ID); ?>">[+] <?php _e('Add Rating / Criteria', WP_RW__ID); ?></a>
+									<?php
+									}
+									?>
+								</div>
+								<div class="summary-rating-option">
+									<label><input type="checkbox" class="show-summary-rating" name="multi_rating[show_summary_rating]" <?php checked(true, $multirating_options->show_summary_rating); ?>/> <?php _e('Show Summary Rating', WP_RW__ID); ?></label>
+								</div>
+							</td>
+						</tr>
+						<tr class="rw-summary-rating" data-cid="1" style="<?php echo $multirating_options->show_summary_rating ? '' : 'display: none'; ?>">
+                            <?php $summary_label = (isset($multirating_options->summary_label) && $multirating_options->summary_label != __('Add Label', WP_RW__ID)) ? $multirating_options->summary_label : '' ?>
+							<td>
+								<span class="rw-add-label rw-summary-label"><a href="#" data-placeholder="<?php _e('Add Label', WP_RW__ID); ?>" class="<?php echo !empty($summary_label) ? 'has-custom-value' : ''; ?>"><nobr><?php echo (!empty($summary_label) ? $summary_label : __('Add Label', WP_RW__ID)); ?></nobr></a></span>
+							</td>
+							<td colspan="2">
+								<div class="rw-ui-container rw-ui-star rw-urid-<?php echo $multirating_options->summary_preview_rating_star_urid; ?>" data-read-only="true"></div>
+								<div class="rw-ui-container rw-ui-nero rw-urid-<?php echo $multirating_options->summary_preview_rating_nero_urid; ?>" data-read-only="true"></div>
+							</td>
+							<input type="hidden" class="multi-rating-label" name="multi_rating[summary_label]" value="<?php echo $summary_label; ?>" />
+							<input type="hidden" name="multi_rating[summary_preview_rating_star_urid]" value="<?php echo $multirating_options->summary_preview_rating_star_urid; ?>" />
+							<input type="hidden" name="multi_rating[summary_preview_rating_nero_urid]" value="<?php echo $multirating_options->summary_preview_rating_nero_urid; ?>" />
+						</tr>
+						<tr class="rw-template-rating" data-cid="0">
+							<td>
+								<span class="rw-add-label"><a href="#" data-placeholder="<?php _e('Add Label', WP_RW__ID); ?>"><nobr><?php _e('Add Label', WP_RW__ID); ?></nobr></a></span>
+							</td>
+							<td class="rw-rating-type">
+								<div class="rw-ui-star"></div>
+								<div class="rw-ui-nero"></div>
+							</td>
+							<td class="rw-action">
+								<span class="rw-remove"><a href="#" class="rw-remove-button"></a></span>
+							</td>
+							<input type="hidden" class="multi-rating-label" />
+						</tr>
+					</table>
+				<?php
+				} else { ?>
+					<div id="rw_preview_star" class="rw-ui-container rw-urid-3" data-sync="false"></div>
+					<div id="rw_preview_nero" class="rw-ui-container rw-ui-nero rw-urid-17" data-sync="false" style="display: none;"></div>
+				<?php
+				}
+				?>
+			</div>
+
+			<?php
+			if ($has_multi_rating) { ?>
+				<h3><?php _e('Multi-Rating Options', WP_RW__ID); ?></h3>
+				<div id="multi-rating-options">
+					<div>
+						<label><input type="checkbox" class="hide-info-bubble" <?php checked(false, $options->showInfo); ?>> <?php _e('Hide Info Bubble', WP_RW__ID); ?></label>
+					</div>
+					<div>
+						<label><input type="checkbox" class="author-rating-readonly" <?php checked(true, $options->readOnly); ?>> <?php _e('Author Rating (readOnly for visitors)', WP_RW__ID); ?></label>
+					</div>
+				</div>
+			<?php
+			}
+			?>
+		</div>
+		
         <div class="rw-js-container">
             <script type="text/javascript">
                 var rwStar, rwNero;
-                
+				
+				function getSummaryPreviewRatingUrid(type) {
+					if (type == RW.TYPE.STAR) {
+						return <?php echo $multirating_options->summary_preview_rating_star_urid; ?>;
+					} else {
+						return <?php echo $multirating_options->summary_preview_rating_nero_urid; ?>;
+					}
+				}
+				
                 // Initialize ratings.
-                function RW_Async_Init(){
-                    RW.init("cfcd208495d565ef66e7dff9f98764da");
+                function RW_Async_Init() {
+                    RW.init('<?php echo rw_fs()->get_site()->public_key ?>');
                     <?php
                         $b_type = $options->type;
                         $b_theme = $options->theme;
@@ -81,9 +199,9 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
                         $options->style = $b_style;                        
                     ?>);
                     <?php
-                        }
-                    ?>
-                    RW.render(function(ratings){
+					}
+					?>
+                    RW.render(function(ratings) {
                         rwStar = RWM.STAR = ratings[3].getInstances(0);
                         rwNero = RWM.NERO = ratings[17].getInstances(0);
                         
@@ -125,7 +243,7 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
                                 RW._addCustomImgStyle(RWT[t].options.imgUrl.large, [RWT[t].options.type], "theme", t);
                             }
                         }
-
+						
                         RWM.Code.refresh();
                     }, false);
                 }
@@ -145,7 +263,7 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
             <input type="hidden" id="rw_options_hidden" name="rw_options" value="" />
 
             <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes', WP_RW__ID) ?>" />
-            <?php if (!rw_fs()->_e4da3b7fbbce2345d7772b0674a318d5()) : ?>
+            <?php if (!rw_fs()->_rw_execute_over()) : ?>
             <a href="<?php echo rw_fs()->get_upgrade_url() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button-secondary gradient rw-upgrade-button" style="float: right;"><?php _e('Upgrade Now!', WP_RW__ID) ?></a>
             <?php endif; ?>
             <span style="margin: 0 10px; font-size: 1em; float: right; line-height: 30px;"><b style="font-size: 24px;vertical-align: top;color: #999;">&#9829;</b> <?php _e('Like it?', WP_RW__ID) ?>  <a href="http://wordpress.org/support/view/plugin-reviews/rating-widget?rate=5#postform" target="_blank" style="

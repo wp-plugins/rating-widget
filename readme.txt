@@ -4,12 +4,14 @@ Donate link: http://rating-widget.com/pricing/wordpress/
 Tags: rate, rating, ratings, vote, votes, voting, star, stars, like, dislike, thumbs, widget, widgets, star rating, thumb rating, rating platform, rating system, seo, post rating, comment rating, 5 star, five star, sidebar, comment, comments, post, posts, page, pages, google, admin, administrator, review, reviews, rich-snippets, plugin, plugins, ajax, buddypress, bbpress, social, javascript, js, wordpress, meta, woocommerce, jquery, contest, competition, voting contest, rtmedia
 Requires at least: 2.8
 Tested up to: 4.0
-Stable tag: 2.3.5
+Stable tag: 2.3.6
 License: GPLv2 or later
 
 The most popular Five Star Rating System on the web. User-friendly ratings for: posts, pages, comments, WooCommerce, BuddyPress and bbPress forums.
 
 == Description ==
+
+#### New! Multi-Criteria Ratings is now fully supported!
 
 #### Ratings for your:
 * Posts
@@ -39,7 +41,7 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with 
 > * Secure Connection (Fraud protection)
 > * Power User Settings
 > * BuddyPress Ratings
-> * 50k pageviews / month
+> * 50k PageViews / month
 > * 1,000 ratings
 > * Unlimited votes
 > * Email Support & [Help Center](http://rating-widget.com/support/)
@@ -50,12 +52,13 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with 
 > * Management Dashboard
 > * Analytics
 > * **Especially for Voting Contests** - Visitor by IP identification
+> * Unlimited Multi-Criterion (Multi-Criteria Rating)
 > * SSL / HTTPS Support
 > * API Access
 > * Custom Ratings Image
 > * WMPL Language Auto-Selection
 > * bbPress's Forum Ratings
-> * 250k pageviews / month
+> * 250k PageViews / month
 > * 3,000 ratings
 > * Unlimited votes
 > * Priority Email Support & [Help Center](http://rating-widget.com/support/)
@@ -68,7 +71,7 @@ The plugin has [PRO VERSIONS](http://rating-widget.com/pricing/wordpress/) with 
 > * Fraud Alerts
 > * Data Export
 > * Mobile Optimized
-> * 1M pageviews / month
+> * 1M PageViews / month
 > * 10,000 ratings
 > * Unlimited votes
 > * Phone, Email & Chat Support
@@ -116,7 +119,7 @@ Check our full features list: http://rating-widget.com/wordpress-plugin/
 4. Ratings on a posts
 5. Ratings on comments
 6. Ratings on BuddyPress activity updates & comments
-7. Ratings on bbPress forum replys and replys authors'
+7. Ratings on bbPress forum replies and replies authors'
 8. Top Rated widget
 9. Ratings options
 10. Ratings advanced font options
@@ -180,6 +183,10 @@ If you didn't find a solution to your problem yet, check out our [WordPress Know
 The RatingWidget Team
 
 == Change Log ==
+= 2.3.6 =
+* New: First release of our new awesome Multi-Criteria ratings support!
+* Fix: Fixed Jeegy's Barrels starts theme.
+
 = 2.3.5 =
 * Fix: Fixed a small warning bug for non bbPress & BuddyPress users.
 * Fix: Turned all code to human-readable.

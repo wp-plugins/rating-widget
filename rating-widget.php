@@ -3,7 +3,7 @@
 Plugin Name: Rating-Widget: Star Rating System
 Plugin URI: http://rating-widget.com/wordpress-plugin/
 Description: Create and manage Rating-Widget ratings in WordPress.
-Version: 2.3.5
+Version: 2.3.6
 Author: Rating-Widget
 Author URI: http://rating-widget.com/wordpress-plugin/
 License: GPLv2
@@ -55,6 +55,7 @@ Domain Path: /langs
 			var $show_on_excerpts_list;
 			var $custom_settings_enabled_list;
 			var $custom_settings_list;
+			var $multirating_settings_list;
 			var $_inDashboard = false;
 			var $_isRegistered = false;
 			var $_inBuddyPress;
@@ -149,6 +150,9 @@ Domain Path: /langs
 				 *   on RTL WP versions.
 				 */
 				add_action( 'admin_enqueue_scripts', array( &$this, 'InitScriptsAndStyles' ) );
+				
+				// Enqueue site's styles
+				add_action('wp_enqueue_scripts', array(&$this, 'init_site_styles'));
 
 				require_once( WP_RW__PLUGIN_DIR . "/languages/dir.php" );
 				$this->languages       = $rw_languages;
@@ -481,7 +485,7 @@ Domain Path: /langs
 			function ClearCache() {
 				RWLogger::LogEnterence( "ClearCache" );
 
-				if ( ! $this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() ) {
+				if ( ! $this->_rw_is_running() ) {
 					return;
 				}
 
@@ -603,11 +607,12 @@ Domain Path: /langs
 				return round((double)substr($pUrid, 0, strlen($pUrid) - $pSubLength) - $pSubValue);
 			}
 
-			function _getPostRatingGuid($id = false)
+			function _getPostRatingGuid($id = false, $criteria_id = false)
 			{
 				if (false === $id){ $id = get_the_ID(); }
-				$urid = ($id + 1) . "0";
 
+				$urid = ($id + 1) . "0" . (false !== $criteria_id ? '-' . $criteria_id : '');
+				
 				if (RWLogger::IsOn()){
 					RWLogger::Log("post-id", $id);
 					RWLogger::Log("post-urid", $urid);
@@ -620,10 +625,10 @@ Domain Path: /langs
 				return self::Urid2Id($pUrid);
 			}
 
-			private function _getCommentRatingGuid($id = false)
+			private function _getCommentRatingGuid($id = false, $criteria_id = false)
 			{
 				if (false === $id){ $id = get_comment_ID(); }
-				$urid = ($id + 1) . "1";
+				$urid = ($id + 1) . "1" . (false !== $criteria_id ? '-' . $criteria_id : '');
 
 				if (RWLogger::IsOn()){
 					RWLogger::Log("comment-id", $id);
@@ -750,7 +755,15 @@ Domain Path: /langs
 
 				$top_left = (object)array('ver' => 'top', 'hor' => 'left');
 				$bottom_left = (object)array('ver' => 'bottom', 'hor' => 'left');
-
+				
+				$default_multirating_options = (object) array(
+					'criteria' => array(time() => array()),
+					'summary_label' => __('Summary', WP_RW__ID),
+					'show_summary_rating' => true,
+					'summary_preview_rating_star_urid' => time()+1,
+					'summary_preview_rating_nero_urid' => time()+2,
+					);
+				
 				$this->_OPTIONS_DEFAULTS = array(
 					WP_RW__DB_OPTION_SITE_PUBLIC_KEY => false,
 					WP_RW__DB_OPTION_SITE_ID => false,
@@ -849,6 +862,13 @@ Domain Path: /langs
 
 					WP_RW__CUSTOM_SETTINGS_ENABLED => new stdClass(),
 					WP_RW__CUSTOM_SETTINGS => new stdClass(),
+					WP_RW__MULTIRATING_SETTINGS => (object) array(
+						'blog-post' => clone $default_multirating_options,
+						'front-post' => clone $default_multirating_options,
+						'comment' => clone $default_multirating_options,
+						'page' => clone $default_multirating_options,
+						'product' => clone $default_multirating_options
+					)
 				);
 
 				RWLogger::LogDeparture("LoadDefaultOptions");
@@ -1060,7 +1080,7 @@ Domain Path: /langs
 					}
 				}
 
-				if ($this->_c4ca4238a0b923820dcc509a6f75849b())
+				if ($this->_rw_setup_extension())
 				{
 					if (RWLogger::IsOn())
 						RWLogger::Log("RemoteCall", "SECURE");
@@ -1183,10 +1203,15 @@ Domain Path: /langs
 
 			function InitScriptsAndStyles()
 			{
-//        wp_enqueue_script( 'rw-test', "/wp-admin/js/rw-test.js", array( 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable' ), false, 1 );
+				// wp_enqueue_script( 'rw-test', "/wp-admin/js/rw-test.js", array( 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable' ), false, 1 );
 				rw_enqueue_style('rw_wp_admin', 'wordpress/admin.css');
 				rw_enqueue_script('rw_wp_admin', 'wordpress/admin.js');
-
+				
+				// Enqueue the stylesheet for the rating in the metabox
+				if ($this->admin_page_has_rating_metabox()) {
+					rw_enqueue_style('rw-admin-rating', WP_RW__PLUGIN_URL . 'resources/css/admin-rating.css');
+				}
+				
 				if (!$this->_inDashboard)
 					return;
 
@@ -1196,7 +1221,8 @@ Domain Path: /langs
 
 				// Enqueue CSS stylesheets.
 				rw_enqueue_style('rw_wp_style', 'wordpress/style.css');
-//        rw_enqueue_style('rw', 'settings.php');
+				
+				// rw_enqueue_style('rw', 'settings.php');
 				rw_enqueue_style('rw_fonts', add_query_arg(array('family' => 'Noto+Sans:400,700,400italic,700italic'), WP_RW__PROTOCOL . '://fonts.googleapis.com/css'));
 
 				rw_register_script('rw', 'index.php');
@@ -1228,9 +1254,92 @@ Domain Path: /langs
 					rw_enqueue_style('jquery-theme-smoothness', 'vendors/jquery/smoothness/jquery.smoothness.css');
 					rw_enqueue_style('rw_external', 'style.css?all=t');
 					rw_enqueue_style('rw_wp_reports', 'wordpress/reports.php');
+					
+					// Load the live preview styles
+					$class = isset($_GET['rating']) ? rtrim($_GET['rating'], 's') : '';
+					if (empty($class) && 'rating-widget' == $_GET['page']) {
+						$class = 'blog-post';
+					} else if (empty($class) && 'rating-widget-woocommerce' == $_GET['page']) {
+						$class = 'product';
+					}
+
+					if ($this->has_multirating_options($class)) {
+						// Enqueue live preview JS
+						rw_enqueue_script('rw-js-live-preview', WP_RW__PLUGIN_URL . '/resources/js/live-preview.js');
+
+						rw_enqueue_style('rw-live-preview', WP_RW__PLUGIN_URL . 'resources/css/live-preview.css');
+					}
 				}
 			}
-
+			
+			/**
+			 * Adds the necessary stylesheet
+			 */
+			function init_site_styles() {
+				rw_enqueue_style('rw-site-rating', WP_RW__PLUGIN_URL . 'resources/css/site-rating.css');
+			}
+			
+			/**
+			 * Checks if the post edit page has rating metabox
+			 * for loading the necessary scripts and styles 
+			 * @return boolean
+			 */
+			function admin_page_has_rating_metabox() {
+				global $pagenow;
+				
+				$post_type = get_post_type();
+				
+				// Check if the user is viewing the edit or the create post page
+				if ('post.php' == $pagenow || 'post-new.php' == $pagenow) {
+					
+					// Check if the post type is supported
+					if (in_array($post_type, array('post', 'page', 'product'))) {
+						return true;
+					}
+				}
+				
+				// Return the default: no rating metabox
+				return false;
+			}
+			
+			/**
+			 * Retrieves the options of this type
+			 * @param type $class
+			 * @return object
+			 */
+			function get_options_by_class($class) {
+				switch ($class) {
+					case 'blog-post':
+						$options = $this->GetOption(WP_RW__BLOG_POSTS_OPTIONS);
+						break;
+					case 'front-post':
+						$options = $this->GetOption(WP_RW__FRONT_POSTS_OPTIONS);
+						break;
+					case 'comment':
+						$options = $this->GetOption(WP_RW__COMMENTS_OPTIONS);
+						break;
+					case 'page':
+						$options = $this->GetOption(WP_RW__PAGES_OPTIONS);
+						break;
+					case 'product':
+						$options = $this->GetOption(WP_RW__WOOCOMMERCE_PRODUCTS_OPTIONS);
+						break;
+					default:
+						$options = array();
+				}
+				
+				return $options;
+			}
+			
+			/**
+			 * Checks if this option type supports multi-rating
+			 * @param type $class
+			 * @return boolean
+			 */
+			function has_multirating_options($class) {
+				return (in_array($class, array('blog-post', 'front-post', 'comment', 'page', 'product')));
+			}
+			
 			function ActivationNotice()
 			{
 				$this->Notice('<a href="edit.php?page=' . WP_RW__ADMIN_MENU_SLUG . '">Activate your account now</a> to start seeing the ratings.');
@@ -1275,29 +1384,29 @@ Domain Path: /langs
 					$this->SetupMenuItems();
 			}
 
-			function _cfcd208495d565ef66e7dff9f98764da()
+			function _rw_potential()
 			{
 				
 				return ('trial' === WP_RW__SITE_PLAN);
 				
 			}
 
-			function _c4ca4238a0b923820dcc509a6f75849b()
+			function _rw_setup_extension()
 			{
-				return (!$this->_cfcd208495d565ef66e7dff9f98764da() && !$this->_c81e728d9d4c2f636f067f89cc14862c());
+				return (!$this->_rw_potential() && !$this->_rw_check_if_done());
 			}
 
-			function _c81e728d9d4c2f636f067f89cc14862c()
+			function _rw_check_if_done()
 			{
 				
 				return (!is_string($this->fs->get_site()->secret_key) || 'free' === WP_RW__SITE_PLAN || 'basic' === WP_RW__SITE_PLAN);
 				
 			}
 
-			function _eccbc87e4b5ce2fe28308fd9f2a7baf3()
+			function _rw_is_running()
 			{
 				
-				if ($this->_cfcd208495d565ef66e7dff9f98764da())
+				if ($this->_rw_potential())
 					return true;
 
 				return (is_string($this->fs->get_site()->secret_key) && ('professional' === WP_RW__SITE_PLAN || 'premium' === WP_RW__SITE_PLAN || 'business' === WP_RW__SITE_PLAN));
@@ -1380,7 +1489,7 @@ Domain Path: /langs
 				$this->fs->add_action('fs_after_account_details', array(&$this, 'AccountPageRender'));
 				$this->fs->add_action('fs_account_page_load_before_departure', array(&$this, 'AccountPageLoad'));
 
-				/*if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && !$this->_cfcd208495d565ef66e7dff9f98764da())
+				/*if ($this->_rw_is_running() && !$this->_rw_potential())
 					// Boosting.
 					$submenu[] = array(
 						'menu_title' => __('Boost', WP_RW__ID),
@@ -2653,7 +2762,7 @@ Domain Path: /langs
 
 			function ReportsPageRender()
 			{
-				if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+				if (!$this->_rw_is_running())
 				{
 					$this->rw_report_example_page();
 				}
@@ -2681,7 +2790,7 @@ Domain Path: /langs
 				reset($associative);
 				return key($associative);
 			}
-
+			
 			/**
 			 * To get a list of all custom user defined posts:
 			 *
@@ -2943,6 +3052,9 @@ Domain Path: /langs
 				}
 
 				$rw_current_settings = $settings_data[$selected_key];
+				
+				// Some alias.
+				$rw_class = $rw_current_settings["class"];
 
 				$is_blog_post = ('blog-post' === $rw_current_settings['class']);
 				$item_with_category = in_array($rw_current_settings['class'], array('blog-post', 'front-post', 'comment'));
@@ -2950,22 +3062,23 @@ Domain Path: /langs
 				// Visibility list must be loaded anyway.
 				$this->_visibilityList = $this->GetOption(WP_RW__VISIBILITY_SETTINGS);
 
-				if ($item_with_category)
+				if ($item_with_category) {
 					// Categories Availability list must be loaded anyway.
 					$this->categories_list = $this->GetOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS);
-
+				}
+				
 				// Availability list must be loaded anyway.
 				$this->availability_list = $this->GetOption(WP_RW__AVAILABILITY_SETTINGS);
 
 				$this->custom_settings_enabled_list = $this->GetOption(WP_RW__CUSTOM_SETTINGS_ENABLED);
+
 				$this->custom_settings_list = $this->GetOption(WP_RW__CUSTOM_SETTINGS);
+
+				$this->multirating_settings_list = $this->GetOption(WP_RW__MULTIRATING_SETTINGS);
 
 				// Accumulated user ratings support.
 				if ('users' === $selected_key && $this->IsBBPressInstalled())
 					$rw_is_user_accumulated = $this->GetOption(WP_RW__IS_ACCUMULATED_USER_RATING);
-
-				// Some alias.
-				$rw_class = $rw_current_settings["class"];
 
 				// Reset categories.
 				$rw_categories = array();
@@ -2976,7 +3089,56 @@ Domain Path: /langs
 				{
 					// Set settings into save mode.
 					$this->settings->SetSaveMode();
+					
+					/* Multi-rating options.
+            ---------------------------------------------------------------------------------------------------------------*/
+					if (isset($_POST['multi_rating'])) {
+						$multi_rating = $_POST['multi_rating'];
+						
+						if (!$this->_rw_is_running() && count($multi_rating['criteria']) > 3) {
+							$multi_rating['criteria'] = array_splice($multi_rating['criteria'], 0, 3);
+						}
+						
+						// Unset empty labels
+						foreach ($multi_rating['criteria'] as $criteria_id => $criteria) {
+							$criteria_label = isset($criteria['label']) ? trim($criteria['label']) : '';
+							if (empty($criteria_label)) {
+								unset($multi_rating['criteria'][$criteria_id]['label']);
+							}
+						}
+						
+						// Retrieve the current multi-rating options
+                        if (!isset($this->multirating_settings_list))
+                            $this->multirating_settings_list = new stdClass();
 
+						$multirating_options = $this->multirating_settings_list->{$rw_class};
+						
+						// Save the new criteria IDs and labels
+						$multirating_options->criteria = $multi_rating['criteria'];
+						
+						// Save the generated summary rating IDs
+						$multirating_options->summary_preview_rating_star_urid = trim($multi_rating['summary_preview_rating_star_urid']);
+						$multirating_options->summary_preview_rating_nero_urid = trim($multi_rating['summary_preview_rating_nero_urid']);
+						
+						// Save the summary label
+						$summary_label = isset($multi_rating['summary_label']) ? trim($multi_rating['summary_label']) : '';
+						if (!empty($summary_label)) {
+							$multirating_options->summary_label = $summary_label;
+						} else {
+							unset($multirating_options->summary_label);
+						}
+						
+						// Save the state of the Show Summary Rating option
+						$multirating_options->show_summary_rating = isset($multi_rating['show_summary_rating']) ? true : false;
+						
+						// Save the updated multi-rating options
+                        if (!isset($this->multirating_settings_list))
+                            $this->multirating_settings_list = new stdClass();
+
+						$this->multirating_settings_list->{$rw_class} = $multirating_options;
+						$this->SetOption(WP_RW__MULTIRATING_SETTINGS, $this->multirating_settings_list);
+					}
+					
 					/* Widget align options.
             ---------------------------------------------------------------------------------------------------------------*/
 					$rw_show_rating = isset($_POST["rw_show"]) ? true : false;
@@ -3015,6 +3177,9 @@ Domain Path: /langs
                 ---------------------------------------------------------------------------------------------------------------*/
 						$rw_categories = isset($_POST["rw_categories"]) && is_array($_POST["rw_categories"]) ? $_POST["rw_categories"] : array();
 
+                        if (!isset($this->categories_list))
+                            $this->categories_list = new stdClass();
+
 						$this->categories_list->{$rw_class} = (in_array("-1", $rw_categories) ? array("-1") : $rw_categories);
 						$this->SetOption(WP_RW__CATEGORIES_AVAILABILITY_SETTINGS, $this->categories_list);
 					}
@@ -3033,13 +3198,19 @@ Domain Path: /langs
 					$rw_visibility_include  = isset($_POST["rw_visibility_include"]) ? $_POST["rw_visibility_include"] : "";
 
 					$rw_custom_settings_enabled = isset($_POST["rw_custom_settings_enabled"]) ? true : false;
+                    if (!isset($this->custom_settings_enabled_list))
+                        $this->custom_settings_enabled_list = new stdClass();
 					$this->custom_settings_enabled_list->{$rw_class} = $rw_custom_settings_enabled;
 					$this->SetOption(WP_RW__CUSTOM_SETTINGS_ENABLED, $this->custom_settings_enabled_list);
 
 					$rw_custom_settings = isset($_POST["rw_custom_settings"]) ? $_POST["rw_custom_settings"] : '';
+                    if (!isset($this->custom_settings_list))
+                        $this->custom_settings_list = new stdClass();
 					$this->custom_settings_list->{$rw_class} = $rw_custom_settings;
 					$this->SetOption(WP_RW__CUSTOM_SETTINGS, $this->custom_settings_list);
 
+                    if (!isset($this->_visibilityList))
+                        $this->_visibilityList = new stdClass();
 					$this->_visibilityList->{$rw_class}->selected = $rw_visibility;
 					$this->_visibilityList->{$rw_class}->exclude = self::IDsCollectionToArray($rw_visibility_exclude);
 					$this->_visibilityList->{$rw_class}->include = self::IDsCollectionToArray($rw_visibility_include);
@@ -3267,7 +3438,7 @@ Domain Path: /langs
 							</div>
 							<div id="rw_wp_set_widgets">
 								<?php
-									if (!$this->_c4ca4238a0b923820dcc509a6f75849b())
+									if (!$this->_rw_setup_extension())
 									{
 										// Show random.
 										if (0 == rand(0, 1))
@@ -3944,7 +4115,7 @@ Domain Path: /langs
 				$rating_html = '<div class="rw-ui-container rw-class-' . $pElementClass . ' rw-urid-' . $pUrid . '"' . $ratingData;
 
 				
-				if (true === $pAddSchema && 'front-post' !== $pElementClass && $this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+				if (true === $pAddSchema && 'front-post' !== $pElementClass && $this->_rw_is_running())
 				{
 					RWLogger::Log('GetRatingHtml', "Adding schema for: urid={$pUrid}; rclass={$pElementClass}");
 
@@ -4370,7 +4541,7 @@ Domain Path: /langs
 				if (RWLogger::IsOn())
 					RWLogger::LogEnterence("SetupBBPress");
 
-				if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+				if (!$this->_rw_is_running())
 				{
 					define('WP_RW__BBP_INSTALLED', false);
 				}
@@ -4768,6 +4939,7 @@ Domain Path: /langs
 					<!-- This site's ratings are powered by RatingWidget plugin v<?php echo WP_RW__VERSION ?> - https://rating-widget.com/wordpress-plugin/ -->
 					<div class="rw-js-container">
 						<script type="text/javascript">
+							
 							// Initialize ratings.
 							function RW_Async_Init(){
 								RW.init({<?php
@@ -4789,7 +4961,7 @@ Domain Path: /langs
                     ?>,
 									source: "wordpress",
 									options: {
-									<?php if ($this->_eccbc87e4b5ce2fe28308fd9f2a7baf3() && defined('ICL_LANGUAGE_CODE') && isset($this->languages[ICL_LANGUAGE_CODE])) : ?>
+									<?php if ($this->_rw_is_running() && defined('ICL_LANGUAGE_CODE') && isset($this->languages[ICL_LANGUAGE_CODE])) : ?>
 									lng: "<?php echo ICL_LANGUAGE_CODE; ?>"
 									<?php endif; ?>
 								},
@@ -4827,7 +4999,25 @@ Domain Path: /langs
 							}
                         }
                     ?>
-							RW.render(null, <?php
+							RW.render(function() {
+								(function($) {
+									$('.rw-rating-table:not(.rw-no-labels)').each(function() {
+										var ratingTable = $(this);
+										
+										// Find the current width before floating left or right to
+										// keep the ratings aligned
+										var col1 = ratingTable.find('td:first');
+										var widthCol1 = col1.width();
+										ratingTable.find('td:first-child').width(widthCol1);
+
+										if (ratingTable.hasClass('rw-rtl')) {
+											ratingTable.find('td').css({float: 'right'});
+										} else {
+											ratingTable.find('td').css({float: 'left'});
+										}
+									});
+								})(jQuery);
+							}, <?php
                         echo (!$this->_TOP_RATED_WIDGET_LOADED) ? "true" : "false";
                     ?>);
 							}
@@ -5409,7 +5599,7 @@ Domain Path: /langs
 			}
 
 
-			function get_rating_id_by_element($element_id, $element_type)
+			function get_rating_id_by_element($element_id, $element_type, $criteria_id = false)
 			{
 				$urid = false;
 
@@ -5421,12 +5611,12 @@ Domain Path: /langs
 					case 'user-page':
 					case 'new-blog-post':
 					case 'user-post':
-						$urid = $this->_getPostRatingGuid($element_id);
+						$urid = $this->_getPostRatingGuid($element_id, $criteria_id);
 						break;
 					case 'comment':
 					case 'new-blog-comment':
 					case 'user-comment':
-						$urid = $this->_getCommentRatingGuid($element_id);
+						$urid = $this->_getCommentRatingGuid($element_id, $criteria_id);
 						break;
 					case 'forum-post':
 					case 'forum-reply':
@@ -5445,6 +5635,15 @@ Domain Path: /langs
 						break;
 				}
 
+				if (false === $urid) {
+					foreach ($this->_extensions as $ext) {
+						if (in_array($element_type, $ext->GetRatingClasses())) {
+							$urid = $ext->GetRatingGuid($element_id, $element_type, $criteria_id);
+							break;
+						}
+					}
+				}
+				
 				return $urid;
 			}
 
@@ -5518,21 +5717,48 @@ Domain Path: /langs
 					$pOptions['read-only'] = 'true';
 				}
 
-				if (false === $urid)
-				{
-					foreach ($this->_extensions as $ext)
-					{
-						if (in_array($pElementClass, $ext->GetRatingClasses()))
-						{
-							$urid = $ext->GetRatingGuid($pElementID, $pElementClass);
-							break;
-						}
-					}
+				if (!$this->has_multirating_options($pElementClass)) {
+					return $this->EmbedRawRating($urid, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions);
+				} else {
+					//Prefixed with mr_ to avoid possible collisions after calling extract()
+					$vars = array(
+						'mr_add_schema' => $pAddSchema,
+						'mr_custom_style' => $pCustomStyle,
+						'mr_element_class' => $pElementClass,
+						'mr_element_id' => $pElementID,
+						'mr_embed_options' => $pOptions,
+						'mr_hor_align' => $pHorAlign,
+						'mr_permalink' => $pPermalink,
+						'mr_summary_urid' => $urid,
+						'mr_title' => $pTitle
+					);
+					
+					return $this->embed_multi_rating($vars);
 				}
-
-				return $this->EmbedRawRating($urid, $pTitle, $pPermalink, $pElementClass, $pAddSchema, $pHorAlign, $pCustomStyle, $pOptions);
 			}
-
+			
+			/**
+			 * Loads the multi-rating view using the data passed to $vars
+			 * @param array $vars
+			 * @return string Returns the generated multi-rating HTML
+			 */
+			function embed_multi_rating($vars) {
+				$multirating_settings_list = $this->GetOption(WP_RW__MULTIRATING_SETTINGS);
+				$multirating_options = $multirating_settings_list->{$vars['mr_element_class']};
+				$general_options = $this->get_options_by_class($vars['mr_element_class']);
+				
+				$vars['mr_general_options'] = $general_options;
+				$vars['mr_multi_options'] = $multirating_options;
+				
+				// Retrieve the generated HTML, necessary for proper placement in the site, e.g.: bottom center
+				ob_start();
+				rw_require_view('site/multi-rating.php', $vars);
+				$html = ob_get_contents();
+				ob_end_clean();
+				
+				return $html;
+			}
+			
 			function EmbedRawRating($urid, $title, $permalink, $class, $add_schema, $hor_align = false, $custom_style = false, $options = array())
 			{
 				$this->QueueRatingData($urid, $title, $permalink, $class);
@@ -5545,7 +5771,7 @@ Domain Path: /langs
 					        (false !== $hor_align ? ' class="rw-' . $hor_align . '"' : '') . '>'
 					        . $html .
 					        '</div>';
-
+				
 				return $html;
 			}
 
@@ -5674,7 +5900,7 @@ Domain Path: /langs
 			{
 				if (RWLogger::IsOn()){ $params = func_get_args(); RWLogger::LogEnterence('GetRatingDataByRatingID', $params); }
 
-				if (!$this->_eccbc87e4b5ce2fe28308fd9f2a7baf3())
+				if (!$this->_rw_is_running())
 					return false;
 
 				$rating = $this->ApiCall(

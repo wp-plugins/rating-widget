@@ -6,7 +6,7 @@
 <div class="wrap">
 	<h2 class="nav-tab-wrapper">
 		<a href="<?php $fs->get_account_url() ?>" class="nav-tab nav-tab-active"><?php _e('Account', WP_FS__SLUG) ?></a>
-		<?php if (!$fs->_e4da3b7fbbce2345d7772b0674a318d5()) : ?>
+		<?php if (!$fs->_rw_execute_over()) : ?>
 			<a href="<?php echo $fs->get_upgrade_url() ?>" class="nav-tab"><?php _e('Upgrade', WP_FS__SLUG) ?></a>
 		<?php endif ?>
 	</h2>
@@ -48,7 +48,7 @@
 													<?php wp_nonce_field('sync_license') ?>
 													<input type="submit" class="button" value="<?php _e('Sync License', WP_FS__SLUG) ?>">
 
-													<?php if ( !$fs->_e4da3b7fbbce2345d7772b0674a318d5() ) : ?>
+													<?php if ( !$fs->_rw_execute_over() ) : ?>
 														<a href="<?php echo $fs->get_upgrade_url() ?>" onclick="_gaq.push(['_trackEvent', 'upgrade', 'wordpress', 'gopro_button', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button button-primary gradient button-upgrade"><?php _e('Upgrade', WP_FS__SLUG) ?></a>
 													<?php else : ?>
 														<a href="<?php echo $fs->get_upgrade_url() ?>" onclick="_gaq.push(['_trackEvent', 'change-plan', 'wordpress', 'account', 1, true]); _gaq.push(['_link', this.href]); return false;" class="button gradient button-secondary button-upgrade"><?php _e('Change Plan', WP_FS__SLUG) ?></a>
