@@ -3,7 +3,7 @@
 	Plugin Name: Rating-Widget: Star Rating System
 	Plugin URI: http://rating-widget.com/wordpress-plugin/
 	Description: Create and manage Rating-Widget ratings in WordPress.
-	Version: 2.4.8
+	Version: 2.4.9
 	Author: Rating-Widget
 	Author URI: http://rating-widget.com/wordpress-plugin/
 	License: GPLv2
@@ -280,6 +280,19 @@
 				$this->_options_manager->store();
 			}
 
+			/**
+			 * Validates the current site able to connect the API.
+			 *
+			 * @author Vova Feldman (@svovaf)
+			 * @since 2.4.8
+			 *
+			 * @return bool
+			 */
+			private function is_api_supported()
+			{
+				return ( false !== rwapi() );
+			}
+
 			private function setup_dashboard_actions() {
 				RWLogger::LogEnterence( "setup_dashboard_actions" );
 
@@ -299,7 +312,7 @@
 					add_action( 'admin_menu', array( &$this, 'AddPostMetaBox' ) ); // Metabox for posts/pages
 					add_action( 'save_post', array( &$this, 'SavePostData' ) );
 
-					if ( false !== rwapi() ) {
+					if ( $this->is_api_supported() ) {
 						// Since some old users might not having a secret key set,
 						// the API won't be able to work for them - therefore, all API related
 						// hooks must be executed within this scope.
@@ -3855,7 +3868,7 @@
 
 					if ( false !== $this->GetOption( WP_RW__SHOW_ON_EXCERPT ) ) {
 						// Hook post excerpt rating showup.
-						add_action( 'the_excerpt', array( &$this, 'add_front_post_rating' ) );
+						add_action( 'the_excerpt', array( &$this, 'AddPostRating' ) );
 
 						RWLogger::Log( "rw_before_loop_start", 'Hooked to the_excerpt()' );
 					}
