@@ -3,7 +3,7 @@
 	Plugin Name: Rating-Widget: Star Rating System
 	Plugin URI: http://rating-widget.com/wordpress-plugin/
 	Description: Create and manage Rating-Widget ratings in WordPress.
-	Version: 2.5.4
+	Version: 2.5.5
 	Author: Rating-Widget
 	Author URI: http://rating-widget.com/wordpress-plugin/
 	License: GPLv2
@@ -1326,6 +1326,10 @@
 			function five_star_wp_rate_notice() {
 				$min_votes_trigger = $this->GetOption(WP_RW__DB_OPTION_WP_RATE_NOTICE_MIN_VOTES_TRIGGER);
 				$response = $this->ApiCall("/votes/count.json", 'GET', array(), WP_RW__CACHE_TIMEOUT_DASHBOARD_STATS);
+				if ( empty($response) ) {
+					return;
+				}
+				
 				if (!isset($response->error)) {
 					$votes = $response->count;
 					if ($votes >= $min_votes_trigger) {
@@ -5288,16 +5292,27 @@
 
 				}
 
-				if ($ver_top)
+				if ( $ver_top ) {
 					// Hook activity TOP rating.
 					add_filter("bp_get_activity_action", array(&$this, "rw_display_activity_rating_top"));
-				if ($ver_bottom)
+				}
+				
+				if ( $ver_bottom ) {
 					// Hook activity BOTTOM rating.
-					add_action("bp_activity_entry_meta", array(&$this, "rw_display_activity_rating_bottom"));
+					if ( is_user_logged_in() ) {
+						// The methods hooked into this action are invoked when the user is logged in.
+						// We hook into this action to align the rating to BuddyPress' Comment, Favorite, or Delete button which is available for logged in user.
+						add_action("bp_activity_entry_meta", array(&$this, "rw_display_activity_rating_bottom"));
+					} else {
+						// This is the only good action that we can use when there is no logged in user.
+						add_action("bp_activity_entry_content", array(&$this, "rw_display_activity_rating_bottom"));
+					}
+				}
 
-				if (true === $items["activity-comment"]["enabled"])
+				if ( true === $items["activity-comment"]["enabled"] ) {
 					// Hook activity-comment rating showup.
 					add_filter("bp_get_activity_content", array(&$this, "rw_display_activity_comment_rating"));
+				}
 
 				return true;
 			}
@@ -5939,7 +5954,25 @@
 
 						if ( RWLogger::IsOn() )
 							RWLogger::Log( 'rw_attach_rating_js', 'Urid = ' . $urid . '; Class = ' . $rclass . ';' );
-
+						
+						$suffix_pos = strpos($rclass, $criteria_suffix_part);
+						if (false !== $suffix_pos) {
+							/* Use dummy value for the criteria options but
+							 * use the settings of the summary rating when
+							 * calling RW.initClass below
+							 */
+							$rw_settings[$rclass] = 'DUMMY';
+							
+							/*
+							 * Make sure that the following code (the if block) will have the main option class, e.g. blog-post,
+							 * and not the criterion class, e.g. blog-post-criteria-1. This is because the following
+							 * code needs the main option class in order to load the type (blog, page, etc.) settings which include
+							 * the themes and other display options. A criterion rating will use these display options,
+							 * so this code extracts the main option class from the criterion class.
+							 */
+							$rclass = substr($rclass, 0, $suffix_pos);
+						}
+						
 						if (isset($rw_settings[$rclass]) && is_array($rw_settings[$rclass]) && !isset($rw_settings[$rclass]["enabled"]))
 						{
 							if ( RWLogger::IsOn() )
@@ -5960,12 +5993,6 @@
 							}
 
 							$attach_js = true;
-						} else if (false !== strpos($rclass, $criteria_suffix_part) && !isset($rw_settings[$rclass])) {
-							/* Use dummy value for the criteria options but
-							 * use the settings of the summary rating when
-							 * calling RW.initClass below
-							 */
-							$rw_settings[$rclass] = 'DUMMY';
 						}
 					}
 				}
