@@ -1,9 +1,9 @@
 <?php
 	/*
-	Plugin Name: Rating-Widget: Star Rating System
+	Plugin Name: Rating-Widget: Star Review System
 	Plugin URI: http://rating-widget.com/wordpress-plugin/
 	Description: Create and manage Rating-Widget ratings in WordPress.
-	Version: 2.5.5
+	Version: 2.5.6
 	Author: Rating-Widget
 	Author URI: http://rating-widget.com/wordpress-plugin/
 	License: GPLv2
@@ -1378,7 +1378,8 @@
     -------------------------------------------------*/
 			private static function Urid2Id($pUrid, $pSubLength = 1, $pSubValue = 1)
 			{
-				return round((double)substr($pUrid, 0, strlen($pUrid) - $pSubLength) - $pSubValue);
+				// Casting the value to integer is important to prevent a warning that is usually thrown by WordPress' caching code.
+				return (int) round((double)substr($pUrid, 0, strlen($pUrid) - $pSubLength) - $pSubValue);
 			}
 
 			function _getPostRatingGuid($id = false, $criteria_id = false)
@@ -6928,7 +6929,7 @@
 				if ($is_rating_readonly) {
 					$pOptions['read-only'] = 'true';
 				}
-
+				
 				if (!$this->has_multirating_options($pElementClass)) {
 					RWLogger::Log('EmbedRating', 'Not multi-criteria rating');
 
@@ -7049,6 +7050,7 @@
 				// If accumulated user rating, then make sure it can not be directly rated.
 				if ( $this->IsUserAccumulatedRating() ) {
 					$pOptions['read-only']   = 'true';
+					$pOptions['force-sync']	 = 'true';
 					$pOptions['show-report'] = 'false';
 				}
 
